@@ -21,3 +21,6 @@ Makes standard plots to analyze deconvolution simulation results.
 \examples{
 # example
 }
+\seealso{
+decon_analysis
+}

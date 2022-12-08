@@ -199,7 +199,7 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE){
 #' coefficients.
 #' @examples
 #' # examples
-#' @seealso
+#' @seealso decon_analysis, decon_results
 #' @export
 pdiff <- function(pi, P, verbose = FALSE){
   pi <- as.numeric(pi)
@@ -232,9 +232,10 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' including scatter plots and a violin plot.
 #' @examples
 #' # example
-#' @seealso
+#' @seealso decon_analysis
 #' @export
 results_plots <- function(dfres, verbose = FALSE){
+  require(ggplot2)
   if(verbose){
     message("Making scatter plots of RMSE by first type predictions...")}
   ggpt1 <- ggplot(dfres, aes(x = prop_k1, y = rmse, color = zs_transform)) + 

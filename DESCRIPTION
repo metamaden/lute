@@ -20,13 +20,13 @@ Imports:
     methods,
     RCurl,
     R.utils,
-    BiocFileCache
+    BiocFileCache,
+    ggplot2
 Suggests:
     nnls,
     glmnet,
     knitr,
     testthat,
-    ggplot2,
     gridExtra,
     rmarkdown,
     BiocStyle,

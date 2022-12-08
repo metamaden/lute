@@ -24,3 +24,6 @@ Compare two sets of type predictions across types within an iteration.
 \examples{
 # examples
 }
+\seealso{
+decon_analysis, decon_results
+}
