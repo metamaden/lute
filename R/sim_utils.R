@@ -228,6 +228,8 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' 
 #' @param dfres Data.frame of deconvolution simulation results.
 #' @param verbose Whether to show verbose status updates.
+#' @param refline.color Color of the reference line for the second scatterplot 
+#' of RMSE by experiment type.
 #' @returns List of ggplot2 objects analyzing deconvolution simulation results, 
 #' including scatter plots and a violin plot.
 #' @examples

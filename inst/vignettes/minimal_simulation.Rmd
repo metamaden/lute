@@ -2,18 +2,40 @@
 title: "Run a minimal deconvolution simulation"
 author: "Sean Maden"
 date: "2022-12-08"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
-This vignette shows how to run a minimal deconvolution simulation on example 
-datasets.
+This vignette shows how to run minimal deconvolution simulations on some example
+synthetic data objects.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(lute)
+libv <- c("lute", "gridExtra")
+sapply(libv, library, character.only = TRUE)
 ```
 
-# Simulation setup
+# Run a minimal simulation
+
+This section walks through how to set up, run, and analyze a deconvolution 
+simulation series. The entire code to run the simulation is as follows:
+
+```{r, eval = F}
+num.sim <- 1e3
+marker1 <- c(1, 0)
+marker2 <- c(0, 1)
+lgv <- lapply(seq(num.sim),function(ii){list(marker1, marker2)})
+size1 <- 1
+size2 <- 100
+lsv <- lapply(seq(num.sim), function(ii){c(size1, size2)})
+prop1 <- seq(1e-3, 1, 1e-3)
+prop2 <- rev(prop1)
+lpv <- lapply(seq(num.sim), function(ii){c(prop1[ii], prop2[ii])})
+lres <- decon_analysis(lgv, lpv, lsv)
+```
+
+## Simulation setup
 
 ```{r}
 num.sim <- 1e3
@@ -50,7 +72,7 @@ prop2 <- rev(prop1)
 lpv <- lapply(seq(num.sim), function(ii){c(prop1[ii], prop2[ii])})
 ```
 
-# Run simulations
+## Run simulations
 
 Now run simulations and store the results as `lres`.
 
@@ -58,7 +80,7 @@ Now run simulations and store the results as `lres`.
 lres <- decon_analysis(lgv, lpv, lsv)
 ```
 
-# Analyze results
+## Analyze results
 
 We access the plot objects from `lres`. 
 
@@ -87,3 +109,20 @@ Finally, we can view the scatterplot of the RMSEs for the non-transformed data
 ```{r}
 lgg$ggpt2
 ```
+
+Finally, we can arrange these plots together using `gridExtra::grid.arrange()`.
+
+```{r}
+grid.arrange(lgg$ggpt1, lgg$ggvp, lgg$ggpt2,
+             layout_matrix = matrix(c(rep(1, 8), rep(2, 8), rep(3, 12)), 
+                                    ncol = 2, byrow = T))
+```
+
+# Conclusions
+
+This vignette showed how to perform a minimal simulation and analyze the results.
+
+For general information about the `lute` R package, see the [User's Guide.]()
+
+For additional simulation examples, see [`size_factor_experiments.Rmd`]() vignette.
+

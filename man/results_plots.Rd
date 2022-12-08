@@ -4,10 +4,13 @@
 \alias{results_plots}
 \title{results_plots}
 \usage{
-results_plots(dfres, verbose = FALSE)
+results_plots(dfres, refline.color = "red", verbose = FALSE)
 }
 \arguments{
 \item{dfres}{Data.frame of deconvolution simulation results.}
+
+\item{refline.color}{Color of the reference line for the second scatterplot 
+of RMSE by experiment type.}
 
 \item{verbose}{Whether to show verbose status updates.}
 }
