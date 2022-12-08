@@ -23,18 +23,13 @@
 #' some reference/signature matrix Z and some bulk/convoluted signals matrix Y
 #' and return the vector of predictions or proportions, p.
 #' 
+#' @param ltl.varname Variable/column in lute_transfer_learning.rda dataset 
+#' containing the strict deconvolution method names.
 #' @returns List of supported strict deconvolution function names and descriptions.
 #' @export 
-supported_strict_methods <- function(methodv = c("nnls"), 
-                                     descriptionv = c("Non-negative least squares. 
-                                                      Widely used strict function 
-                                                      for bulk deconvolution from 
-                                                      single-cell RNAseq or 
-                                                      similar reference data 
-                                                      type.")){
-  lsd <- lapply(seq(length(methodv)), function(ii){descriptionv[ii]})
-  names(lsd) <- methodv
-  return(methodv)
+supported_strict_methods <- function(ltl.varname = "strict_deconvolution_method_used"){
+  ltl <- get(load(data("lute_transfer_learning")))
+  return(ltl[,ltl.varname])
 }
 
 #' predtype
