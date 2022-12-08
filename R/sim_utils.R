@@ -58,10 +58,13 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
 #' @export
 predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, 
                      verbose = FALSE){
-  if(method == "nnls"){p <- nnls(Z, Y)$x} else{
+  if(strict.method == "nnls"){
+      p <- nnls(Z, Y)$x
+  } else{
     stop("Error, method not supported. Choose one of either: ",
          paste0(names(supported_strict_methods()), collapse = ","))
   }
+  p <- as.numeric(p)
   if(type.prop){
     if(verbose){message("Computing proportions from outputs.")}
     p <- p/sum(p)
@@ -117,9 +120,7 @@ decon_results <- function(lgv, lpv, lsv, strict.method = "nnls",
     if(is(p2, "try-error")){
       message("Warning, couldn't get predictions for S-adjusted Z test.")}
     if(verbose){message("Making result data.frame...")}
-    dfres <- do.call(rbind, 
-                     lapply(list(p1, p2), 
-                            pdiff, P))
+    dfres <- do.call(rbind, lapply(list(p1, p2), pdiff, P))
     dfres <- as.data.frame(dfres)
     dfres$expt <- paste0("expt", ii)
     dfres$zs_transform <- c(FALSE, TRUE)
