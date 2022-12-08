@@ -70,7 +70,7 @@ predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE,
          paste0(names(supported_strict_methods()), collapse = ","))
   }
   p <- as.numeric(p)
-  if(type.prop){
+  if(proportions){
     if(verbose){message("Computing proportions from outputs.")}
     p <- p/sum(p)
     } else{
@@ -128,7 +128,7 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
     dfres$expt <- paste0("expt", ii)
     dfres$zs_transform <- c(FALSE, TRUE)
     if(verbose){message("Making results return list...")}
-    lexpt <- list(Z = Z, ZS = ZS, Y = Y, method = strict.method)
+    lexpt <- list(Z = Z, ZS = ZS, Y = Y, method = strict_method)
     lpred <- list(p1 = p1, p2 = p2)
     lres <- list(lexpt = lexpt, lpred = lpred, dfres = dfres)
     return(lres)
@@ -204,12 +204,20 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE){
 pdiff <- function(pi, P, verbose = FALSE){
   pi <- as.numeric(pi)
   P <- as.numeric(P)
+  if(!length(pi) == length(P)){
+    stop("Error, predictions objects must be of the same length.")
+  }
   bias <- pi - P
   rmse <- sqrt(mean(bias^2))
-  corr.p <- try(cor.test(pi, P, method = "pearson")$estimate, silent = verbose)
-  corr.s <- try(cor.test(pi, P, method = "spearman")$estimate, silent = verbose)
-  corr.p <- ifelse(is(corr.p, "try-error"), NA, corr.p)
-  corr.s <- ifelse(is(corr.s, "try-error"), NA, corr.p)
+  if(length(pi) > 2 & length(P) > 2){
+    corr.p <- try(cor.test(pi, P, method = "pearson")$estimate, silent = verbose)
+    corr.s <- try(cor.test(pi, P, method = "spearman")$estimate, silent = verbose)
+    corr.p <- ifelse(is(corr.p, "try-error"), NA, corr.p)
+    corr.s <- ifelse(is(corr.s, "try-error"), NA, corr.p)
+  } else{
+    if(verbose){message("Two predictions provided; skipping correlations.")}
+    corr.p <- corr.s <- NA
+  }
   rv <- c(bias = bias, rmse = rmse, corr.p = corr.p, corr.s = corr.s)
   return(rv)
 }
