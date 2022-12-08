@@ -23,9 +23,17 @@
 #' some reference/signature matrix Z and some bulk/convoluted signals matrix Y
 #' and return the vector of predictions or proportions, p.
 #' 
-#' @returns Vector of supported strict deconvolution function names.
+#' @returns List of supported strict deconvolution function names and descriptions.
 #' @export 
-supported_strict_methods <- function(methodv = c("nnls")){
+supported_strict_methods <- function(methodv = c("nnls"), 
+                                     descriptionv = c("Non-negative least squares. 
+                                                      Widely used strict function 
+                                                      for bulk deconvolution from 
+                                                      single-cell RNAseq or 
+                                                      similar reference data 
+                                                      type.")){
+  lsd <- lapply(seq(length(methodv)), function(ii){descriptionv[ii]})
+  names(lsd) <- methodv
   return(methodv)
 }
 
@@ -49,7 +57,7 @@ supported_strict_methods <- function(methodv = c("nnls")){
 predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, verbose = FALSE){
   if(method == "nnls"){p <- nnls(Z, Y)$x} else{
     stop("Error, method not supported. Choose one of either: ".
-         paste0(supported_strict_methods(), collapse = ","))
+         paste0(names(supported_strict_methods()), collapse = ","))
   }
   if(type.prop){
     if(verbose){message("Computing proportions from outputs.")}
@@ -61,7 +69,17 @@ predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, verbose =
 }
 
 
-#'
+#' decon_results
+#' 
+#' Run a series of deconvolution simulations and return the results. For list
+#' arguments `lgv`, `lpv`, and `lsv`, list index corresponds to the simulation 
+#' rep.
+#' 
+#' @param lgv List of marker expression for reference/signature matrix Z.
+#' @param lpv List of type proportions to make Y and compare p predictions.
+#' @param lsv List of size factor values. 
+#' @param strict.method Type of strict deconvolution method to use (see 
+#' `supported_strict_methods()` for details)
 #' @param 
 #' @returns 
 #' @examples

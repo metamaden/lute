@@ -1,0 +1,2 @@
+method,strict_deconvolution_method_used,full_method_name,description
+nnls,nnls,non-negative least squares,Widely used strict function for bulk deconvolution from single-cell RNAseq or similar reference data type.
