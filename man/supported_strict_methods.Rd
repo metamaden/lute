@@ -15,8 +15,6 @@ strict deconvolution method names.}
 
 \item{fname}{Name of the file containing supported deconvolution methods 
 info.}
-
-\item{verbose}{Whether to show verbose status updates.}
 }
 \value{
 List of supported strict deconvolution function names and 
