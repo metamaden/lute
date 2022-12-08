@@ -22,6 +22,8 @@ Imports:
     R.utils,
     BiocFileCache
 Suggests:
+    nnls,
+    glmnet,
     knitr,
     testthat,
     ggplot2,
