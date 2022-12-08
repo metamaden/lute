@@ -60,7 +60,7 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
 predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, 
                      verbose = FALSE){
   if(method == "nnls"){p <- nnls(Z, Y)$x} else{
-    stop("Error, method not supported. Choose one of either: ".
+    stop("Error, method not supported. Choose one of either: ",
          paste0(names(supported_strict_methods()), collapse = ","))
   }
   if(type.prop){
