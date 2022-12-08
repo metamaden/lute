@@ -35,7 +35,7 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
                                      fname = "lute_transfer_learning"){
   if(verbose){message("Loading data from ",fname,"...")}
   ltl <- get(load(data(fname)))
-  if(!varname in colnames(ltl)){
+  if(!varname %in% colnames(ltl)){
     stop("Error, ",varname," is not a variable in dataset.")}
   return(ltl[,varname])
 }
@@ -84,6 +84,7 @@ predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE,
 #' @param lsv List of size factor values. 
 #' @param strict.method Type of strict deconvolution method to use (see 
 #' `supported_strict_methods()` for details)
+#' @param verbose Whether to show verbose status updates.
 #' @param 
 #' @returns 
 #' @examples
@@ -140,6 +141,7 @@ decon_results <- function(lgv, lpv, lsv, strict.method = "nnls",
 #' @param lgv List of marker expression for reference/signature matrix Z.
 #' @param lpv List of type proportions to make Y and compare p predictions.
 #' @param lsv List of size factor values. 
+#' @param verbose Whether to show verbose status updates.
 #' @returns 
 #' @examples
 #' 
@@ -190,6 +192,7 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE){
 #' 
 #' @param pi Prediction set vector. Indices correspond to those in `P`.
 #' @param P Prediction set vector. Indices correspond to those in `pi`.
+#' @param verbose Whether to show verbose status updates.
 #' @returns Comparisons across types, including bias, RMSE, and correlations.
 #' @examples
 #' @seealso
@@ -212,16 +215,21 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' @param dfres Data.frame of deconvolution simulation results.
 #' @returns List of ggplot2 objects analyzing deconvolution simulation results, 
 #' including scatter plots and a violin plot.
+#' @param verbose Whether to show verbose status updates.
 #' @examples
 #' @seealso
 #' @export
 results_plots <- function(dfres, verbose = FALSE){
-  # plot rmse by proportion k1
+  if(verbose){
+    message("Making scatter plots of RMSE by first type predictions...")}
   ggpt1 <- ggplot(dfres, aes(x = prop_k1, y = rmse, color = zs_transform)) + 
     geom_point() + ggtitle("RMSE by proportion type 1")
   ggpt1 <- ggpt1 + facet_wrap(~zs_transform)
+  if(verbose){message("Making violin plots of RMSE by type...")}
   ggvp <- ggplot(dfres, aes(x = zs_transform , y = rmse, color = zs_transform)) +
     geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
+  if(verbose){
+    message("Making scatter plots of RMSE, with vs. without S-transform...")}
   dfp <- data.frame(no_stransform = dfres[dfres$zs_transform==F,]$rmse,
                     with_stransform = dfres[dfres$zs_transform==T,]$rmse)
   ggpt2 <- ggplot(dfp, aes(x = no_stransform, y = with_stransform)) + geom_point() +
