@@ -15,16 +15,47 @@ library(lute)
 
 # Simulation setup
 
-We need to define the core deconvolution objects to run the simulation. These are
-the following 3 list variables:
+```{r}
+num.sim <- 1e3
+```
 
-* `lgv` : Marker signals. These are used to calculate $Z$. 
+We have set the number of simulations to `r num.sim`. We need to define the core 
+deconvolution objects to run the simulation. These are the following 3 list variables:
 
-* `lsv` : Size factors. These are used to transform $Z$ and also to make the $Y$ pseudo-bulked sample.
+* `lgv` : Marker signals. These are used to calculate $Z$. We can assign these as
+follows:
+
+```{r}
+marker1 <- c(1, 0)
+marker2 <- c(0, 1)
+lgv <- lapply(seq(num.sim),function(ii){list(marker1, marker2)})
+```
+
+* `lsv` : Size factors. These are used to transform $Z$ and also to make the $Y$ 
+pseudo-bulked sample. To assign these values, use:
+
+```{r}
+size1 <- 1
+size2 <- 100
+lsv <- lapply(seq(num.sim), function(ii){c(size1, size2)})
+```
 
 * `lpv` : True prediction values. These are used to make the $Y$ pseudo-bulked sample and
-to compare predictions returned from deconvolution.
+to compare predictions returned from deconvolution. We can vary complementary 
+proportions for 2 types using:
+
+```{r}
+prop1 <- seq(1e-3, 1, 1e-3)
+prop2 <- rev(prop1)
+lpv <- lapply(seq(num.sim), function(ii){c(prop1[ii], prop2[ii])})
+```
 
 # Run simulations
+
+Now run simulations and store the results as `lres`.
+
+```{r}
+lres <- decon_analysis(lgv, lpv, lsv)
+```
 
 # Analyze results

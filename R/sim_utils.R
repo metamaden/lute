@@ -192,11 +192,15 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE){
 #' @param pi Prediction set vector. Indices correspond to those in `P`.
 #' @param P Prediction set vector. Indices correspond to those in `pi`.
 #' @param verbose Whether to show verbose status updates.
-#' @returns Comparisons across types, including bias, RMSE, and correlations.
+#' @returns Comparisons across types, including bias (prediction - true), the
+#' root mean squared error (RMSE), and Pearson and Spearman correlation 
+#' coefficients.
 #' @examples
 #' @seealso
 #' @export
 pdiff <- function(pi, P, verbose = FALSE){
+  pi <- as.numeric(pi)
+  P <- as.numeric(P)
   bias <- pi - P
   rmse <- sqrt(mean(bias^2))
   corr.p <- try(cor.test(pi, P, method = "pearson")$estimate, silent = verbose)
