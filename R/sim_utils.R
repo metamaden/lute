@@ -234,7 +234,7 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' # example
 #' @seealso decon_analysis
 #' @export
-results_plots <- function(dfres, verbose = FALSE){
+results_plots <- function(dfres, refline.color = "red", verbose = FALSE){
   require(ggplot2)
   if(verbose){
     message("Making scatter plots of RMSE by first type predictions...")}
@@ -249,6 +249,6 @@ results_plots <- function(dfres, verbose = FALSE){
   dfp <- data.frame(no_stransform = dfres[dfres$zs_transform==F,]$rmse,
                     with_stransform = dfres[dfres$zs_transform==T,]$rmse)
   ggpt2 <- ggplot(dfp, aes(x = no_stransform, y = with_stransform)) + geom_point() +
-    geom_abline(intercept = 0, slope = 1) + ggtitle("RMSE, Z vs. ZS")
+    geom_abline(intercept = 0, slope = 1, color = refline.color) + ggtitle("RMSE, Z vs. ZS")
   return(list(ggpt1 = ggpt1, ggvp = ggvp, ggpt2 = ggpt2))
 }

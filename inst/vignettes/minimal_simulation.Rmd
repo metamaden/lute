@@ -59,3 +59,31 @@ lres <- decon_analysis(lgv, lpv, lsv)
 ```
 
 # Analyze results
+
+We access the plot objects from `lres`. 
+
+```{r}
+lgg <- lres$lgg
+```
+
+We can view the scatter plots of NNLS-predicted proportions for type 1 (x-axis)
+by the root mean squared error (RMSE), grouped on whether the $S$-transform was
+first applied to the $Z$ reference, using:
+
+```{r}
+lgg$ggpt1
+```
+
+We can view the violin plots of RMSE grouped on $S$ transformation status using:
+
+```{r}
+lgg$ggvp
+```
+
+Finally, we can view the scatterplot of the RMSEs for the non-transformed data 
+(x-axis) versus the $S$-tranformed data (y-axis), with a red reference line 
+(y-intercept = 0, slope = 1), using:
+
+```{r}
+lgg$ggpt2
+```
