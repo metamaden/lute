@@ -33,6 +33,9 @@ decon_results(
 `supported_strict_methods()` for details)}
 
 \item{verbose}{Whether to show verbose status updates.}
+
+\item{strict_method}{Type of strict deconvolution method to use (see 
+`supported_strict_methods()` for details)}
 }
 \description{
 Run a series of deconvolution simulations and return the results. For list

@@ -60,7 +60,7 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
 #' @export
 predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE, 
                      verbose = FALSE){
-  if(strict.method == "nnls"){
+  if(strict_method == "nnls"){
       p <- nnls::nnls(Z, Y)$x
   } else{
     stop("Error, method not supported. Choose one of either: ",
@@ -86,7 +86,7 @@ predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE,
 #' @param lgv List of marker expression for reference/signature matrix Z.
 #' @param lpv List of type proportions to make Y and compare p predictions.
 #' @param lsv List of size factor values. 
-#' @param strict.method Type of strict deconvolution method to use (see 
+#' @param strict_method Type of strict deconvolution method to use (see 
 #' `supported_strict_methods()` for details)
 #' @param verbose Whether to show verbose status updates.
 #' @param 
@@ -103,7 +103,7 @@ predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE,
 #' 
 #' @seealso
 #' @export
-decon_results <- function(lgv, lpv, lsv, strict.method = "nnls", 
+decon_results <- function(lgv, lpv, lsv, strict_method = "nnls", 
                           proportions = TRUE, verbose = FALSE){
   if(verbose){message("found ",length(lgv)," expt to run...")}
   lres <- lapply(seq(length(lgv)), function(ii){
@@ -113,9 +113,9 @@ decon_results <- function(lgv, lpv, lsv, strict.method = "nnls",
     Z <- do.call(cbind, lgi); ZS <- sweep(Z, 2, S, "*")
     Y <- t(t(P) %*% t(ZS))
     if(verbose){message("Getting type predictions...")}
-    p1 <- try(predtype(Z = Z, Y = Y, strict.method = strict.method, 
+    p1 <- try(predtype(Z = Z, Y = Y, strict_method = strict_method, 
                    proportions = proportions, verbose = verbose))
-    p2 <- try(predtype(Z = ZS, Y = Y, strict.method = strict.method, 
+    p2 <- try(predtype(Z = ZS, Y = Y, strict_method = strict_method, 
                    proportions = proportions, verbose = verbose))
     if(is(p1, "try-error")){
       message("Warning, couldn't get predictions for unadjusted Z test.")}
