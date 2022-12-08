@@ -10,9 +10,20 @@ datasets.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(lute)
 ```
 
 # Simulation setup
+
+We need to define the core deconvolution objects to run the simulation. These are
+the following 3 list variables:
+
+* `lgv` : Marker signals. These are used to calculate $Z$. 
+
+* `lsv` : Size factors. These are used to transform $Z$ and also to make the $Y$ pseudo-bulked sample.
+
+* `lpv` : True prediction values. These are used to make the $Y$ pseudo-bulked sample and
+to compare predictions returned from deconvolution.
 
 # Run simulations
 
