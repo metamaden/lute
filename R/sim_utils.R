@@ -27,7 +27,6 @@
 #' strict deconvolution method names.
 #' @param fname Name of the file containing supported deconvolution methods 
 #' info.
-#' @param verbose Whether to show verbose status updates.
 #' @returns List of supported strict deconvolution function names and 
 #' descriptions.
 #' @export 
