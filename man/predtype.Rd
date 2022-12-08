@@ -15,6 +15,9 @@ columns correspond to types.}
 \item{Y}{Convoluted signals matrix, where rows correspond to markers and 
 columns correspond to types.}
 
+\item{strict.method}{Name of a supported strict deconvolution method to use.
+See `supported_strict_methods()` for details about supported methods.}
+
 \item{proportions}{Whether to return predicted proportions. If False, returns 
 unmodified point prediction outputs.}
 
@@ -30,7 +33,7 @@ predictions corresponding to identities of signature/reference matrix types
 (e.g. returns object pres, where type Z[,1] is pres[1], etc.).
 }
 \seealso{
-decon_results, lute_methods
+decon_results, supported_strict_methods
 
 decon_results, lute_methods
 }

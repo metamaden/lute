@@ -49,12 +49,14 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
 #' columns correspond to types.
 #' @param Y Convoluted signals matrix, where rows correspond to markers and 
 #' columns correspond to types.
+#' @param strict.method Name of a supported strict deconvolution method to use.
+#' See `supported_strict_methods()` for details about supported methods.
 #' @param proportions Whether to return predicted proportions. If False, returns 
 #' unmodified point prediction outputs.
 #' @param verbose Whether to show verbose status updates.
 #' @returns 
 #' @examples
-#' @seealso decon_results, lute_methods
+#' @seealso decon_results, supported_strict_methods
 #' @export
 predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, 
                      verbose = FALSE){
