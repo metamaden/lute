@@ -49,7 +49,7 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
 #' columns correspond to types.
 #' @param Y Convoluted signals matrix, where rows correspond to markers and 
 #' columns correspond to types.
-#' @param strict.method Name of a supported strict deconvolution method to use.
+#' @param strict_method Name of a supported strict deconvolution method to use.
 #' See `supported_strict_methods()` for details about supported methods.
 #' @param proportions Whether to return predicted proportions. If False, returns 
 #' unmodified point prediction outputs.
@@ -58,10 +58,10 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
 #' @examples
 #' @seealso decon_results, supported_strict_methods
 #' @export
-predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, 
+predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE, 
                      verbose = FALSE){
   if(strict.method == "nnls"){
-      p <- nnls(Z, Y)$x
+      p <- nnls::nnls(Z, Y)$x
   } else{
     stop("Error, method not supported. Choose one of either: ",
          paste0(names(supported_strict_methods()), collapse = ","))
@@ -127,7 +127,7 @@ decon_results <- function(lgv, lpv, lsv, strict.method = "nnls",
     dfres$expt <- paste0("expt", ii)
     dfres$zs_transform <- c(FALSE, TRUE)
     if(verbose){message("Making results return list...")}
-    lexpt <- list(Z = Z, ZS = ZS, Y = Y, method = "nnls")
+    lexpt <- list(Z = Z, ZS = ZS, Y = Y, method = strict.method)
     lpred <- list(p1 = p1, p2 = p2)
     lres <- list(lexpt = lexpt, lpred = lpred, dfres = dfres)
     return(lres)

@@ -15,13 +15,13 @@ columns correspond to types.}
 \item{Y}{Convoluted signals matrix, where rows correspond to markers and 
 columns correspond to types.}
 
-\item{strict.method}{Name of a supported strict deconvolution method to use.
-See `supported_strict_methods()` for details about supported methods.}
-
 \item{proportions}{Whether to return predicted proportions. If False, returns 
 unmodified point prediction outputs.}
 
 \item{verbose}{Whether to show verbose status updates.}
+
+\item{strict_method}{Name of a supported strict deconvolution method to use.
+See `supported_strict_methods()` for details about supported methods.}
 }
 \description{
 Get predictions by type. Takes deconvolution objects and returns vector of 
