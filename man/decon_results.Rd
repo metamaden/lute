@@ -32,10 +32,16 @@ decon_results(
 \item{strict.method}{Type of strict deconvolution method to use (see 
 `supported_strict_methods()` for details)}
 
+\item{proportions}{Whether to predict proportions. If FALSE, returns the 
+unadjusted point estimates.}
+
 \item{verbose}{Whether to show verbose status updates.}
 
 \item{strict_method}{Type of strict deconvolution method to use (see 
 `supported_strict_methods()` for details)}
+}
+\value{
+return
 }
 \description{
 Run a series of deconvolution simulations and return the results. For list
@@ -47,15 +53,12 @@ arguments `lgv`, `lpv`, and `lsv`, list index corresponds to the simulation
 rep.
 }
 \examples{
-
 # make example data
 lgv <- list(list(c(1,2),c(2,1),c(1,1)), list(c(2,2),c(2,1),c(1,2)))
 lpv <- list(c(0.1, 0.8, 0.1),c(0.3, 0.6, 0.1),c(0.2, 0.2, 0.6))
 lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
-
 # run simulations
 lres <- decon_results(lgv, lpv, lsv)
-
 
 # make example data
 lgv <- list(list(c(1,2),c(2,1),c(1,1)), list(c(2,2),c(2,1),c(1,2)))

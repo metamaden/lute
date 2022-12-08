@@ -17,15 +17,16 @@ decon_analysis(lgv, lpv, lsv, verbose = FALSE)
 
 \item{verbose}{Whether to show verbose status updates.}
 }
+\value{
+return
+}
 \description{
 Do simulations, get results df and plots.
 
 Do simulations, get results df and plots.
 }
 \examples{
-
 # example:
-
 
 # example:
 

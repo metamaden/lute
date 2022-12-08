@@ -23,6 +23,9 @@ unmodified point prediction outputs.}
 \item{strict_method}{Name of a supported strict deconvolution method to use.
 See `supported_strict_methods()` for details about supported methods.}
 }
+\value{
+return
+}
 \description{
 Get predictions by type. Takes deconvolution objects and returns vector of 
 predictions corresponding to identities of signature/reference matrix types 
@@ -31,6 +34,9 @@ predictions corresponding to identities of signature/reference matrix types
 Get predictions by type. Takes deconvolution objects and returns vector of 
 predictions corresponding to identities of signature/reference matrix types 
 (e.g. returns object pres, where type Z[,1] is pres[1], etc.).
+}
+\examples{
+# example
 }
 \seealso{
 decon_results, supported_strict_methods

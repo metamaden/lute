@@ -27,6 +27,8 @@
 #' strict deconvolution method names.
 #' @param fname Name of the file containing supported deconvolution methods 
 #' info.
+#' @examples
+#' supported_strict_methods()
 #' @returns List of supported strict deconvolution function names and 
 #' descriptions.
 #' @export 
@@ -54,8 +56,9 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
 #' @param proportions Whether to return predicted proportions. If False, returns 
 #' unmodified point prediction outputs.
 #' @param verbose Whether to show verbose status updates.
-#' @returns 
+#' @returns return 
 #' @examples
+#' # example
 #' @seealso decon_results, supported_strict_methods
 #' @export
 predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE, 
@@ -88,19 +91,17 @@ predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE,
 #' @param lsv List of size factor values. 
 #' @param strict_method Type of strict deconvolution method to use (see 
 #' `supported_strict_methods()` for details)
+#' @param proportions Whether to predict proportions. If FALSE, returns the 
+#' unadjusted point estimates.
 #' @param verbose Whether to show verbose status updates.
-#' @param 
-#' @returns 
+#' @returns return
 #' @examples
-#' 
 #' # make example data
 #' lgv <- list(list(c(1,2),c(2,1),c(1,1)), list(c(2,2),c(2,1),c(1,2)))
 #' lpv <- list(c(0.1, 0.8, 0.1),c(0.3, 0.6, 0.1),c(0.2, 0.2, 0.6))
 #' lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
-#' 
 #' # run simulations
 #' lres <- decon_results(lgv, lpv, lsv)
-#' 
 #' @seealso
 #' @export
 decon_results <- function(lgv, lpv, lsv, strict_method = "nnls", 
@@ -144,15 +145,13 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 #' @param lpv List of type proportions to make Y and compare p predictions.
 #' @param lsv List of size factor values. 
 #' @param verbose Whether to show verbose status updates.
-#' @returns 
+#' @returns return
 #' @examples
-#' 
 #' # example:
 # lgv <- list(list(c(1,2),c(2,1),c(1,1)), list(c(2,2),c(2,1),c(1,2)))
 # lpv <- list(c(0.1, 0.8, 0.1),c(0.3, 0.6, 0.1),c(0.2, 0.2, 0.6))
 # lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
 # lres <- decon_results(lgv, lpv, lsv)
-#'
 #' @seealso decon_results, 
 #' @export
 decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE){
@@ -199,6 +198,7 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE){
 #' root mean squared error (RMSE), and Pearson and Spearman correlation 
 #' coefficients.
 #' @examples
+#' # examples
 #' @seealso
 #' @export
 pdiff <- function(pi, P, verbose = FALSE){
@@ -219,10 +219,11 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' Makes standard plots to analyze deconvolution simulation results.
 #' 
 #' @param dfres Data.frame of deconvolution simulation results.
+#' @param verbose Whether to show verbose status updates.
 #' @returns List of ggplot2 objects analyzing deconvolution simulation results, 
 #' including scatter plots and a violin plot.
-#' @param verbose Whether to show verbose status updates.
 #' @examples
+#' # example
 #' @seealso
 #' @export
 results_plots <- function(dfres, verbose = FALSE){

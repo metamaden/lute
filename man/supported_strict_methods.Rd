@@ -37,3 +37,6 @@ Show supported strict deconvolution function. That is, functions which take
 some reference/signature matrix Z and some bulk/convoluted signals matrix Y
 and return the vector of predictions or proportions, p.
 }
+\examples{
+supported_strict_methods()
+}

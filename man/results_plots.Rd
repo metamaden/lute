@@ -25,3 +25,6 @@ Makes standard plots to analyze deconvolution simulation results.
 
 Makes standard plots to analyze deconvolution simulation results.
 }
+\examples{
+# example
+}
