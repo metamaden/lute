@@ -23,13 +23,21 @@
 #' some reference/signature matrix Z and some bulk/convoluted signals matrix Y
 #' and return the vector of predictions or proportions, p.
 #' 
-#' @param ltl.varname Variable/column in lute_transfer_learning.rda dataset 
-#' containing the strict deconvolution method names.
-#' @returns List of supported strict deconvolution function names and descriptions.
+#' @param varname Variable/column in lute_transfer_learning.rda dataset with 
+#' strict deconvolution method names.
+#' @param fname Name of the file containing supported deconvolution methods 
+#' info.
+#' @param verbose Whether to show verbose status updates.
+#' @returns List of supported strict deconvolution function names and 
+#' descriptions.
 #' @export 
-supported_strict_methods <- function(ltl.varname = "strict_deconvolution_method_used"){
-  ltl <- get(load(data("lute_transfer_learning")))
-  return(ltl[,ltl.varname])
+supported_strict_methods <- function(varname = "strict_deconvolution_method_used",
+                                     fname = "lute_transfer_learning"){
+  if(verbose){message("Loading data from ",fname,"...")}
+  ltl <- get(load(data(fname)))
+  if(!varname in colnames(ltl)){
+    stop("Error, ",varname," is not a variable in dataset.")}
+  return(ltl[,varname])
 }
 
 #' predtype
@@ -49,7 +57,8 @@ supported_strict_methods <- function(ltl.varname = "strict_deconvolution_method_
 #' @examples
 #' @seealso decon_results, lute_methods
 #' @export
-predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, verbose = FALSE){
+predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, 
+                     verbose = FALSE){
   if(method == "nnls"){p <- nnls(Z, Y)$x} else{
     stop("Error, method not supported. Choose one of either: ".
          paste0(names(supported_strict_methods()), collapse = ","))
@@ -78,36 +87,43 @@ predtype <- function(Z, Y, strict.method = "nnls", proportions = TRUE, verbose =
 #' @param 
 #' @returns 
 #' @examples
+#' 
+#' # make example data
+#' lgv <- list(list(c(1,2),c(2,1),c(1,1)), list(c(2,2),c(2,1),c(1,2)))
+#' lpv <- list(c(0.1, 0.8, 0.1),c(0.3, 0.6, 0.1),c(0.2, 0.2, 0.6))
+#' lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
+#' 
+#' # run simulations
+#' lres <- decon_results(lgv, lpv, lsv)
+#' 
 #' @seealso
 #' @export
 decon_results <- function(lgv, lpv, lsv, strict.method = "nnls", 
-                          type.prop = proportions, verbose = F){
-  # decon_results
-  #
-  # example:
-  # lgv <- list(list(c(1,2),c(2,1),c(1,1)), list(c(2,2),c(2,1),c(1,2)))
-  # lpv <- list(c(0.1, 0.8, 0.1),c(0.3, 0.6, 0.1),c(0.2, 0.2, 0.6))
-  # lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
-  # lres <- decon_results(lgv, lpv, lsv)
-  #
+                          proportions = TRUE, verbose = FALSE){
   if(verbose){message("found ",length(lgv)," expt to run...")}
   lres <- lapply(seq(length(lgv)), function(ii){
-    if(verbose){message("running expt ", ii, " of ",length(lgv),"...")}
+    if(verbose){message("Running expt ", ii, " of ",length(lgv),"...")}
     lgi <- lgv[[ii]]; G <- length(lgi[[1]])
     S <- lsv[[ii]]; P <- lpv[[ii]]
     Z <- do.call(cbind, lgi); ZS <- sweep(Z, 2, S, "*")
     Y <- t(t(P) %*% t(ZS))
-    p1 <- predtype(Z = Z, Y = Y, strict.method = strict.method, 
-                   proportions = proportions)
-    p2 <- predtype(Z = ZS, Y = Y, strict.method = strict.method, 
-                   proportions = proportions)
+    if(verbose){message("Getting type predictions...")}
+    p1 <- try(predtype(Z = Z, Y = Y, strict.method = strict.method, 
+                   proportions = proportions, verbose = verbose))
+    p2 <- try(predtype(Z = ZS, Y = Y, strict.method = strict.method, 
+                   proportions = proportions, verbose = verbose))
+    if(is(p1, "try-error")){
+      message("Warning, couldn't get predictions for unadjusted Z test.")}
+    if(is(p2, "try-error")){
+      message("Warning, couldn't get predictions for S-adjusted Z test.")}
+    if(verbose){message("Making result data.frame...")}
     dfres <- do.call(rbind, 
                      lapply(list(p1, p2), 
-                            pdiff, P)) # make results df
+                            pdiff, P))
     dfres <- as.data.frame(dfres)
     dfres$expt <- paste0("expt", ii)
     dfres$zs_transform <- c(FALSE, TRUE)
-    # make return list
+    if(verbose){message("Making results return list...")}
     lexpt <- list(Z = Z, ZS = ZS, Y = Y, method = "nnls")
     lpred <- list(p1 = p1, p2 = p2)
     lres <- list(lexpt = lexpt, lpred = lpred, dfres = dfres)
@@ -121,26 +137,35 @@ decon_results <- function(lgv, lpv, lsv, strict.method = "nnls",
 #' 
 #' Do simulations, get results df and plots.
 #' 
-#' @param lgv
-#' @param lpv 
-#' @param lsv
+#' @param lgv List of marker expression for reference/signature matrix Z.
+#' @param lpv List of type proportions to make Y and compare p predictions.
+#' @param lsv List of size factor values. 
 #' @returns 
 #' @examples
+#' 
 #' # example:
 # lgv <- list(list(c(1,2),c(2,1),c(1,1)), list(c(2,2),c(2,1),c(1,2)))
 # lpv <- list(c(0.1, 0.8, 0.1),c(0.3, 0.6, 0.1),c(0.2, 0.2, 0.6))
 # lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
 # lres <- decon_results(lgv, lpv, lsv)
+#'
 #' @seealso decon_results, 
 #' @export
-decon_analysis <- function(lgv, lpv, lsv){
+decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE){
   # decon_analysis
   #
   # Do simulations, get results df and plots.
   #
-  lres <- suppressWarnings(decon_results(lgv, lpv, lsv, verbose = F))
+  if(verbose){
+    message("Running deconvolution simulations...")
+    lres <- decon_results(lgv = lgv, lpv = lpv, lsv = lsv, verbose = verbose)
+  } else{
+    lres <- suppressWarnings(
+      decon_results(lgv = lgv, lpv = lpv, lsv = lsv, verbose = verbose))
+  }
+  if(verbose){message("Appending results data.frames together...")}
   dfres <- do.call(rbind, lapply(lres, function(ii){ii$dfres}))
-  # append proportions for k1
+  if(verbose){message("Appending experiment data to results data.frame...")}
   prop1 <- unlist(lapply(lpv, function(ii){ii[1]}))
   prop2 <- unlist(lapply(lpv, function(ii){ii[2]}))
   sfact1 <- unlist(lapply(lsv, function(ii){ii[1]}))
@@ -149,38 +174,48 @@ decon_analysis <- function(lgv, lpv, lsv){
   dfres$prop_k2 <- rep(prop2, each = 2)
   dfres$sfact_k1 <- rep(sfact1, each = 2)
   dfres$sfact_k2 <- rep(sfact2, each = 2)
+  if(verbose){message("Making results ggplots...")}
   lgg <- results_plots(dfres = dfres)
   return(list(dfres = dfres, lgg = lgg))
 }
 
-#---------------------
-# comparator functions
-#---------------------
+#-------------------
+# analysis functions
+#-------------------
+# functions supporting analysis of deconvolution simulation results
 
-#'
-#' @param 
-#' @returns 
+#' pdiff
+#' 
+#' Compare two sets of type predictions across types within an iteration. 
+#' 
+#' @param pi Prediction set vector. Indices correspond to those in `P`.
+#' @param P Prediction set vector. Indices correspond to those in `pi`.
+#' @returns Comparisons across types, including bias, RMSE, and correlations.
 #' @examples
 #' @seealso
 #' @export
-pdiff <- function(pi, P){
+pdiff <- function(pi, P, verbose = FALSE){
   bias <- pi - P
   rmse <- sqrt(mean(bias^2))
-  corr.p <- try(
-    cor.test(pi, P, method = "pearson")$estimate,
-    silent = T)
+  corr.p <- try(cor.test(pi, P, method = "pearson")$estimate, silent = verbose)
+  corr.s <- try(cor.test(pi, P, method = "spearman")$estimate, silent = verbose)
   corr.p <- ifelse(is(corr.p, "try-error"), NA, corr.p)
-  corr.s <- try(
-    cor.test(pi, P, method = "spearman")$estimate,
-    silent = T)
   corr.s <- ifelse(is(corr.s, "try-error"), NA, corr.p)
-  rv <- c(bias = bias, rmse = rmse, 
-          corr.p = corr.p, 
-          corr.s = corr.s)
+  rv <- c(bias = bias, rmse = rmse, corr.p = corr.p, corr.s = corr.s)
   return(rv)
 }
 
-results_plots <- function(dfres){
+#' results_plots
+#' 
+#' Makes standard plots to analyze deconvolution simulation results.
+#' 
+#' @param dfres Data.frame of deconvolution simulation results.
+#' @returns List of ggplot2 objects analyzing deconvolution simulation results, 
+#' including scatter plots and a violin plot.
+#' @examples
+#' @seealso
+#' @export
+results_plots <- function(dfres, verbose = FALSE){
   # plot rmse by proportion k1
   ggpt1 <- ggplot(dfres, aes(x = prop_k1, y = rmse, color = zs_transform)) + 
     geom_point() + ggtitle("RMSE by proportion type 1")
