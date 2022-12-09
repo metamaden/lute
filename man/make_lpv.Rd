@@ -4,12 +4,12 @@
 \alias{make_lpv}
 \title{make_lpv}
 \usage{
-make_lpv(ktotal = 2, k1 = seq(0, 1, 0.001))
+make_lpv(ktotal = 2, k1 = NULL)
 }
 \arguments{
 \item{ktotal}{Total types to simulate.}
 
-\item{k1}{Vector of first type proportions.}
+\item{k1}{Vector of first type proportions. If NULL, uses seq(1e-3, 1, 1e-3).}
 }
 \value{
 lpv, a list of proportions vectors for simulation iterations.

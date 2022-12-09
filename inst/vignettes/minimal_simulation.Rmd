@@ -23,12 +23,13 @@ simulation series. The entire code to run the simulation is as follows:
 
 ```{r, eval = F}
 num.sim <- 1e3
-marker1 <- c(1, 0)
-marker2 <- c(0, 1)
-lgv <- lapply(seq(num.sim),function(ii){list(marker1, marker2)})
+lgv <- random_lgv(gindexv = c(1,2), num.iter = num.sim)
 size1 <- 1
 size2 <- 100
 lsv <- lapply(seq(num.sim), function(ii){c(size1, size2)})
+
+lpv <- make_lpv(k1 = seq(0, 1, 1e-3))
+
 prop1 <- seq(1e-3, 1, 1e-3)
 prop2 <- rev(prop1)
 lpv <- lapply(seq(num.sim), function(ii){c(prop1[ii], prop2[ii])})

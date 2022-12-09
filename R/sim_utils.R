@@ -190,7 +190,6 @@ decon_analysis <- function(lpv, lsv, verbose = FALSE, lgv = NULL, sce = NULL,
   } else{
     stop("Error, lgv length should equal or exceed lpv length.")
   }
-  
   if(verbose){
     message("Running deconvolution simulations...")
     lres <- decon_results(lgv = lgv, lpv = lpv, lsv = lsv, verbose = verbose)
