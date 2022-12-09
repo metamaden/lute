@@ -3,6 +3,7 @@
 export(decon_analysis)
 export(decon_results)
 export(kexpr_sce)
+export(make_lpv)
 export(pdiff)
 export(predtype)
 export(results_plots)
