@@ -141,10 +141,12 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 #' 
 #' Do simulations, get results df and plots.
 #' 
-#' @param lgv List of marker expression for reference/signature matrix Z.
 #' @param lpv List of type proportions to make Y and compare p predictions.
 #' @param lsv List of size factor values. 
 #' @param verbose Whether to show verbose status updates.
+#' @param lgv List of marker expression for reference/signature matrix Z.
+#' @param sce SingleCellExperiment or SummarizedExperiment object.
+#' @param ... Additional arguments passed to `kexpr_sce()`.
 #' @returns return
 #' @examples
 #' # example:
@@ -154,11 +156,32 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 # lres <- decon_results(lgv, lpv, lsv)
 #' @seealso decon_results, 
 #' @export
-decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE){
-  # decon_analysis
-  #
-  # Do simulations, get results df and plots.
-  #
+decon_analysis <- function(lpv, lsv, verbose = FALSE, lgv = NULL, sce = NULL, 
+                           ...){
+  num.iter <- length(lpv)
+  if(verbose){message("Prepping ",num.iter," simulation iterations...")}
+  if(is(lgv, "logical")){
+    cond.sce <- is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment")
+    if(cond.sce){
+      if(verbose){message("Getting type expression from sce object...")}
+      lgv <- kexpr_sce(sce, return.lgv = TRUE, ...)
+      lgv <- lapply(seq(length(lpv)), function(ii){lgv})
+      } else{stop("Error, provide either lgv or sce.")}
+  }
+  # check iterations for each object
+  if(length(lpv)<=length(lsv)){
+    message("Using first ", num.iter, " iterations in lsv.")
+    lsv <- lsv[seq(num.iter)]
+  } else{
+    stop("Error, lsv length should equal or exceed lpv length.")
+  }
+  if(length(lpv)<=length(lgv)){
+    message("Using first ", num.iter," iterations in lgv.")
+    lgv <- lgv[seq(num.iter)]
+  } else{
+    stop("Error, lgv length should equal or exceed lpv length.")
+  }
+  
   if(verbose){
     message("Running deconvolution simulations...")
     lres <- decon_results(lgv = lgv, lpv = lpv, lsv = lsv, verbose = verbose)
