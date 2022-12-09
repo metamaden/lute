@@ -44,3 +44,6 @@ lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
 # run simulations
 lres <- decon_results(lgv, lpv, lsv)
 }
+\seealso{
+decon_analysis
+}

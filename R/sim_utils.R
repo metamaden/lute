@@ -102,7 +102,7 @@ predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE,
 #' lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
 #' # run simulations
 #' lres <- decon_results(lgv, lpv, lsv)
-#' @seealso
+#' @seealso decon_analysis
 #' @export
 decon_results <- function(lgv, lpv, lsv, strict_method = "nnls", 
                           proportions = TRUE, verbose = FALSE){
