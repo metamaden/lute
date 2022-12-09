@@ -4,16 +4,24 @@
 \alias{decon_analysis}
 \title{decon_analysis}
 \usage{
-decon_analysis(lgv, lpv, lsv, verbose = FALSE)
+decon_analysis(lpv, lsv, verbose = FALSE, lgv = NULL, sce = NULL, ...)
 }
 \arguments{
-\item{lgv}{List of marker expression for reference/signature matrix Z.}
+\item{lpv}{List of type proportions to make Y and compare p predictions. The
+length of this list is considered the target number of simulation iterations 
+for the run.}
 
-\item{lpv}{List of type proportions to make Y and compare p predictions.}
-
-\item{lsv}{List of size factor values.}
+\item{lsv}{List of size factor values. If length(lsv) > length(lpv), only use
+up to the number of iterations in lpv.}
 
 \item{verbose}{Whether to show verbose status updates.}
+
+\item{lgv}{List of marker expression for reference/signature matrix Z. If 
+length(lgv) > length(lpv), only use up to the number of iterations in lpv.}
+
+\item{sce}{SingleCellExperiment or SummarizedExperiment object.}
+
+\item{...}{Additional arguments passed to `kexpr_sce()`.}
 }
 \value{
 return

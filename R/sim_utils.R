@@ -141,10 +141,14 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 #' 
 #' Do simulations, get results df and plots.
 #' 
-#' @param lpv List of type proportions to make Y and compare p predictions.
-#' @param lsv List of size factor values. 
+#' @param lpv List of type proportions to make Y and compare p predictions. The
+#' length of this list is considered the target number of simulation iterations 
+#' for the run.
+#' @param lsv List of size factor values. If length(lsv) > length(lpv), only use
+#' up to the number of iterations in lpv. 
 #' @param verbose Whether to show verbose status updates.
-#' @param lgv List of marker expression for reference/signature matrix Z.
+#' @param lgv List of marker expression for reference/signature matrix Z. If 
+#' length(lgv) > length(lpv), only use up to the number of iterations in lpv.
 #' @param sce SingleCellExperiment or SummarizedExperiment object.
 #' @param ... Additional arguments passed to `kexpr_sce()`.
 #' @returns return
@@ -159,24 +163,29 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 decon_analysis <- function(lpv, lsv, verbose = FALSE, lgv = NULL, sce = NULL, 
                            ...){
   num.iter <- length(lpv)
+  num.types <- length(lpv[[1]])
   if(verbose){message("Prepping ",num.iter," simulation iterations...")}
-  if(is(lgv, "logical")){
+  if(is(lgv, "NULL")){
     cond.sce <- is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment")
     if(cond.sce){
       if(verbose){message("Getting type expression from sce object...")}
       lgv <- kexpr_sce(sce, return.lgv = TRUE, ...)
+      if(!length(lgv) == num.types){
+        mstr <- ifelse(length(lgv) > num.types, "more", "less")
+        stop("Error, sce has ",mstr," types than lpv. Is type.varname correct?")
+      }
       lgv <- lapply(seq(length(lpv)), function(ii){lgv})
       } else{stop("Error, provide either lgv or sce.")}
   }
   # check iterations for each object
   if(length(lpv)<=length(lsv)){
-    message("Using first ", num.iter, " iterations in lsv.")
+    if(verbose){message("Using first ", num.iter, " iterations in lsv.")}
     lsv <- lsv[seq(num.iter)]
   } else{
     stop("Error, lsv length should equal or exceed lpv length.")
   }
   if(length(lpv)<=length(lgv)){
-    message("Using first ", num.iter," iterations in lgv.")
+    if(verbose){message("Using first ", num.iter," iterations in lgv.")}
     lgv <- lgv[seq(num.iter)]
   } else{
     stop("Error, lgv length should equal or exceed lpv length.")
