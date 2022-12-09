@@ -28,7 +28,7 @@ size1 <- 1
 size2 <- 100
 lsv <- lapply(seq(num.sim), function(ii){c(size1, size2)})
 
-lpv <- make_lpv(k1 = seq(0, 1, 1e-3))
+lpv <- make_lpv()
 
 prop1 <- seq(1e-3, 1, 1e-3)
 prop2 <- rev(prop1)

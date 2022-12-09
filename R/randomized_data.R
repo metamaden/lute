@@ -28,7 +28,7 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
   if(is(k1, "NULL")){k1 <- seq(1e-3, 1, 1e-3)}
   num.iter <- length(k1); ki <- rev(k1)/ktotal
   lpv <- lapply(seq(num.iter), function(ii){
-    c(k1[ii], rep(ki[ii]/(ktotal-1), ktotal-1))})
+    c(k1[ii], rep(ki[ii], ktotal-1))})
   return(lpv)
 }
 
