@@ -27,13 +27,8 @@ lgv <- random_lgv(gindexv = c(1,2), num.iter = num.sim)
 size1 <- 1
 size2 <- 100
 lsv <- lapply(seq(num.sim), function(ii){c(size1, size2)})
-
 lpv <- make_lpv()
-
-prop1 <- seq(1e-3, 1, 1e-3)
-prop2 <- rev(prop1)
-lpv <- lapply(seq(num.sim), function(ii){c(prop1[ii], prop2[ii])})
-lres <- decon_analysis(lgv, lpv, lsv)
+lres <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv)
 ```
 
 ## Simulation setup

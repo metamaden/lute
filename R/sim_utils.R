@@ -109,22 +109,32 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
   if(verbose){message("found ",length(lgv)," expt to run...")}
   lres <- lapply(seq(length(lgv)), function(ii){
     if(verbose){message("Running expt ", ii, " of ",length(lgv),"...")}
-    lgi <- lgv[[ii]]; G <- length(lgi[[1]])
-    S <- lsv[[ii]]; P <- lpv[[ii]]
-    Z <- do.call(cbind, lgi); ZS <- sweep(Z, 2, S, "*")
-    Y <- t(t(P) %*% t(ZS))
+    lgi <- lgv[[ii]]
+    G <- length(lgi[[1]])
+    P <- lpv[[ii]]
+    Z <- do.call(cbind, lgi)
     if(verbose){message("Getting type predictions...")}
+    if(is(S, "NULL")){
+      Y <- t(t(P) %*% t(ZS))
+    } else{
+      S <- lsv[[ii]]
+      ZS <- sweep(Z, 2, S, "*")
+      Y <- t(t(P) %*% t(ZS))
+    }
     p1 <- try(predtype(Z = Z, Y = Y, strict_method = strict_method, 
-                   proportions = proportions, verbose = verbose))
-    p2 <- try(predtype(Z = ZS, Y = Y, strict_method = strict_method, 
-                   proportions = proportions, verbose = verbose))
+                       proportions = proportions, verbose = verbose))
     if(is(p1, "try-error")){
       message("Warning, couldn't get predictions for unadjusted Z test.")}
-    if(is(p2, "try-error")){
-      message("Warning, couldn't get predictions for S-adjusted Z test.")}
-    if(verbose){message("Making result data.frame...")}
-    dfres <- do.call(rbind, lapply(list(p1, p2), pdiff, P))
-    dfres <- as.data.frame(dfres)
+    if(is(S, "NULL")){
+      dfres <- as.data.frame(p1)
+    } else{
+      p2 <- try(predtype(Z = ZS, Y = Y, strict_method = strict_method, 
+                         proportions = proportions, verbose = verbose))
+      if(is(p2, "try-error")){
+        message("Warning, couldn't get predictions for S-adjusted Z test.")}
+      dfres <- do.call(rbind, lapply(list(p1, p2), pdiff, P))
+      dfres <- as.data.frame(dfres)
+    }
     dfres$expt <- paste0("expt", ii)
     dfres$zs_transform <- c(FALSE, TRUE)
     if(verbose){message("Making results return list...")}
@@ -146,10 +156,10 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 #' for the run.
 #' @param lsv List of size factor values. If length(lsv) > length(lpv), only use
 #' up to the number of iterations in lpv. 
-#' @param verbose Whether to show verbose status updates.
 #' @param lgv List of marker expression for reference/signature matrix Z. If 
 #' length(lgv) > length(lpv), only use up to the number of iterations in lpv.
 #' @param sce SingleCellExperiment or SummarizedExperiment object.
+#' @param verbose Whether to show verbose status updates.
 #' @param ... Additional arguments passed to `kexpr_sce()`.
 #' @returns return
 #' @examples
@@ -160,7 +170,7 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 # lres <- decon_results(lgv, lpv, lsv)
 #' @seealso decon_results, 
 #' @export
-decon_analysis <- function(lpv, lsv, verbose = FALSE, lgv = NULL, sce = NULL, 
+decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, sce = NULL, 
                            ...){
   num.iter <- length(lpv)
   num.types <- length(lpv[[1]])
@@ -200,17 +210,62 @@ decon_analysis <- function(lpv, lsv, verbose = FALSE, lgv = NULL, sce = NULL,
   if(verbose){message("Appending results data.frames together...")}
   dfres <- do.call(rbind, lapply(lres, function(ii){ii$dfres}))
   if(verbose){message("Appending experiment data to results data.frame...")}
-  prop1 <- unlist(lapply(lpv, function(ii){ii[1]}))
-  prop2 <- unlist(lapply(lpv, function(ii){ii[2]}))
-  sfact1 <- unlist(lapply(lsv, function(ii){ii[1]}))
-  sfact2 <- unlist(lapply(lsv, function(ii){ii[2]}))
-  dfres$prop_k1 <- rep(prop1, each = 2)
-  dfres$prop_k2 <- rep(prop2, each = 2)
-  dfres$sfact_k1 <- rep(sfact1, each = 2)
-  dfres$sfact_k2 <- rep(sfact2, each = 2)
+  kv <- length(lpv[[1]])
+  for(ki in seq(kv)){
+    dfres$newprop <- unlist(lapply(lpv, function(ii){ii[1]}))
+    dfres$news <- unlist(lapply(lsv, function(ii){ii[1]}))
+    colnames(dfres)[(ncol(dfres))-1:ncol(dfres)] <- paste0(
+      c("prop_", "sfact_"), ki)
+  }
+  if(nrow(dfres) > 4){
+    if(verbose){message("Getting by type across simulations...")}
+    dfres.k <- dfres_k(dfres)
+  }
   if(verbose){message("Making results ggplots...")}
   lgg <- results_plots(dfres = dfres)
-  return(list(dfres = dfres, lgg = lgg))
+  return(list(dfres = dfres, dfres.k = dfres.k, lgg = lgg))
+}
+
+#' dfres_k
+#'
+#' Make k-wise results data.frame from simulation outcomes.
+#'
+#' @param dfres Results data.frame containing simulation outcomes.
+#' @returns dfk, data.frame of k/type-wise results summaries.
+#' @export
+dfres_k <- function(dfres){
+  require(dplyr)
+  cnv <- colnames(dfres)
+  cnv.bias <- cnv[grepl("bias.*", cnv)]
+  cnv.prop <- cnv[grepl("prop_.*", cnv)]
+  if(!length(cnv.prop)==length(cnv.bias)){
+    message("Warning, miss-matched biases and proportions provided.")}
+  kv <- gsub("^prop_k", "", cnv.prop)
+  ev <- unique(dfres$zs_transform)
+  if(verbose){message("Found ",length(kv)," types.")}
+  dfk <- do.call(rbind, lapply(ev, function(ei){
+    do.call(rbind, lapply(kv, function(ki){
+      cnf <- c(cnv.bias[grepl(paste0("bias", ki, "$"), cnv.bias)],
+               cnv.prop[grepl(paste0("prop_k",ki,"$"), cnv.prop)])
+      filt <- dfres$zs_transform == ei
+      dff <- dfres[filt,cnf]
+      if(nrow(dff)>3){
+        dff$real <- dff[,1] + dff[,2]
+        rmse <- sqrt(mean((dff[,2]-dff[,3])^2))
+        corr.p <- cor.test(dff[,2], dff[,3], method = "pearson")
+        corr.s <- cor.test(dff[,2], dff[,3], mehtod = "spearman")
+        return(c(rmse, corr.p$estimate, corr.p$p.value, corr.s$estimate,
+                 corr.s$p.value))
+      }
+    }))
+  }))
+  dfk <- as.data.frame(dfk)
+  colnames(dfk) <- c("rmse", "cor.est.pearson", "cor.pval.pearson",
+                    "cor.est.spearman", "cor.pval.spearman")
+  dfk$expt <- rep(ev, each = length(kv))
+  dfk$k <- rep(kv, length(ev))
+  rownames(dfk) <- paste0("k:", dfk$k, ";expt:", dfk$expt)
+  return(dfk)
 }
 
 #-------------------

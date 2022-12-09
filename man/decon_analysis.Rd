@@ -4,7 +4,7 @@
 \alias{decon_analysis}
 \title{decon_analysis}
 \usage{
-decon_analysis(lpv, lsv, verbose = FALSE, lgv = NULL, sce = NULL, ...)
+decon_analysis(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, sce = NULL, ...)
 }
 \arguments{
 \item{lpv}{List of type proportions to make Y and compare p predictions. The
