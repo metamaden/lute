@@ -137,10 +137,13 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
     dfres <- do.call(rbind, lapply(lp, pdiff, P)) # compute results stats
     dfres <- as.data.frame(dfres)
     dfres$expt <- paste0("expt", ii)
-    dfres$zs_transform <- c(FALSE, TRUE)
+    dfres$zs_transform[1] <- c(FALSE)
     if(verbose){message("Making results return list...")}
     lexpt <- list(Z = Z, Y = Y, method = strict_method)
-    if(!is(lsv, "NULL")){lexpt[["ZS"]] <- ZS}
+    if(!is(lsv, "NULL")){
+      lexpt[["ZS"]] <- ZS
+      dfres$zs_transform[2] <- c(TRUE)
+    }
     lpred <- lp; names(lpred) <- paste0("p", seq(length(lp)))
     lres <- list(lexpt = lexpt, lpred = lpred, dfres = dfres)
     return(lres)
