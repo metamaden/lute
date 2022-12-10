@@ -114,8 +114,9 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
     P <- lpv[[ii]]
     Z <- do.call(cbind, lgi)
     if(verbose){message("Getting type predictions...")}
-    if(is(S, "NULL")){
-      Y <- t(t(P) %*% t(ZS))
+    if(is(lsv, "NULL")){
+      if(verbose){message("Making Y without S transform.")}
+      Y <- t(t(P) %*% t(Z))
     } else{
       S <- lsv[[ii]]
       ZS <- sweep(Z, 2, S, "*")
@@ -125,21 +126,22 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
                        proportions = proportions, verbose = verbose))
     if(is(p1, "try-error")){
       message("Warning, couldn't get predictions for unadjusted Z test.")}
-    if(is(S, "NULL")){
-      dfres <- as.data.frame(p1)
-    } else{
+    lp <- list(p1)
+    if(!is(lsv, "NULL")){
       p2 <- try(predtype(Z = ZS, Y = Y, strict_method = strict_method, 
                          proportions = proportions, verbose = verbose))
       if(is(p2, "try-error")){
         message("Warning, couldn't get predictions for S-adjusted Z test.")}
-      dfres <- do.call(rbind, lapply(list(p1, p2), pdiff, P))
-      dfres <- as.data.frame(dfres)
+      lp[[2]] <- p2
     }
+    dfres <- do.call(rbind, lapply(lp, pdiff, P)) # compute results stats
+    dfres <- as.data.frame(dfres)
     dfres$expt <- paste0("expt", ii)
     dfres$zs_transform <- c(FALSE, TRUE)
     if(verbose){message("Making results return list...")}
-    lexpt <- list(Z = Z, ZS = ZS, Y = Y, method = strict_method)
-    lpred <- list(p1 = p1, p2 = p2)
+    lexpt <- list(Z = Z, Y = Y, method = strict_method)
+    if(!is(lsv, "NULL")){lexpt[["ZS"]] <- ZS}
+    lpred <- lp; names(lpred) <- paste0("p", seq(length(lp)))
     lres <- list(lexpt = lexpt, lpred = lpred, dfres = dfres)
     return(lres)
   })
@@ -188,11 +190,13 @@ decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, sce = N
       } else{stop("Error, provide either lgv or sce.")}
   }
   # check iterations for each object
-  if(length(lpv)<=length(lsv)){
-    if(verbose){message("Using first ", num.iter, " iterations in lsv.")}
-    lsv <- lsv[seq(num.iter)]
-  } else{
-    stop("Error, lsv length should equal or exceed lpv length.")
+  if(!is(lsv, "NULL")){
+    if(length(lpv)<=length(lsv)){
+      if(verbose){message("Using first ", num.iter, " iterations in lsv.")}
+      lsv <- lsv[seq(num.iter)]
+    } else{
+      stop("Error, lsv length should equal or exceed lpv length.")
+    }
   }
   if(length(lpv)<=length(lgv)){
     if(verbose){message("Using first ", num.iter," iterations in lgv.")}
@@ -214,16 +218,17 @@ decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, sce = N
   for(ki in seq(kv)){
     dfres$newprop <- unlist(lapply(lpv, function(ii){ii[1]}))
     dfres$news <- unlist(lapply(lsv, function(ii){ii[1]}))
-    colnames(dfres)[(ncol(dfres))-1:ncol(dfres)] <- paste0(
+    colnames(dfres)[(ncol(dfres)-1):ncol(dfres)] <- paste0(
       c("prop_", "sfact_"), ki)
-  }
-  if(nrow(dfres) > 4){
-    if(verbose){message("Getting by type across simulations...")}
-    dfres.k <- dfres_k(dfres)
   }
   if(verbose){message("Making results ggplots...")}
   lgg <- results_plots(dfres = dfres)
-  return(list(dfres = dfres, dfres.k = dfres.k, lgg = lgg))
+  lr <- list(dfres = dfres, lgg = lgg)
+  if(nrow(dfres) > 3){
+    if(verbose){message("Getting by type across simulations...")}
+    lr[["dfres.k"]] <- dfres_k(dfres)
+  }
+  return(lr)
 }
 
 #' dfres_k
