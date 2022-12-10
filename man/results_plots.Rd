@@ -4,7 +4,7 @@
 \alias{results_plots}
 \title{results_plots}
 \usage{
-results_plots(dfres, refline.color = "red", verbose = FALSE)
+results_plots(dfres, lsv = NULL, refline.color = "red", verbose = FALSE)
 }
 \arguments{
 \item{dfres}{Data.frame of deconvolution simulation results.}

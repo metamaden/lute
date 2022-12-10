@@ -122,6 +122,7 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
       ZS <- sweep(Z, 2, S, "*")
       Y <- t(t(P) %*% t(ZS))
     }
+    lexpt <- list(Z = Z, Y = Y, method = strict_method) # metadata for return
     p1 <- try(predtype(Z = Z, Y = Y, strict_method = strict_method, 
                        proportions = proportions, verbose = verbose))
     if(is(p1, "try-error")){
@@ -139,7 +140,6 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
     dfres$expt <- paste0("expt", ii)
     dfres$zs_transform <- "NA"; dfres$zs_transform[1] <- FALSE
     if(verbose){message("Making results return list...")}
-    lexpt <- list(Z = Z, Y = Y, method = strict_method)
     if(!is(lsv, "NULL")){lexpt[["ZS"]] <- ZS;dfres$zs_transform[2] <- TRUE}
     lpred <- lp; names(lpred) <- paste0("p", seq(length(lp)))
     lres <- list(lexpt = lexpt, lpred = lpred, dfres = dfres)
@@ -157,7 +157,8 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 #' length of this list is considered the target number of simulation iterations 
 #' for the run.
 #' @param lsv List of size factor values. If length(lsv) > length(lpv), only use
-#' up to the number of iterations in lpv. 
+#' up to the number of iterations in lpv. If NULL, S-transformation experiments
+#' aren't performed, and Y is calculated as $P*Z$ rather than $P*ZS$.
 #' @param lgv List of marker expression for reference/signature matrix Z. If 
 #' length(lgv) > length(lpv), only use up to the number of iterations in lpv.
 #' @param sce SingleCellExperiment or SummarizedExperiment object.
@@ -222,7 +223,7 @@ decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, sce = N
       c("prop_k", "sfact_k"), ki)
   }
   if(verbose){message("Making results ggplots...")}
-  lgg <- results_plots(dfres = dfres)
+  lgg <- results_plots(dfres = dfres, lsv = lsv)
   lr <- list(dfres = dfres, lgg = lgg)
   if(nrow(dfres) > 3){
     if(verbose){message("Getting by type across simulations...")}
