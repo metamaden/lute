@@ -137,13 +137,10 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
     dfres <- do.call(rbind, lapply(lp, pdiff, P)) # compute results stats
     dfres <- as.data.frame(dfres)
     dfres$expt <- paste0("expt", ii)
-    dfres$zs_transform[1] <- c(FALSE)
+    dfres$zs_transform <- "NA"; dfres$zs_transform[1] <- FALSE
     if(verbose){message("Making results return list...")}
     lexpt <- list(Z = Z, Y = Y, method = strict_method)
-    if(!is(lsv, "NULL")){
-      lexpt[["ZS"]] <- ZS
-      dfres$zs_transform[2] <- c(TRUE)
-    }
+    if(!is(lsv, "NULL")){lexpt[["ZS"]] <- ZS;dfres$zs_transform[2] <- TRUE}
     lpred <- lp; names(lpred) <- paste0("p", seq(length(lp)))
     lres <- list(lexpt = lexpt, lpred = lpred, dfres = dfres)
     return(lres)
@@ -222,7 +219,7 @@ decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, sce = N
     dfres$newprop <- unlist(lapply(lpv, function(ii){ii[1]}))
     dfres$news <- unlist(lapply(lsv, function(ii){ii[1]}))
     colnames(dfres)[(ncol(dfres)-1):ncol(dfres)] <- paste0(
-      c("prop_", "sfact_"), ki)
+      c("prop_k", "sfact_k"), ki)
   }
   if(verbose){message("Making results ggplots...")}
   lgg <- results_plots(dfres = dfres)
@@ -330,21 +327,33 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' # example
 #' @seealso decon_analysis
 #' @export
-results_plots <- function(dfres, refline.color = "red", verbose = FALSE){
+results_plots <- function(dfres, lsv = NULL, refline.color = "red", verbose = FALSE){
   require(ggplot2)
-  if(verbose){
-    message("Making scatter plots of RMSE by first type predictions...")}
-  ggpt1 <- ggplot(dfres, aes(x = prop_k1, y = rmse, color = zs_transform)) + 
-    geom_point() + ggtitle("RMSE by proportion type 1")
-  ggpt1 <- ggpt1 + facet_wrap(~zs_transform)
-  if(verbose){message("Making violin plots of RMSE by type...")}
-  ggvp <- ggplot(dfres, aes(x = zs_transform , y = rmse, color = zs_transform)) +
-    geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
-  if(verbose){
-    message("Making scatter plots of RMSE, with vs. without S-transform...")}
-  dfp <- data.frame(no_stransform = dfres[dfres$zs_transform==F,]$rmse,
-                    with_stransform = dfres[dfres$zs_transform==T,]$rmse)
-  ggpt2 <- ggplot(dfp, aes(x = no_stransform, y = with_stransform)) + geom_point() +
-    geom_abline(intercept = 0, slope = 1, color = refline.color) + ggtitle("RMSE, Z vs. ZS")
-  return(list(ggpt1 = ggpt1, ggvp = ggvp, ggpt2 = ggpt2))
+  lgg <- list()
+  if(is(lsv, "NULL")){
+    if(verbose){
+      message("Making scatter plots of RMSE by first type predictions...")}
+    lgg[["ggpt1"]] <- ggplot(dfres, aes(x = prop_k1, y = rmse)) + 
+      geom_point() + ggtitle("RMSE by proportion type 1")
+    if(verbose){message("Making violin plots of RMSE by type...")}
+    lgg[["ggvp"]] <- ggplot(dfres, aes(x = zs_transform , y = rmse)) +
+      geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
+  } else{
+    if(verbose){
+      message("Making scatter plots of RMSE by first type predictions...")}
+    ggpt1 <- ggplot(dfres, aes(x = prop_k1, y = rmse, color = zs_transform)) + 
+      geom_point() + ggtitle("RMSE by proportion type 1")
+    lgg[["ggpt1"]] <- ggpt1 + facet_wrap(~zs_transform)
+    if(verbose){message("Making violin plots of RMSE by type...")}
+    lgg[["ggvp"]] <- ggplot(dfres, aes(x = zs_transform , y = rmse, color = zs_transform)) +
+      geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
+    if(verbose){
+      message("Making scatter plots of RMSE, with vs. without S-transform...")}
+    dfp <- data.frame(no_stransform = dfres[dfres$zs_transform==F,]$rmse,
+                      with_stransform = dfres[dfres$zs_transform==T,]$rmse)
+    lgg[["ggpt2"]] <- ggplot(dfp, aes(x = no_stransform, y = with_stransform)) + 
+      geom_point() + geom_abline(intercept = 0, slope = 1, color = refline.color) + 
+      ggtitle("RMSE, Z vs. ZS")
+  }
+  return(lgg)
 }
