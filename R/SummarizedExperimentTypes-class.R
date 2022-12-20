@@ -8,7 +8,7 @@
 
 
 setClass(
-  "SummarizedExperimentTypes",
+  "newclass", # "SummarizedExperimentTypes",
   representation(type_summary = "character", annotation = "character"),
   contains = "SummarizedExperiment"
 )
