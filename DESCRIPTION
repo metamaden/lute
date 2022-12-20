@@ -11,8 +11,8 @@ Encoding: UTF-8
 URL: https://github.com/metamaden/lute
 BugReports: https://github.com/metamaden/lute/issues
 LazyData: FALSE
-Depends: R (>= 3.5.0)
 Depends:
+    R (>= 3.5.0),
     SummarizedExperiment,
     SingleCellExperiment,
     S4Vectors,
