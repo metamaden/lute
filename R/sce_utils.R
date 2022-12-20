@@ -18,7 +18,7 @@
 #' as a 2d matrix.
 #' @param expr.scale Name of expression data obtained from assays(sce), e.g.
 #' logcounts, counts, etc.
-#' @param marker.varname Marker variable name form rowData(sce).
+#' @param marker.varname Marker variable name from rowData(sce).
 #' @param type.varname Type variable name from colData(sce).
 #' @param marker.summary Summary function to use, e.g. mean, median, etc.
 #' @param vebose Whether to return verbose status messages.

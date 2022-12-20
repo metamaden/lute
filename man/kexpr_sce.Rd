@@ -23,7 +23,7 @@ as a 2d matrix.}
 \item{expr.scale}{Name of expression data obtained from assays(sce), e.g.
 logcounts, counts, etc.}
 
-\item{marker.varname}{Marker variable name form rowData(sce).}
+\item{marker.varname}{Marker variable name from rowData(sce).}
 
 \item{type.varname}{Type variable name from colData(sce).}
 
