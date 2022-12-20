@@ -77,3 +77,18 @@ random_lgv <- function(gindexv, ktotal = 2, num.iter = 1, lambda.pos = 25,
   })
   return(lapply(seq(num.iter), function(ii){lgv}))
 }
+
+#' random_sce
+#'
+#' Make a random SingleCellExperiment object.
+#'
+#' @param verbose Whether to show verbose status messsages.
+#'
+random_sce <- function(...){
+  if(verbose){message("Getting random signal data...")}
+  lgv <- random_lgv(...)
+  sce.assays <- do.call(rbind, lgv)
+  if(verbose){message("Making new sce object...")}
+  sce <- SingleCellExperiment(assays = sce.assays)
+  return(sce)
+}

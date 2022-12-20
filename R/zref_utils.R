@@ -29,7 +29,7 @@ compute_type_se <- function(sce, marker.varname = NULL, type.varname = "cellType
                             return.type = "SummarizedExperimentTypes", 
                             verbose = T, ...){
   
-  
+  # manage type-specific markers
   if(is(marker.varname, "NULL")){user.markers <- 0}
   while(user.markers == 0)
     marker.cond <- !marker.varname %in% colnames(rowData(sce))
@@ -48,6 +48,10 @@ compute_type_se <- function(sce, marker.varname = NULL, type.varname = "cellType
       }
     }
     repeat
+  # get the type-specific marker signal summaries
+  set.assays <- kexpr_sce()
+  # form new set object
+  set <- SummarizedExperimentTypes(set.assays = set.assays)
   return(set)
 }
 
