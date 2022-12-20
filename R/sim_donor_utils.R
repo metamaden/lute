@@ -6,7 +6,7 @@
 # cell type data sources.
 #
 
-#' get_donor_marker_flattable
+#' rand_donor_marker_table
 #' 
 #' Get a flat table of random donor marker signals by types.
 #' 
@@ -27,12 +27,11 @@
 #' 
 #' get_donor_marker_flattable(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
 #' 
-#' @seealso decon_results, supported_strict_methods
+#' @seealso random_lgv
 #' @export
-new_donor_marker_table <- function(ndonor, gindexv = c(1, 2), 
-                                       mean.offset.pos = 10, 
-                                       mean.offset.neg = 2, 
-                                       seed.num = 0, ...){
+rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2), 
+                                    mean.offset.pos = 10, mean.offset.neg = 2, 
+                                    seed.num = 0, ...){
   set.seed(seed.num)
   nmarkers <- length(gindexv)
   # draw random offsets from normal dist
