@@ -6,7 +6,8 @@
 \usage{
 supported_strict_methods(
   varname = "strict_deconvolution_method_used",
-  fname = "lute_deconvolution_transfer_learning"
+  fname = "lute_deconvolution_transfer_learning",
+  verbose = FALSE
 )
 }
 \arguments{

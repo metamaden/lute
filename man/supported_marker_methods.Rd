@@ -5,7 +5,7 @@
 \title{supported_marker_methods}
 \usage{
 supported_marker_methods(
-  varname = "marker_method",
+  varname = "marker_method_name",
   fname = "lute_marker-method_transfer_learning",
   verbose = FALSE
 )
