@@ -23,7 +23,8 @@
 #' descriptions.
 #' @export 
 supported_strict_methods <- function(varname = "strict_deconvolution_method_used",
-                                     fname = "lute_deconvolution_transfer_learning"){
+                                     fname = "lute_deconvolution_transfer_learning",
+                                     verbose = FALSE){
   if(verbose){message("Loading data from ",fname,"...")}
   ltl <- get(load(data(fname)))
   if(!varname %in% colnames(ltl)){
@@ -50,7 +51,7 @@ supported_marker_methods <- function(varname = "marker_method",
                                      fname = "lute_marker-method_transfer_learning", 
                                      verbose = FALSE){
   if(verbose){message("Loading data from ",fname,"...")}
-  ltl <- get(load(data(fname)))
+  data("lute_marker-method_transfer_learning")
   if(!varname %in% colnames(ltl)){
     stop("Error, ",varname," is not a variable in dataset.")}
   return(ltl[,varname])
