@@ -26,10 +26,10 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
                                      fname = "lute_deconvolution_transfer_learning",
                                      verbose = FALSE){
   if(verbose){message("Loading data from ",fname,"...")}
-  ltl <- get(load(data("lute_deconvolution_transfer_learning")))
-  if(!varname %in% colnames(ltl)){
+  eval(parse(text = paste0("data(", fname, ")")))
+  if(!varname %in% colnames(dfstrict )){
     stop("Error, ",varname," is not a variable in dataset.")}
-  return(ltl[,varname])
+  return(dfstrict[,varname])
 }
 
 #' supported_marker_methods
@@ -51,7 +51,6 @@ supported_marker_methods <- function(varname = "marker_method_name",
                                      fname = "lute_marker-method_transfer_learning", 
                                      verbose = FALSE){
   if(verbose){message("Loading data from ",fname,"...")}
-  # data("lute_marker-method_transfer_learning")
   eval(parse(text = paste0("data(", fname, ")")))
   if(!varname %in% colnames(dfmarker)){
     stop("Error, ",varname," is not a variable in dataset.")}
