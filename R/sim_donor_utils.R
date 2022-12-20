@@ -20,7 +20,13 @@
 #' signals.
 #' @returns return 
 #' @examples
-#' get_donor_marker_flattable(ndonor = 10, gindexv = c(1,2,3))
+#' 
+#' get_donor_marker_flattable(ndonor = 2, gindexv = c(1,2))
+#' 
+#' get_donor_marker_flattable(ndonor = 10, gindexv = c(1,1,2))
+#' 
+#' get_donor_marker_flattable(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
+#' 
 #' @seealso decon_results, supported_strict_methods
 #' @export
 get_donor_marker_flattable <- function(ndonor, gindexv = c(1, 2), 
@@ -40,7 +46,7 @@ get_donor_marker_flattable <- function(ndonor, gindexv = c(1, 2),
   meanv.neg[meanv.neg < 0] <- -1*meanv.neg
   # get matrix of markers (rows) by donors (cols)
   md <- do.call(cbind, lapply(seq(ndonor), function(ii){
-    unlist(random_lgv(gindexv, num.iter = num.iter,
+    unlist(random_lgv(gindexv, num.iter = 1,
                       lambda.pos = meanv.pos[ii],
                       lambda.neg = meanv.neg[ii]))
   }))
@@ -48,6 +54,6 @@ get_donor_marker_flattable <- function(ndonor, gindexv = c(1, 2),
   colnames(md) <- paste0("donor", seq(ndonor))
   md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
   md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
-  md$marker.type <- rep(paste0("type", gindexv), times = ndonor)
+  md$marker.type <- paste0("type", gindexv)
   return(md)
 }

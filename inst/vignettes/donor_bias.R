@@ -10,6 +10,7 @@ lambda.neg = 1
 ktotal = 2
 
 set.seed(seed.num)
+nmarkers <- length(gindexv)
 # draw random offsets from normal dist
 offposv <- rnorm(n = ndonor, mean = mean.offset.pos)
 offnegv <- rnorm(n = ndonor, mean = mean.offset.neg)
@@ -29,4 +30,4 @@ md <- as.data.frame(md)
 colnames(md) <- paste0("donor", seq(ndonor))
 md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
 md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
-md$marker.type <- rep(paste0("type", gindexv), times = ndonor)
+md$marker.type <- paste0("type", gindexv)
