@@ -77,10 +77,9 @@ meanv.neg[meanv.neg < 0] <- -1*meanv.neg
 md <- do.call(cbind, lapply(seq(ndonor), function(ii){
   unlist(random_lgv(gindexv, num.iter = num.iter,
                     lambda.pos = meanv.pos[ii],
-                    lambda.neg = meanv.neg[ii],
-                    ...))
+                    lambda.neg = meanv.neg[ii]))
 }))
 md <- as.data.frame(md)
 colnames(md) <- paste0("donor", seq(ndonor))
-md$marker <- paste0("marker", rep(seq(ktotal), each = ndonor))
-md$type <- paste0("type", rep(seq(ktotal), ndonor))
+md$marker <- paste0("marker", rep(seq(ktotal), each = length(lgv)))
+md$type <- paste0("type", rep(seq(ktotal), length(lgv)))

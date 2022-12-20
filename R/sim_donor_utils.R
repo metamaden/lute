@@ -20,7 +20,7 @@
 #' signals.
 #' @returns return 
 #' @examples
-#' # example
+#' get_donor_marker_flattable(ndonor = 10, lgv = c(1,2,3))
 #' @seealso decon_results, supported_strict_methods
 #' @export
 get_donor_marker_flattable <- function(ndonor, gindexv = c(1, 2), 
@@ -46,7 +46,7 @@ get_donor_marker_flattable <- function(ndonor, gindexv = c(1, 2),
   }))
   md <- as.data.frame(md)
   colnames(md) <- paste0("donor", seq(ndonor))
-  md$marker <- paste0("marker", rep(seq(ktotal), each = ndonor))
-  md$type <- paste0("type", rep(seq(ktotal), ndonor))
+  md$marker <- paste0("marker", rep(seq(ktotal), each = length(lgv)))
+  md$type <- paste0("type", rep(seq(ktotal), length(lgv)))
   return(md)
 }
