@@ -1,7 +1,5 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
-#
 # Defines utilities for making and managing the Z types reference matrix.
 #
 

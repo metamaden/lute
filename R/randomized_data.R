@@ -46,21 +46,26 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
 #' markers for type 1 (negative for type 2) and a single positive marker for 
 #' type 2 (negative for type 1).
 #' 
-#' @param randomize.type Type of randomization function to use. Can be "poisson"
-#' for Poisson distribution sampling. 
+#' @param gindexv Vector of marker indices. Index values correspond to the k types,
+#' and each index position represents a marker (e.g. c(1,2,2) means two markers 
+#' for the second type, etc.).
 #' @param ktotal Total types to simulate.
 #' @param num.iter Total simulation iterations.
-#' @param ... Additional arguments passed to randomization function. For 
-#' randomize.type == "poisson", this is the mpoisson function.
+#' @param lambda.pos Value of lambda (Poisson dist. mean) for "positive" marker 
+#' status (e.g. mean of dist. for k when marker is positive for k, negative for 
+#' not-k).
+#' @param lambda.neg Value of lambda (Poisson dist. mean) for "negative" marker 
+#' status (e.g. mean of dist. for k when marker is positive for not-k, negative 
+#' for k).
+#' @param seed.num Seed value for randomization.
 #' @returns Listed lgv object containing the randomized marker values across 
 #' types.
 #' @examples 
 #' set.seed(0)
 #' random_lgv(gindexv = c(rep(1, 10), rep(2, 5)))
 #' @export
-random_lgv <- function(gindexv, ktotal = 2, num.iter = 1, 
-                       lambda.pos = 25, lambda.neg = 2, 
-                       seed.num = 0){
+random_lgv <- function(gindexv, ktotal = 2, num.iter = 1, lambda.pos = 25, 
+                       lambda.neg = 2, seed.num = 0){
   set.seed(seed.num)
   lgv <- lapply(seq(ktotal), function(ki){
     gmarkerv <- gindexv

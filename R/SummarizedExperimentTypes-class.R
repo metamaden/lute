@@ -1,7 +1,5 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
-#
 # Define SummarizedExperimentSets class, validity tests, maker and conversion 
 # functions, etc. Borrows heavily from definitions of established Bioconductor 
 # classes for inspiration, including from packages minfi and 

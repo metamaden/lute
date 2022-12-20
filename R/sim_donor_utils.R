@@ -1,7 +1,5 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
-#
 # Utilities to perform simulations and randomizations with one or more donors or
 # cell type data sources.
 #
@@ -11,6 +9,9 @@
 #' Get a flat table of random donor marker signals by types.
 #' 
 #' @param ndonor Number of donors to simulate.
+#' @param gindexv Vector of marker indices. Index values correspond to the k types,
+#' and each index position represents a marker (e.g. c(1,2,2) means two markers 
+#' for the second type, etc.).
 #' @param mean.offset.pos Poisson dist mean for randomization of offsets for
 #' positive marker signals.
 #' @param mean.offset.neg Poisson dist mean for randomization of offsets for

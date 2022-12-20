@@ -1,7 +1,5 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
-#
 # Utilities to run deconvolution simulations
 #
 #
@@ -159,10 +157,10 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 #' @param lsv List of size factor values. If length(lsv) > length(lpv), only use
 #' up to the number of iterations in lpv. If NULL, S-transformation experiments
 #' aren't performed, and Y is calculated as $P*Z$ rather than $P*ZS$.
+#' @param verbose Whether to show verbose status updates.
 #' @param lgv List of marker expression for reference/signature matrix Z. If 
 #' length(lgv) > length(lpv), only use up to the number of iterations in lpv.
 #' @param sce SingleCellExperiment or SummarizedExperiment object.
-#' @param verbose Whether to show verbose status updates.
 #' @param ... Additional arguments passed to `kexpr_sce()`.
 #' @returns return
 #' @examples
@@ -173,8 +171,8 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 # lres <- decon_results(lgv, lpv, lsv)
 #' @seealso decon_results, 
 #' @export
-decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, sce = NULL, 
-                           ...){
+decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, 
+                           sce = NULL, ...){
   num.iter <- length(lpv)
   num.types <- length(lpv[[1]])
   if(verbose){message("Prepping ",num.iter," simulation iterations...")}
@@ -319,16 +317,20 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' Makes standard plots to analyze deconvolution simulation results.
 #' 
 #' @param dfres Data.frame of deconvolution simulation results.
-#' @param verbose Whether to show verbose status updates.
+#' @param lsv List of size factor values. If length(lsv) > length(lpv), only use
+#' up to the number of iterations in lpv. If NULL, S-transformation experiments
+#' aren't performed, and Y is calculated as $P*Z$ rather than $P*ZS$.
 #' @param refline.color Color of the reference line for the second scatterplot 
 #' of RMSE by experiment type.
+#' @param verbose Whether to show verbose status updates.
 #' @returns List of ggplot2 objects analyzing deconvolution simulation results, 
 #' including scatter plots and a violin plot.
 #' @examples
 #' # example
 #' @seealso decon_analysis
 #' @export
-results_plots <- function(dfres, lsv = NULL, refline.color = "red", verbose = FALSE){
+results_plots <- function(dfres, lsv = NULL, refline.color = "red", 
+                          verbose = FALSE){
   require(ggplot2)
   lgg <- list()
   if(is(lsv, "NULL")){
