@@ -14,31 +14,6 @@
 #-------------------
 # manage simulations
 #-------------------
-
-#' supported_strict_methods
-#' 
-#' Show supported strict deconvolution function. That is, functions which take
-#' some reference/signature matrix Z and some bulk/convoluted signals matrix Y
-#' and return the vector of predictions or proportions, p.
-#' 
-#' @param varname Variable/column in lute_transfer_learning.rda dataset with 
-#' strict deconvolution method names.
-#' @param fname Name of the file containing supported deconvolution methods 
-#' info.
-#' @examples
-#' supported_strict_methods()
-#' @returns List of supported strict deconvolution function names and 
-#' descriptions.
-#' @export 
-supported_strict_methods <- function(varname = "strict_deconvolution_method_used",
-                                     fname = "lute_transfer_learning"){
-  if(verbose){message("Loading data from ",fname,"...")}
-  ltl <- get(load(data(fname)))
-  if(!varname %in% colnames(ltl)){
-    stop("Error, ",varname," is not a variable in dataset.")}
-  return(ltl[,varname])
-}
-
 #' predtype
 #' 
 #' Get predictions by type. Takes deconvolution objects and returns vector of 

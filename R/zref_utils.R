@@ -51,12 +51,19 @@ compute_type_se <- function(sce, marker.varname = NULL, type.varname = "cellType
   return(set)
 }
 
+
+sce_append_markers <- function(sce, marker.varname = "typeMarker", 
+                               marker.method = c("meanratio2")){
+  return(sce.new)
+}
+
 #' sce_append_markers
 #'
 #' Wrapper function for marker discovery procedures. Accepts and returns a 
 #' SingleCellExperiment, with marker labels appended.
 #'
 #' @param marker.method Supported marker discovery methods.
+#' @param verbose Whether to show verbose status messages.
 #' 
 sce_append_markers <- function(sce, marker.varname = "typeMarker", 
                                marker.method = c("meanratio2")){
@@ -65,6 +72,43 @@ sce_append_markers <- function(sce, marker.varname = "typeMarker",
   return(sce.new)
 }
 
+#' get_valid_marker_method
+#'
+#' Show supported marker identification methods. These are load from the 
+#' provided table in the lute package.
+#'
+#' @seealso supported_strict_methods
+#' @export
+get_valid_marker_method <- function(verbose = FALSE){
+  if(verbose){message("Loading data from ",fname,"...")}
+  ltl <- get(load(data(fname)))
+  if(!varname %in% colnames(ltl)){
+    stop("Error, ",varname," is not a variable in dataset.")}
+  return(ltl[,varname])
+}
 
-
+#' supported_strict_methods
+#' 
+#' Show supported strict deconvolution function. That is, functions which take
+#' some reference/signature matrix Z and some bulk/convoluted signals matrix Y
+#' and return the vector of predictions or proportions, p.
+#' 
+#' @param varname Variable/column in lute_transfer_learning.rda dataset with 
+#' strict deconvolution method names.
+#' @param fname Name of the file containing supported deconvolution methods 
+#' info.
+#' @examples
+#' supported_strict_methods()
+#' @returns List of supported strict deconvolution function names and 
+#' descriptions.
+#' @export 
+supported_strict_methods <- function(varname = "strict_deconvolution_method_used",
+                                     fname = "lute_transfer_learning",
+                                     varbose = FALSE){
+  if(verbose){message("Loading data from ",fname,"...")}
+  ltl <- get(load(data(fname)))
+  if(!varname %in% colnames(ltl)){
+    stop("Error, ",varname," is not a variable in dataset.")}
+  return(ltl[,varname])
+}
 
