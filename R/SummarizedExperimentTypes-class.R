@@ -2,14 +2,15 @@
 
 # Author: Sean Maden
 #
-# Define set class, validity tests, maker and conversion functions, etc.
-# Borrows heavily from definitions of established Bioconductor classes for
-# inspiration, including from packages minfi and SummarizedExperiment.
+# Define SummarizedExperimentSets class, validity tests, maker and conversion 
+# functions, etc. Borrows heavily from definitions of established Bioconductor 
+# classes for inspiration, including from packages minfi and 
+# SummarizedExperiment.
 #
 
 
 setClass(
-  "SummarizedExperimentSets",
+  "SummarizedExperimentTypes",
   representation(type_summary = "character", annotation = "character"),
   contains = "SummarizedExperiment"
 )
@@ -17,20 +18,37 @@ setClass(
 SummarizedExperimentTypes <- function(assays, 
                                       type_summary,
                                       gr = GRanges(), 
-                                      annotation = "", ...) {
+                                      annotation = "", 
+                                      ...) {
   assays <- Assays(assays, as.null.if.no.assay=TRUE)
   new("SummarizedExperimentTypes",
       SummarizedExperiment(assays = assays, 
                            rowRanges = as(gr, "GRanges"),
-                           ...), annotation = annotation
+                           ...), 
+      annotation = annotation
   )
 }
 
 #---------------
 # define methods
 #---------------
-setMethod("show", signature(object = "GenomicMethylSet"), function(object) {
-  callNextMethod()
-  .show.annotation(annotation(object))
-  .show.type_summary(type_summary(object))
-})
+setMethod("show", 
+          signature(object = "SummarizedExperimentTypes"), 
+          function(object) {
+            callNextMethod()
+            .show.annotation(annotation(object))
+            .show.type_summary(type_summary(object))
+            }
+          )
+
+
+
+
+
+
+
+
+
+
+
+
