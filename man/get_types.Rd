@@ -16,7 +16,23 @@ get_types(
 )
 }
 \arguments{
+\item{sce}{Either a SummarizedExperiment or SingleCellExperiment object.}
+
+\item{bind.marker.results}{Whether to bind valid flat outputs from marker
+searches to the colData in the returned results object.}
+
+\item{marker.method}{Valid method to identify markers from sce object.}
+
+\item{type.method}{Valid method to obtain type-level expression/signals.}
+
+\item{return.type}{Class of results object to return.}
+
+\item{verbose}{Whether to show verbose status messages.}
+
 \item{...}{Additional arguments to pass for marker discovery method.}
+
+\item{num.top.markers}{Number of top markers to retain by type (e.g. total 
+markers is k*num.top.markers).}
 }
 \value{
 Either a SummarizedExperimentTypes or or MultiAssayExperiment object.
