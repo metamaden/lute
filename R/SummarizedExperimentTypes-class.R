@@ -8,6 +8,30 @@
 
 setClass(
   "SummarizedExperimentSets",
-  representation(preprocessMethod = "character", annotation = "character"),
+  representation(typeSummary = "character", annotation = "character"),
   contains = "SummarizedExperiment"
 )
+
+SummarizedExperimentTypes <- function(assays, 
+                                      type_summary,
+                                      gr = GRanges(), 
+                                      annotation = "", ...) {
+  assays <- Assays(assays, as.null.if.no.assay=TRUE)
+  new("SummarizedExperimentTypes",
+      SummarizedExperiment(
+        assays = assays,
+        rowRanges = as(gr, "GRanges"),
+        ...),
+      annotation = annotation
+  )
+}
+
+#---------------------
+# define methods
+#---------------------
+
+setMethod("show", signature(object = "GenomicMethylSet"), function(object) {
+  callNextMethod()
+  .show.annotation(annotation(object))
+  .show.preprocessMethod(preprocessMethod(object))
+})
