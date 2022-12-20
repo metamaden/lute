@@ -19,11 +19,11 @@
 #' @param verbose Whether to show verbose status messages.
 #' @examples
 #' supported_strict_methods()
-#' @returns List of supported strict deconvolution function names and 
+#' @returns Vector of supported strict deconvolution function names and 
 #' descriptions.
 #' @export 
 supported_strict_methods <- function(varname = "strict_deconvolution_method_used",
-                                     fname = "lute_transfer_learning"){
+                                     fname = "lute_deconvolution_transfer_learning"){
   if(verbose){message("Loading data from ",fname,"...")}
   ltl <- get(load(data(fname)))
   if(!varname %in% colnames(ltl)){
@@ -31,17 +31,27 @@ supported_strict_methods <- function(varname = "strict_deconvolution_method_used
   return(ltl[,varname])
 }
 
-#' sce_append_markers
+#' supported_marker_methods
 #'
-#' Wrapper function for marker discovery procedures. Accepts and returns a 
-#' SingleCellExperiment, with marker labels appended.
+#' Show supported marker identification methods. These are load from the 
+#' provided table in the lute package.
 #'
-#' @param marker.method Supported marker discovery methods.
+#' @param varname Variable/column in lute_transfer_learning.rda dataset with 
+#' strict deconvolution method names.
+#' @param fname Name of the file containing supported deconvolution methods 
+#' info.
 #' @param verbose Whether to show verbose status messages.
-#' 
-sce_append_markers <- function(sce, marker.varname = "typeMarker", 
-                               marker.method = c("meanratio2")){
-  
-  
-  return(sce.new)
+#' @examples
+#' supported_marker_methods()
+#' @returns Vector of supported marker selection methods.
+#' @seealso supported_strict_methods
+#' @export
+supported_marker_methods <- function(varname = "marker_method", 
+                                     fname = "lute_marker-method_transfer_learning", 
+                                     verbose = FALSE){
+  if(verbose){message("Loading data from ",fname,"...")}
+  ltl <- get(load(data(fname)))
+  if(!varname %in% colnames(ltl)){
+    stop("Error, ",varname," is not a variable in dataset.")}
+  return(ltl[,varname])
 }

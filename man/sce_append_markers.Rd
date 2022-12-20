@@ -12,6 +12,8 @@ sce_append_markers(
 }
 \arguments{
 \item{marker.method}{Supported marker discovery methods.}
+
+\item{verbose}{Whether to show verbose status messages.}
 }
 \description{
 Wrapper function for marker discovery procedures. Accepts and returns a 
