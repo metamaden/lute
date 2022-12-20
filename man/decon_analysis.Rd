@@ -12,7 +12,8 @@ length of this list is considered the target number of simulation iterations
 for the run.}
 
 \item{lsv}{List of size factor values. If length(lsv) > length(lpv), only use
-up to the number of iterations in lpv.}
+up to the number of iterations in lpv. If NULL, S-transformation experiments
+aren't performed, and Y is calculated as $P*Z$ rather than $P*ZS$.}
 
 \item{verbose}{Whether to show verbose status updates.}
 

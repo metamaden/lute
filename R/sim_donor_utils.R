@@ -9,7 +9,7 @@
 #' get_donor_marker_flattable
 #' 
 #' Get a flat table of random donor marker signals by types.
-#' ndonor <- 2
+#' 
 #' @param ndonor Number of donors to simulate.
 #' @param mean.offset.pos Poisson dist mean for randomization of offsets for
 #' positive marker signals.
@@ -29,7 +29,7 @@
 #' 
 #' @seealso decon_results, supported_strict_methods
 #' @export
-get_donor_marker_flattable <- function(ndonor, gindexv = c(1, 2), 
+new_donor_marker_table <- function(ndonor, gindexv = c(1, 2), 
                                        mean.offset.pos = 10, 
                                        mean.offset.neg = 2, 
                                        seed.num = 0, ...){
