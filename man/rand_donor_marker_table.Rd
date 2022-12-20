@@ -16,6 +16,10 @@ rand_donor_marker_table(
 \arguments{
 \item{ndonor}{Number of donors to simulate.}
 
+\item{gindexv}{Vector of marker indices. Index values correspond to the k types,
+and each index position represents a marker (e.g. c(1,2,2) means two markers 
+for the second type, etc.).}
+
 \item{mean.offset.pos}{Poisson dist mean for randomization of offsets for
 positive marker signals.}
 

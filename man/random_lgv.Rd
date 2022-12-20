@@ -14,15 +14,23 @@ random_lgv(
 )
 }
 \arguments{
+\item{gindexv}{Vector of marker indices. Index values correspond to the k types,
+and each index position represents a marker (e.g. c(1,2,2) means two markers 
+for the second type, etc.).}
+
 \item{ktotal}{Total types to simulate.}
 
 \item{num.iter}{Total simulation iterations.}
 
-\item{randomize.type}{Type of randomization function to use. Can be "poisson"
-for Poisson distribution sampling.}
+\item{lambda.pos}{Value of lambda (Poisson dist. mean) for "positive" marker 
+status (e.g. mean of dist. for k when marker is positive for k, negative for 
+not-k).}
 
-\item{...}{Additional arguments passed to randomization function. For 
-randomize.type == "poisson", this is the mpoisson function.}
+\item{lambda.neg}{Value of lambda (Poisson dist. mean) for "negative" marker 
+status (e.g. mean of dist. for k when marker is positive for not-k, negative 
+for k).}
+
+\item{seed.num}{Seed value for randomization.}
 }
 \value{
 Listed lgv object containing the randomized marker values across 

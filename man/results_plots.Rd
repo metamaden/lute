@@ -9,6 +9,10 @@ results_plots(dfres, lsv = NULL, refline.color = "red", verbose = FALSE)
 \arguments{
 \item{dfres}{Data.frame of deconvolution simulation results.}
 
+\item{lsv}{List of size factor values. If length(lsv) > length(lpv), only use
+up to the number of iterations in lpv. If NULL, S-transformation experiments
+aren't performed, and Y is calculated as $P*Z$ rather than $P*ZS$.}
+
 \item{refline.color}{Color of the reference line for the second scatterplot 
 of RMSE by experiment type.}
 
