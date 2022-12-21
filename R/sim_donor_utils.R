@@ -12,6 +12,7 @@
 #' @param gindexv Vector of marker indices. Index values correspond to the k types,
 #' and each index position represents a marker (e.g. c(1,2,2) means two markers 
 #' for the second type, etc.).
+#' @param ktotal Total types to simulate.
 #' @param lambda.pos Value of lambda (Poisson dist. mean) for "positive" marker 
 #' status (e.g. mean of dist. for k when marker is positive for k, negative for 
 #' not-k).
@@ -36,7 +37,7 @@
 #' 
 #' @seealso random_lgv
 #' @export
-rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2), 
+rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2), ktotal = 2, 
                                     lambda.pos = 20, lambda.neg = 2,
                                     mean.offset.pos = 10, mean.offset.neg = 2, 
                                     seed.num = 0, ...){
@@ -53,9 +54,10 @@ rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2),
   meanv.neg[meanv.neg < 0] <- -1*meanv.neg
   # get matrix of markers (rows) by donors (cols)
   md <- do.call(cbind, lapply(seq(ndonor), function(ii){
-    unlist(random_lgv(gindexv, num.iter = 1,
+    unlist(random_lgv(gindexv, num.iter = 1, ktotal = ktotal,
                       lambda.pos = meanv.pos[ii],
-                      lambda.neg = meanv.neg[ii]))
+                      lambda.neg = meanv.neg[ii], 
+                      ...))
   }))
   md <- as.data.frame(md)
   colnames(md) <- paste0("donor", seq(ndonor))

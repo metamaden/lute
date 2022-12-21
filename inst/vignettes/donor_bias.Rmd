@@ -1,0 +1,17 @@
+---
+title: "donor_bias"
+author: "Sean Maden"
+date: "2022-12-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+libv <- c("lute")
+sapply(libv, library, character.only = T)
+
+# get simulated marker data
+dt <- rand_donor_marker_table(ndonor = 2, lambda.pos = 10)
+```
+
