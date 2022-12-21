@@ -10,4 +10,4 @@ libv <- c("lute")
 sapply(libv, library, character.only = T)
 
 # get simulated marker data
-dt <- rand_donor_marker_table(ndonor = 2)
+dt <- rand_donor_marker_table(ndonor = 2, lambda.pos = 10)
