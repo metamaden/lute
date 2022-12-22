@@ -14,10 +14,44 @@ sapply(libv, library, character.only = T)
 
 ```{r}
 # get simulated marker data
-ndonor = 2
-dt <- rand_donor_marker_table(ndonor = 2, lambda.pos = 10)
+ndonor = 5
+dt <- rand_donor_marker_table(ndonor)
 dt
 ```
+
+PCA by donor
+
+```{r}
+df.pca <- t(dt[,grepl("donor", colnames(dt))])
+rpca <- prcomp(df.pca)
+# make scatterplot
+dfp <- as.data.frame(rpca$x)
+dfp$donor <- rownames(df.pca)
+ggplot(dfp, aes(x = PC1, y = PC2, color = donor)) + 
+  geom_point(size = 2, alpha = 0.5)
+```
+
+PCA by donor;type
+
+```{r}
+ntype <- length(unique(dt$type))
+catv <- paste0(rep(paste0("donor", seq(ndonor)), each = ntype), ";", 
+               rep(paste0("type", seq(ntype)), times = ndonor))
+df.pca <- do.call(rbind, lapply(catv, function(cati){
+  colfilt <- grepl(gsub(";.*", "", cati), colnames(dt))
+  rowfilt <- grepl(gsub(".*;", "", cati), dt$type)
+  dtf <- dt[rowfilt, colfilt]
+}))
+rownames(df.pca) <- catv
+rpca <- prcomp(df.pca)
+# make scatterplot
+dfp <- as.data.frame(rpca$x)
+dfp$donor <- gsub(";.*", "", rownames(df.pca))
+dfp$type <- gsub(".*;", "", rownames(df.pca))
+ggplot(dfp, aes(x = PC1, y = PC2, color = donor, shape = type)) + 
+  geom_point(size = 2, alpha = 0.5)
+```
+
 Predictions by donor
 
 ```{r}
