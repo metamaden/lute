@@ -14,6 +14,25 @@ sapply(libv, library, character.only = T)
 
 ```{r}
 # get simulated marker data
+ndonor = 2
 dt <- rand_donor_marker_table(ndonor = 2, lambda.pos = 10)
 dt
+```
+Predictions by donor
+
+```{r}
+lpv <- list(c(0.5, 0.5))
+lsv <- list(c(1, 1))
+
+ndonor <- length(colnames(dt)[grepl("donor", colnames(dt))])
+ntype <- length(unique(dt$marker))
+
+ld <- lapply(seq(ndonor), function(ii){
+  cnvf <- c(paste0("donor", ii), "type"); dtf <- dt[,cnvf]
+  lgvi <- lapply(seq(ntype), function(jj){
+    dtf[dtf[,2]==paste0("type", jj),1]
+  })
+  decon_analysis(lgv = list(lgvi), lpv = lpv, lsv = lsv)
+})
+names(ld) <- paste0("donor", seq(ndonor))
 ```
