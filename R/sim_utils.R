@@ -210,9 +210,10 @@ decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL,
 #' Make k-wise results data.frame from simulation outcomes.
 #'
 #' @param dfres Results data.frame containing simulation outcomes.
+#' @param verbose Whether to show verbose status updates.
 #' @returns dfk, data.frame of k/type-wise results summaries.
 #' @export
-dfres_k <- function(dfres){
+dfres_k <- function(dfres, verbose = FALSE){
   require(dplyr)
   cnv <- colnames(dfres)
   cnv.bias <- cnv[grepl("bias.*", cnv)]

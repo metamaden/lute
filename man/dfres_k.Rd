@@ -4,10 +4,12 @@
 \alias{dfres_k}
 \title{dfres_k}
 \usage{
-dfres_k(dfres)
+dfres_k(dfres, verbose = FALSE)
 }
 \arguments{
 \item{dfres}{Results data.frame containing simulation outcomes.}
+
+\item{verbose}{Whether to show verbose status updates.}
 }
 \value{
 dfk, data.frame of k/type-wise results summaries.
