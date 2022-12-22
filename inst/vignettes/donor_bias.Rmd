@@ -12,12 +12,30 @@ libv <- c("lute")
 sapply(libv, library, character.only = T)
 ```
 
+# Randomize donor data
+
+We  start by generating the randomized marker data for `r ndonor` donors.
+
 ```{r}
 # get simulated marker data
 ndonor = 5
 dt <- rand_donor_marker_table(ndonor)
 dt
 ```
+
+Next, we generate the combined marker signals from the provided donors.
+
+```{r}
+# get mean of signals from all donors
+dt$donor.combn.all.mean <- apply(dt[,grepl("donor", colnames(dt))], 1, mean)
+dt$donor.combn.all.median <- apply(dt[,grepl("donor", colnames(dt))], 1, median)
+# get list of combination indices
+# lc <- lapply(seq(2,(ndonor-1)), function(ii)combn(ndonor, ii))
+```
+
+
+
+# Plots
 
 PCA by donor
 
@@ -35,8 +53,10 @@ PCA by donor;type
 
 ```{r}
 ntype <- length(unique(dt$type))
-catv <- paste0(rep(paste0("donor", seq(ndonor)), each = ntype), ";", 
-               rep(paste0("type", seq(ntype)), times = ndonor))
+cndv <- colnames(dt)[grepl("^donor.*", colnames(dt))]
+ndonorcat <- length(cndv)
+catv <- paste0(rep(cndv, each = ntype), ";", 
+               rep(paste0("type", seq(ntype)), times = ndonorcat))
 df.pca <- do.call(rbind, lapply(catv, function(cati){
   colfilt <- grepl(gsub(";.*", "", cati), colnames(dt))
   rowfilt <- grepl(gsub(".*;", "", cati), dt$type)
