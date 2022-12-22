@@ -33,9 +33,7 @@ dt$donor.combn.all.median <- apply(dt[,grepl("donor", colnames(dt))], 1, median)
 # lc <- lapply(seq(2,(ndonor-1)), function(ii)combn(ndonor, ii))
 ```
 
-
-
-# Plots
+# Plots -- marker signals
 
 PCA by donor
 
@@ -75,18 +73,30 @@ ggplot(dfp, aes(x = PC1, y = PC2, color = donor, shape = type)) +
 Predictions by donor
 
 ```{r}
-lpv <- list(c(0.5, 0.5))
-lsv <- list(c(1, 1))
-
+# get decon args
+prop.val <- 0.1
+lpv <- list(c(prop.val, 1-prop.val))
+lsv <- list(c(1, 10))
+# get params
 ndonor <- length(colnames(dt)[grepl("donor", colnames(dt))])
 ntype <- length(unique(dt$marker))
-
-ld <- lapply(seq(ndonor), function(ii){
-  cnvf <- c(paste0("donor", ii), "type"); dtf <- dt[,cnvf]
+# run decon
+ld <- lapply(cndv, function(donori){
+  cnvf <- c(donori, "type"); dtf <- dt[,cnvf]
   lgvi <- lapply(seq(ntype), function(jj){
     dtf[dtf[,2]==paste0("type", jj),1]
   })
   decon_analysis(lgv = list(lgvi), lpv = lpv, lsv = lsv)
 })
-names(ld) <- paste0("donor", seq(ndonor))
+names(ld) <- cndv
+```
+
+# Plots -- predictions
+
+```{r}
+dfp <- do.call(rbind, lapply(ld, function(li){li$dfres[1, c(1,2)]}))
+dfp$donor <- rownames(dfp)
+
+ggplot(dfp, aes(x = bias1, y = bias2, color = donor)) + geom_point(alpha = 0.5) +
+  geom_abline(intercept = 0, slope = 1, col = "red")
 ```
