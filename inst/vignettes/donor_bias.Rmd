@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-libv <- c("lute")
+libv <- c("lute", "ggplot2", "GGally")
 sapply(libv, library, character.only = T)
 ```
 
@@ -74,9 +74,15 @@ Predictions by donor
 
 ```{r}
 # get decon args
-prop.val <- 0.1
-lpv <- list(c(prop.val, 1-prop.val))
-lsv <- list(c(1, 10))
+# prop.val <- 0.1
+# lpv <- list(c(prop.val, 1-prop.val))
+# lsv <- list(c(1, 10))
+lpv <- make_lpv()
+num.sim <- length(lpv)
+size1 <- 1
+size2 <- 100
+lsv <- lapply(seq(num.sim), function(ii){c(size1, size2)})
+
 # get params
 ndonor <- length(colnames(dt)[grepl("donor", colnames(dt))])
 ntype <- length(unique(dt$marker))
@@ -86,7 +92,9 @@ ld <- lapply(cndv, function(donori){
   lgvi <- lapply(seq(ntype), function(jj){
     dtf[dtf[,2]==paste0("type", jj),1]
   })
-  decon_analysis(lgv = list(lgvi), lpv = lpv, lsv = lsv)
+  # rep up to num sim
+  lgv.in <- lapply(seq(num.sim), function(ii){lgvi})
+  decon_analysis(lgv = lgv.in, lpv = lpv, lsv = lsv)
 })
 names(ld) <- cndv
 ```
@@ -96,7 +104,16 @@ names(ld) <- cndv
 ```{r}
 dfp <- do.call(rbind, lapply(ld, function(li){li$dfres[1, c(1,2)]}))
 dfp$donor <- rownames(dfp)
+# grid of scatterplots, corr
 
-ggplot(dfp, aes(x = bias1, y = bias2, color = donor)) + geom_point(alpha = 0.5) +
-  geom_abline(intercept = 0, slope = 1, col = "red")
+dfp$donor <- factor(dfp$donor, levels = dfp$donor)
+ggpairs(dfp, columns = seq(ntype), mapping = ggplot2::aes(color = donor))
+```
+
+```{r}
+dfp$donor <- as.factor(dfp$donor)
+flea[,2] <- as.numeric(flea[,2])
+ggpairs(flea, columns = 2:4, mapping = aes(fill=species))
+
+ggpairs(dfp, columns = 1:2, mapping = aes(fill=donor))
 ```
