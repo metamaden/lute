@@ -10,8 +10,8 @@ rand_donor_marker_table(
   ktotal = 2,
   lambda.pos = 20,
   lambda.neg = 2,
-  mean.offset.pos = 10,
-  mean.offset.neg = 2,
+  sd.offset.pos = 10,
+  sd.offset.neg = 2,
   seed.num = 0,
   verbose = FALSE,
   ...
@@ -34,10 +34,10 @@ not-k).}
 status (e.g. mean of dist. for k when marker is positive for not-k, negative 
 for k).}
 
-\item{mean.offset.pos}{Poisson dist mean for randomization of offsets for
+\item{sd.offset.pos}{Poisson dist mean for randomization of offsets for
 positive marker signals.}
 
-\item{mean.offset.neg}{Poisson dist mean for randomization of offsets for
+\item{sd.offset.neg}{Poisson dist mean for randomization of offsets for
 negative marker signals.}
 
 \item{seed.num}{Token to set the random seed.}

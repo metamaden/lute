@@ -9,8 +9,8 @@ donor_marker_experiment(
   ndonor = 2,
   ktotal = 2,
   num.sim = 1,
-  mean.offset.pos = 5,
-  mean.offset.neg = 5,
+  sd.offset.pos = 5,
+  sd.offset.neg = 5,
   lpv = NULL,
   lsv = NULL,
   run.decon = TRUE,
@@ -29,10 +29,10 @@ for details.}
 
 \item{num.sim}{Number of simulations for deconvolution experiments.}
 
-\item{mean.offset.pos}{Poisson dist mean for randomization of offsets for
+\item{sd.offset.pos}{Poisson dist mean for randomization of offsets for
 positive marker signals.}
 
-\item{mean.offset.neg}{Poisson dist mean for randomization of offsets for
+\item{sd.offset.neg}{Poisson dist mean for randomization of offsets for
 negative marker signals.}
 
 \item{lpv}{List of length num.sim containing true proportions for each 
