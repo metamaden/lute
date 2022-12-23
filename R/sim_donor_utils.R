@@ -40,7 +40,10 @@ donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
                                     verbose = FALSE, ...){
   if(verbose){message("Getting random marker table...")}
   dt <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, 
-                                ktotal = ktotal, ...)
+                                ktotal = ktotal, 
+                                mean.offset.pos = mean.offset.pos,
+                                mean.offset.neg = mean.offset.neg, 
+                                ...)
   lr <- list(marker.table = dt, lpca.markers = pcaplots_donor(dt))
   # manage deconvolution experiments
   if(run.decon){

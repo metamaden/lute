@@ -34,6 +34,34 @@ lexpt <- lapply(offsetv, function(offi){
 names(lexpt) <- paste0("offset:", offsetv)
 ```
 
+## Randomized marker data
+
+```{r}
+knitr::kable(lexpt$`offset:2`$marker.table)
+knitr::kable(lexpt$`offset:5`$marker.table)
+knitr::kable(lexpt$`offset:10`$marker.table)
+```
+
+## PCA of donor bias
+
+PCA by donor, when offset is lowest (2)
+
+```{r}
+lexpt$`offset:2`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
+```
+
+PCA by donor, when offset is intermediate (5)
+
+```{r}
+lexpt$`offset:5`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
+```
+
+PCA by donor, when offset is highest (10)
+
+```{r}
+lexpt$`offset:10`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
+```
+
 # Randomize donor data
 
 We  start by generating the randomized marker data for `r ndonor` donors.
