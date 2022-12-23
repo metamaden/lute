@@ -84,11 +84,14 @@ rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2), ktotal = 2,
 #' and type, across markers.
 #' 
 #' @param dt Donor marker signals table.
-#'
-#'
+#' @param verbose Whether to show verbose status messages.
+#' @param ... Additional arguments passed to PCA functions.
+#' @returns list of PCA results, plots, and metadata
+#' @export
 pcaplots_donor <- function(dt, verbose = FALSE, ...){
-  require(ggplot2)
-  
+  list(pca.bydonor = pca_bydonor(dt, ...), 
+       pca.bydonortype = pca_bydonortype(dt, ...),
+       metadata = test.md)
 }
 
 #' pca_bydonor
@@ -150,7 +153,8 @@ pca_bydonortype <- function(dt,
                             test.md = list(test = "pca", 
                                            test.type = "by donor;type"), 
                             verbose = FALSE){
-  # get pca results
+  require(ggplot2)
+  # run pca
   ntype <- length(unique(dt$type))
   cndv <- colnames(dt)[grepl("^donor.*", colnames(dt))]
   ndonorcat <- length(cndv)
