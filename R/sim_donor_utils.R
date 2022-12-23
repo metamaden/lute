@@ -26,21 +26,21 @@
 #' @param run.decon Whether to run deconvolution experiments, returning 
 #' predictions. Automatically generates values for lpv, lsv if none passed.
 #' @param seed.num Seed value for random sizes in lsv, in case lsv is NULL.
-#' @param ... Arguments passed to functions rand_donor_marker_table().
+#' @param ... Arguments passed to functions `rand_donor_marker_table()`.
 #' @returns Results of a donor marker experiment, including randomized marker
 #' signal table, results of PCA on marker table, and results and plots of 
 #' deconvolution predictions.
+#' @examples 
+#' donor_marker_experiment()
 #' @export
-donor_marker_experiment <- function(gindexv, ndonor = 2, ktotal = 2, num.sim = 1, 
-                                    mean.offset.pos = 5, mean.offset.neg = 5,
-                                    lpv = NULL, lsv = NULL, run.decon = TRUE, 
-                                    seed.num = 0, verbose = FALSE, ...){
+donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2, 
+                                    num.sim = 1, mean.offset.pos = 5, 
+                                    mean.offset.neg = 5, lpv = NULL, lsv = NULL, 
+                                    run.decon = TRUE, seed.num = 0, 
+                                    verbose = FALSE, ...){
   if(verbose){message("Getting random marker table...")}
   dt <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, 
                                 ktotal = ktotal, ...)
-  
-  dt <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, 
-                                ktotal = ktotal)
   lr <- list(marker.table = dt, lpca.markers = pcaplots_donor(dt))
   # manage deconvolution experiments
   if(run.decon){
@@ -66,27 +66,6 @@ donor_marker_experiment <- function(gindexv, ndonor = 2, ktotal = 2, num.sim = 1
   }
   return(lr)
 }
-
-lpv <- make_lpv()
-num.sim <- length(lpv)
-size1 <- 1
-size2 <- 100
-lsv <- lapply(seq(num.sim), function(ii){c(size1, size2)})
-
-# get params
-ndonor <- length(colnames(dt)[grepl("donor", colnames(dt))])
-ntype <- length(unique(dt$marker))
-# run decon
-ld <- lapply(cndv, function(donori){
-  cnvf <- c(donori, "type"); dtf <- dt[,cnvf]
-  lgvi <- lapply(seq(ntype), function(jj){
-    dtf[dtf[,2]==paste0("type", jj),1]
-  })
-  # rep up to num sim
-  lgv.in <- lapply(seq(num.sim), function(ii){lgvi})
-  decon_analysis(lgv = lgv.in, lpv = lpv, lsv = lsv)
-})
-names(ld) <- cndv
 
 #---------------------
 # experiment utilities

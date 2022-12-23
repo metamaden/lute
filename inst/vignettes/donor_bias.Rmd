@@ -5,11 +5,33 @@ date: "2022-12-21"
 output: html_document
 ---
 
+This vignette walks through a series of deconvolution analyses evaluating the 
+impact of between-donor variations on results.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 libv <- c("lute", "ggplot2", "GGally")
 sapply(libv, library, character.only = T)
+```
+
+# Experiment series 1: ndonors = 2
+
+Let's run a series of experiments keeping `ndonor = 2`. We start with the simplest
+example of `k = 2` types and `G = 2` total markers, one for each type. We will
+vary the offset from small (2) to medium (5) to large (10). This offset magnitude
+should be proportional to observed between-donor variances.
+
+```{r}
+ndonor = 2
+gindexv = c(1, 2)
+offsetv <- c(2, 5, 10)
+lexpt <- lapply(offsetv, function(offi){
+  donor_marker_experiment(gindexv = c(1,2),
+                          ndonor = ndonor,
+                          mean.offset.pos = offi,
+                          mean.offset.neg = offi)
+})
+names(lexpt) <- paste0("offset:", offsetv)
 ```
 
 # Randomize donor data

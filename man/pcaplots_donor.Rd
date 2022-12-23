@@ -8,6 +8,13 @@ pcaplots_donor(dt, verbose = FALSE, ...)
 }
 \arguments{
 \item{dt}{Donor marker signals table.}
+
+\item{verbose}{Whether to show verbose status messages.}
+
+\item{...}{Additional arguments passed to PCA functions.}
+}
+\value{
+list of PCA results, plots, and metadata
 }
 \description{
 Make plots of two PCAs: (1) by donor, across markers and types; (2) by donor

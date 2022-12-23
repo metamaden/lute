@@ -5,7 +5,7 @@
 \title{rand_donor_marker_table}
 \usage{
 rand_donor_marker_table(
-  ndonor,
+  ndonor = 2,
   gindexv = c(1, 2),
   ktotal = 2,
   lambda.pos = 20,
