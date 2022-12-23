@@ -4,10 +4,12 @@
 \alias{pcaplots_donor}
 \title{pcaplots_donor}
 \usage{
-pcaplots_donor(dt, verbose = FALSE, ...)
+pcaplots_donor(dt, title.append = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{dt}{Donor marker signals table.}
+
+\item{title.append}{Optional string to append to plot titles.}
 
 \item{verbose}{Whether to show verbose status messages.}
 

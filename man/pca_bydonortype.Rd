@@ -7,6 +7,7 @@
 pca_bydonortype(
   dt,
   test.md = list(test = "pca", test.type = "by donor;type"),
+  title.append = NULL,
   verbose = FALSE
 )
 }
@@ -15,6 +16,8 @@ pca_bydonortype(
 for each marker and type.}
 
 \item{test.md}{Metadata info to be returned with test results}
+
+\item{title.append}{Optional string to append to plot titles.}
 
 \item{verbose}{Whether to show verbose status messages.}
 }

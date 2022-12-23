@@ -15,6 +15,7 @@ donor_marker_experiment(
   lsv = NULL,
   run.decon = TRUE,
   seed.num = 0,
+  plot.title.append = NULL,
   verbose = FALSE,
   ...
 )
