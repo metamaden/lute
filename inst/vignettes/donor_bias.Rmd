@@ -19,7 +19,7 @@ We  start by generating the randomized marker data for `r ndonor` donors.
 ```{r}
 # get simulated marker data
 ndonor = 5
-dt <- rand_donor_marker_table(ndonor)
+dt <- lute::rand_donor_marker_table(ndonor, gindexv = c(1,1,2,2,3,3), ktotal = 3)
 dt
 ```
 
@@ -40,11 +40,22 @@ PCA by donor
 ```{r}
 df.pca <- t(dt[,grepl("donor", colnames(dt))])
 rpca <- prcomp(df.pca)
+# assign pca labels with perc. sd
+percv <- round(100*rpca$sdev/sum(rpca$sdev),0)
+colnames(rpca$x) <- paste0(colnames(rpca$x), " (",percv,"%)")
 # make scatterplot
+num.markers <- length(unique(dt$marker))
+num.types <- length(unique(dt$type))
 dfp <- as.data.frame(rpca$x)
+dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
 dfp$donor <- rownames(df.pca)
-ggplot(dfp, aes(x = PC1, y = PC2, color = donor)) + 
-  geom_point(size = 2, alpha = 0.5)
+dfp$donor.summary <- ifelse(grepl("mean|median", dfp$donor), TRUE, FALSE)
+ggplot(dfp, aes(x = x, y = y, color = donor, shape = donor.summary)) + 
+  geom_point(size = 4, alpha = 0.5) + xlab(colnames(dfp)[1]) +
+  ylab(colnames(dfp)[2]) + 
+  ggtitle(paste0("PCA across markers; ",
+                 "Num. markers = ", num.markers, 
+                 "; Num. types = ", num.types))
 ```
 
 PCA by donor;type
@@ -62,14 +73,32 @@ df.pca <- do.call(rbind, lapply(catv, function(cati){
 }))
 rownames(df.pca) <- catv
 rpca <- prcomp(df.pca)
+# assign pca labels with perc. sd
+percv <- round(100*rpca$sdev/sum(rpca$sdev),0)
+colnames(rpca$x) <- paste0(colnames(rpca$x), " (",percv,"%)")
 # make scatterplot
 dfp <- as.data.frame(rpca$x)
+dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
 dfp$donor <- gsub(";.*", "", rownames(df.pca))
 dfp$type <- gsub(".*;", "", rownames(df.pca))
-ggplot(dfp, aes(x = PC1, y = PC2, color = donor, shape = type)) + 
-  geom_point(size = 2, alpha = 0.5)
+ggplot(dfp, aes(x = x, y = y, color = donor, shape = type)) + 
+  geom_point(size = 4, alpha = 0.5) + 
+  ggtitle(paste0("PCA by donor, marker; Num. markers = ", ncol(df.pca))) +
+  xlab(colnames(dfp)[1]) + ylab(colnames(dfp)[2])
 ```
 
+```{r}
+ggpairs(dfp, top = list(continuous="na"), columns = seq(ncol(df.pca)), 
+        map = ggplot2::aes(color=donor, shape=type), 
+        title = paste0("Num. markers = ", ncol(df.pca)))
+```
+
+```{r}
+dfp <- data.frame(pc = colnames(rpca$x), sd = rpca$sdev)
+ggplot(dfp, aes(x = pc, y = sd)) + geom_bar(stat="identity") + theme_bw() +
+  ggtitle(paste0("Num. markers = ", ncol(df.pca))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 Predictions by donor
 
 ```{r}
@@ -102,18 +131,14 @@ names(ld) <- cndv
 # Plots -- predictions
 
 ```{r}
-dfp <- do.call(rbind, lapply(ld, function(li){li$dfres[1, c(1,2)]}))
-dfp$donor <- rownames(dfp)
-# grid of scatterplots, corr
-
-dfp$donor <- factor(dfp$donor, levels = dfp$donor)
-ggpairs(dfp, columns = seq(ntype), mapping = ggplot2::aes(color = donor))
-```
-
-```{r}
-dfp$donor <- as.factor(dfp$donor)
-flea[,2] <- as.numeric(flea[,2])
-ggpairs(flea, columns = 2:4, mapping = aes(fill=species))
-
-ggpairs(dfp, columns = 1:2, mapping = aes(fill=donor))
+# get plot data
+ztrans <- FALSE
+dfp <- do.call(rbind, lapply(ld, function(li){
+  dfresi <- li$dfres
+  dfresi <- dfresi[dfresi$zs_transform==ztrans,c(1,2)]
+  }
+))
+# dfp$donor <- rownames(dfp)
+# make grid of scatterplots, corr
+pairs(dfp[,grepl("bias.*", colnames(dfp))])
 ```
