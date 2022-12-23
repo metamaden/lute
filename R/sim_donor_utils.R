@@ -15,9 +15,9 @@
 #' @param ndonor Total number of donors to simulate.
 #' @param ktotal Total K types to simulate.
 #' @param num.sim Number of simulations for deconvolution experiments.
-#' @param mean.offset.pos Poisson dist mean for randomization of offsets for
+#' @param sd.offset.pos Poisson dist mean for randomization of offsets for
 #' positive marker signals.
-#' @param mean.offset.neg Poisson dist mean for randomization of offsets for
+#' @param sd.offset.neg Poisson dist mean for randomization of offsets for
 #' negative marker signals.
 #' @param lpv List of length num.sim containing true proportions for each 
 #' simulated type. Automatically generated if not provided.
@@ -34,15 +34,15 @@
 #' donor_marker_experiment()
 #' @export
 donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2, 
-                                    num.sim = 1, mean.offset.pos = 5, 
-                                    mean.offset.neg = 5, lpv = NULL, lsv = NULL, 
+                                    num.sim = 1, sd.offset.pos = 5, 
+                                    sd.offset.neg = 5, lpv = NULL, lsv = NULL, 
                                     run.decon = TRUE, seed.num = 0, 
                                     verbose = FALSE, ...){
   if(verbose){message("Getting random marker table...")}
   dt <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, 
                                 ktotal = ktotal, 
-                                mean.offset.pos = mean.offset.pos,
-                                mean.offset.neg = mean.offset.neg, 
+                                sd.offset.pos = sd.offset.pos,
+                                sd.offset.neg = sd.offset.neg, 
                                 ...)
   lr <- list(marker.table = dt, lpca.markers = pcaplots_donor(dt))
   # manage deconvolution experiments
@@ -89,9 +89,9 @@ donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param lambda.neg Value of lambda (Poisson dist. mean) for "negative" marker 
 #' status (e.g. mean of dist. for k when marker is positive for not-k, negative 
 #' for k).
-#' @param mean.offset.pos Poisson dist mean for randomization of offsets for
+#' @param sd.offset.pos Poisson dist mean for randomization of offsets for
 #' positive marker signals.
-#' @param mean.offset.neg Poisson dist mean for randomization of offsets for
+#' @param sd.offset.neg Poisson dist mean for randomization of offsets for
 #' negative marker signals.
 #' @param seed.num Token to set the random seed.
 #' @param vebose Whether to return verbose status messages.
@@ -110,13 +110,13 @@ donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @export
 rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), ktotal = 2, 
                                     lambda.pos = 20, lambda.neg = 2,
-                                    mean.offset.pos = 10, mean.offset.neg = 2, 
+                                    sd.offset.pos = 10, sd.offset.neg = 2, 
                                     seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
   nmarkers <- length(gindexv)
   # draw random offsets from normal dist
-  offposv <- rnorm(n = ndonor, mean = mean.offset.pos)
-  offnegv <- rnorm(n = ndonor, mean = mean.offset.neg)
+  offposv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.pos)
+  offnegv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.neg)
   # get value vectors
   meanv.pos <- offposv + lambda.pos
   meanv.neg <- offnegv + lambda.neg
