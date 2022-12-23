@@ -4,6 +4,28 @@
 # cell type data sources.
 #
 
+#--------------------
+# experiment function
+#--------------------
+
+#' donor_marker_experiment
+#'
+#' @param ... Arguments passed to functions rand_donor_marker_table() and
+#' run_decon_expr().
+#' @returns Results of a donor marker experiment, including randomized marker
+#' signal table, results of PCA on marker table, and results and plots of 
+#' deconvolution predictions.
+#'
+donor_marker_experiment <- function(...){
+  
+  rand_donor_marker_table()
+  pcaplots_donor()
+}
+
+#---------------------
+# experiment utilities
+#---------------------
+
 #' rand_donor_marker_table
 #' 
 #' Get a flat table of random donor marker signals by types.
@@ -38,7 +60,7 @@
 #' 
 #' @seealso random_lgv
 #' @export
-rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2), ktotal = 2, 
+rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), ktotal = 2, 
                                     lambda.pos = 20, lambda.neg = 2,
                                     mean.offset.pos = 10, mean.offset.neg = 2, 
                                     seed.num = 0, verbose = FALSE, ...){
@@ -74,10 +96,6 @@ rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2), ktotal = 2,
   return(md)
 }
 
-#------
-# plots
-#------
-
 #' pcaplots_donor
 #'
 #' Make plots of two PCAs: (1) by donor, across markers and types; (2) by donor
@@ -93,6 +111,10 @@ pcaplots_donor <- function(dt, verbose = FALSE, ...){
        pca.bydonortype = pca_bydonortype(dt, ...),
        metadata = test.md)
 }
+
+#------
+# plots
+#------
 
 #' pca_bydonor
 #'
