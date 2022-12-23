@@ -45,8 +45,8 @@ donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
   # manage deconvolution experiments
   if(run.decon){
     if(verbose){message("Running deconvolution experiment...")}
-    if(is(lp, "NULL")){lpv <- make_lpv(ktotal)[seq(num.sim)]}
-    if(is(ls, "NULL")){
+    if(is(lpv, "NULL")){lpv <- make_lpv(ktotal)[seq(num.sim)]}
+    if(is(lsv, "NULL")){
       set.seed(seed.num)
       sizev <- sample(100, ktotal)
       lsv <- lapply(seq(num.sim), function(ii){sizev})
