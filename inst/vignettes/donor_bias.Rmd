@@ -25,9 +25,11 @@ should be proportional to observed between-donor variances.
 ndonor = 2
 gindexv = c(1, 2)
 offsetv <- c(2, 5, 10)
+num.sim <- 50
 lexpt <- lapply(offsetv, function(offi){
-  donor_marker_experiment(gindexv = c(1,2),
-                          ndonor = ndonor,
+  title.append <- paste0("Offset = ", offi, "\n")
+  donor_marker_experiment(gindexv = c(1,2), num.sim = num.sim, ndonor = ndonor,
+                          plot.title.append = title.append,
                           sd.offset.pos = offi,
                           sd.offset.neg = offi)
 })
@@ -75,6 +77,43 @@ lexpt$`offset:2`$lpca.markers$pca.bydonortype$screeplot
 lexpt$`offset:5`$lpca.markers$pca.bydonortype$screeplot
 lexpt$`offset:10`$lpca.markers$pca.bydonortype$screeplot
 ```
+
+## Deconvolution results
+
+### Results table
+
+```{r}
+# get all results
+dfres <- do.call(rbind, lapply(offsetv, function(offi){
+  lres <- lexpt[grepl(paste0("offset:",offi,"$"), names(lexpt))][[1]]$decon.results
+  dfresi <- do.call(rbind, lapply(lres, function(resi){resi$dfres}))
+  dfresi <- as.data.frame(dfresi)
+  dfresi$offset <- offi
+  dfresi
+}))
+```
+
+### Bias violin plots
+
+```{r}
+dfres$offset <- as.factor(dfres$offset)
+
+ggplot(dfres, aes(x = offset, y = bias1)) + geom_violin(draw_quantiles = 0.5) +
+  theme_bw() + ggtitle("Bias1")
+
+ggplot(dfres, aes(x = offset, y = bias2)) + geom_violin(draw_quantiles = 0.5) +
+  theme_bw() + ggtitle("Bias2")
+```
+
+### Bias scatterplots
+
+```{r}
+ggpt <- ggplot(dfres, aes(x = bias1, y = bias2, color = offset)) + geom_point(alpha = 0.5)
+ggpt
+ggpt + facet_wrap(~offset)
+```
+
+
 
 # Randomize donor data
 
