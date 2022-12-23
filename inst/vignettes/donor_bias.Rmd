@@ -35,24 +35,9 @@ dt$donor.combn.all.median <- apply(dt[,grepl("donor", colnames(dt))], 1, median)
 PCA by donor
 
 ```{r}
-df.pca <- t(dt[,grepl("donor", colnames(dt))])
-rpca <- prcomp(df.pca)
-# assign pca labels with perc. sd
-percv <- round(100*rpca$sdev/sum(rpca$sdev),0)
-colnames(rpca$x) <- paste0(colnames(rpca$x), " (",percv,"%)")
-# make scatterplot
-num.markers <- length(unique(dt$marker))
-num.types <- length(unique(dt$type))
-dfp <- as.data.frame(rpca$x)
-dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
-dfp$donor <- rownames(df.pca)
-dfp$donor.summary <- ifelse(grepl("mean|median", dfp$donor), TRUE, FALSE)
-ggplot(dfp, aes(x = x, y = y, color = donor, shape = donor.summary)) + 
-  geom_point(size = 4, alpha = 0.5) + xlab(colnames(dfp)[1]) +
-  ylab(colnames(dfp)[2]) + 
-  ggtitle(paste0("PCA across markers; ",
-                 "Num. markers = ", num.markers, 
-                 "; Num. types = ", num.types))
+lpca <- pca_bydonor(dt)
+lpca$scatterplot
+lpca$screeplot
 ```
 
 PCA by donor;type

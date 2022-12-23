@@ -13,6 +13,7 @@ rand_donor_marker_table(
   mean.offset.pos = 10,
   mean.offset.neg = 2,
   seed.num = 0,
+  verbose = FALSE,
   ...
 )
 }
@@ -43,6 +44,8 @@ negative marker signals.}
 
 \item{...}{Additional parameters passed to `random_lgv()` to get marker 
 signals.}
+
+\item{vebose}{Whether to return verbose status messages.}
 }
 \value{
 return

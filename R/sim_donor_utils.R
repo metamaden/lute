@@ -95,31 +95,45 @@ pcaplots_donor <- function(dt, verbose = FALSE, ...){
 #'
 #' Get analysis results and plots for PCA by donor, across markers and types.
 #'
-#'
-#'
-#'
-pca_bydonor <- function(dt, verbose = FALSE){
+#' @param dt Data table containing the donors (rows) by marker signals (columns)
+#' for each marker and type.
+#' @param test.md Metadata info to be returned with test results
+#' @param verbose Whether to show verbose status messages.
+#' @returns lr, results list containing PCA results data, ggplots, and metadata.
+#' @export
+pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor"), 
+                        verbose = FALSE){
   require(ggplot2)
-  df.pca <- t(dt[,grepl("donor", colnames(dt))])
-  rpca <- prcomp(df.pca)
-  # assign pca labels with perc. sd
+  # run pca
+  df.pca <- t(dt[,grepl("donor", colnames(dt))]); rpca <- prcomp(df.pca)
+  # assign pc labels
   percv <- round(100*rpca$sdev/sum(rpca$sdev),0)
   colnames(rpca$x) <- paste0(colnames(rpca$x), " (",percv,"%)")
-  # make scatterplot
+  # get scatterplot data
   num.markers <- length(unique(dt$marker))
   num.types <- length(unique(dt$type))
   dfp <- as.data.frame(rpca$x)
   dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
   dfp$donor <- rownames(df.pca)
   dfp$donor.summary <- ifelse(grepl("mean|median", dfp$donor), TRUE, FALSE)
-  ggplot(dfp, aes(x = x, y = y, color = donor, shape = donor.summary)) + 
+  title.str <- paste0("PCA across markers; Num. markers = ", num.markers, 
+                      "; Num. types = ", num.types)
+  # make scatterplot
+  gg.pt <- ggplot(dfp, aes(x = x, y = y, color = donor, 
+                           shape = donor.summary)) + 
     geom_point(size = 4, alpha = 0.5) + xlab(colnames(dfp)[1]) +
-    ylab(colnames(dfp)[2]) + 
-    ggtitle(paste0("PCA across markers; ",
-                   "Num. markers = ", num.markers, 
-                   "; Num. types = ", num.types))
+    ylab(colnames(dfp)[2]) + ggtitle(title.str)
+  # get screeplot data
+  dfp <- data.frame(pc = colnames(rpca$x), sd = rpca$sdev)
+  title.str.scree <- paste0("Screeplot; Num. markers = ", ncol(df.pca)) 
   # make screeplot
-  
+  gg.bp <- ggplot(dfp, aes(x = pc, y = sd)) + geom_bar(stat="identity") + 
+    theme_bw() + ggtitle(title.str.scree) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  # make return list
+  lr <- list(pca.results = rpca, scatterplot = gg.pt, screeplot = gg.bp, 
+             metadata = test.md)
+  return(lr)
 }
 
 #' pca_bydonortype
