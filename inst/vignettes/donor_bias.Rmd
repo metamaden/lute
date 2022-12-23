@@ -2,7 +2,9 @@
 title: "donor_bias"
 author: "Sean Maden"
 date: "2022-12-21"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 This vignette walks through a series of deconvolution analyses evaluating the 
