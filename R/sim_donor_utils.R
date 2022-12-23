@@ -24,6 +24,7 @@
 #' @param mean.offset.neg Poisson dist mean for randomization of offsets for
 #' negative marker signals.
 #' @param seed.num Token to set the random seed.
+#' @param vebose Whether to return verbose status messages.
 #' @param ... Additional parameters passed to `random_lgv()` to get marker 
 #' signals.
 #' @returns return 
@@ -40,7 +41,7 @@
 rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2), ktotal = 2, 
                                     lambda.pos = 20, lambda.neg = 2,
                                     mean.offset.pos = 10, mean.offset.neg = 2, 
-                                    seed.num = 0, ...){
+                                    seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
   nmarkers <- length(gindexv)
   # draw random offsets from normal dist
@@ -61,8 +62,73 @@ rand_donor_marker_table <- function(ndonor, gindexv = c(1, 2), ktotal = 2,
   }))
   md <- as.data.frame(md)
   colnames(md) <- paste0("donor", seq(ndonor))
+  if(ndonor > 1){
+    if(verbose){message("Getting donor summary columns...")}
+    which.cnv.donor <- which(grepl("donor", colnames(md)))
+    md$donor.combn.all.mean <- apply(md[,which.cnv.donor], 1, mean)
+    md$donor.combn.all.median <- apply(md[,which.cnv.donor], 1, median)
+  }
   md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
   md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
   md$marker.type <- paste0("type", gindexv)
   return(md)
+}
+
+#------
+# plots
+#------
+
+#' pcaplots_donor
+#'
+#' Make plots of two PCAs: (1) by donor, across markers and types; (2) by donor
+#' and type, across markers.
+#' 
+#' @param dt Donor marker signals table.
+#'
+#'
+pcaplots_donor <- function(dt, verbose = FALSE, ...){
+  require(ggplot2)
+  
+}
+
+#' pca_bydonor
+#'
+#' Get analysis results and plots for PCA by donor, across markers and types.
+#'
+#'
+#'
+#'
+pca_bydonor <- function(dt, verbose = FALSE){
+  require(ggplot2)
+  df.pca <- t(dt[,grepl("donor", colnames(dt))])
+  rpca <- prcomp(df.pca)
+  # assign pca labels with perc. sd
+  percv <- round(100*rpca$sdev/sum(rpca$sdev),0)
+  colnames(rpca$x) <- paste0(colnames(rpca$x), " (",percv,"%)")
+  # make scatterplot
+  num.markers <- length(unique(dt$marker))
+  num.types <- length(unique(dt$type))
+  dfp <- as.data.frame(rpca$x)
+  dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
+  dfp$donor <- rownames(df.pca)
+  dfp$donor.summary <- ifelse(grepl("mean|median", dfp$donor), TRUE, FALSE)
+  ggplot(dfp, aes(x = x, y = y, color = donor, shape = donor.summary)) + 
+    geom_point(size = 4, alpha = 0.5) + xlab(colnames(dfp)[1]) +
+    ylab(colnames(dfp)[2]) + 
+    ggtitle(paste0("PCA across markers; ",
+                   "Num. markers = ", num.markers, 
+                   "; Num. types = ", num.types))
+  # make screeplot
+  
+}
+
+#' pca_bydonortype
+#'
+#' Get analysis results and plots for PCA by donor and type, across markers.
+#' 
+#' 
+#' 
+#'
+pca_bydonortype <- function(dt, verbose = FALSE){
+  
 }

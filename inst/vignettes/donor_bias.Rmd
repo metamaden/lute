@@ -26,11 +26,8 @@ dt
 Next, we generate the combined marker signals from the provided donors.
 
 ```{r}
-# get mean of signals from all donors
 dt$donor.combn.all.mean <- apply(dt[,grepl("donor", colnames(dt))], 1, mean)
 dt$donor.combn.all.median <- apply(dt[,grepl("donor", colnames(dt))], 1, median)
-# get list of combination indices
-# lc <- lapply(seq(2,(ndonor-1)), function(ii)combn(ndonor, ii))
 ```
 
 # Plots -- marker signals
