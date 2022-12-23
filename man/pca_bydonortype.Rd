@@ -4,7 +4,22 @@
 \alias{pca_bydonortype}
 \title{pca_bydonortype}
 \usage{
-pca_bydonortype(dt, verbose = FALSE)
+pca_bydonortype(
+  dt,
+  test.md = list(test = "pca", test.type = "by donor;type"),
+  verbose = FALSE
+)
+}
+\arguments{
+\item{dt}{Data table containing the donors (rows) by marker signals (columns)
+for each marker and type.}
+
+\item{test.md}{Metadata info to be returned with test results}
+
+\item{verbose}{Whether to show verbose status messages.}
+}
+\value{
+lr, results list containing PCA results data, ggplots, and metadata.
 }
 \description{
 Get analysis results and plots for PCA by donor and type, across markers.

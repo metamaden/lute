@@ -131,8 +131,8 @@ pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor")
     theme_bw() + ggtitle(title.str.scree) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   # make return list
-  lr <- list(pca.results = rpca, scatterplot = gg.pt, screeplot = gg.bp, 
-             metadata = test.md)
+  lr <- list(pca.results = rpca, scatterplot.pc1.pc2 = gg.pt, 
+             screeplot = gg.bp, metadata = test.md)
   return(lr)
 }
 
@@ -140,9 +140,58 @@ pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor")
 #'
 #' Get analysis results and plots for PCA by donor and type, across markers.
 #' 
-#' 
-#' 
-#'
-pca_bydonortype <- function(dt, verbose = FALSE){
-  
+#' @param dt Data table containing the donors (rows) by marker signals (columns)
+#' for each marker and type.
+#' @param test.md Metadata info to be returned with test results
+#' @param verbose Whether to show verbose status messages.
+#' @returns lr, results list containing PCA results data, ggplots, and metadata.
+#' @export
+pca_bydonortype <- function(dt, 
+                            test.md = list(test = "pca", 
+                                           test.type = "by donor;type"), 
+                            verbose = FALSE){
+  # get pca results
+  ntype <- length(unique(dt$type))
+  cndv <- colnames(dt)[grepl("^donor.*", colnames(dt))]
+  ndonorcat <- length(cndv)
+  catv <- paste0(rep(cndv, each = ntype), ";", 
+                 rep(paste0("type", seq(ntype)), times = ndonorcat))
+  df.pca <- do.call(rbind, lapply(catv, function(cati){
+    colfilt <- grepl(gsub(";.*", "", cati), colnames(dt))
+    rowfilt <- grepl(gsub(".*;", "", cati), dt$type)
+    dtf <- dt[rowfilt, colfilt]
+  }))
+  rownames(df.pca) <- catv; rpca <- prcomp(df.pca)
+  # assign pc labels
+  percv <- round(100*rpca$sdev/sum(rpca$sdev),0)
+  colnames(rpca$x) <- paste0(colnames(rpca$x), " (",percv,"%)")
+  # make scatterplot
+  dfp <- as.data.frame(rpca$x); dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
+  dfp$donor <- gsub(";.*", "", rownames(df.pca))
+  dfp$type <- gsub(".*;", "", rownames(df.pca))
+  title.str <- paste0("PCA by donor, marker; Num. markers = ", ncol(df.pca))
+  # plot scatterplot, first 2 pc's
+  gg.pt <- ggplot(dfp, aes(x = x, y = y, color = donor, shape = type)) + 
+    geom_point(size = 4, alpha = 0.5) + ggtitle(title.str) +
+    xlab(colnames(dfp)[1]) + ylab(colnames(dfp)[2])
+  # get screeplot data
+  dfp2 <- data.frame(pc = colnames(rpca$x), sd = rpca$sdev)
+  title.str.scree <- paste0("Num. markers = ", ncol(df.pca))
+  # make screeplot
+  gg.bp <- ggplot(dfp2, aes(x = pc, y = sd)) + geom_bar(stat="identity") + 
+    theme_bw() + ggtitle(title.str.scree) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  # get return object
+  lr <- list(pca.results = rpca, scatterplot.pc1.pc2 = gg.pt, 
+             screeplot = gg.bp, metadata = test.md)
+  if(ncol(rpca$x) > 2){ # plot ggpairs
+    if(verbose){message("Making ggpairs scatterplots for >2 PCs...")}
+    title.str.pairs <- paste0("Num. markers = ", ncol(df.pca))
+    gg.pairs <- ggpairs(dfp, top = list(continuous="na"), 
+                        columns = seq(ncol(df.pca)), 
+                        map = ggplot2::aes(color=donor, shape=type),
+                        title = title.str.pairs)
+    lr$pairs = gg.pairs
+  }
+  return(lr)
 }

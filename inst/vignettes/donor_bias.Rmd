@@ -36,50 +36,17 @@ PCA by donor
 
 ```{r}
 lpca <- pca_bydonor(dt)
-lpca$scatterplot
+lpca$scatterplot.pc1.pc2
 lpca$screeplot
 ```
 
 PCA by donor;type
 
 ```{r}
-ntype <- length(unique(dt$type))
-cndv <- colnames(dt)[grepl("^donor.*", colnames(dt))]
-ndonorcat <- length(cndv)
-catv <- paste0(rep(cndv, each = ntype), ";", 
-               rep(paste0("type", seq(ntype)), times = ndonorcat))
-df.pca <- do.call(rbind, lapply(catv, function(cati){
-  colfilt <- grepl(gsub(";.*", "", cati), colnames(dt))
-  rowfilt <- grepl(gsub(".*;", "", cati), dt$type)
-  dtf <- dt[rowfilt, colfilt]
-}))
-rownames(df.pca) <- catv
-rpca <- prcomp(df.pca)
-# assign pca labels with perc. sd
-percv <- round(100*rpca$sdev/sum(rpca$sdev),0)
-colnames(rpca$x) <- paste0(colnames(rpca$x), " (",percv,"%)")
-# make scatterplot
-dfp <- as.data.frame(rpca$x)
-dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
-dfp$donor <- gsub(";.*", "", rownames(df.pca))
-dfp$type <- gsub(".*;", "", rownames(df.pca))
-ggplot(dfp, aes(x = x, y = y, color = donor, shape = type)) + 
-  geom_point(size = 4, alpha = 0.5) + 
-  ggtitle(paste0("PCA by donor, marker; Num. markers = ", ncol(df.pca))) +
-  xlab(colnames(dfp)[1]) + ylab(colnames(dfp)[2])
-```
-
-```{r}
-ggpairs(dfp, top = list(continuous="na"), columns = seq(ncol(df.pca)), 
-        map = ggplot2::aes(color=donor, shape=type), 
-        title = paste0("Num. markers = ", ncol(df.pca)))
-```
-
-```{r}
-dfp <- data.frame(pc = colnames(rpca$x), sd = rpca$sdev)
-ggplot(dfp, aes(x = pc, y = sd)) + geom_bar(stat="identity") + theme_bw() +
-  ggtitle(paste0("Num. markers = ", ncol(df.pca))) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+lpca2 <- pca_bydonortype(dt)
+lpca2$scatterplot.pc1.pc2
+lpca2$pairs
+lpca2$screeplot
 ```
 Predictions by donor
 
