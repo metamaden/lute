@@ -28,8 +28,8 @@ offsetv <- c(2, 5, 10)
 lexpt <- lapply(offsetv, function(offi){
   donor_marker_experiment(gindexv = c(1,2),
                           ndonor = ndonor,
-                          mean.offset.pos = offi,
-                          mean.offset.neg = offi)
+                          sd.offset.pos = offi,
+                          sd.offset.neg = offi)
 })
 names(lexpt) <- paste0("offset:", offsetv)
 ```
@@ -42,24 +42,38 @@ knitr::kable(lexpt$`offset:5`$marker.table)
 knitr::kable(lexpt$`offset:10`$marker.table)
 ```
 
-## PCA of donor bias
+## Marker bias plots
 
-PCA by donor, when offset is lowest (2)
+### PC1 vs. PC2 of donor bias
 
 ```{r}
 lexpt$`offset:2`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
-```
-
-PCA by donor, when offset is intermediate (5)
-
-```{r}
 lexpt$`offset:5`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
+lexpt$`offset:10`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
 ```
 
-PCA by donor, when offset is highest (10)
+### PC1 vs. PC2 of donor, marker variances
 
 ```{r}
-lexpt$`offset:10`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
+lexpt$`offset:2`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
+lexpt$`offset:5`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
+lexpt$`offset:10`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
+```
+
+### Screeplots, PCA by donor
+
+```{r}
+lexpt$`offset:2`$lpca.markers$pca.bydonor$screeplot
+lexpt$`offset:5`$lpca.markers$pca.bydonor$screeplot
+lexpt$`offset:10`$lpca.markers$pca.bydonor$screeplot
+```
+
+### Screeplots, PCA by donor;type
+
+```{r}
+lexpt$`offset:2`$lpca.markers$pca.bydonortype$screeplot
+lexpt$`offset:5`$lpca.markers$pca.bydonortype$screeplot
+lexpt$`offset:10`$lpca.markers$pca.bydonortype$screeplot
 ```
 
 # Randomize donor data

@@ -37,6 +37,7 @@ donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
                                     num.sim = 1, sd.offset.pos = 5, 
                                     sd.offset.neg = 5, lpv = NULL, lsv = NULL, 
                                     run.decon = TRUE, seed.num = 0, 
+                                    plot.title.append = NULL,
                                     verbose = FALSE, ...){
   if(verbose){message("Getting random marker table...")}
   dt <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, 
@@ -44,7 +45,8 @@ donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
                                 sd.offset.pos = sd.offset.pos,
                                 sd.offset.neg = sd.offset.neg, 
                                 ...)
-  lr <- list(marker.table = dt, lpca.markers = pcaplots_donor(dt))
+  lpca.markers <- pcaplots_donor(dt, plot.title.append)
+  lr <- list(marker.table = dt, lpca.markers = lpca.markers)
   # manage deconvolution experiments
   if(run.decon){
     if(verbose){message("Running deconvolution experiment...")}
@@ -150,13 +152,14 @@ rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), ktotal = 2,
 #' and type, across markers.
 #' 
 #' @param dt Donor marker signals table.
+#' @param title.append Optional string to append to plot titles.
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments passed to PCA functions.
 #' @returns list of PCA results, plots, and metadata
 #' @export
-pcaplots_donor <- function(dt, verbose = FALSE, ...){
-  list(pca.bydonor = pca_bydonor(dt, ...), 
-       pca.bydonortype = pca_bydonortype(dt, ...))
+pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
+  list(pca.bydonor = pca_bydonor(dt, title.append = title.append, ...), 
+       pca.bydonortype = pca_bydonortype(dt, title.append = title.append, ...))
 }
 
 #------
@@ -170,11 +173,12 @@ pcaplots_donor <- function(dt, verbose = FALSE, ...){
 #' @param dt Data table containing the donors (rows) by marker signals (columns)
 #' for each marker and type.
 #' @param test.md Metadata info to be returned with test results
+#' @param title.append Optional string to append to plot titles.
 #' @param verbose Whether to show verbose status messages.
 #' @returns lr, results list containing PCA results data, ggplots, and metadata.
 #' @export
 pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor"), 
-                        verbose = FALSE){
+                        title.append = NULL, verbose = FALSE){
   require(ggplot2)
   # run pca
   df.pca <- t(dt[,grepl("donor", colnames(dt))]); rpca <- prcomp(df.pca)
@@ -188,16 +192,20 @@ pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor")
   dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
   dfp$donor <- rownames(df.pca)
   dfp$donor.summary <- ifelse(grepl("mean|median", dfp$donor), TRUE, FALSE)
-  title.str <- paste0("PCA across markers; Num. markers = ", num.markers, 
+  title.str.pt <- paste0("PCA across markers; Num. markers = ", num.markers, 
                       "; Num. types = ", num.types)
+  if(!is(title.append, "NULL")){
+    title.str.pt <- paste0(title.append, title.str.pt)}
   # make scatterplot
   gg.pt <- ggplot(dfp, aes(x = x, y = y, color = donor, 
                            shape = donor.summary)) + 
     geom_point(size = 4, alpha = 0.5) + xlab(colnames(dfp)[1]) +
-    ylab(colnames(dfp)[2]) + ggtitle(title.str)
+    ylab(colnames(dfp)[2]) + ggtitle(title.str.pt)
   # get screeplot data
   dfp <- data.frame(pc = colnames(rpca$x), sd = rpca$sdev)
   title.str.scree <- paste0("Screeplot; Num. markers = ", ncol(df.pca)) 
+  if(!is(title.append, "NULL")){
+    title.str.scree <- paste0(title.append, title.str.scree)}
   # make screeplot
   gg.bp <- ggplot(dfp, aes(x = pc, y = sd)) + geom_bar(stat="identity") + 
     theme_bw() + ggtitle(title.str.scree) +
@@ -215,13 +223,14 @@ pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor")
 #' @param dt Data table containing the donors (rows) by marker signals (columns)
 #' for each marker and type.
 #' @param test.md Metadata info to be returned with test results
+#' @param title.append Optional string to append to plot titles.
 #' @param verbose Whether to show verbose status messages.
 #' @returns lr, results list containing PCA results data, ggplots, and metadata.
 #' @export
 pca_bydonortype <- function(dt, 
                             test.md = list(test = "pca", 
-                                           test.type = "by donor;type"), 
-                            verbose = FALSE){
+                                           test.type = "by donor;type"),
+                            title.append = NULL, verbose = FALSE){
   require(ggplot2)
   # run pca
   ntype <- length(unique(dt$type))
@@ -242,14 +251,18 @@ pca_bydonortype <- function(dt,
   dfp <- as.data.frame(rpca$x); dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
   dfp$donor <- gsub(";.*", "", rownames(df.pca))
   dfp$type <- gsub(".*;", "", rownames(df.pca))
-  title.str <- paste0("PCA by donor, marker; Num. markers = ", ncol(df.pca))
+  title.str.pt <- paste0("PCA by donor, marker; Num. markers = ", ncol(df.pca))
+  if(!is(title.append, "NULL")){
+    title.str.pt <- paste0(title.append, title.str.pt)}
   # plot scatterplot, first 2 pc's
   gg.pt <- ggplot(dfp, aes(x = x, y = y, color = donor, shape = type)) + 
-    geom_point(size = 4, alpha = 0.5) + ggtitle(title.str) +
+    geom_point(size = 4, alpha = 0.5) + ggtitle(title.str.pt) +
     xlab(colnames(dfp)[1]) + ylab(colnames(dfp)[2])
   # get screeplot data
   dfp2 <- data.frame(pc = colnames(rpca$x), sd = rpca$sdev)
   title.str.scree <- paste0("Num. markers = ", ncol(df.pca))
+  if(!is(title.append, "NULL")){
+    title.str.scree <- paste0(title.append, title.str.scree)}
   # make screeplot
   gg.bp <- ggplot(dfp2, aes(x = pc, y = sd)) + geom_bar(stat="identity") + 
     theme_bw() + ggtitle(title.str.scree) +
@@ -260,6 +273,8 @@ pca_bydonortype <- function(dt,
   if(ncol(rpca$x) > 2){ # plot ggpairs
     if(verbose){message("Making ggpairs scatterplots for >2 PCs...")}
     title.str.pairs <- paste0("Num. markers = ", ncol(df.pca))
+    if(!is(title.append, "NULL")){
+      title.str.pairs <- paste0(title.append, title.str.pairs)}
     gg.pairs <- ggpairs(dfp, top = list(continuous="na"), 
                         columns = seq(ncol(df.pca)), 
                         map = ggplot2::aes(color=donor, shape=type),
