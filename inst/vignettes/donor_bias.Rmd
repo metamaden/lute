@@ -231,3 +231,134 @@ lexpt$`offset:2`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
 lexpt$`offset:5`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
 lexpt$`offset:10`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
 ```
+
+### Screeplots, PCA by donor
+
+```{r}
+lexpt$`offset:2`$lpca.markers$pca.bydonor$screeplot
+lexpt$`offset:5`$lpca.markers$pca.bydonor$screeplot
+lexpt$`offset:10`$lpca.markers$pca.bydonor$screeplot
+```
+
+### Screeplots, PCA by donor;type
+
+```{r}
+lexpt$`offset:2`$lpca.markers$pca.bydonortype$screeplot
+lexpt$`offset:5`$lpca.markers$pca.bydonortype$screeplot
+lexpt$`offset:10`$lpca.markers$pca.bydonortype$screeplot
+```
+
+
+## Deconvolution results -- all tests
+
+### Results table
+
+```{r}
+# get all results
+dfres <- do.call(rbind, lapply(offsetv, function(offi){
+  lres <- lexpt[grepl(paste0("offset:",offi,"$"), names(lexpt))][[1]]$decon.results
+  dfresi <- do.call(rbind, lapply(lres, function(resi){resi$dfres}))
+  dfresi <- as.data.frame(dfresi)
+  dfresi$offset <- offi
+  dfresi
+}))
+```
+
+### Bias violin plots
+
+```{r}
+dfres$offset <- as.factor(dfres$offset)
+
+ggplot(dfres, aes(x = offset, y = bias1)) + geom_violin(draw_quantiles = 0.5) +
+  theme_bw() + ggtitle("Bias1") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(dfres, aes(x = offset, y = bias2)) + geom_violin(draw_quantiles = 0.5) +
+  theme_bw() + ggtitle("Bias2") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Bias scatterplots
+
+```{r}
+ggpt <- ggplot(dfres, aes(x = bias1, y = bias2, color = offset)) + geom_point(alpha = 0.5)
+ggpt
+ggpt + facet_wrap(~offset)
+```
+
+### RMSE violin plot
+
+```{r}
+ggplot(dfres, aes(x = offset, y = rmse, fill = offset)) + 
+  geom_violin(draw_quantiles = 0.5) + theme_bw() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Deconvolution results -- without S transformations
+
+### Results table
+
+```{r}
+dfres.all <- dfres
+dfres <- dfres.all[dfres.all$zs_transform==FALSE,]
+```
+
+### Bias violin plots
+
+```{r}
+dfres$offset <- as.factor(dfres$offset)
+
+ggplot(dfres, aes(x = offset, y = bias1)) + geom_violin(draw_quantiles = 0.5) +
+  theme_bw() + ggtitle("Bias1") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(dfres, aes(x = offset, y = bias2)) + geom_violin(draw_quantiles = 0.5) +
+  theme_bw() + ggtitle("Bias2") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Bias scatterplots
+
+```{r}
+ggpt <- ggplot(dfres, aes(x = bias1, y = bias2, color = offset)) + geom_point(alpha = 0.5)
+ggpt
+ggpt + facet_wrap(~offset)
+```
+
+### RMSE violin plot
+
+```{r}
+ggplot(dfres, aes(x = offset, y = rmse, fill = offset)) + 
+  geom_violin(draw_quantiles = 0.5) + theme_bw() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Deconvolution results -- with S transformations
+
+```{r}
+dfres <- dfres.all[dfres.all$zs_transform==TRUE,]
+```
+
+### Bias violin plots
+
+```{r}
+dfres$offset <- as.factor(dfres$offset)
+
+ggplot(dfres, aes(x = offset, y = bias1)) + geom_violin(draw_quantiles = 0.5) +
+  theme_bw() + ggtitle("Bias1") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(dfres, aes(x = offset, y = bias2)) + geom_violin(draw_quantiles = 0.5) +
+  theme_bw() + ggtitle("Bias2") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Bias scatterplots
+
+```{r}
+ggpt <- ggplot(dfres, aes(x = bias1, y = bias2, color = offset)) + geom_point(alpha = 0.5)
+ggpt
+ggpt + facet_wrap(~offset) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### RMSE violin plot
+
+```{r}
+ggplot(dfres, aes(x = offset, y = rmse, fill = offset)) + 
+  geom_violin(draw_quantiles = 0.5) + theme_bw() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
