@@ -123,8 +123,8 @@ rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), ktotal = 2,
   meanv.pos <- offposv + lambda.pos
   meanv.neg <- offnegv + lambda.neg
   # convert negative means
-  meanv.pos[meanv.pos < 0] <- -1*meanv.pos
-  meanv.neg[meanv.neg < 0] <- -1*meanv.neg
+  meanv.pos[meanv.pos < 0] <- -1*meanv.pos[meanv.pos < 0]
+  meanv.neg[meanv.neg < 0] <- -1*meanv.neg[meanv.neg < 0]
   # get matrix of markers (rows) by donors (cols)
   md <- do.call(cbind, lapply(seq(ndonor), function(ii){
     unlist(random_lgv(gindexv, num.iter = 1, ktotal = ktotal,
