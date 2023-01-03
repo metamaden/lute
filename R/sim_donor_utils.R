@@ -45,7 +45,7 @@ donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
                                 sd.offset.pos = sd.offset.pos,
                                 sd.offset.neg = sd.offset.neg, 
                                 ...)
-  lpca.markers <- pcaplots_donor(dt, plot.title.append)
+  lpca.markers <- pcaplots_donor(dt = dt, title.append = plot.title.append)
   lr <- list(marker.table = dt, lpca.markers = lpca.markers)
   # manage deconvolution experiments
   if(run.decon){
@@ -158,8 +158,8 @@ rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), ktotal = 2,
 #' @returns list of PCA results, plots, and metadata
 #' @export
 pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
-  list(pca.bydonor = pca_bydonor(dt, title.append = title.append, ...), 
-       pca.bydonortype = pca_bydonortype(dt, title.append = title.append, ...))
+  list(pca.bydonor = pca_bydonor(dt= dt, title.append = title.append, ...), 
+       pca.bydonortype = pca_bydonortype(dt = dt, title.append = title.append, ...))
 }
 
 #------
@@ -239,9 +239,11 @@ pca_bydonortype <- function(dt,
   catv <- paste0(rep(cndv, each = ntype), ";", 
                  rep(paste0("type", seq(ntype)), times = ndonorcat))
   df.pca <- do.call(rbind, lapply(catv, function(cati){
-    colfilt <- grepl(gsub(";.*", "", cati), colnames(dt))
-    rowfilt <- grepl(gsub(".*;", "", cati), dt$type)
-    dtf <- dt[rowfilt, colfilt]
+    donor.str.filt <- paste0(gsub(";.*", "", cati), "$")
+    type.str.filt <- paste0(gsub(".*;", "", cati), "$")
+    colfilt <- grepl(donor.str.filt, colnames(dt))
+    rowfilt <- grepl(type.str.filt, dt$type)
+    dt[rowfilt, colfilt]
   }))
   rownames(df.pca) <- catv; rpca <- prcomp(df.pca)
   # assign pc labels
