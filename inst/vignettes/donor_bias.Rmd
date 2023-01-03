@@ -41,9 +41,9 @@ names(lexpt) <- paste0("offset:", offsetv)
 ## Randomized marker data
 
 ```{r}
-knitr::kable(lexpt$`offset:2`$marker.table)
-knitr::kable(lexpt$`offset:5`$marker.table)
-knitr::kable(lexpt$`offset:10`$marker.table)
+knitr::kable(lexpt$`offset:2`$marker.table, align = "c")
+knitr::kable(lexpt$`offset:5`$marker.table, align = "c")
+knitr::kable(lexpt$`offset:10`$marker.table, align = "c")
 ```
 
 ## Marker bias plots
@@ -194,3 +194,40 @@ ggplot(dfres, aes(x = offset, y = rmse, fill = offset)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+# Experiment series 1: ndonors = 10
+
+Building on the simple 2-donors case above, we now simulate 10 donors with the 
+same progression in random offset increase.
+
+```{r}
+ndonor = 10
+gindexv = c(1, 2)
+offsetv <- c(2, 5, 10)
+num.sim <- 50
+lexpt <- lapply(offsetv, function(offi){
+  title.append <- paste0("Offset = ", offi, "\n")
+  donor_marker_experiment(gindexv = c(1,2), num.sim = num.sim, ndonor = ndonor,
+                          plot.title.append = title.append,
+                          sd.offset.pos = offi,
+                          sd.offset.neg = offi)
+})
+names(lexpt) <- paste0("offset:", offsetv)
+```
+
+## Marker bias plots
+
+### PC1 vs. PC2 of donor bias
+
+```{r}
+lexpt$`offset:2`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
+lexpt$`offset:5`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
+lexpt$`offset:10`$lpca.markers$pca.bydonor$scatterplot.pc1.pc2
+```
+
+### PC1 vs. PC2 of donor, marker variances
+
+```{r}
+lexpt$`offset:2`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
+lexpt$`offset:5`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
+lexpt$`offset:10`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
+```
