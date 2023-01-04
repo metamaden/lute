@@ -3,8 +3,10 @@ title: "Size factor experiments"
 author: "Sean Maden"
 date: "2022-12-08"
 output:
-  pdf_document: default
-  html_document: default
+  pdf_document:
+    number_sections: true
+  html_document: 
+    number_sections: true
 ---
 
 This vignette demonstrates the principle of type-specific factor transformations 
@@ -17,7 +19,15 @@ libv <- c("lute")
 sapply(libv, library, character.only = TRUE)
 ```
 
-# Summary
+# Table of contents
+
+[Overview](#summary)
+
+[Simulations](#simulations)
+
+[Conclusions](#conclusions)
+
+# Overview
 
 ## Terminology
 
@@ -38,27 +48,31 @@ markers (e.g. marker genes), and $K$ is the set of types (e.g. cell types).
 
 * $P$ : The type-specific proportions, represented as a vector of length $K$.
 
-## Methods for calculating $Z$
+## Methods for calculating Z
 
-We wish to predict $P$ using some $Y$ and $Z$. When the type-specific factors
+We wish to predict $P$ using some $Y$ and $Z$. When the type-specific factors/sizes
 in $S$ are known or can be reliably estimated, we have the following options for 
 representing $Z$:
 
 1. $Z_{1} = Z$ : This is the unadjusted representation of the signature signals by type.
 
 2. $Z_{2} = Z*S$ : This is the signature signals adjusted, or multiplied, by the 
-type-specific sizes.
+type-specific factors or sizes.
 
-## Simulation experiment details
+## Simulation experiments
 
-Below, we will show the impact of the $S$ transformation on the $P$ predictions
-from deconvolution. We will generate the objects $Z$, $S$, and $P$, then generate 
-the pseudobulked $Y$ data as the product of $Z*S*P$. We then predict $P$ using the
-two methods of calculating $Z$ (see above). 
+Below, we will show the impact of transformation $Z$ on some $S$. We evaluate the 
+transformation's impact on the $P$ predictions from deconvolution. For each simulation,
+we generate the objects $Z$, $S$, and $P$, then we generate the pseudobulked $Y$ data 
+as the product of $Z*S*P$. Finally, we predict $P$ using the two methods of 
+calculating $Z$ ([see above](#methods-for-calculating-z)). For these experiments, we set the total types to be 
+two or $K = 2$, and we set the total markers to be two or $G = 2$. 
 
-We will perform a series of three experiments total where we vary the type-specific 
-factors of $S$ in each series. In other words, we vary the relative sizes of each 
-type ($s_{1}$ for type 1/$k_{1}$ and $s_{2}$ for type2/$k_{2}$) in the following ways: 
+We will consider the $S$ factors to represent the true sizes of the simulated cell 
+types, and our terminology below will reflect this. We perform three experiments 
+where we vary the type-specific sizes of $S$ in each. In other words, we vary the 
+relative sizes of each type ($s_{1}$ for type 1 (or $k_{1}$) and $s_{2}$ for type 
+2 (or $k_{2}$) in the following ways: 
 
 *(A) Cell sizes equal:*
 $$s_{1} == s_{2}$$
@@ -69,6 +83,9 @@ $$s_{1} \approx s_{2}$$
 *(C) Cell sizes very different:*
 size of type $k_{2}$
 $$s_{1} \gg s_{2}$$ 
+
+Each experiment consists of a series of 1,000 simulations wherein the proportions 
+of two simulated types are themselves varied in complementary fashion ([see below](#experiment-setup)). 
 
 ## Results evaluations
 
@@ -126,20 +143,20 @@ lpv <- make_lpv()
 
 That's all there is to the basic simulation setup.
 
-## Experiment series A -- cell sizes equal
+## Experiment series A
 
-Specify equal cell sizes as `size1` and `size`, then store these as a list `lsv` 
-having the same length as the object `lgv` above. These list lengths correspond 
-to the total simulations to be run in the series.
+Specify equal cell sizes as `size1` and `size2` ($s_{1} = s_{2}$), then store 
+these as a list `lsv` having the same length as the object `lgv` above. These 
+list lengths correspond to the total simulations to be run in the series.
 
 ```{r}
 size1 <- size2 <- 1
 lsv <- lapply(seq(num.sim), function(ii){c(size1, size2)})
 ```
 
-We now run deconvolution simulations using the `decon_analysis()` function (see 
-`?decon_analysis` for details) and providing the marker gene signals `lgv`, cell 
-sizes `lsv`, and proportions `lpv`.
+We now run deconvolution simulations using the `decon_analysis()` function and 
+providing the marker gene signals `lgv`, cell sizes `lsv`, and proportions `lpv`
+(see `?decon_analysis` for details).
 
 ```{r, message=F}
 lres <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv)
@@ -153,11 +170,12 @@ lres$lgg$ggvp
 lres$lgg$ggpt2
 ```
 
-## Experiment series B -- type sizes similar
+## Experiment series B
 
-For this series, we set the type-specific sizes to be slightly different. We will
-set type 1's size to be 100 and type 2's size to be 95, then run a new simulation 
-series. Finally, we will view the summary plots as before.
+For this series, we set the type-specific sizes to be slightly different 
+($s_{1} \approx s_{2}$). We will set type 1's size to be 100 and type 2's size 
+to be 95, then run a new simulation series. Finally, we will view the summary 
+plots as before.
 
 ```{r, message=F}
 size1 <- 100
@@ -169,11 +187,11 @@ lres$lgg$ggvp
 lres$lgg$ggpt2
 ```
 
-## Experiment series C -- types very different
+## Experiment series C
 
-For this series, we make type 1 much larger than type 2. We will set type 1 to
-have size 1000 and type 2 to have size 1, then run and summarize simulations as
-above.
+For this series, we make type 1 much larger than type 2 ($s_{1} \gg s_{2}$). We 
+will set type 1 to have size 1000 and type 2 to have size 1, then run and summarize 
+simulations as above.
 
 ```{r, message=F}
 size1 <- 1e3
@@ -191,13 +209,15 @@ In this vignette, we showed a simple experiment evaluating the impact of a
 transformation on type-specific factor transformation on deconvolution simulation 
 outcomes. We measured outcomes using RMSE across types, and comparing data in 
 visualizations for the case of predictions using either the (1) unadjusted signals 
-matrix $Z$, or (2) the adjusted signals matrix $Z*S$. 
+matrix $Z$, or (2) the adjusted signals matrix $Z*S$ 
+([see above](#methods-for-calculating-z) for details). 
 
-In experiment series A, we see a validation of the design (a.k.a. "sanity check") 
+In [experiment series A](#experiment-series-a), we see a validation of the design (a.k.a. "sanity check") 
 where results are virtually identical for the two conditions when cell sizes are equal.
-In series B, when cell sizes differ just slightly, we see noticeably lower RMSE 
+In [series B](#experiment-series-b), when cell sizes differ just slightly, we see noticeably lower RMSE 
 for most simulations in the case of (2), denoted as`zs_transform == TRUE` or the 
-teal color in the plots. In series C, when cell sizes are drastically different,
-we see even lower RMSE for (2)/`zs_transform == TRUE`. These findings show the 
-importance of correcting on a type-specific factor when present in the convoluted
-signals matrix $Y$, such as when quantifying expression in bulk tissue RNA-seq data.
+teal color in the plots. In [series C](#experiment-series-c), when cell sizes are 
+drastically different, we see even lower RMSE for (2)/`zs_transform == TRUE`. These 
+findings show the importance of correcting on a type-specific factor when present in 
+the convoluted signals matrix $Y$, such as when quantifying expression in bulk tissue 
+RNA-seq data.
