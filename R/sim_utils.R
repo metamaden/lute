@@ -86,10 +86,12 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
   } else{
     stop("Error, not enough lpv entries provided.")
   }
-  if(length(lsv) >= length(lgv)){
-    lsv <- lsv[1:length(lgv)]
-  } else{
-    stop("Error, not enough lsv entries provided.")
+  if(!is(lsv, "NULL")){
+    if(length(lsv) >= length(lgv)){
+      lsv <- lsv[1:length(lgv)]
+    } else{
+      stop("Error, provided lsv length should equal lgv length.")
+    }
   }
   # run simulations
   lres <- lapply(seq(length(lgv)), function(ii){
@@ -131,6 +133,9 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
     return(lres)
   })
   names(lres) <- paste0("expt", seq(length(lres)))
+  lres[["lpv"]] <- lpv
+  lres[["lgv"]] <- lgv
+  lres[["lsv"]] <- lsv
   return(lres)
 }
 
@@ -172,8 +177,13 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE,
       decon_results(lgv = lgv, lpv = lpv, lsv = lsv, verbose = verbose))
   }
   if(verbose){message("Appending results data.frames together...")}
+  lresf <- lres[grepl("expt", names(lres))]
   dfres <- do.call(rbind, lapply(lres, function(ii){ii$dfres}))
   if(verbose){message("Appending experiment data to results data.frame...")}
+  # reassign param lists from results list
+  lpv <- lres$lpv
+  lsv <- lres$lsv
+  lgv <- lres$lgv
   kv <- length(lpv[[1]])
   for(ki in seq(kv)){
     dfres$newprop <- unlist(lapply(lpv, function(ii){ii[1]}))
