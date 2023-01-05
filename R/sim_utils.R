@@ -186,8 +186,10 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE,
   lgv <- lres$lgv
   kv <- length(lpv[[1]])
   for(ki in seq(kv)){
-    dfres$newprop <- unlist(lapply(lpv, function(ii){ii[1]}))
-    dfres$news <- unlist(lapply(lsv, function(ii){ii[1]}))
+    indexv <- as.numeric(gsub("expt", "", dfres$expt)) # index (e.g. for rep)
+    new.propv <- unlist(lapply(lpv, function(ii){ii[1]}))[indexv]
+    new.sv <- unlist(lapply(lsv, function(ii){ii[1]}))[indexv]
+    dfres$newprop <- new.propv; dfres$news <- new.sv
     colnames(dfres)[(ncol(dfres)-1):ncol(dfres)] <- paste0(
       c("prop_k", "sfact_k"), ki)
   }
