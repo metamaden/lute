@@ -4,9 +4,12 @@
 \alias{decon_analysis}
 \title{decon_analysis}
 \usage{
-decon_analysis(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, sce = NULL, ...)
+decon_analysis(lgv, lpv, lsv, verbose = FALSE, sce = NULL, ...)
 }
 \arguments{
+\item{lgv}{List of marker expression for reference/signature matrix Z. If 
+length(lgv) > length(lpv), only use up to the number of iterations in lpv.}
+
 \item{lpv}{List of type proportions to make Y and compare p predictions. The
 length of this list is considered the target number of simulation iterations 
 for the run.}
@@ -16,9 +19,6 @@ up to the number of iterations in lpv. If NULL, S-transformation experiments
 aren't performed, and Y is calculated as $P*Z$ rather than $P*ZS$.}
 
 \item{verbose}{Whether to show verbose status updates.}
-
-\item{lgv}{List of marker expression for reference/signature matrix Z. If 
-length(lgv) > length(lpv), only use up to the number of iterations in lpv.}
 
 \item{sce}{SingleCellExperiment or SummarizedExperiment object.}
 
