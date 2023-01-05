@@ -80,6 +80,18 @@ predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE,
 decon_results <- function(lgv, lpv, lsv, strict_method = "nnls", 
                           proportions = TRUE, verbose = FALSE){
   if(verbose){message("found ",length(lgv)," expt to run...")}
+  # check provided object lengths
+  if(length(lpv) >= length(lgv)){
+    lpv <- lpv[1:length(lgv)]
+  } else{
+    stop("Error, not enough lpv entries provided.")
+  }
+  if(length(lsv) >= length(lgv)){
+    lsv <- lsv[1:length(lgv)]
+  } else{
+    stop("Error, not enough lsv entries provided.")
+  }
+  # run simulations
   lres <- lapply(seq(length(lgv)), function(ii){
     if(verbose){message("Running expt ", ii, " of ",length(lgv),"...")}
     lgi <- lgv[[ii]]
