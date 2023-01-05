@@ -158,38 +158,12 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 # lres <- decon_results(lgv, lpv, lsv)
 #' @seealso decon_results, 
 #' @export
-decon_analysis <- function(lpv, lsv = NULL, verbose = FALSE, lgv = NULL, 
+decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE, 
                            sce = NULL, ...){
-  num.iter <- length(lpv)
+  num.iter <- length(lgv)
   num.types <- length(lpv[[1]])
   if(verbose){message("Prepping ",num.iter," simulation iterations...")}
-  if(is(lgv, "NULL")){
-    cond.sce <- is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment")
-    if(cond.sce){
-      if(verbose){message("Getting type expression from sce object...")}
-      lgv <- kexpr_sce(sce, return.lgv = TRUE, ...)
-      if(!length(lgv) == num.types){
-        mstr <- ifelse(length(lgv) > num.types, "more", "less")
-        stop("Error, sce has ",mstr," types than lpv. Is type.varname correct?")
-      }
-      lgv <- lapply(seq(length(lpv)), function(ii){lgv})
-      } else{stop("Error, provide either lgv or sce.")}
-  }
   # check iterations for each object
-  if(!is(lsv, "NULL")){
-    if(length(lpv)<=length(lsv)){
-      if(verbose){message("Using first ", num.iter, " iterations in lsv.")}
-      lsv <- lsv[seq(num.iter)]
-    } else{
-      stop("Error, lsv length should equal or exceed lpv length.")
-    }
-  }
-  if(length(lpv)<=length(lgv)){
-    if(verbose){message("Using first ", num.iter," iterations in lgv.")}
-    lgv <- lgv[seq(num.iter)]
-  } else{
-    stop("Error, lgv length should equal or exceed lpv length.")
-  }
   if(verbose){
     message("Running deconvolution simulations...")
     lres <- decon_results(lgv = lgv, lpv = lpv, lsv = lsv, verbose = verbose)
