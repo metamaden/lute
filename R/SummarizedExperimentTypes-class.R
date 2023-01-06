@@ -54,12 +54,28 @@ SummarizedExperimentTypesRanges <- function(assays,
 #-----------------------
 # define class functions
 #-----------------------
-#'
-#'
-#'
-#'
-#'
-#'
+#' sce_groupstat
+#' 
+#' Get group-level summary statistics, either on rowData or collapsed colData.
+#' 
+#' @param scef Filtered SingleCellExperiment object. Should reflect the data
+#' for a specific type.
+#' @param groupvar Variable containing group information on scef colData.
+#' @param ugroupv Vector of all unique groups to consider, of which levels in
+#' groupvar entries should be identical or a subset.
+#' @param summarytype Whether to summarize data on rowData (e.g. one entry per 
+#' row/gene), or otherwise use the colData collapsed on means (e.g. take the 
+#' mean expression across cells for each gene, returning one row per type).
+#' @param groupstat Summary statistics to calculate. Can be either of "mean",
+#' "median", "var", "sd", or "numzero" (i.e. number of zero-value entries).
+#' @param verbose Whether to show verbose status messages.
+#' @returns data.frame containing group-level summary statistics for all groups 
+#' specified in ugroupv.
+#' @examples 
+#' sce <- random_sce()
+#' colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
+#' dfg <- sce_groupstat(sce, "donor", c("group1", "group2"), "counts", "colData")
+#' @export
 sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts", 
                           summarytype = "rowData",
                           groupstat = c("mean", "median", 
