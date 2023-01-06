@@ -15,38 +15,45 @@ sapply(libv, library, character.only = TRUE)
 sce <- random_sce()
 
 # assign new group var "donor"
-colData(sce)$donor <- rep(c("donor1", "donor2"), ncol(sce)/2)
+# two donors per type:
+# colData(sce)$donor <- rep(c("donor1", "donor2"), ncol(sce)/2)
+# two donors type1, one donor type2:
+colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
 
 # show donor by type
 table(sce$celltype, sce$donor)
-#       donor1 donor2
-# type1      3      2
-# type2      2      3
 
 #------------------
 # make set from sce
 #------------------
 # set <- set_from_sce(sce, typevar = "celltype", method = "mean")
 
-sce_groupstat <- function(scef, groupvar, assayname = "counts", 
+sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts", 
                           summarytype = "rowData",
                           groupstat = c("mean", "median", 
                                         "var", "sd", "numzero"),
                           verbose = FALSE){
+  groupstat.filt <- groupstat %in% c("mean", "median", "var", "sd", "numzero")
+  groupstat <- groupstat[groupstat.filt]
   if(groupvar %in% colnames(colData(scef))){
     if(verbose){
-      message("Appending group-level statistics for variable: ", groupvar)}
-    num.groups <- length(unique(scef[[groupvar]]))
-    if(num.groups > 1){
-      ugroupv <- unique(scef[[groupvar]])
-      dfg <- do.call(cbind, lapply(ugroupv, function(groupi){
-        if(verbose){message("summarizing group: ", groupi)}
+      message("Appending group-level statistics for variable: ", 
+              groupvar, "...")}
+    dfg <- do.call(cbind, lapply(ugroupv, function(groupi){
+      # make NA matrix
+      dfgi <- as.data.frame(matrix(NA, 
+                                   ncol = length(groupstat)+1, 
+                                   nrow = ifelse(
+                                     summarytype=="colData", 1, 
+                                     nrow(scef))))
+      colnames(dfgi) <- c("num.entries", groupstat)
+      if(groupi %in% scef[[groupvar]]){
         sceff <- scef[,scef[[groupvar]]==groupi]
-        exprff <- as.matrix(assays(sceff)[[assayname]])
+        exprff <- assays(sceff)[[assayname]]
         if(summarytype == "colData"){
-          exprff <- matrix(apply(t(exprff),2,mean), nrow = 1)
+          exprff <- matrix(colMeans(t(exprff)), nrow = 1)
         }
-        dfgi <- data.frame(num.entries = rep(ncol(exprff), nrow(exprff)))
+        dfgi$num.entries <- ncol(exprff)
         if("mean" %in% groupstat){dfgi$mean <- rowMeans(exprff)}
         if("median" %in% groupstat){dfgi$median <- rowMedians(exprff)}
         if("var" %in% groupstat){dfgi$var <- rowVars(exprff)}
@@ -55,18 +62,18 @@ sce_groupstat <- function(scef, groupvar, assayname = "counts",
           dfgi$numzero <- unlist(
             apply(exprff, 1, function(ri){length(which(ri==0))}))
         }
-        if(summarytype == "colData"){
-          colnames(dfgi) <- paste0(groupi, ";colData_means;", colnames(dfgi))
-        } else{
-          colnames(dfgi) <- paste0(groupi, ";", colnames(dfgi))
-        }
-        dfgi
-      }))
-      return(dfg)
-    } else{
-      if(verbose){
-        message("One group detected; skipping group statistics...")}
-    }
+      } else{
+        if(verbose){
+          message("Skipping summary for group: ", 
+                  groupi, "...")}
+      }
+      cnstr <- ";"
+      if(summarytype == "colData"){
+        cnstr <- paste0(cnstr, "colData_means;")}
+      colnames(dfgi) <- paste0(groupi, cnstr, colnames(dfgi))
+      dfgi
+    }))
+    return(dfg)
   } else{
     message("Warning: variable ",groupvar," not found in sce coldata.")
   }
@@ -81,6 +88,7 @@ assayname <- "counts"
 verbose <- TRUE
 typev <- unique(sce[[typevar]])
 expr.sce <- assays(sce)$counts
+ugroupv <- unique(sce[[groupvar]]) # get all possible group lvls
 expr.set <- do.call(cbind, lapply(typev, function(typei){
   if(verbose){message("Summarizing type: ", typei, "...")}
   scef <- sce[,sce[[typevar]]==typei]
@@ -101,9 +109,9 @@ expr.set <- do.call(cbind, lapply(typev, function(typei){
                    min = gene.min)
   # parse group-level statistics
   if(!is(groupvar, "NULL")){
-    dfg <- sce_groupstat(scef = scef, groupvar = groupvar, 
-                         summarytype = "rowData",
-                         assayname = assayname, verbose = verbose)
+    dfg <- sce_groupstat(scef = scef, groupvar = groupvar, ugroupv = ugroupv,
+                         summarytype = "rowData", assayname = assayname, 
+                         verbose = verbose)
     condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(de)
     if(condv){if(verbose){message("Binding group-level data.")}
       de <- cbind(de, dfg)}
@@ -139,8 +147,9 @@ cd <- do.call(rbind, lapply(typev, function(typei){
              sd.zerocount = sd.zerocount)
   # parse group-level statistics
   if(!is(groupvar, "NULL")){
-    dfg <- sce_groupstat(scef = scef, groupvar = groupvar, assayname = assayname, 
-                         summarytype = "colData", verbose = verbose)
+    dfg <- sce_groupstat(scef = scef, groupvar = groupvar, ugroupv = ugroupv, 
+                         assayname = assayname, summarytype = "colData", 
+                         verbose = verbose)
     condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(dfr)
     if(condv){
       if(verbose){message("Binding group-level data.")};dfr <- cbind(dfr, dfg)
