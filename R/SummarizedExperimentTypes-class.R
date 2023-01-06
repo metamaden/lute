@@ -18,7 +18,19 @@ SummarizedExperimentTypes <- function(assays,
                                       gr = GRanges(), 
                                       annotation = "", 
                                       ...) {
-  assays <- Assays(assays, as.null.if.no.assay=TRUE)
+  #assays <- Assays(SimpleList(assays), as.null.if.no.assay=TRUE)
+  new("SummarizedExperimentTypes",
+      SummarizedExperiment(assays = assays, ...), 
+      annotation = annotation
+  )
+}
+
+SummarizedExperimentTypesRanges <- function(assays, 
+                                      type_summary,
+                                      gr = GRanges(), 
+                                      annotation = "", 
+                                      ...) {
+  #assays <- Assays(SimpleList(assays), as.null.if.no.assay=TRUE)
   new("SummarizedExperimentTypes",
       SummarizedExperiment(assays = assays, 
                            rowRanges = as(gr, "GRanges"),
