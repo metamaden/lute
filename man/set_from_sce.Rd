@@ -10,7 +10,7 @@ set_from_sce(
   method = "mean",
   typevar = "celltype",
   assayname = "counts",
-  verbose,
+  verbose = FALSE,
   ...
 )
 }

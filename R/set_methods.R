@@ -97,7 +97,7 @@ sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts",
 #'
 set_from_sce <- function(sce, groupvar = NULL, method = "mean", 
                          typevar = "celltype", assayname = "counts", 
-                         verbose, ...){
+                         verbose = FALSE, ...){
   if(!is(sce, "SingleCellExperiment")){
     stop("sce must be of class SingleCellExperiment.")}
   typev <- unique(sce[[typevar]])
