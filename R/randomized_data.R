@@ -82,13 +82,33 @@ random_lgv <- function(gindexv, ktotal = 2, num.iter = 1, lambda.pos = 25,
 #'
 #' Make a random SingleCellExperiment object.
 #'
-#' @param verbose Whether to show verbose status messsages.
-#'
-random_sce <- function(...){
-  if(verbose){message("Getting random signal data...")}
-  lgv <- random_lgv(...)
-  sce.assays <- do.call(rbind, lgv)
+#' @param num.genes Number of genes to randomize.
+#' @param num.cells Numnber of cells to randomize.
+#' @param num.types Number of cell types to annotate.
+#' @param expr.mean Poisson dist mean for random expression data.
+#' @param seed.num Seed value for randomization of expression data.
+#' @param verbose Whether to show verbose status messages.
+#' @return New randomized SingleCellExperiment object.
+#' @example 
+#' sce <- random_sce()
+#' @export
+random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
+                       expr.mean = 10, verbose = FALSE, seed.num = 0){
+  if(verbose){message("Getting random expression data...")}
+  expr.ct <- matrix(rpois(num.cells*num.genes, lambda = expr.mean), 
+                    ncol=num.cells, nrow=num.genes)
+  if(verbose){message("Getting new colData...")}
+  cellv <- paste0("cell.barcode.", seq(num.cells))
+  cpertype <- round(num.cells/num.types, 0)
+  typev <- c(rep("type1", 5), rep("type2", cpertype))
+  cd <- data.frame(cell.id = cellv, celltype = typev)
+  colnames(expr.ct) <- cellv
+  if(verbose){message("Getting new rowData...")}
+  genev <- paste0("gene", seq(nrow(expr.ct)))
+  rd <- data.frame(gene.id = genev)
+  rownames(expr.ct) <- genev
   if(verbose){message("Making new sce object...")}
-  sce <- SingleCellExperiment(assays = sce.assays)
+  sce <- SingleCellExperiment(assays = list(counts=expr.ct), 
+                              colData = cd, rowData = rd)
   return(sce)
 }
