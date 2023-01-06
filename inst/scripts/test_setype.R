@@ -160,10 +160,6 @@ cd <- do.call(rbind, lapply(typev, function(typei){
 
 
 # get summary stats
-do.call(rbind, lapply())
-
-set.assays <- Assays(SimpleList(as.matrix(mexpr)))
-
 set <- SummarizedExperimentTypes(assays = list(mexpr),
                                  rowData = rd, colData = cd)
 
