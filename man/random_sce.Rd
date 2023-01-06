@@ -4,10 +4,30 @@
 \alias{random_sce}
 \title{random_sce}
 \usage{
-random_sce(...)
+random_sce(
+  num.genes = 20,
+  num.cells = 10,
+  num.types = 2,
+  expr.mean = 10,
+  verbose = FALSE,
+  seed.num = 0
+)
 }
 \arguments{
-\item{verbose}{Whether to show verbose status messsages.}
+\item{num.genes}{Number of genes to randomize.}
+
+\item{num.cells}{Numnber of cells to randomize.}
+
+\item{num.types}{Number of cell types to annotate.}
+
+\item{expr.mean}{Poisson dist mean for random expression data.}
+
+\item{verbose}{Whether to show verbose status messages.}
+
+\item{seed.num}{Seed value for randomization of expression data.}
+}
+\value{
+New randomized SingleCellExperiment object.
 }
 \description{
 Make a random SingleCellExperiment object.

@@ -12,34 +12,7 @@ sapply(libv, library, character.only = TRUE)
 #----------------
 # make sce object
 #----------------
-# set random seed
-set.seed(0)
-
-# example se object
-# get params
-num.genes <- 20
-num.cells <- 10
-num.types <- 2
-expr.mean <- 10
-# get expr
-expr.ct <- matrix(rpois(num.cells*num.genes, lambda = expr.mean), 
-                 ncol=num.cells, nrow=num.genes)
-# get coldata
-cellv <- paste0("cell.barcode.", seq(num.cells))
-cpertype <- round(num.cells/num.types, 0)
-typev <- c(rep("type1", 5), rep("type2", cpertype))
-cd <- data.frame(cell.id = cellv,
-                 celltype = typev)
-colnames(expr.ct) <- cellv
-# get rowdata
-genev <- paste0("gene", seq(nrow(expr.ct)))
-rd <- data.frame(gene.id = genev)
-rownames(expr.ct) <- genev
-
-# make sce object
-sce <- SingleCellExperiment(assays = list(counts=expr.ct), 
-                            colData = cd,
-                            rowData = rd)
+sce <- random_sce()
 
 #------------------
 # make set from sce
