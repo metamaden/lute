@@ -100,11 +100,11 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
                          verbose, ...){
   if(!is(sce, "SingleCellExperiment")){
     stop("sce must be of class SingleCellExperiment.")}
-  reqv <- c("SummarizedExperiment", "SingleCellExperiment")
-  sapply(reqv, require, character.only = TRUE)
   typev <- unique(sce[[typevar]])
   expr.sce <- assays(sce)$counts
-  ugroupv <- unique(sce[[groupvar]]) # get all possible group lvls
+  if(!is(groupvar, "NULL")){
+    ugroupv <- unique(sce[[groupvar]]) # get all possible group lvls
+  }
   expr.set <- do.call(cbind, lapply(typev, function(typei){
     if(verbose){message("Summarizing type: ", typei, "...")}
     scef <- sce[,sce[[typevar]]==typei]
