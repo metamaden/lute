@@ -45,27 +45,122 @@ sce <- random_sce()
 Calling this with defaults produces a small random dataset. You can vary the 
 properties of the random data in the new `sce` object (see `?random_sce`).
 
-Next, we will add group metadata to the new `sce` object. We often want to 
-produce group-level summaries from scRNA-seq datasets. For instance, we may need
-to summarize data by donor or subject in a multi-subject experiment. Let's assign
-new group metadata to `sce` like so:
+## Make a new `SummarizedExperimentTypes` object
+
+Let's call `set_from_sce()` to make the object `set`:
+
+```{r}
+set <- set_from_sce(sce, typevar = "celltype", method = "mean")
+class(set)
+nrow(set)
+identical(rownames(sce), rownames(set))
+ncol(set)
+colnames(set)
+```
+
+We can see that `set` contains the same number of genes as our random `sce` dataset, 
+but the number of columns correspond to the unique groups in `sce`, stored in the
+variable `celltype`, which are `type1` and `type2`.
+
+## Access summary rowData
+
+We can access rowdata, or gene-level metadata, from a `SummarizedExperimentTypes`
+object using `rowData()`, which is the same way as for a regular 
+`SummarizedExperiment` object.
+
+```{r}
+rd <- rowData(set)
+colnames(rd)
+```
+We can see the columns in the `set` rowdata correspond to the summary statistics
+of "var" (for variances), "sdv" (for standard deviations), and "min" (for 
+minimum value), grouped by type (either "type1" or "type2").
+
+The full rowdata object looks like:
+
+```{r}
+knitr::kable(rd, align = "c")
+```
+## Access summary colData
+
+As with the rowdata, we access coldata from `set` using `colData()`, which is 
+again the same as for a regular `SummarizedExperiment` object.
+
+```{r}
+cd <- colData(set)
+colnames(cd)
+```
+
+In the coldata, we see variable "type" for the type labels which are also the 
+assay data columns. We also see "num.cells" which is the number of cells for each
+type, or in other words the number of columns in the `sce` object which were 
+used to make the type summary data. The remaining columns show statistics for
+the number of cells have zero expression for the type, where "num.allzeroexpr"
+is the number of genes for which all cells had zero expression. The last three
+columns "mean.zerocount", "median.zerocount", and "var.zerocount" show the mean,
+median, and variance in the number of cells with zero counts across genes.
+
+The full coldata looks like:
+
+```{r}
+knitr::kable(cd, align = "c")
+```
+
+
+# Example generating group-level summaries
+
+We often want to produce group-level summaries from scRNA-seq datasets. For 
+instance, we may need to summarize data by donor or subject in a multi-subject 
+experiment. Let's now add group metadata to the new `sce` objectlike so:
 
 ```{r}
 colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
 ```
 
-For demonstration, we have added group data such that not all groups are represented
-in all types. This can be viewed with a call to the `table()` function:
+For demonstration, not all groups are represented in all types. This can be 
+viewed with a call to the `table()` function:
 
 ```{r}
 table(sce[["donor"]], sce[["celltype"]])
 ```
 
-We are ready to generate our new `SummarizedExperimentTypes` object.
+We can see that the `type1` does not contain any data from `donor2`. We are 
+ready to generate our new `SummarizedExperimentTypes` object.
 
-## Make a new `SummarizedExperimentTypes` object
+Let's regenerate the `set` object as before, but specifying the group variable
+corresponding to donor ID as `groupvar = "donor"`.
 
+```{r}
+set <- set_from_sce(sce, groupvar = "donor")
+```
 
+## Access group summary rowdata
 
+We can access the new `set` rowdata as above:
 
+```{r}
+rd <- rowData(set)
+colnames(rd)
+```
+
+There's a lot more information in the new rowdata! In addition to summary statistics
+specific to the type (e.g. `"type1"` and `"type2"`), there are new columns for
+summary statistics relating to the groups by type (e.g. `"type1;donor1;..."`, 
+`"type1;donor2;..."`, `"type2;donor1;..."`, and `"type2;donor2;..."`). For each 
+of these type-by-group categories, we generated the gene-wise means, medians, 
+variances, standard deviations, and number of zero-value cells/columns.
+
+The type-by-group summary statistics are specified as an additional argument 
+in `set_from_sce()` function called `groupstat`, which is passed to the 
+function `sce_groupstat()` to get the rowdata and coldata summaries (see 
+`?sce_groupstat` for details). Fewer statistics can be specified in `groupstat`
+in order to speed up computation.
+
+## Access group summary coldata
+
+We can access the new `set` coldata as above:
+
+```{r}
+cd <- colData(set)
+```
 
