@@ -25,7 +25,7 @@ SummarizedExperimentTypes <- function(assays,
   )
 }
 
-SummarizedExperimentTypesRanges <- function(assays, 
+RangedSummarizedExperimentTypes <- function(assays, 
                                       type_summary,
                                       gr = GRanges(), 
                                       annotation = "", 

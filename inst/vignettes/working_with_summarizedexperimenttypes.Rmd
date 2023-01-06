@@ -1,0 +1,71 @@
+---
+title: "donor_bias"
+author: "Sean Maden"
+date: "2022-12-21"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+This vignette provides working examples using the `SummarizedExperimentTypes`
+class introduced in `lute`.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+libv <- c("lute", "SummarizedExperiment", "SingleCellExperiment")
+sapply(libv, library, character.only = T)
+```
+
+# Overview
+
+Often when working with deconvolution experiments, we need to generate and compare
+multiple references datasets, represented as the matrix $Z$ in the deconvolution
+problem $Y = Z * P$. To manage this, it is convenient to have a devoted object
+class specifically for containing the type-level signals and important summary
+information. The new class `SummarizedExperimentTypes`, and related classes such
+as `RangedSummarizedExperimentTypes` can help with this.
+
+# Example starting from a `SingleCellExperiment`
+
+Often we calculate the reference matrix from a single-cell RNA-seq dataset contained
+in a `SingleCellExperiment`-type object. The function `set_from_sce()` has been
+provided to facilitate this. It takes a `SingleCellExperiment` object as input and
+returns a `SummarizedExperimentTypes` object. Below, we show how to do this with 
+some simulated data.
+
+## Simulating a `SingleCellExperiment`
+
+You can generate a `SingleCellExperiment` object containing simulated scRNAseq
+data using the `random_sce()` function:
+
+```{r}
+sce <- random_sce()
+```
+
+Calling this with defaults produces a small random dataset. You can vary the 
+properties of the random data in the new `sce` object (see `?random_sce`).
+
+Next, we will add group metadata to the new `sce` object. We often want to 
+produce group-level summaries from scRNA-seq datasets. For instance, we may need
+to summarize data by donor or subject in a multi-subject experiment. Let's assign
+new group metadata to `sce` like so:
+
+```{r}
+colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
+```
+
+For demonstration, we have added group data such that not all groups are represented
+in all types. This can be viewed with a call to the `table()` function:
+
+```{r}
+table(sce[["donor"]], sce[["celltype"]])
+```
+
+We are ready to generate our new `SummarizedExperimentTypes` object.
+
+## Make a new `SummarizedExperimentTypes` object
+
+
+
+
+
