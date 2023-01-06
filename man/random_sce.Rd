@@ -32,3 +32,6 @@ New randomized SingleCellExperiment object.
 \description{
 Make a random SingleCellExperiment object.
 }
+\examples{
+sce <- random_sce()
+}

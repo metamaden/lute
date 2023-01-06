@@ -89,7 +89,7 @@ random_lgv <- function(gindexv, ktotal = 2, num.iter = 1, lambda.pos = 25,
 #' @param seed.num Seed value for randomization of expression data.
 #' @param verbose Whether to show verbose status messages.
 #' @return New randomized SingleCellExperiment object.
-#' @example 
+#' @examples 
 #' sce <- random_sce()
 #' @export
 random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
