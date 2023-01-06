@@ -14,18 +14,72 @@ sapply(libv, library, character.only = TRUE)
 #----------------
 sce <- random_sce()
 
+# assign new group var "donor"
+colData(sce)$donor <- rep(c("donor1", "donor2"), ncol(sce)/2)
+
+# show donor by type
+table(sce$celltype, sce$donor)
+#       donor1 donor2
+# type1      3      2
+# type2      2      3
+
 #------------------
 # make set from sce
 #------------------
 set <- set_from_sce(sce, typevar = "celltype", method = "mean")
 
+sce_groupstat <- function(scef, groupvar, assayname = "counts", 
+                          summarytype = "rowData",
+                          groupstat = c("mean", "median", 
+                                        "var", "sd", "numzero"),
+                          verbose = FALSE){
+  if(groupvar %in% colnames(colData(scef))){
+    if(verbose){
+      message("Appending group-level statistics for variable: ", groupvar)}
+    num.groups <- length(unique(scef[[groupvar]]))
+    group.wise.mean <- group.wise.var <- NA
+    if(num.groups > 1){
+      ugroupv <- unique(scef[[groupvar]])
+      dfg <- do.call(cbind, lapply(ugroupv, function(groupi){
+        if(verbose){message("summarizing group: ", groupi)}
+        sceff <- scef[,scef[[groupvar]]==groupi]
+        exprff <- as.matrix(assays(sceff)[[assayname]])
+        if(summarytype == "colData"){exprff <- t(exprff)}
+        dfgi <- data.frame(num.entries = rep(ncol(exprff), nrow(exprff)))
+        if("mean" %in% groupstat){dfgi$mean <- rowMeans(exprff)}
+        if("median" %in% groupstat){dfgi$median <- rowMedians(exprff)}
+        if("var" %in% groupstat){dfgi$var <- rowVars(exprff)}
+        if("sd" %in% groupstat){dfgi$sd <- rowSds(exprff)}
+        if("numzero" %in% groupstat){
+          dfgi$numzero <- unlist(
+            apply(exprff, 1, function(ri){length(which(ri==0))}))
+        }
+        colnames(dfgi) <- paste0(groupi, ";", colnames(dfgi))
+        dfgi
+      }))
+      return(dfg)
+    } else{
+      if(verbose){
+        message("One group detected; skipping group statistics...")}
+    }
+  } else{
+    message("Warning: variable ",groupvar," not found in sce coldata.")
+  }
+  return(NULL)
+}
+
 # script
-method = "mean"
+groupvar <- 'donor' 
+method <- "mean"
 typevar <- "celltype"
+assayname <- "counts"
+verbose <- TRUE
 typev <- unique(sce[[typevar]])
 expr.sce <- assays(sce)$counts
 expr.set <- do.call(cbind, lapply(typev, function(typei){
-  exprf <- expr.sce[,sce[[typevar]]==typei]
+  if(verbose){message("Summarizing type: ", typei, "...")}
+  scef <- sce[,sce[[typevar]]==typei]
+  exprf <- assays(scef)[[assayname]]
   gene.varv <- apply(exprf,1,var)
   gene.sdv <- apply(exprf,1,sd)
   gene.max <- apply(exprf,1,max)
@@ -38,10 +92,17 @@ expr.set <- do.call(cbind, lapply(typev, function(typei){
     exprnew <- exprf[,1,drop=F]
   }
   colnames(exprnew) <- paste0(typei, ";expr")
-  de <- data.frame(var = gene.varv,
-                   sdv = gene.sdv,
-                   max = gene.max,
+  de <- data.frame(var = gene.varv, sdv = gene.sdv, max = gene.max,
                    min = gene.min)
+  # parse group-level statistics
+  if(!is(groupvar, "NULL")){
+    dfg <- sce_groupstat(scef = scef, groupvar = groupvar, 
+                         assayname = assayname, summarytype = "rowData", 
+                         verbose = verbose)
+    condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(de)
+    if(condv){if(verbose){message("Binding group-level data.")}
+      de <- cbind(de, dfg)}
+  }
   colnames(de) <- paste0(typei, ";", colnames(de))
   return(cbind(exprnew, de))
 }))
@@ -62,18 +123,21 @@ cd <- do.call(rbind, lapply(typev, function(typei){
   median.zerocount <- median(count.zeroexpr)
   var.zerocount <- var(count.zeroexpr)
   sd.zerocount <- sd(count.zeroexpr)
-  # insert group-wise summary code here
-  group.wise.mean <- group.wise.var <- num.groups <- NA
-  data.frame(type = typei,
+  # get return df
+  dfr <- data.frame(type = typei,
              num.cells = num.cells,
              num.allzeroexpr = num.allzeroexpr,
              mean.zerocount = mean.zerocount,
              median.zerocount = median.zerocount,
              var.zerocount = var.zerocount,
-             sd.zerocount = sd.zerocount,
-             num.groups = num.groups,
-             group.wise.mean = group.wise.mean,
-             group.wise.var = group.wise.var)
+             sd.zerocount = sd.zerocount)
+  
+  
+  }
+  
+  
+  
+  
 }))
 
 # get summary stats
