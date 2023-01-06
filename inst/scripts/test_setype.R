@@ -13,20 +13,11 @@ sapply(libv, library, character.only = TRUE)
 # make sce object
 #----------------
 sce <- random_sce()
-
 # assign new group var "donor"
-# two donors per type:
-# colData(sce)$donor <- rep(c("donor1", "donor2"), ncol(sce)/2)
 # two donors type1, one donor type2:
 colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
-
-# show donor by type
-table(sce$celltype, sce$donor)
-
-#------------------
 # make set from sce
-#------------------
-# set <- set_from_sce(sce, typevar = "celltype", method = "mean")
+set <- set_from_sce(sce, typevar = "celltype", method = "mean")
 
 sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts", 
                           summarytype = "rowData",
