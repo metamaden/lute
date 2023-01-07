@@ -3,8 +3,8 @@ title: "donor_bias"
 author: "Sean Maden"
 date: "2022-12-21"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 This vignette provides working examples using the `SummarizedExperimentTypes`
@@ -21,33 +21,37 @@ sapply(libv, library, character.only = T)
 Often when working with deconvolution experiments, we need to generate and compare
 multiple references datasets, represented as the matrix $Z$ in the deconvolution
 problem $Y = Z * P$. To manage this, it is convenient to have a devoted object
-class specifically for containing the type-level signals and important summary
-information. The new class `SummarizedExperimentTypes`, and related classes such
-as `RangedSummarizedExperimentTypes` can help with this.
+class specifically for containing the type-level signals for some $Z$, as well as
+any important summary information that may be used in quality control filters or 
+bias corrections downstream. The new class `SummarizedExperimentTypes`, and related 
+classes such as `RangedSummarizedExperimentTypes` can help with this.
 
-# Example starting from a `SingleCellExperiment`
+# Simulating data for a `SingleCellExperiment` object
 
 Often we calculate the reference matrix from a single-cell RNA-seq dataset contained
-in a `SingleCellExperiment`-type object. The function `set_from_sce()` has been
-provided to facilitate this. It takes a `SingleCellExperiment` object as input and
-returns a `SummarizedExperimentTypes` object. Below, we show how to do this with 
-some simulated data.
-
-## Simulating a `SingleCellExperiment`
+in a `SingleCellExperiment`-type object. The function `set_from_sce()` facilitates 
+this. It takes a `SingleCellExperiment` object as input and returns a 
+`SummarizedExperimentTypes` object. Below, we show how to do this with some 
+simulated data.
 
 You can generate a `SingleCellExperiment` object containing simulated scRNAseq
-data using the `random_sce()` function:
+data using the `random_sce()` function. Calling this with defaults produces a 
+small random dataset. You can also vary the properties of the random data in the 
+new `sce` object (see `?random_sce`).
+
+Make the small object `sce` as follows:
 
 ```{r}
 sce <- random_sce()
 ```
 
-Calling this with defaults produces a small random dataset. You can vary the 
-properties of the random data in the new `sce` object (see `?random_sce`).
+
+# Type-level summaries example
 
 ## Make a new `SummarizedExperimentTypes` object
 
-Let's call `set_from_sce()` to make the object `set`:
+Let's call `set_from_sce()` to make the object `set`, a new object of type 
+`SummarizedExperimentTypes`:
 
 ```{r}
 set <- set_from_sce(sce, typevar = "celltype", method = "mean")
@@ -58,9 +62,9 @@ ncol(set)
 colnames(set)
 ```
 
-We can see that `set` contains the same number of genes as our random `sce` dataset, 
-but the number of columns correspond to the unique groups in `sce`, stored in the
-variable `celltype`, which are `type1` and `type2`.
+We can see that `set` contains the same number and ordering of genes (rows) as our 
+random `sce` dataset, but the number of columns now correspond to the unique groups 
+from the variable `celltype`, which are `type1` and `type2`.
 
 ## Access summary rowData
 
@@ -91,14 +95,15 @@ cd <- colData(set)
 colnames(cd)
 ```
 
-In the coldata, we see variable "type" for the type labels which are also the 
-assay data columns. We also see "num.cells" which is the number of cells for each
-type, or in other words the number of columns in the `sce` object which were 
-used to make the type summary data. The remaining columns show statistics for
-the number of cells have zero expression for the type, where "num.allzeroexpr"
-is the number of genes for which all cells had zero expression. The last three
-columns "mean.zerocount", "median.zerocount", and "var.zerocount" show the mean,
-median, and variance in the number of cells with zero counts across genes.
+In the coldata, we see the column `"type"` which specifies the type labels. These 
+labels correspond to each of the assay columns. We also see `"num.cells"` which 
+is the number of cells for each type, or the total `sce` columns used to make the 
+type summary data. 
+
+Next, column `"num.allzeroexpr"` is the number of genes for which all cells had 
+zero expression. The last three columns `"mean.zerocount"`, `"median.zerocount"`, 
+and `"var.zerocount"` show the mean, median, and variance in the number of cells 
+with zero counts across genes.
 
 The full coldata looks like:
 
@@ -107,7 +112,7 @@ knitr::kable(cd, align = "c")
 ```
 
 
-# Example generating group-level summaries
+# Group-level summaries example
 
 We often want to produce group-level summaries from scRNA-seq datasets. For 
 instance, we may need to summarize data by donor or subject in a multi-subject 
@@ -162,5 +167,24 @@ We can access the new `set` coldata as above:
 
 ```{r}
 cd <- colData(set)
+colnames(cd)
 ```
 
+Unlike with rowdata, rows in coldata correspond to columns in the `set` assay data
+such that we have two rows total. This means that cells for a given group are
+initially collapsed by means for each gene, and then the coldata summary 
+statistics are generated across these gene expression means.
+
+Importantly, we generate `NA` values for group categories that aren't present in
+a given type. In this case, we have `NA` values for `donor2` in `type1`. We can
+view this now:
+
+```{r}
+cdf <- as.data.frame(t(cd))
+knitr::kable(cdf, align = "c")
+```
+
+# Conclusions
+
+This vignette showed how to simulate a small `SingleCellExperiment` object and 
+produce a `SummarizedExperimentTypes` object with the function `set_from_sce()`.
