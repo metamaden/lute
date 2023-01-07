@@ -1,10 +1,10 @@
 ---
-title: "donor_bias"
+title: "Working with type summaries in `lute`"
 author: "Sean Maden"
 date: "2022-12-21"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 This vignette provides working examples using the `SummarizedExperimentTypes`
@@ -180,7 +180,8 @@ a given type. In this case, we have `NA` values for `donor2` in `type1`. We can
 view this now:
 
 ```{r}
-cdf <- as.data.frame(t(cd))
+cdf <- as.data.frame(cd)
+cdf <- as.data.frame(t(cdf))
 knitr::kable(cdf, align = "c")
 ```
 
