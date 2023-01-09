@@ -303,7 +303,7 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' # example
 #' @seealso decon_analysis
 #' @export
-results_plots <- function(dfres, lsv = NULL, refline.color = "red", 
+results_plots <- function(dfres, lsv = NULL, refline.color = "black", 
                           verbose = FALSE){
   require(ggplot2)
   lgg <- list()
@@ -371,10 +371,8 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "red",
       geom_point(dfp, mapping = aes(x = prop_true, y = prop_pred, 
                                     shape = celltype, color = celltype),
                  alpha = 0.5, size = 3) + 
-      geom_abline(intercept = 0, slope = 1) +
+      geom_abline(intercept = 0, slope = 1, col = refline.color) +
       xlim(0.38, 1) + ylim(0.43, 1) +
-      scale_color_manual(labels = c("Neuron", "Non-neuron"), 
-                         values = c("blue", "red")) +
       xlab("True cell composition (cc)") +
       ylab("Estimated cc")
     lgg[["ggpt.bias"]] <- ggpt + facet_grid(cols=vars(expt_type))
