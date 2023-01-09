@@ -334,17 +334,16 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
     if(verbose){
       message("Making bias scatter plots, with vs. without S-transform...")}
     # get plot data
-    dfr <- lres$dfres
-    dfr$prop_k1_pred <- dfr$bias1 + dfr$prop_k1
-    dfr$prop_k2_pred <- dfr$bias2 + dfr$prop_k2
-    dfp <- rbind(data.frame(prop_true = dfr$prop_k1,
-                            prop_pred = dfr$prop_k1_pred,
-                            expt_type = dfr$zs_transform,
-                            celltype = rep("Neuron", nrow(dfr))),
-                 data.frame(prop_true = dfr$prop_k2,
-                            prop_pred = dfr$prop_k2_pred,
-                            expt_type = dfr$zs_transform,
-                            celltype = rep("Non-neuron", nrow(dfr))))
+    dfres$prop_k1_pred <- dfres$bias1 + dfres$prop_k1
+    dfres$prop_k2_pred <- dfres$bias2 + dfres$prop_k2
+    dfp <- rbind(data.frame(prop_true = dfres$prop_k1,
+                            prop_pred = dfres$prop_k1_pred,
+                            expt_type = dfres$zs_transform,
+                            celltype = rep("Neuron", nrow(dfres))),
+                 data.frame(prop_true = dfres$prop_k2,
+                            prop_pred = dfres$prop_k2_pred,
+                            expt_type = dfres$zs_transform,
+                            celltype = rep("Non-neuron", nrow(dfres))))
     # get new expt lvl labels
     lvlstr.false <- "no_scaling"; lvlstr.true <- "with_scaling"
     # get rmse to print
