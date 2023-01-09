@@ -78,7 +78,7 @@ sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts",
 #' set_from_sce
 #'
 #' Make an object of class `SummarizedExperimentTypes` from an object of class
-#' `SingleCellExperiment`.
+#' `SingleCellExperiment` or `SummarizedExperiment`.
 #'
 #' @param sce `SingleCellExperiment` object.
 #' @param method Method to summarize assays on types.
@@ -98,8 +98,8 @@ sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts",
 set_from_sce <- function(sce, groupvar = NULL, method = "mean", 
                          typevar = "celltype", assayname = "counts", 
                          verbose = FALSE, ...){
-  if(!is(sce, "SingleCellExperiment")){
-    stop("sce must be of class SingleCellExperiment.")}
+  if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
+    stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
   typev <- unique(sce[[typevar]])
   expr.sce <- assays(sce)$counts
   if(!is(groupvar, "NULL")){
