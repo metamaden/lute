@@ -176,7 +176,7 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
   }))
   
   # make new set object
-  set <- SummarizedExperimentTypes(assays = list(mexpr), 
-                                   rowData = rd, colData = cd)
+  lassays <- list(mexpr); names(lassays) <- assayname
+  set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, colData = cd)
   return(set)
 }
