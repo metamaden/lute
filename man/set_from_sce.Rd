@@ -36,7 +36,7 @@ groups (see `?sce_groupstat` for details).}
 }
 \description{
 Make an object of class `SummarizedExperimentTypes` from an object of class
-`SingleCellExperiment`.
+`SingleCellExperiment` or `SummarizedExperiment`.
 }
 \examples{
 sce <- random_sce()
