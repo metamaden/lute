@@ -355,7 +355,8 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
     df.rmse <- data.frame(expt_type = c(lvlstr.false, lvlstr.true),
                           rmse = c(format(rmse.false, digits = 2), 
                                    format(rmse.true, digits = 2)))
-    df.rmse$xpos <- -Inf; df.rmse$ypos <- Inf
+    df.rmse$xpos <- min(dfp$prop_true)+0.1*min(dfp$prop_true)
+    df.rmse$ypos <- max(dfp$prop_pred)-0.1*max(dfp$prop_pred)
     df.rmse$hjustpos <- df.rmse$vjustpos <- 0
     df.rmse$rmse <- paste0("RMSE: ", df.rmse$rmse)
     # format expt_type variable
