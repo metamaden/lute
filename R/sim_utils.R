@@ -331,6 +331,53 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "red",
     lgg[["ggpt2"]] <- ggplot(dfp, aes(x = no_stransform, y = with_stransform)) + 
       geom_point() + geom_abline(intercept = 0, slope = 1, color = refline.color) + 
       ggtitle("RMSE, Z vs. ZS")
+    if(verbose){
+      message("Making bias scatter plots, with vs. without S-transform...")}
+    # get plot data
+    dfr <- lres$dfres
+    dfr$prop_k1_pred <- dfr$bias1 + dfr$prop_k1
+    dfr$prop_k2_pred <- dfr$bias2 + dfr$prop_k2
+    dfp <- rbind(data.frame(prop_true = dfr$prop_k1,
+                            prop_pred = dfr$prop_k1_pred,
+                            expt_type = dfr$zs_transform,
+                            celltype = rep("Neuron", nrow(dfr))),
+                 data.frame(prop_true = dfr$prop_k2,
+                            prop_pred = dfr$prop_k2_pred,
+                            expt_type = dfr$zs_transform,
+                            celltype = rep("Non-neuron", nrow(dfr))))
+    # get new expt lvl labels
+    lvlstr.false <- "no_scaling"; lvlstr.true <- "with_scaling"
+    # get rmse to print
+    rmse.false <- sqrt(mean((dfp[dfp$expt_type==FALSE,]$prop_true-
+                               dfp[dfp$expt_type==FALSE,]$prop_pred)^2))
+    rmse.true <- sqrt(mean((dfp[dfp$expt_type==TRUE,]$prop_true-
+                              dfp[dfp$expt_type==TRUE,]$prop_pred)^2))
+    dfp$rmse <- ifelse(dfp$expt_type==TRUE, rmse.true, rmse.false)
+    df.rmse <- data.frame(expt_type = c(lvlstr.false, lvlstr.true),
+                          rmse = c(format(rmse.false, digits = 2), 
+                                   format(rmse.true, digits = 2)))
+    df.rmse$xpos <- -Inf; df.rmse$ypos <- Inf
+    df.rmse$hjustpos <- df.rmse$vjustpos <- 0
+    df.rmse$rmse <- paste0("RMSE: ", df.rmse$rmse)
+    # format expt_type variable
+    dfp$expt_type <- ifelse(dfp$expt_type == "TRUE", lvlstr.true, lvlstr.false)
+    dfp$expt_type <- factor(dfp$expt_type, levels = c(lvlstr.false, lvlstr.true))
+    # new plot object
+    ggpt <- ggplot() + theme_bw() +
+      geom_text(data = df.rmse, alpha = 0.8,
+                mapping = aes(x = xpos, y = ypos, 
+                              hjust = hjustpos, vjust = vjustpos,
+                              label = rmse)) +
+      geom_point(dfp, mapping = aes(x = prop_true, y = prop_pred, 
+                                    shape = celltype, color = celltype),
+                 alpha = 0.5, size = 3) + 
+      geom_abline(intercept = 0, slope = 1) +
+      xlim(0.38, 1) + ylim(0.43, 1) +
+      scale_color_manual(labels = c("Neuron", "Non-neuron"), 
+                         values = c("blue", "red")) +
+      xlab("True cell composition (cc)") +
+      ylab("Estimated cc")
+    lgg[["ggpt.bias"]] <- ggpt + facet_grid(cols=vars(expt_type))
   }
   return(lgg)
 }
