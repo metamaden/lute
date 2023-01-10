@@ -325,7 +325,8 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
                                     verbose = verbose)
     lgg[["ggpt_bias"]] <- plot_ggpt_bias(dfres = dfres, facet = TRUE,
                                          verbose = verbose)
-    lgg[["ggpt_rmse"]] <- plot_ggpt_bias(dfres = dfres, verbose = verbose)
+    lgg[["ggpt_rmse"]] <- plot_ggpt_rmse(dfres = dfres, 
+                                         verbose = verbose)
   }
   return(lgg)
 }
@@ -400,7 +401,6 @@ plot_ggpt_bias <- function(dfres, facet = TRUE, verbose = FALSE){
                                   shape = celltype, color = celltype),
                alpha = 0.5, size = 3) + 
     geom_abline(intercept = 0, slope = 1, col = "black") +
-    xlim(0.38, 1) + ylim(0.43, 1) +
     xlab("True cell composition (cc)") +
     ylab("Estimated cc")
   if(facet){ggpt <- ggpt + facet_grid(cols=vars(expt_type))}
