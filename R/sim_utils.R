@@ -363,16 +363,16 @@ plot_ggpt_bias <- function(dfres, facet = TRUE, verbose = FALSE){
   if(verbose){
     message("Making bias scatter plots, with vs. without S-transform...")}
   # get plot data
-  dfres$prop_k1_pred <- dfres$bias1 + dfres$prop_k1
-  dfres$prop_k2_pred <- dfres$bias2 + dfres$prop_k2
-  dfp <- rbind(data.frame(prop_true = dfres$prop_k1,
-                          prop_pred = dfres$prop_k1_pred,
-                          expt_type = dfres$zs_transform,
-                          celltype = rep("Neuron", nrow(dfres))),
-               data.frame(prop_true = dfres$prop_k2,
-                          prop_pred = dfres$prop_k2_pred,
-                          expt_type = dfres$zs_transform,
-                          celltype = rep("Non-neuron", nrow(dfres))))
+  cnv <- colnames(dfres)
+  typev <- gsub("^bias", "", cnv[grepl("^bias.*", cnv)])
+  dfp <- do.call(rbind, lapply(typev, function(typei){
+    prop_truei <- dfres[,paste0("prop_k", typei)]
+    prop_predi <- dfres[,paste0("bias", typei)] + prop_true
+    data.frame(prop_true = prop_truei, 
+               prop_pred = prop_predi,
+               expt_type = dfres$zs_transform,
+               celltype = rep(typei, nrow(dfres)))
+  }))
   # get new expt lvl labels
   lvlstr.false <- "no_scaling"; lvlstr.true <- "with_scaling"
   # get rmse to print
