@@ -335,7 +335,11 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
 
 #' plot_ggpt_rmsebyp1
 #'
+#' Makes a ggplot scatterplot of the RMSE (y-axis) by the true proportion of 
+#' type 1 (x-axis).
+#'
 #' @param dfres Simulation series results data.frame.
+#' @param facet Whether to facet scatterplots for each S condition, if present.
 #' @param verbose Whether to return verbose status messages.
 #' @returns ggplot scatterplot object
 #' @export
@@ -350,7 +354,11 @@ plot_ggpt_rmsebyp1 <- function(dfres, facet = TRUE, verbose = FALSE){
 
 #' plot_ggpt_bias
 #'
+#' Makes a ggplot scatterplot of the true proportions (x-axis) by the predicted
+#' proportions (y-axis), where point colors and shapes indicate the type.
+#'
 #' @param dfres Simulation series results data.frame.
+#' @param facet Whether to facet scatterplots for each S condition, if present.
 #' @param verbose Whether to return verbose status messages.
 #' @returns ggplot scatterplot object
 #' @export
@@ -405,9 +413,12 @@ plot_ggpt_bias <- function(dfres, facet = TRUE, verbose = FALSE){
 
 #' plot_ggvp_rmse
 #'
+#' Makes a violin plot of the RMSE (y-axis) by experiment condition (x-axis).
+#'
 #' @param dfres Simulation series results data.frame.
+#' @param facet Whether to facet violin plots for each S condition, if present.
 #' @param verbose Whether to return verbose status messages.
-#' @returns ggplot scatterplot object
+#' @returns ggplot violin plot object
 #' @export
 plot_ggvp_rmse <- function(dfres, facet = TRUE, verbose = FALSE){
   if(verbose){message("Making violin plots of RMSE by type...")}
@@ -420,7 +431,8 @@ plot_ggvp_rmse <- function(dfres, facet = TRUE, verbose = FALSE){
 #' plot_ggpt_rmse
 #'
 #' Plots RMSE for zs_transform == FALSE (x-axis) by zs_transform == TRUE 
-#' (y-axis).
+#' (y-axis). Note, this requires that the S factor condition varied within
+#' simulations.
 #'
 #' @param dfres Simulation series results data.frame.
 #' @param verbose Whether to return verbose status messages.
