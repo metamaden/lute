@@ -310,8 +310,7 @@ pdiff <- function(pi, P, verbose = FALSE){
 #' @export
 results_plots <- function(dfres, lsv = NULL, refline.color = "black", 
                           verbose = FALSE){
-  require(ggplot2)
-  lgg <- list()
+  require(ggplot2); lgg <- list()
   if(is(lsv, "NULL")){
     lgg[["ggpt1"]] <- plot_ggpt_rmsebyp1(dfres = dfres, facet = FALSE, 
                                          verbose = verbose)
@@ -327,8 +326,6 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
     lgg[["ggpt_bias"]] <- plot_ggpt_bias(dfres = dfres, facet = TRUE,
                                          verbose = verbose)
     lgg[["ggpt_rmse"]] <- plot_ggpt_bias(dfres = dfres, verbose = verbose)
-    
-    
   }
   return(lgg)
 }
