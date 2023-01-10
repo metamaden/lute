@@ -187,7 +187,7 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
 #' Append marker data adjusted on some group variable.
 #'
 #' @param set A SummarizedExperimentTypes object
-#' @param type Adjustment type (options: "mean_group_variance").
+#' @param type Adjustment type (options: "mgvdenom").
 #' @param groupvar_pattern String pattern to identify group variables from 
 #' rowData, if present.
 #' @param verbose Whether to show verbose status messages.
@@ -199,7 +199,7 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
 #' set <- set_from_sce(sce, groupvar = "donor")
 #' @export
 append_groupadj <- function(set, groupvar_pattern = "donor.*", 
-                            type = "mean_group_variance",
+                            type = "mgvdenom",
                             sce = NULL, verbose = FALSE, ...){
   if(!(is(set, "SummarizedExperimentTypes"))){
     stop("set must be of class SummarizedExperimentTypes.")}
@@ -211,10 +211,12 @@ append_groupadj <- function(set, groupvar_pattern = "donor.*",
   }
 }
 
-#' groupadj_meangroupvar_setrowdata
+#' groupadj_mgvdenom_setrowdata
 #'
-#' Gets assay data adjusted on group-wise means of variances as: 
-#' counts/adjustment
+#' Get adjusted assays and rowadata, calculated as the counts over the mean 
+#' group-wise variances ("mgvdenom"), or: 
+#' 
+#' $$counts/mgvdenom$$
 #' 
 #' @param set A SummarizedExperimentTypes
 #' @param groupvar_pattern String pattern to identify group-level summaries from
@@ -224,11 +226,11 @@ append_groupadj <- function(set, groupvar_pattern = "donor.*",
 #' @param rd.method.str Character string to append for new assays and rowData 
 #' matrices.
 #' @param verbose Whether to return verbose status messages.
-#' @returns set with updated rowData and assays.
+#' @returns set with updated rowData columns and new assays matrix.
 #' @export
-groupadj_meangroupvar_setrowdata <- function(set, groupvar_pattern, 
+groupadj_mgvdenom_setrowdata <- function(set, groupvar_pattern, 
                                     assayname = "counts",
-                                    rd.method.str = "meangroupvar", 
+                                    rd.method.str = "mgvdenom", 
                                     verbose = FALSE){
   if(verbose){message("Checking for groups in rowData...")}
   typev <- colnames(set); rd <- rowData(set); rd.cnv <- colnames(rd)
