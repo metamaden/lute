@@ -1,6 +1,21 @@
-#-----------------------
-# define class functions
-#-----------------------
+#!/usr/bin/env R
+
+# Author: Sean Maden
+#
+# Methods for SummarizedExperimentType objects. 
+#
+# Sections:
+#
+#   1. define class functions: Class definitions and methods to make new objects.
+#
+#   2. methods for converting between classes: Between-object class conversions.
+#
+#   3. methods for adjustments: Adjustment and weighting methods.
+#
+
+#--------------------------
+# 1. define class functions
+#--------------------------
 #' sce_groupstat
 #' 
 #' Get group-level summary statistics, either on rowData or collapsed colData.
@@ -74,6 +89,10 @@ sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts",
   }
   return(NULL)
 }
+
+#------------------------------------------
+# 2. methods for converting between classes
+#------------------------------------------
 
 #' set_from_sce
 #'
@@ -181,6 +200,10 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
   return(set)
 }
 
+
+#---------------------------
+# 3. methods for adjustments
+#---------------------------
 
 #' append_groupvar_adj
 #'
