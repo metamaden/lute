@@ -367,11 +367,10 @@ plot_ggpt_bias <- function(dfres, facet = TRUE, verbose = FALSE){
   typev <- gsub("^bias", "", cnv[grepl("^bias.*", cnv)])
   dfp <- do.call(rbind, lapply(typev, function(typei){
     prop_truei <- dfres[,paste0("prop_k", typei)]
-    prop_predi <- dfres[,paste0("bias", typei)] + prop_true
-    data.frame(prop_true = prop_truei, 
-               prop_pred = prop_predi,
-               expt_type = dfres$zs_transform,
-               celltype = rep(typei, nrow(dfres)))
+    data.frame(expt_type = dfres$zs_transform,
+               celltype = rep(typei, nrow(dfres)),
+               prop_true = prop_truei,
+               prop_pred = dfres[,paste0("bias", typei)] + prop_truei)
   }))
   # get new expt lvl labels
   lvlstr.false <- "no_scaling"; lvlstr.true <- "with_scaling"
