@@ -180,3 +180,21 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
   set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, colData = cd)
   return(set)
 }
+
+
+#' append_adj_groupvar
+#'
+#' Append marker data adjusted on some group variable.
+#'
+#' @param set A SummarizedExperimentTypes object
+#' @param type Adjustment type (options: "variance").
+#' @param groupvar Group variable for adjustment (e.g. "donor").
+#' @param verbose Whether to show verbose status messages.
+#' @param ... Additional arguments passed for specific adjustment type function.
+#' @return set object with adjusted marker signal assay data appended.
+#' @export
+append_adj_groupvar <- function(set, type, groupvar, sce = NULL, 
+                                verbose = FALSE, ...){
+  
+}
+
