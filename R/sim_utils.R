@@ -313,107 +313,106 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
   require(ggplot2)
   lgg <- list()
   if(is(lsv, "NULL")){
-    
-    
-    lgg[["ggpt1"]] <- plot_ggpt_rmsebyp1()
-    lgg[["ggvp"]] <- plot_ggvp_rmse()
-    
-    
+    lgg[["ggpt1"]] <- plot_ggpt_rmsebyp1(dfres = dfres, facet = FALSE, 
+                                         verbose = verbose)
+    lgg[["ggvp"]] <- plot_ggvp_rmse(dfres = dfres, facet = FALSE, 
+                                    verbose = verbose)
   } else{
-    if(verbose){
-      message("Making scatter plots of RMSE by first type predictions...")}
-    ggpt1 <- ggplot(dfres, aes(x = prop_k1, y = rmse, color = zs_transform)) + 
-      geom_point() + ggtitle("RMSE by proportion type 1")
-    lgg[["ggpt1"]] <- ggpt1 + facet_wrap(~zs_transform)
-    if(verbose){message("Making violin plots of RMSE by type...")}
-    lgg[["ggvp"]] <- ggplot(dfres, aes(x = zs_transform , y = rmse, color = zs_transform)) +
-      geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
-    if(verbose){
-      message("Making scatter plots of RMSE, with vs. without S-transform...")}
-    dfp <- data.frame(no_stransform = dfres[dfres$zs_transform==F,]$rmse,
-                      with_stransform = dfres[dfres$zs_transform==T,]$rmse)
-    lgg[["ggpt2"]] <- ggplot(dfp, aes(x = no_stransform, y = with_stransform)) + 
-      geom_point() + geom_abline(intercept = 0, slope = 1, color = refline.color) + 
-      ggtitle("RMSE, Z vs. ZS")
-    if(verbose){
-      message("Making bias scatter plots, with vs. without S-transform...")}
-    # get plot data
-    dfres$prop_k1_pred <- dfres$bias1 + dfres$prop_k1
-    dfres$prop_k2_pred <- dfres$bias2 + dfres$prop_k2
-    dfp <- rbind(data.frame(prop_true = dfres$prop_k1,
-                            prop_pred = dfres$prop_k1_pred,
-                            expt_type = dfres$zs_transform,
-                            celltype = rep("Neuron", nrow(dfres))),
-                 data.frame(prop_true = dfres$prop_k2,
-                            prop_pred = dfres$prop_k2_pred,
-                            expt_type = dfres$zs_transform,
-                            celltype = rep("Non-neuron", nrow(dfres))))
-    # get new expt lvl labels
-    lvlstr.false <- "no_scaling"; lvlstr.true <- "with_scaling"
-    # get rmse to print
-    rmse.false <- sqrt(mean((dfp[dfp$expt_type==FALSE,]$prop_true-
-                               dfp[dfp$expt_type==FALSE,]$prop_pred)^2))
-    rmse.true <- sqrt(mean((dfp[dfp$expt_type==TRUE,]$prop_true-
-                              dfp[dfp$expt_type==TRUE,]$prop_pred)^2))
-    dfp$rmse <- ifelse(dfp$expt_type==TRUE, rmse.true, rmse.false)
-    df.rmse <- data.frame(expt_type = c(lvlstr.false, lvlstr.true),
-                          rmse = c(format(rmse.false, digits = 2), 
-                                   format(rmse.true, digits = 2)))
-    df.rmse$xpos <- min(dfp$prop_true)+0.1*min(dfp$prop_true)
-    df.rmse$ypos <- max(dfp$prop_pred)-0.1*max(dfp$prop_pred)
-    df.rmse$hjustpos <- df.rmse$vjustpos <- 0
-    df.rmse$rmse <- paste0("RMSE: ", df.rmse$rmse)
-    # format expt_type variable
-    dfp$expt_type <- ifelse(dfp$expt_type == "TRUE", lvlstr.true, lvlstr.false)
-    dfp$expt_type <- factor(dfp$expt_type, levels = c(lvlstr.false, lvlstr.true))
-    # new plot object
-    ggpt <- ggplot() + theme_bw() +
-      geom_text(data = df.rmse, alpha = 0.8,
-                mapping = aes(x = xpos, y = ypos, 
-                              hjust = hjustpos, vjust = vjustpos,
-                              label = rmse)) +
-      geom_point(dfp, mapping = aes(x = prop_true, y = prop_pred, 
-                                    shape = celltype, color = celltype),
-                 alpha = 0.5, size = 3) + 
-      geom_abline(intercept = 0, slope = 1, col = refline.color) +
-      xlim(0.38, 1) + ylim(0.43, 1) +
-      xlab("True cell composition (cc)") +
-      ylab("Estimated cc")
-    lgg[["ggpt.bias"]] <- ggpt + facet_grid(cols=vars(expt_type))
+    lgg[["ggpt1"]] <- plot_ggpt_rmsebyp1(dfres = dfres, facet = TRUE, 
+                                         verbose = verbose)
+    lgg[["ggvp"]] <- plot_ggvp_rmse(dfres = dfres, facet = TRUE, 
+                                    verbose = verbose)
+    
+    
+    
   }
   return(lgg)
 }
 
+#' plot_ggpt_rmsebyp1
 #'
 #'
-#'
-plot_ggpt_rmsebyp1 <- function(verbose = FALSE){
+plot_ggpt_rmsebyp1 <- function(dfres, facet = TRUE, verbose = FALSE){
   if(verbose){
     message("Making scatter plots of RMSE by first type predictions...")}
-  lgg[["ggpt1"]] <- ggplot(dfres, aes(x = prop_k1, y = rmse)) + 
+  ggpt <- ggplot(dfres, aes(x = prop_k1, y = rmse)) + 
     geom_point() + ggtitle("RMSE by proportion type 1")
-  
+  if(facet){ggpt <- ggpt + facet_wrap(~zs_transform)}
+  return(ggpt)
 }
 
+#' plot_ggpt_bias
 #'
 #'
-#'
-plot_ggpt_bias <- function(verbose = FALSE){
-  
+plot_ggpt_bias <- function(dfres, verbose = FALSE){
+  if(verbose){
+    message("Making bias scatter plots, with vs. without S-transform...")}
+  # get plot data
+  dfres$prop_k1_pred <- dfres$bias1 + dfres$prop_k1
+  dfres$prop_k2_pred <- dfres$bias2 + dfres$prop_k2
+  dfp <- rbind(data.frame(prop_true = dfres$prop_k1,
+                          prop_pred = dfres$prop_k1_pred,
+                          expt_type = dfres$zs_transform,
+                          celltype = rep("Neuron", nrow(dfres))),
+               data.frame(prop_true = dfres$prop_k2,
+                          prop_pred = dfres$prop_k2_pred,
+                          expt_type = dfres$zs_transform,
+                          celltype = rep("Non-neuron", nrow(dfres))))
+  # get new expt lvl labels
+  lvlstr.false <- "no_scaling"; lvlstr.true <- "with_scaling"
+  # get rmse to print
+  rmse.false <- sqrt(mean((dfp[dfp$expt_type==FALSE,]$prop_true-
+                             dfp[dfp$expt_type==FALSE,]$prop_pred)^2))
+  rmse.true <- sqrt(mean((dfp[dfp$expt_type==TRUE,]$prop_true-
+                            dfp[dfp$expt_type==TRUE,]$prop_pred)^2))
+  dfp$rmse <- ifelse(dfp$expt_type==TRUE, rmse.true, rmse.false)
+  df.rmse <- data.frame(expt_type = c(lvlstr.false, lvlstr.true),
+                        rmse = c(format(rmse.false, digits = 2), 
+                                 format(rmse.true, digits = 2)))
+  df.rmse$xpos <- min(dfp$prop_true)+0.1*min(dfp$prop_true)
+  df.rmse$ypos <- max(dfp$prop_pred)-0.1*max(dfp$prop_pred)
+  df.rmse$hjustpos <- df.rmse$vjustpos <- 0
+  df.rmse$rmse <- paste0("RMSE: ", df.rmse$rmse)
+  # format expt_type variable
+  dfp$expt_type <- ifelse(dfp$expt_type == "TRUE", lvlstr.true, lvlstr.false)
+  dfp$expt_type <- factor(dfp$expt_type, levels = c(lvlstr.false, lvlstr.true))
+  # new plot object
+  ggpt <- ggplot() + theme_bw() +
+    geom_text(data = df.rmse, alpha = 0.8,
+              mapping = aes(x = xpos, y = ypos, 
+                            hjust = hjustpos, vjust = vjustpos,
+                            label = rmse)) +
+    geom_point(dfp, mapping = aes(x = prop_true, y = prop_pred, 
+                                  shape = celltype, color = celltype),
+               alpha = 0.5, size = 3) + 
+    geom_abline(intercept = 0, slope = 1, col = refline.color) +
+    xlim(0.38, 1) + ylim(0.43, 1) +
+    xlab("True cell composition (cc)") +
+    ylab("Estimated cc")
+  lgg[["ggpt.bias"]] <- ggpt + facet_grid(cols=vars(expt_type))
 }
 
+#' plot_ggvp_rmse
 #'
 #'
-#'
-plot_ggvp_rmse <- function(verbose = FALSE){
+plot_ggvp_rmse <- function(dfres, facet = TRUE, verbose = FALSE){
   if(verbose){message("Making violin plots of RMSE by type...")}
-  lgg[["ggvp"]] <- ggplot(dfres, aes(x = zs_transform , y = rmse)) +
+  ggvp <- ggplot(dfres, aes(x = zs_transform , y = rmse)) +
     geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
+  if(facet){ggvp <- ggvp + facet_wrap(~zs_transform)}
+  return(ggvp)
 }
 
+#' plot_ggpt_rmse
 #'
 #'
-#'
-plot_ggpt_rmse <- function(verbose = FALSE){
-  
+plot_ggpt_rmse <- function(dfres, verbose = FALSE){
+  if(verbose){
+    message("Making scatter plots of RMSE, with vs. without S-transform...")}
+  dfp <- data.frame(no_stransform = dfres[dfres$zs_transform==F,]$rmse,
+                    with_stransform = dfres[dfres$zs_transform==T,]$rmse)
+  ggpt <- ggplot(dfp, aes(x = no_stransform, y = with_stransform)) + 
+    geom_point() + geom_abline(intercept = 0, slope = 1, color = refline.color) + 
+    ggtitle("RMSE, Z vs. ZS")
+  return(ggpt)
 }
