@@ -6,11 +6,15 @@
 #
 # Sections:
 #
-#   1. define class functions: Class definitions and methods to make new objects.
+#   1. define class functions: Class definitions and methods to make new 
+#       objects.
 #
 #   2. methods for converting between classes: Between-object class conversions.
 #
 #   3. methods for adjustments: Adjustment and weighting methods.
+#
+#   4. set simulations: Methods supporting simultions using 
+#       SummarizedExperimentTypes objects.
 #
 
 #--------------------------
@@ -103,7 +107,7 @@ sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts",
 #' @param method Method to summarize assays on types.
 #' @param typevar Variable containing the type-level labels.
 #' @param assayname Name of assays data in assays(sce).
-#' @param groupvar Variable containing group-level labels using in group 
+#' @param groupvar Variable containing group-level labels used for group-wise
 #' summaries. If NULL, skip group summaries.
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments specified for `sce_groupstat()` summaries by 
@@ -285,4 +289,6 @@ groupadj_mgvdenom_fromrd <- function(set,
   return(set)
 }
 
-
+#-------------------
+# 4. set simulations
+#-------------------
