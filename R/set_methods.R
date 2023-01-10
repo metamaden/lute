@@ -187,14 +187,61 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
 #' Append marker data adjusted on some group variable.
 #'
 #' @param set A SummarizedExperimentTypes object
-#' @param type Adjustment type (options: "variance").
-#' @param groupvar Group variable for adjustment (e.g. "donor").
+#' @param type Adjustment type (options: "mean_group_variance").
+#' @param groupvar_pattern String pattern to identify group variables from 
+#' rowData, if present.
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments passed for specific adjustment type function.
 #' @return set object with adjusted marker signal assay data appended.
+#' @examples
+#' sce <- random_sce()
+#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
+#' set <- set_from_sce(sce, groupvar = "donor")
 #' @export
-append_adj_groupvar <- function(set, type, groupvar, sce = NULL, 
-                                verbose = FALSE, ...){
+append_groupadj <- function(set, groupvar_pattern = "donor.*", 
+                            type = "mean_group_variance",
+                            sce = NULL, verbose = FALSE, ...){
+  if(!(is(set, "SummarizedExperimentTypes"))){
+    stop("set must be of class SummarizedExperimentTypes.")}
   
+  if(type == "mean_group_variance"){
+    if(verbose){message("Checking rowdata for groupvar: ", groupvar, "...")}
+    
+    
+  }
 }
+
+#' groupadj_meangroupvar_setrowdata
+#'
+#' Gets assay data adjusted on group-wise means of variances as: 
+#' counts/adjustment
+#' 
+#' @param set A SummarizedExperimentTypes
+#'
+groupadj_meangroupvar_setrowdata <- function(set, groupvar_pattern, 
+                                    assayname = "counts",
+                                    rd.method.str = "meangroupvar", 
+                                    verbose = FALSE){
+  if(verbose){message("Checking for groups in rowData...")}
+  typev <- colnames(set); rd <- rowData(set); rd.cnv <- colnames(rd)
+  str.patt <- paste0("^type[0-9];", groupvar_pattern, ";var$")
+  rd.cnvf <- rd.cnv[grepl(str.patt, rd.cnv)]
+  if(length(rd.cnvf)==0){stop("Error, no groups found in rowData.")}
+  if(verbose){message("Group data found. Getting marker adjustments...")}
+  rd.new <- do.call(cbind, lapply(typev, function(typei){
+    type.str.patt <- paste0("^", typei, ";.*")
+    which.rd.filt <- which(grepl(type.str.patt, rd.cnvf))
+    rd.cnvf.filt <- rd.cnvf[which.rd.filt]
+    rdf <- as.data.frame(rd[,rd.cnvf.filt])
+    rowMeans(rdf, na.rm = T)
+  }))
+  colnames(rd.new) <- paste0(typev, ";", rd.method.str)
+  if(verbose){message("Updating rowData...")}
+  rowData(set) <- cbind(rd, rd.new) # update rowdata
+  if(verbose){message("Getting new adjusted assay data...")}
+  new.assay.name <- paste0(assayname,"_adj_",rd.method.str)
+  assays(set)[[new.assay.name]] <- assays(set)[[assayname]]/rd.new
+  return(set)
+}
+
 
