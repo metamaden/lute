@@ -217,7 +217,15 @@ append_groupadj <- function(set, groupvar_pattern = "donor.*",
 #' counts/adjustment
 #' 
 #' @param set A SummarizedExperimentTypes
-#'
+#' @param groupvar_pattern String pattern to identify group-level summaries from
+#' rowData column labels with grepl.
+#' @param assayname Name of original assays data to adjust, as identifiable from
+#' names(assays(set)).
+#' @param rd.method.str Character string to append for new assays and rowData 
+#' matrices.
+#' @param verbose Whether to return verbose status messages.
+#' @returns set with updated rowData and assays.
+#' @export
 groupadj_meangroupvar_setrowdata <- function(set, groupvar_pattern, 
                                     assayname = "counts",
                                     rd.method.str = "meangroupvar", 
