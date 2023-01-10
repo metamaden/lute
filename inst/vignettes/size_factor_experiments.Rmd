@@ -99,7 +99,7 @@ We evaluate results using the root mean squared error (RMSE) across types. That
 is, an individual simulation yields an RMSE for each of two simulated types, and 
 we calculate the RMSE across these types using:
 
-$$RMSE = \sqrt{\frac{\sum_{k_{i}=1}^{K}{(p_{i}-\hat{p}_{i})}}{K}}$$
+$$RMSE = \sqrt{\sum_{k_{i}=1}^{K}{(p_{i}-\hat{p}_{i})^{2}}}$$
 
 Where we have:
 
