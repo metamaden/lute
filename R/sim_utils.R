@@ -400,7 +400,7 @@ plot_ggpt_bias <- function(dfres, facet = TRUE, verbose = FALSE){
     geom_point(dfp, mapping = aes(x = prop_true, y = prop_pred, 
                                   shape = celltype, color = celltype),
                alpha = 0.5, size = 3) + 
-    geom_abline(intercept = 0, slope = 1, col = refline.color) +
+    geom_abline(intercept = 0, slope = 1, col = "black") +
     xlim(0.38, 1) + ylim(0.43, 1) +
     xlab("True cell composition (cc)") +
     ylab("Estimated cc")
@@ -441,7 +441,7 @@ plot_ggpt_rmse <- function(dfres, verbose = FALSE){
   dfp <- data.frame(no_stransform = dfres[dfres$zs_transform==F,]$rmse,
                     with_stransform = dfres[dfres$zs_transform==T,]$rmse)
   ggpt <- ggplot(dfp, aes(x = no_stransform, y = with_stransform)) + 
-    geom_point() + geom_abline(intercept = 0, slope = 1, color = refline.color) + 
+    geom_point() + geom_abline(intercept = 0, slope = 1, color = "black") + 
     ggtitle("RMSE, Z vs. ZS")
   return(ggpt)
 }
