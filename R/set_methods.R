@@ -205,13 +205,13 @@ append_groupadj <- function(set, groupvar_pattern = "donor.*",
     stop("set must be of class SummarizedExperimentTypes.")}
   
   if(type == "mean_group_variance"){
-    if(verbose){message("Checking rowdata for groupvar: ", groupvar, "...")}
+    set <- try(groupadj_mgvdenom_setrowdata(set, group))
     
     
   }
 }
 
-#' groupadj_mgvdenom_setrowdata
+#' groupadj_mgvdenom_fromrd
 #'
 #' Get adjusted assays and rowadata, calculated as the counts over the mean 
 #' group-wise variances ("mgvdenom"), or: 
