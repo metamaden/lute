@@ -286,6 +286,11 @@ pdiff <- function(pi, P, verbose = FALSE){
   return(rv)
 }
 
+#--------------
+# results plots
+#--------------
+# standard plots of simulation results
+
 #' results_plots
 #' 
 #' Makes standard plots to analyze deconvolution simulation results.
@@ -308,13 +313,12 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
   require(ggplot2)
   lgg <- list()
   if(is(lsv, "NULL")){
-    if(verbose){
-      message("Making scatter plots of RMSE by first type predictions...")}
-    lgg[["ggpt1"]] <- ggplot(dfres, aes(x = prop_k1, y = rmse)) + 
-      geom_point() + ggtitle("RMSE by proportion type 1")
-    if(verbose){message("Making violin plots of RMSE by type...")}
-    lgg[["ggvp"]] <- ggplot(dfres, aes(x = zs_transform , y = rmse)) +
-      geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
+    
+    
+    lgg[["ggpt1"]] <- plot_ggpt_rmsebyp1()
+    lgg[["ggvp"]] <- plot_ggvp_rmse()
+    
+    
   } else{
     if(verbose){
       message("Making scatter plots of RMSE by first type predictions...")}
@@ -378,4 +382,38 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
     lgg[["ggpt.bias"]] <- ggpt + facet_grid(cols=vars(expt_type))
   }
   return(lgg)
+}
+
+#'
+#'
+#'
+plot_ggpt_rmsebyp1 <- function(verbose = FALSE){
+  if(verbose){
+    message("Making scatter plots of RMSE by first type predictions...")}
+  lgg[["ggpt1"]] <- ggplot(dfres, aes(x = prop_k1, y = rmse)) + 
+    geom_point() + ggtitle("RMSE by proportion type 1")
+  
+}
+
+#'
+#'
+#'
+plot_ggpt_bias <- function(verbose = FALSE){
+  
+}
+
+#'
+#'
+#'
+plot_ggvp_rmse <- function(verbose = FALSE){
+  if(verbose){message("Making violin plots of RMSE by type...")}
+  lgg[["ggvp"]] <- ggplot(dfres, aes(x = zs_transform , y = rmse)) +
+    geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
+}
+
+#'
+#'
+#'
+plot_ggpt_rmse <- function(verbose = FALSE){
+  
 }
