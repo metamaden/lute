@@ -317,12 +317,16 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
                                          verbose = verbose)
     lgg[["ggvp"]] <- plot_ggvp_rmse(dfres = dfres, facet = FALSE, 
                                     verbose = verbose)
+    lgg[["ggpt_bias"]] <- plot_ggpt_bias(dfres = dfres, facet = FALSE,
+                                         verbose = verbose)
   } else{
     lgg[["ggpt1"]] <- plot_ggpt_rmsebyp1(dfres = dfres, facet = TRUE, 
                                          verbose = verbose)
     lgg[["ggvp"]] <- plot_ggvp_rmse(dfres = dfres, facet = TRUE, 
                                     verbose = verbose)
-    
+    lgg[["ggpt_bias"]] <- plot_ggpt_bias(dfres = dfres, facet = TRUE,
+                                         verbose = verbose)
+    lgg[["ggpt_rmse"]] <- plot_ggpt_bias(dfres = dfres, verbose = verbose)
     
     
   }
@@ -331,7 +335,10 @@ results_plots <- function(dfres, lsv = NULL, refline.color = "black",
 
 #' plot_ggpt_rmsebyp1
 #'
-#'
+#' @param dfres Simulation series results data.frame.
+#' @param verbose Whether to return verbose status messages.
+#' @returns ggplot scatterplot object
+#' @export
 plot_ggpt_rmsebyp1 <- function(dfres, facet = TRUE, verbose = FALSE){
   if(verbose){
     message("Making scatter plots of RMSE by first type predictions...")}
@@ -343,8 +350,11 @@ plot_ggpt_rmsebyp1 <- function(dfres, facet = TRUE, verbose = FALSE){
 
 #' plot_ggpt_bias
 #'
-#'
-plot_ggpt_bias <- function(dfres, verbose = FALSE){
+#' @param dfres Simulation series results data.frame.
+#' @param verbose Whether to return verbose status messages.
+#' @returns ggplot scatterplot object
+#' @export
+plot_ggpt_bias <- function(dfres, facet = TRUE, verbose = FALSE){
   if(verbose){
     message("Making bias scatter plots, with vs. without S-transform...")}
   # get plot data
@@ -389,12 +399,16 @@ plot_ggpt_bias <- function(dfres, verbose = FALSE){
     xlim(0.38, 1) + ylim(0.43, 1) +
     xlab("True cell composition (cc)") +
     ylab("Estimated cc")
-  lgg[["ggpt.bias"]] <- ggpt + facet_grid(cols=vars(expt_type))
+  if(facet){ggpt <- ggpt + facet_grid(cols=vars(expt_type))}
+  return(ggpt)
 }
 
 #' plot_ggvp_rmse
 #'
-#'
+#' @param dfres Simulation series results data.frame.
+#' @param verbose Whether to return verbose status messages.
+#' @returns ggplot scatterplot object
+#' @export
 plot_ggvp_rmse <- function(dfres, facet = TRUE, verbose = FALSE){
   if(verbose){message("Making violin plots of RMSE by type...")}
   ggvp <- ggplot(dfres, aes(x = zs_transform , y = rmse)) +
@@ -405,7 +419,13 @@ plot_ggvp_rmse <- function(dfres, facet = TRUE, verbose = FALSE){
 
 #' plot_ggpt_rmse
 #'
+#' Plots RMSE for zs_transform == FALSE (x-axis) by zs_transform == TRUE 
+#' (y-axis).
 #'
+#' @param dfres Simulation series results data.frame.
+#' @param verbose Whether to return verbose status messages.
+#' @returns ggplot scatterplot object
+#' @export
 plot_ggpt_rmse <- function(dfres, verbose = FALSE){
   if(verbose){
     message("Making scatter plots of RMSE, with vs. without S-transform...")}
