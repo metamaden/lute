@@ -182,14 +182,19 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
 }
 
 
-#' append_adj_groupvar
+#' append_groupvar_adj
 #'
-#' Append marker data adjusted on some group variable.
+#' Perform group-wise adjustments on a SummarizedExperimentTypes object. Appends 
+#' group adjustments to rowData and group-adjusted signals to assays.
 #'
 #' @param set A SummarizedExperimentTypes object
-#' @param type Adjustment type (options: "mgvdenom").
 #' @param groupvar_pattern String pattern to identify group variables from 
 #' rowData, if present.
+#' @param assayname Name of original assays data to adjust, as identifiable from
+#' names(assays(set)).
+#' @param rd.method.str Character string to append for new assays and rowData 
+#' matrices.
+#' @param type Adjustment type (options: "mgvdenom").
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments passed for specific adjustment type function.
 #' @return set object with adjusted marker signal assay data appended.
@@ -197,18 +202,20 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
 #' sce <- random_sce()
 #' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
 #' set <- set_from_sce(sce, groupvar = "donor")
+#' set <- append_groupvar_adj(set)
 #' @export
-append_groupadj <- function(set, groupvar_pattern = "donor.*", 
-                            type = "mgvdenom",
-                            sce = NULL, verbose = FALSE, ...){
+append_groupvar_adj <- function(set, groupvar_pattern = "donor.*", 
+                            assayname = "counts", type = "mgvdenom",
+                            verbose = FALSE, ...){
   if(!(is(set, "SummarizedExperimentTypes"))){
     stop("set must be of class SummarizedExperimentTypes.")}
-  
-  if(type == "mean_group_variance"){
-    set <- try(groupadj_mgvdenom_setrowdata(set, group))
-    
-    
-  }
+  if(type == "mgvdenom"){
+    set <- groupadj_mgvdenom_fromrd(set = set, 
+                                    groupvar_pattern = groupvar_pattern,
+                                    rd.method.str = type, assayname = assayname,
+                                    verbose = verbose, ...)
+  } else{stop("Error: invalid adjustment type.")}
+  return(set)
 }
 
 #' groupadj_mgvdenom_fromrd
@@ -228,10 +235,11 @@ append_groupadj <- function(set, groupvar_pattern = "donor.*",
 #' @param verbose Whether to return verbose status messages.
 #' @returns set with updated rowData columns and new assays matrix.
 #' @export
-groupadj_mgvdenom_setrowdata <- function(set, groupvar_pattern, 
-                                    assayname = "counts",
-                                    rd.method.str = "mgvdenom", 
-                                    verbose = FALSE){
+groupadj_mgvdenom_fromrd <- function(set, 
+                                     groupvar_pattern = "donor.*",
+                                     assayname = "counts",
+                                     rd.method.str = "mgvdenom", 
+                                     verbose = FALSE){
   if(verbose){message("Checking for groups in rowData...")}
   typev <- colnames(set); rd <- rowData(set); rd.cnv <- colnames(rd)
   str.patt <- paste0("^type[0-9];", groupvar_pattern, ";var$")
