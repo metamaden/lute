@@ -2,7 +2,7 @@
 % Please edit documentation in R/set_methods.R
 \name{append_groupvar_adj}
 \alias{append_groupvar_adj}
-\title{convert_sce}
+\title{append_groupvar_adj}
 \usage{
 append_groupvar_adj(
   set,
@@ -28,9 +28,6 @@ names(assays(set)).}
 
 \item{...}{Additional arguments passed for specific adjustment type function.}
 
-\item{append_groupvar_adj}{Perform group-wise adjustments on a SummarizedExperimentTypes object. Appends 
-group adjustments to rowData and group-adjusted signals to assays.}
-
 \item{rd.method.str}{Character string to append for new assays and rowData 
 matrices.}
 }
@@ -38,7 +35,8 @@ matrices.}
 set object with adjusted marker signal assay data appended.
 }
 \description{
-Manage conversions to a `SummarizedExperimentTypes` object.
+Perform group-wise adjustments on a SummarizedExperimentTypes object. Appends 
+group adjustments to rowData and group-adjusted signals to assays.
 }
 \examples{
 sce <- random_sce()

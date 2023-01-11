@@ -35,7 +35,8 @@ Suggests:
     limma,
     ExperimentHub,
     AnnotationHub,
-    ComplexHeatmap
+    ComplexHeatmap,
+    DelayedMatrixStats
 VignetteBuilder:
     knitr
 biocViews: Deconvolution, Transcriptomics, RNAseq, Simulation, Biostatistics

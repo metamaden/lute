@@ -40,4 +40,5 @@ sce <- random_sce()
 sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
 sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
 set <- set_from_sce(sce, groupvar = "donor", typevar = "typevar")
+set2 <- set_from_set(set, typevar = "celltype", groupvar = "donor")
 }
