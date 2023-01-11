@@ -135,13 +135,10 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
     gene.sdv <- apply(exprf,1,sd)
     gene.max <- apply(exprf,1,max)
     gene.min <- apply(exprf,1,min)
-    if(method == "mean"){
-      exprnew <- matrix(rowMeans(exprf), ncol = 1)
-    } else if(method == "median"){
-      exprnew <- matrix(rowMedians(exprf), ncol = 1)
-    } else{
-      exprnew <- exprf[,1,drop=F]
-    }
+    # get new assay data
+    exprnew <- make_new_assaydata(exprf, method = method, 
+                                  na.rm = T, verbose = verbose)
+    exprnew <- matrix(exprnew, ncol = 1)
     colnames(exprnew) <- paste0(typei, ";expr")
     de <- data.frame(var = gene.varv, sdv = gene.sdv, max = gene.max,
                      min = gene.min)
@@ -253,11 +250,8 @@ set_from_set <- function(set, groupvar = "donor", typevar = "celltype",
     unique.group.lvl <- paste0(unique.group.lvl, collapse = ";")
     if(num.group > 1){group.var <- rowVars(mei);group.mean <- rowMeans(mei)}
     # get summarized expr data
-    if(method == "mean"){
-      mei <- rowMeans(as.matrix(mei))
-    } else if(method == "median"){
-      mei <- rowMedians(as.matrix(mei))
-    } else(stop("Error: invalid method."))
+    mei <- make_new_assaydata(mei, method = method, 
+                              na.rm = T, verbose = verbose)
     # return as list
     list(rd = data.frame(group.var = group.var,
                          group.mean = group.mean),
