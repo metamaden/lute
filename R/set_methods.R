@@ -42,10 +42,9 @@
 #' colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
 #' dfg <- sce_groupstat(sce, "donor", c("group1", "group2"), "counts", "colData")
 #' @export
-sce_groupstat <- function(scef, groupvar, ugroupv, assayname = "counts", 
-                          summarytype = "rowData",
-                          groupstat = c("mean", "median", 
-                                        "var", "sd", "numzero"),
+sce_groupstat <- function(scef, groupvar, ugroupv, 
+                          assayname = "counts", summarytype = "rowData", 
+                          groupstat = c("numzero", "var"),
                           verbose = FALSE){
   groupstat.filt <- groupstat %in% c("mean", "median", "var", "sd", "numzero")
   groupstat <- groupstat[groupstat.filt]
@@ -197,101 +196,83 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
     }
     return(dfr)
   }))
-  
   # make new set object
-  lassays <- list(mexpr); names(lassays) <- assayname
+  lassays <- list(mexpr); names(lassays) <- paste0(assayname, "_bytype")
+  new.set.md <- list(assay.info = list(typevar = typevar))
   set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, colData = cd)
   return(set)
 }
 
 #' set_from_set
 #'
+#' Expects a set object with type;group nesting. Returns a set object summarized
+#' by each type across any available groups.
+#'
 #' @param 
 #' @param 
 #' 
+#' @examples 
+#' sce <- random_sce()
+#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
+#' sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
+#' set <- set_from_sce(sce, groupvar = "donor", typevar = "typevar")
 #'
-set_from_set <- function(set, groupvar, method = "mean", typevar = "celltype", 
-                         assayname = "counts",  verbose = FALSE, ...){
-  if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
-    stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
+set_from_set <- function(set, groupvar = "donor", typevar = "celltype", 
+                         method = "mean", assayname = "counts_bytype",  
+                         verbose = FALSE, ...){
+  # check set class
+  setclass.cond <- (is(set, "SummarizedExperimentTypes")|
+                      is(set, "RangedSummarizedExperiment Types"))
+  if(!setclass.cond){
+    stop("set must be of class SummarizedExperimentTypes or similar.")}
+  
+  # get params
   typev <- unique(sce[[typevar]])
   expr.sce <- assays(sce)$counts
   if(!is(groupvar, "NULL")){
     ugroupv <- unique(sce[[groupvar]]) # get all possible group lvls
   }
-  expr.set <- do.call(cbind, lapply(typev, function(typei){
-    if(verbose){message("Summarizing type: ", typei, "...")}
-    scef <- sce[,sce[[typevar]]==typei]
-    exprf <- assays(scef)[[assayname]]
-    gene.varv <- apply(exprf,1,var)
-    gene.sdv <- apply(exprf,1,sd)
-    gene.max <- apply(exprf,1,max)
-    gene.min <- apply(exprf,1,min)
-    if(method == "mean"){
-      exprnew <- matrix(rowMeans(exprf), ncol = 1)
-    } else if(method == "median"){
-      exprnew <- matrix(rowMedians(exprf), ncol = 1)
-    } else{
-      exprnew <- exprf[,1,drop=F]
-    }
-    colnames(exprnew) <- paste0(typei, ";expr")
-    de <- data.frame(var = gene.varv, sdv = gene.sdv, max = gene.max,
-                     min = gene.min)
-    # parse group-level statistics
-    if(!is(groupvar, "NULL")){
-      dfg <- sce_groupstat(scef = scef, groupvar = groupvar, ugroupv = ugroupv,
-                           summarytype = "rowData", assayname = assayname, 
-                           verbose = verbose, ...)
-      condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(de)
-      if(condv){if(verbose){message("Binding group-level data.")}
-        de <- cbind(de, dfg)}
-    }
-    colnames(de) <- paste0(typei, ";", colnames(de))
-    return(cbind(exprnew, de))
-  }))
-  which.mexpr <- grepl(".*;expr$", colnames(expr.set))
-  mexpr <- expr.set[,which.mexpr] # expr data
-  colnames(mexpr) <- gsub(";expr.*", "", colnames(mexpr))
-  rd <- expr.set[,!which.mexpr] # rowdata
   
-  # get coldata
-  cd.sce <- colData(sce)
-  cd <- do.call(rbind, lapply(typev, function(typei){
-    if(verbose){message("Working on type: ", typei, "...")}
-    scef <- sce[,sce[[typevar]]==typei]
-    num.cells <- ncol(scef)
-    # parse 0-expr genes/cells
-    count.zeroexpr <- apply(assays(scef)$counts, 1, 
-                            function(ri){length(ri[ri==0])})
-    num.allzeroexpr <- length(which(count.zeroexpr==num.cells))
-    mean.zerocount <- mean(count.zeroexpr)
-    median.zerocount <- median(count.zeroexpr)
-    var.zerocount <- var(count.zeroexpr)
-    sd.zerocount <- sd(count.zeroexpr)
-    # get return df
-    dfr <- data.frame(type = typei,
-                      num.cells = num.cells,
-                      num.allzeroexpr = num.allzeroexpr,
-                      mean.zerocount = mean.zerocount,
-                      median.zerocount = median.zerocount,
-                      var.zerocount = var.zerocount,
-                      sd.zerocount = sd.zerocount)
-    # parse group-level statistics
-    if(!is(groupvar, "NULL")){
-      dfg <- sce_groupstat(scef = scef, groupvar = groupvar, ugroupv = ugroupv, 
-                           assayname = assayname, summarytype = "colData", 
-                           verbose = verbose, ...)
-      condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(dfr)
-      if(condv){
-        if(verbose){message("Binding group-level data.")};dfr <- cbind(dfr, dfg)
-      }
-    }
-    return(dfr)
+  # make new assays data
+  cnv <- colnames(set)
+  ldat <- lapply(typev, function(typei){
+    type.filt <- grepl(paste0("^", typei, "(;.*|$)"), cnv)
+    mei <- assays(set[,type.filt])[[assayname]]
+    mei <- as.matrix(mei)
+    unique.group.lvl <- unique(gsub(paste0("^",typei,";"), "", colnames(mei)))
+    unique.group.lvl <- paste0(unique.group.lvl, collapse = ";")
+    num.group <- ncol(mei)
+    group.var <- rowVars(mei)
+    group.mean <- rowMeans(mei)
+    list(rd = data.frame(group.var = group.var,
+                         group.mean = group.mean),
+         cd = data.frame(type = typei, num.group = num.group, 
+                         group.lvl = unique.group.lvl),
+         mexpr = rowMeans(mei))
+  })
+  names(ldat) <- typev
+  
+  # assemble set components
+  # assay expr table
+  new.assay <- do.call(cbind, lapply(ldat, function(li){li$mexpr}))
+  colnames(new.assay) <- names(ldat)
+  # coldata
+  new.cd <- do.call(rbind, lapply(ldat, function(li){li$cd}))
+  rownames(new.cd) <- colnames(new.assay)
+  # rowdata
+  new.rd <- do.call(cbind, lapply(seq(length(ldat)), function(ii){
+    typei <- names(ldat)[ii]; rdi <- ldat[[ii]]$rd
+    colnames(rdi) <- paste0(typei, ";", colnames(rdi))
+    rdi
   }))
+  # metadata
+  new.md <- list(assay.info = list(type = typevar, groupvar = groupvar),
+                 set.original = set)
   
   # make new set object
-  lassays <- list(mexpr); names(lassays) <- assayname
-  set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, colData = cd)
+  set <- SummarizedExperimentTypes(assays = list(assayname = new.assay), 
+                                   rowData = rd, colData = cd,
+                                   metadata = new.md)
   return(set)
 }
 
