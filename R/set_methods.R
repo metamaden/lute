@@ -236,19 +236,28 @@ set_from_set <- function(set, groupvar = "donor", typevar = "celltype",
   # make new assays data
   cnv <- colnames(set)
   ldat <- lapply(typev, function(typei){
+    # filter set data
     type.filt <- grepl(paste0("^", typei, "(;.*|$)"), cnv)
-    mei <- assays(set[,type.filt])[[assayname]]
+    mei <- assays(set[,type.filt,drop = F])[[assayname]]
     mei <- as.matrix(mei)
+    # get data summary variables
+    group.var <- group.mean <- NA
     unique.group.lvl <- unique(gsub(paste0("^",typei,";"), "", colnames(mei)))
+    num.group <- length(unique.group.lvl)
     unique.group.lvl <- paste0(unique.group.lvl, collapse = ";")
-    num.group <- ncol(mei)
-    group.var <- rowVars(mei)
-    group.mean <- rowMeans(mei)
+    if(num.group > 1){group.var <- rowVars(mei);group.mean <- rowMeans(mei)}
+    # get summarized expr data
+    if(method == "mean"){
+      mei <- rowMeans(as.matrix(mei))
+    } else if(method == "median"){
+      mei <- rowMedians(as.matrix(mei))
+    } else(stop("Error: invalid method."))
+    # return as list
     list(rd = data.frame(group.var = group.var,
                          group.mean = group.mean),
          cd = data.frame(type = typei, num.group = num.group, 
                          group.lvl = unique.group.lvl),
-         mexpr = rowMeans(mei))
+         mexpr = mei)
   })
   names(ldat) <- typev
   
@@ -265,17 +274,20 @@ set_from_set <- function(set, groupvar = "donor", typevar = "celltype",
     colnames(rdi) <- paste0(typei, ";", colnames(rdi))
     rdi
   }))
+  rownames(new.rd) <- rownames(set)
   # metadata
-  new.md <- list(assay.info = list(type = typevar, groupvar = groupvar),
+  new.md <- list(assay.info = list(
+                                      type = typevar, 
+                                      groupvar = groupvar
+                                  ),
                  set.original = set)
   
   # make new set object
-  set <- SummarizedExperimentTypes(assays = list(assayname = new.assay), 
-                                   rowData = rd, colData = cd,
+  set.new <- SummarizedExperimentTypes(assays = list(assayname = new.assay), 
+                                   rowData = new.rd, colData = new.cd,
                                    metadata = new.md)
-  return(set)
+  return(set.new)
 }
-
 
 #' convert_sce
 #'
