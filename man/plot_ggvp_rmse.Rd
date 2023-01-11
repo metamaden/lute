@@ -9,8 +9,6 @@ plot_ggvp_rmse(dfres, facet = TRUE, verbose = FALSE)
 \arguments{
 \item{dfres}{Simulation series results data.frame.}
 
-\item{facet}{Whether to facet violin plots for each S condition, if present.}
-
 \item{verbose}{Whether to return verbose status messages.}
 }
 \value{

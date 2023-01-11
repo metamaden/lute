@@ -160,7 +160,7 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
   }))
   which.mexpr <- grepl(".*;expr$", colnames(expr.set))
   mexpr <- expr.set[,which.mexpr] # expr data
-  colnames(mexpr) <- gsub(";.*", "", colnames(mexpr))
+  colnames(mexpr) <- gsub(";expr.*", "", colnames(mexpr))
   rd <- expr.set[,!which.mexpr] # rowdata
   
   # get coldata
