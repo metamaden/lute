@@ -412,7 +412,6 @@ plot_ggpt_bias <- function(dfres, facet = TRUE, verbose = FALSE){
 #' Makes a violin plot of the RMSE (y-axis) by experiment condition (x-axis).
 #'
 #' @param dfres Simulation series results data.frame.
-#' @param facet Whether to facet violin plots for each S condition, if present.
 #' @param verbose Whether to return verbose status messages.
 #' @returns ggplot violin plot object
 #' @export
@@ -420,7 +419,6 @@ plot_ggvp_rmse <- function(dfres, facet = TRUE, verbose = FALSE){
   if(verbose){message("Making violin plots of RMSE by type...")}
   ggvp <- ggplot(dfres, aes(x = zs_transform , y = rmse)) +
     geom_violin(draw_quantiles = 0.5) + ggtitle("RMSE by type")
-  if(facet){ggvp <- ggvp + facet_wrap(~zs_transform)}
   return(ggvp)
 }
 
