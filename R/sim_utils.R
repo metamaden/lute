@@ -311,18 +311,15 @@ pdiff <- function(pi, P, verbose = FALSE){
 results_plots <- function(dfres, lsv = NULL, refline.color = "black", 
                           verbose = FALSE){
   require(ggplot2); lgg <- list()
+  lgg[["ggvp"]] <- plot_ggvp_rmse(dfres = dfres, verbose = verbose)
   if(is(lsv, "NULL")){
     lgg[["ggpt1"]] <- plot_ggpt_rmsebyp1(dfres = dfres, facet = FALSE, 
                                          verbose = verbose)
-    lgg[["ggvp"]] <- plot_ggvp_rmse(dfres = dfres, facet = FALSE, 
-                                    verbose = verbose)
     lgg[["ggpt_bias"]] <- plot_ggpt_bias(dfres = dfres, facet = FALSE,
                                          verbose = verbose)
   } else{
     lgg[["ggpt1"]] <- plot_ggpt_rmsebyp1(dfres = dfres, facet = TRUE, 
                                          verbose = verbose)
-    lgg[["ggvp"]] <- plot_ggvp_rmse(dfres = dfres, facet = TRUE, 
-                                    verbose = verbose)
     lgg[["ggpt_bias"]] <- plot_ggpt_bias(dfres = dfres, facet = TRUE,
                                          verbose = verbose)
     lgg[["ggpt_rmse"]] <- plot_ggpt_rmse(dfres = dfres, 
