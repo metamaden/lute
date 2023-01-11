@@ -309,11 +309,36 @@ set_from_set <- function(set, groupvar = "donor", typevar = "celltype",
 #' @param ma Assay data matrix (cols = samples/cells/donors, rows = genes/loci).
 #' Accepts tables of type data.frame, matrix, or DelayedArray.
 #' @param method Statistical method to perform summary.
+#' @param na.rm Option for NA removal.
 #' @param verbose Whether to show verbose status messages.
 #' @returns 
 #' @export
-make_new_assaydata <- function(ma, method = "mean", verbose = FALSE){
-  
+make_new_assaydata <- function(ma, method = "mean", na.rm = TRUE, verbose = FALSE){
+  if(verbose){message("Parsing ma class...")}
+  ma.isda <- is(ma, "DelayedArray")
+  ma.ismat <- is(ma, "matrix") & !ma.isda
+  ma.isdf <- is(ma, "data.frame") & !ma.isda
+  if(!(ma.isda|ma.ismat|ma.isdf)){stop("Error: invalid ma class.")}
+  if(verbose){message("Getting ma in valid class...")}
+  ma.form <- ma
+  if(ma.isdf){ma.form <- as.matrix(ma)}
+  ma.form.isda <- is(ma.form, "DelayedArray")
+  ma.form.ismat <- is(ma.form, "matrix") & !ma.isda
+  if(verbose)(message("Setting the R library..."))
+  lib.str <- ifelse(ma.form.isda, "DelayedMatrixStats", "Matrix")
+  if(verbose)(message("Setting the summary method..."))
+  method.str <- "NA"
+  if(method == "mean"){
+    method.str <- "rowMeans"
+  } else if(method == "median"){
+    method.str <- "rowMedians"
+  } else{
+    stop("Error: invalid summary method.")
+  }
+  if(verbose){message("Getting summary assay data...")}
+  call.str <- paste0(lib.str, "::", method.str,"(ma, na.rm = ",na.rm,")")
+  ma.new <- eval(parse(text = call.str))
+  return(ma.new)
 }
 
 #---------------------------
