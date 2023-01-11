@@ -127,7 +127,7 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
     dfres$expt <- paste0("expt", ii)
     dfres$zs_transform <- "NA"; dfres$zs_transform[1] <- FALSE
     if(verbose){message("Making results return list...")}
-    if(!is(lsv, "NULL")){lexpt[["ZS"]] <- ZS;dfres$zs_transform[2] <- TRUE}
+    if(!is(lsv, "NULL")){lexpt[["ZS"]] <- ZS; dfres$zs_transform[2] <- TRUE}
     lpred <- lp; names(lpred) <- paste0("p", seq(length(lp)))
     lres <- list(lexpt = lexpt, lpred = lpred, dfres = dfres)
     return(lres)
@@ -157,10 +157,10 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 #' @returns return
 #' @examples
 #' # example:
-# lgv <- list(list(c(1,2),c(2,1),c(1,1)), list(c(2,2),c(2,1),c(1,2)))
-# lpv <- list(c(0.1, 0.8, 0.1),c(0.3, 0.6, 0.1),c(0.2, 0.2, 0.6))
-# lsv <- list(c(1, 10, 10), c(2, 3, 2), c(1, 1, 1))
-# lres <- decon_results(lgv, lpv, lsv)
+# lgv <- list(list(c(1,0), c(0, 1)))
+# lpv <- list(c(0.2, 0.8))
+# lsv <- list(c(10, 1))
+# lres <- decon_analysis(lgv, lpv, lsv)
 #' @seealso decon_results, 
 #' @export
 decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE, 
@@ -187,11 +187,11 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE,
   kv <- length(lpv[[1]])
   for(ki in seq(kv)){
     indexv <- as.numeric(gsub("expt", "", dfres$expt)) # index (e.g. for rep)
-    new.propv <- unlist(lapply(lpv, function(ii){ii[1]}))[indexv]
-    new.sv <- unlist(lapply(lsv, function(ii){ii[1]}))[indexv]
-    dfres$newprop <- new.propv; dfres$news <- new.sv
-    colnames(dfres)[(ncol(dfres)-1):ncol(dfres)] <- paste0(
-      c("prop_k", "sfact_k"), ki)
+    new.propv <- unlist(lapply(lpv, function(ii){ii[ki]}))[indexv]
+    new.sv <- unlist(lapply(lsv, function(ii){ii[ki]}))[indexv]
+    dfapp <- data.frame(newprop = new.propv, news = new.sv)
+    colnames(dfapp) <- paste0(c("prop_k", "sfact_k"), ki)
+    dfres <- cbind(dfres, dfapp)
   }
   if(verbose){message("Making results ggplots...")}
   lgg <- results_plots(dfres = dfres, lsv = lsv)
