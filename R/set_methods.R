@@ -208,15 +208,20 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
 #' Expects a set object with type;group nesting. Returns a set object summarized
 #' by each type across any available groups.
 #'
-#' @param 
-#' @param 
-#' 
+#' @param set An object of type SummarizedExperimentTypes or similar.
+#' @param groupvar Name of variable containing group level information.
+#' @param typevar Name of variable containing type level information.
+#' @param method Statistical method to summarize types on group levels for new
+#' assays. Can be either of "mean" or "median".
+#' @param assayname Name of assays data in provided set object to summarize.
+#' @param verbose Whether to show verbose status messages.
+#' @returns New set object with type data summarized on provided groups.
 #' @examples 
 #' sce <- random_sce()
 #' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
 #' sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
 #' set <- set_from_sce(sce, groupvar = "donor", typevar = "typevar")
-#'
+#' @export
 set_from_set <- function(set, groupvar = "donor", typevar = "celltype", 
                          method = "mean", assayname = "counts_bytype",  
                          verbose = FALSE, ...){

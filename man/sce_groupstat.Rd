@@ -10,7 +10,7 @@ sce_groupstat(
   ugroupv,
   assayname = "counts",
   summarytype = "rowData",
-  groupstat = c("mean", "median", "var", "sd", "numzero"),
+  groupstat = c("numzero", "var"),
   verbose = FALSE
 )
 }
