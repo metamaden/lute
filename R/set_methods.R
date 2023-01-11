@@ -221,6 +221,7 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
 #' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
 #' sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
 #' set <- set_from_sce(sce, groupvar = "donor", typevar = "typevar")
+#' set2 <- set_from_set(set, typevar = "celltype", groupvar = "donor")
 #' @export
 set_from_set <- function(set, groupvar = "donor", typevar = "celltype", 
                          method = "mean", assayname = "counts_bytype",  
