@@ -17,7 +17,7 @@ set_from_sce(
 \arguments{
 \item{sce}{`SingleCellExperiment` object.}
 
-\item{groupvar}{Variable containing group-level labels using in group 
+\item{groupvar}{Variable containing group-level labels used for group-wise
 summaries. If NULL, skip group summaries.}
 
 \item{method}{Method to summarize assays on types.}
