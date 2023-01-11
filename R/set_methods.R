@@ -304,6 +304,18 @@ set_from_set <- function(set, groupvar = "donor", typevar = "celltype",
 #' 
 #'
 
+#' make_new_assaydata
+#' 
+#' @param ma Assay data matrix (cols = samples/cells/donors, rows = genes/loci).
+#' Accepts tables of type data.frame, matrix, or DelayedArray.
+#' @param method Statistical method to perform summary.
+#' @param verbose Whether to show verbose status messages.
+#' @returns 
+#' @export
+make_new_assaydata <- function(ma, method = "mean", verbose = FALSE){
+  
+}
+
 #---------------------------
 # 3. methods for adjustments
 #---------------------------
