@@ -387,8 +387,8 @@ P <- c(0.25, 0.75)
 Ypb <- t(t(P) %*% t(Z))
 ```
 
-Next, we simulate a new $Z$ signature matrix from a new randomization with the
-same amount of donor-specific variation. Using this and the previously generated
+Next, we simulate a new $Z$ signature matrix from a new randomization with much 
+higher variation across donors. Using this and the previously generated 
 pseudobulked $Y$ object, we generate our unadjusted predictions.
 
 ```{r}
@@ -426,6 +426,6 @@ produced accurate predictions whereas the unadjusted predictions are considerabl
 inaccurate.
 
 ```{r}
-dft <- data.frame(unadj = punadj, adj = padj, true = unlist(lpv))
+dft <- data.frame(unadj = punadj, adj = padj, true = P)
 knitr::kable(dft, align = "c")
 ```
