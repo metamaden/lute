@@ -200,7 +200,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
     type.variable = type.variable, group.variable = group.variable
   ))
   # parse standard plot options
-  if(make_set_plots){
+  if(make.set.plots){
     lmd[["set_plots"]] <- get_set_plots(set = set, 
                                         group.variable = group.variable,
                                         type.variable = type.variable,
@@ -225,7 +225,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
 #' @param method Statistical method to summarize types on group levels for new
 #' assays. Can be either of "mean" or "median".
 #' @param assayname Name of assays data in provided set object to summarize.
-#' @param make_set_plots Whether to make standard set plots (e.g. heatmap, PCA).
+#' @param make.set.plots Whether to make standard set plots (e.g. heatmap, PCA).
 #' @param verbose Whether to show verbose status messages.
 #' @returns New set object with type data summarized on provided groups.
 #' @examples 
@@ -237,7 +237,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
 #' @export
 set_from_set <- function(set, group.variable = "donor", type.variable = "celltype", 
                          method = "mean", assayname = "summarized_counts",  
-                         make_set_plots = TRUE, verbose = FALSE, ...){
+                         make.set.plots = TRUE, verbose = FALSE, ...){
   # check set class
   setclass.cond <- (is(set, "SummarizedExperimentTypes")|
                       is(set, "RangedSummarizedExperiment Types"))
@@ -296,7 +296,7 @@ set_from_set <- function(set, group.variable = "donor", type.variable = "celltyp
                  set.original = set)
   lmd <- new.md
   # parse standard plot options
-  if(make_set_plots){
+  if(make.set.plots){
     lmd[["set_plots"]] <- get_set_plots(set = set, 
                                         group.variable = group.variable,
                                         type.variable = type.variable,
