@@ -472,13 +472,24 @@ get_set_plots <- function(){}
 get_set_heatmap <- function(set, assayname = "logcounts_bytype",
                             type.variable = NULL, group.variable = NULL, 
                             mtype.variable = NULL, randcol.seednum = 0, 
-                            scale.color = TRUE, hm.topanno = NULL, 
+                            scale.hmdata = TRUE, hm.topanno = NULL, 
                             hm.leftanno = NULL,verbose = FALSE){
   require(ComplexHeatmap)
   if(!is(set,  "SummarizedExperimentTypes")){
     stop(paste0("Error: set must be an object of class ",
                 "SummarizedExperimentTypes or similar."))
   }
+  # parse heatmap assays data
+  if(!assayname %in% names(assays(set))){
+    if(verbose){message("Warning: assayname '",assayname,
+                        "' not found in set assays.")}
+    if(verbose){message("Checking available assays...")}
+    assayname <- names(assays(set))[1]
+    if(is(assayname, "NULL")){stop("Error: no assay names in set.")} else{
+      if(verbose){message("Using assay '",assayname,"'...")}
+    }
+  }
+  hm.data <- assays(set)[[assayname]]
   # parse top annotation options
   if(is(hm.topanno, "NULL")){
     if(verbose){message("Making new top annotation from arguments...")}
@@ -528,24 +539,14 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
     if(verbose){message("Using provided left annotation...")}
     leftanno <- hm.leftanno
   }
-  # parse heatmap assays data
-  if(!assayname %in% names(assays(set))){
-    if(verbose){message("Warning: assayname '",assayname,
-                        "' not found in set assays.")}
-    if(verbose){message("Checking available assays...")}
-    assayname <- names(assays(set))[1]
-    if(is(assayname, "NULL")){stop("Error: no assay names in set.")} else{
-      if(verbose){message("Using assay '",assayname,"'...")}
-    }
-  }
-  hm.data <- assays(set)[[assayname]]
   # get legend character string
-  legend.str <- assayname
-  if(scale.color == TRUE){
-    legend.str <- paste0(legend.str, "\nscaled")
-    hm.data <- scale(hm.data)
+  # parse scale option
+  legend.str <- gsub("_.*", "", assayname)
+  if(scale.hmdata == TRUE){
     if(verbose){message("Scaling heatmap data...")}
+    legend.str <- paste0("scaled\n", legend.str); hm.data <- scale(hm.data)
   }
+  # parse assays summary metadata
   if(verbose){message("Formatting legend/heatmap name...")}
   if("assay.info" %in% names(metadata(set))){
     ai <- metadata(set)$assay.info  
@@ -553,14 +554,12 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
       legend.str <- paste0(ai[["stat.method"]], "\n", legend.str)
     }
   }
-  lv <- unlist(strsplit(legend.str, ""))
-  lv[1] <- toupper(lv[1])
+  # make first char uppercase
+  lv <- unlist(strsplit(legend.str, "")); lv[1] <- toupper(lv[1])
   legend.final <- paste0(lv, collapse = "")
   if(verbose){message("Making new heatmap object...")}
-  hm <- Heatmap(hm.data, name = legend.str, 
-                show_column_dend = F, top_annotation = topanno,
-                left_annotation = leftanno)
-  hm
+  Heatmap(hm.data, name = legned.final, show_column_dend = FALSE, 
+          top_annotation = topanno, left_annotation = leftanno)
 }
 
 #' get_set_pca
