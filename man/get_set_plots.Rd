@@ -6,19 +6,38 @@
 \usage{
 get_set_plots(
   set,
+  lplots = c("hm"),
   assayname = "summarized_counts",
   type.variable = NULL,
   group.variable = NULL,
   mtype.variable = NULL,
   randcol.seednum = 0,
   scale.hmdata = TRUE,
-  lplots = c("hm"),
   verbose,
   ...
 )
 }
 \arguments{
+\item{set}{A SummarizedExperimentTypes object or similar.}
+
 \item{lplots}{List of plot types to make. Accepts "pca" and "hm".}
+
+\item{assayname}{Name of assays matrix in set object to plot.}
+
+\item{type.variable}{Variable name for type labels in set colData.}
+
+\item{group.variable}{Variable name for type labels in set colData.}
+
+\item{mtype.variable}{Variable name for marker labels in rowData.}
+
+\item{randcol.seednum}{Number for random seed to make random colors.}
+
+\item{scale.hmdata}{Whether to rescale heatmap data with scale().}
+
+\item{verbose}{Whether to show verbose status messages.}
+}
+\value{
+List of plot objects
 }
 \description{
 Makes standard plots for SummarizedExperimentTypes and similar objects.

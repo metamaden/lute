@@ -24,7 +24,7 @@ get_set_heatmap(
 
 \item{type.variable}{Variable name for type labels in set colData.}
 
-\item{group.variable}{Variable name for type labels in set colData}
+\item{group.variable}{Variable name for type labels in set colData.}
 
 \item{mtype.variable}{Variable name for marker labels in rowData.}
 

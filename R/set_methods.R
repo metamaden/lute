@@ -453,13 +453,22 @@ groupadj_mgvdenom_fromrd <- function(set,
 #'
 #' Makes standard plots for SummarizedExperimentTypes and similar objects.
 #'
+#' @param set A SummarizedExperimentTypes object or similar.
 #' @param lplots List of plot types to make. Accepts "pca" and "hm".
-#'
-get_set_plots <- function(set, assayname = "summarized_counts", 
+#' @param assayname Name of assays matrix in set object to plot.
+#' @param type.variable Variable name for type labels in set colData.
+#' @param group.variable Variable name for type labels in set colData.
+#' @param mtype.variable Variable name for marker labels in rowData.
+#' @param randcol.seednum Number for random seed to make random colors.
+#' @param scale.hmdata Whether to rescale heatmap data with scale().
+#' @param verbose Whether to show verbose status messages.
+#' @returns List of plot objects
+#' @export
+get_set_plots <- function(set, lplots = c("hm"), 
+                          assayname = "summarized_counts", 
                           type.variable = NULL, group.variable = NULL,
                           mtype.variable = NULL, randcol.seednum = 0, 
-                          scale.hmdata = TRUE,
-                          lplots = c("hm"), verbose, ...){
+                          scale.hmdata = TRUE, verbose, ...){
   lp <- list()
   if("hm" %in% lplots|"heatmap" %in% lplots){
     if(verbose){message("Making new heatmap...")}
@@ -469,7 +478,6 @@ get_set_plots <- function(set, assayname = "summarized_counts",
                                        group.variable = group.variable,
                                        mtype.variable = mtype.variable,
                                        randcol.seednum = randcol.seednum,
-                                       scale.hmdata = scale.hmdata,
                                        scale.hmdata = scale.hmdata,
                                        hm.leftanno = hm.leftanno,
                                        verbose = verbose)
@@ -492,7 +500,7 @@ get_set_plots <- function(set, assayname = "summarized_counts",
 #' makes this annotatiomn using set rowData and other specified arguments.
 #' @param assayname Name of assays matrix in set object to plot.
 #' @param type.variable Variable name for type labels in set colData.
-#' @param group.variable Variable name for type labels in set colData
+#' @param group.variable Variable name for type labels in set colData.
 #' @param mtype.variable Variable name for marker labels in rowData.
 #' @param randcol.seednum Number for random seed to make random colors.
 #' @param scale.hmdata Whether to rescale heatmap data with scale().
