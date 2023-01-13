@@ -104,7 +104,7 @@ sce_groupstat <- function(scef, group.variable, ugroupv,
 #'
 #' @param sce `SingleCellExperiment` object.
 #' @param method Method to summarize assays on types.
-#' @param typevar Variable containing the type-level labels.
+#' @param type.variable Variable containing the type-level labels.
 #' @param assayname Name of assays data in assays(sce).
 #' @param group.variable Variable containing group-level labels used for group-wise
 #' summaries. If NULL, skip group summaries.
@@ -122,14 +122,14 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
                          verbose = FALSE, ...){
   if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
     stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
-  typev <- unique(sce[[typevar]])
+  typev <- unique(sce[[type.variable]])
   expr.sce <- assays(sce)$counts
   if(!is(group.variable, "NULL")){
     ugroupv <- unique(sce[[group.variable]]) # get all possible group lvls
   }
   expr.set <- do.call(cbind, lapply(typev, function(typei){
     if(verbose){message("Summarizing type: ", typei, "...")}
-    scef <- sce[,sce[[typevar]]==typei]
+    scef <- sce[,sce[[type.variable]]==typei]
     exprf <- assays(scef)[[assayname]]
     gene.varv <- apply(exprf,1,var)
     gene.sdv <- apply(exprf,1,sd)
@@ -163,7 +163,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
   cd.sce <- colData(sce)
   cd <- do.call(rbind, lapply(typev, function(typei){
     if(verbose){message("Working on type: ", typei, "...")}
-    scef <- sce[,sce[[typevar]]==typei]
+    scef <- sce[,sce[[type.variable]]==typei]
     num.cells <- ncol(scef)
     # parse 0-expr genes/cells
     count.zeroexpr <- apply(assays(scef)$counts, 1, 
@@ -196,11 +196,11 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
   # metadata
   new.md <- list(assay.info = list(
     method = method, sce.assayname = assayname, 
-    type = typevar, group.variable = group.variable
+    type = type.variable, group.variable = group.variable
   ))
   # make new set object
   lassays <- list(mexpr); names(lassays) <- paste0(assayname, "_bytype")
-  new.set.md <- list(assay.info = list(typevar = typevar))
+  new.set.md <- list(assay.info = list(type.variable = type.variable))
   set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, colData = cd,
                                    metadata = new.md)
   return(set)
@@ -213,7 +213,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
 #'
 #' @param set An object of type SummarizedExperimentTypes or similar.
 #' @param group.variable Name of variable containing group level information.
-#' @param typevar Name of variable containing type level information.
+#' @param type.variable Name of variable containing type level information.
 #' @param method Statistical method to summarize types on group levels for new
 #' assays. Can be either of "mean" or "median".
 #' @param assayname Name of assays data in provided set object to summarize.
@@ -222,11 +222,11 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
 #' @examples 
 #' sce <- random_sce()
 #' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
-#' sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
-#' set <- set_from_sce(sce, group.variable = "donor", typevar = "typevar")
-#' set2 <- set_from_set(set, typevar = "celltype", group.variable = "donor")
+#' sce[["type.variable"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
+#' set <- set_from_sce(sce, group.variable = "donor", type.variable = "celltype")
+#' set2 <- set_from_set(set, type.variable = "celltype", group.variable = "donor")
 #' @export
-set_from_set <- function(set, group.variable = "donor", typevar = "celltype", 
+set_from_set <- function(set, group.variable = "donor", type.variable = "celltype", 
                          method = "mean", assayname = "counts_bytype",  
                          verbose = FALSE, ...){
   # check set class
@@ -236,7 +236,7 @@ set_from_set <- function(set, group.variable = "donor", typevar = "celltype",
     stop("set must be of class SummarizedExperimentTypes or similar.")}
   
   # get params
-  typev <- unique(sce[[typevar]])
+  typev <- unique(sce[[type.variable]])
   expr.sce <- assays(sce)$counts
   if(!is(group.variable, "NULL")){
     ugroupv <- unique(sce[[group.variable]]) # get all possible group lvls
@@ -282,7 +282,7 @@ set_from_set <- function(set, group.variable = "donor", typevar = "celltype",
   }))
   rownames(new.rd) <- rownames(set)
   # metadata
-  new.md <- list(assay.info = list(type = typevar, 
+  new.md <- list(assay.info = list(type.variable = type.variable, 
                                    group.variable = group.variable),
                  set.original = set)
   
@@ -450,8 +450,8 @@ get_set_plots <- function(){}
 #' @param
 #' @param
 get_set_heatmap <- function(set, assayname = "logcounts_bytype",
-                            typevar = NULL, group.variable = NULL, 
-                            markertypevar = NULL,
+                            type.variable = NULL, group.variable = NULL, 
+                            mtype.variable = NULL,
                             randcol.seednum = 0, scale.color = TRUE,
                             verbose = FALSE){
   require(ComplexHeatmap)
@@ -461,9 +461,9 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
   }
   cd <- colData(set)
   if(verbose){message("Checking variables...")}
-  if(is(typevar, "NULL")){
+  if(is(type.variable, "NULL")){
     if(verbose){message("Taking assay colnames as type variable.")}
-    typevar <- "type"; set[[typevar]] <- colnames(set)
+    type.variable <- "type"; set[[type.variable]] <- colnames(set)
   }
   # heatmap of marker logcounts
   set.seed(randcol.seednum)
@@ -472,23 +472,23 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
   if(is(group.variable, "NULL")|!gvariable.cond){
     if(verbose){message("Proceeding without specifying group variable...")}
     topanno.str <- paste0("HeatmapAnnotation(", 
-                          typevar, " = set[[typev]],", 
+                          type.variable, " = set[[type.variable]],", 
                           "annotation_name_side = 'left')")
   } else{
     if(verbose){message("Proceeding with specified group variable...")}
     topanno.str <- paste0("HeatmapAnnotation(", 
-                          typevar, " = set[[typevar]],",
+                          type.variable, " = set[[type.variable]],",
                           group.variable," = set[[group.variable]], ",
                           "annotation_name_side = 'left')")
   }
   topanno <- eval(parse(text = topanno.str)) # parse string as command
   # parse left anno
   leftanno <- NULL
-  if(!is(markertypevar, "NULL")){
+  if(!is(mtype.variable, "NULL")){
     rd <- rowData(set)
-    if(markertypevar %in% colnames(rd)){
+    if(mtype.variable %in% colnames(rd)){
       if(verbose){message("Getting marker type variable from rowData...")}
-      leftanno <- rowAnnotation(marker_type = rd[,markertypevar])
+      leftanno <- rowAnnotation(marker_type = rd[,mtype.variable])
     } else{
       if(verbose){message("Warning: marker type variable not in rowData.")}
     }
