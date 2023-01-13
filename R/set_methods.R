@@ -196,11 +196,11 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
   # metadata
   new.md <- list(assay.info = list(
     stat.method = method, sce.assayname = assayname, 
-    type = type.variable, group.variable = group.variable
+    type.variable = type.variable, group.variable = group.variable
   ))
   # make new set object
-  lassays <- list(mexpr); names(lassays) <- paste0(assayname, "_bytype")
-  new.set.md <- list(assay.info = list(type.variable = type.variable))
+  lassays <- list(mexpr); names(lassays) <- paste0("summarized_", assayname)
+  new.set.md <- list(assay.info = new.md)
   set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, colData = cd,
                                    metadata = new.md)
   return(set)
@@ -283,13 +283,12 @@ set_from_set <- function(set, group.variable = "donor", type.variable = "celltyp
   rownames(new.rd) <- rownames(set)
   # metadata
   new.md <- list(assay.info = list(stat.method = method,
-                                   type.variable = type.variable,
-                                   group.variable = group.variable),
+                                   type.variable = type.variable),
                  set.original = set)
   
   # make new set object
   la <- list(assayname = new.assay)
-  names(la) <- paste0(assayname, "_bytype")
+  names(la) <- paste0("summarized_", gsub(".*_", "", assayname))
   set.new <- SummarizedExperimentTypes(assays = la, rowData = new.rd, 
                                        colData = new.cd, metadata = new.md)
   return(set.new)
@@ -550,7 +549,7 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
   legend.str <- gsub("_.*", "", assayname)
   if(scale.hmdata == TRUE){
     if(verbose){message("Scaling heatmap data...")}
-    legend.str <- paste0("scaled\n", legend.str); hm.data <- scale(hm.data)
+    hm.data <- scale(hm.data); legend.str <- paste0("scaled\n", legend.str)
   }
   # parse assays summary metadata
   if(verbose){message("Formatting legend/heatmap name...")}
@@ -564,7 +563,7 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
   lv <- unlist(strsplit(legend.str, "")); lv[1] <- toupper(lv[1])
   legend.final <- paste0(lv, collapse = "")
   if(verbose){message("Making new heatmap object...")}
-  Heatmap(hm.data, name = legned.final, show_column_dend = FALSE, 
+  Heatmap(hm.data, name = legend.final, show_column_dend = FALSE, 
           top_annotation = topanno, left_annotation = leftanno)
 }
 
