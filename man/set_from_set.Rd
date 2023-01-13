@@ -9,7 +9,8 @@ set_from_set(
   group.variable = "donor",
   type.variable = "celltype",
   method = "mean",
-  assayname = "counts_bytype",
+  assayname = "summarized_counts",
+  make_set_plots = TRUE,
   verbose = FALSE,
   ...
 )
@@ -25,6 +26,8 @@ set_from_set(
 assays. Can be either of "mean" or "median".}
 
 \item{assayname}{Name of assays data in provided set object to summarize.}
+
+\item{make_set_plots}{Whether to make standard set plots (e.g. heatmap, PCA).}
 
 \item{verbose}{Whether to show verbose status messages.}
 }

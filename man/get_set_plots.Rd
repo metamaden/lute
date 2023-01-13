@@ -4,8 +4,22 @@
 \alias{get_set_plots}
 \title{get_set_plots}
 \usage{
-get_set_plots()
+get_set_plots(
+  set,
+  assayname = "summarized_counts",
+  type.variable = NULL,
+  group.variable = NULL,
+  mtype.variable = NULL,
+  randcol.seednum = 0,
+  scale.hmdata = TRUE,
+  lplots = c("hm"),
+  verbose,
+  ...
+)
+}
+\arguments{
+\item{lplots}{List of plot types to make. Accepts "pca" and "hm".}
 }
 \description{
-get_set_plots
+Makes standard plots for SummarizedExperimentTypes and similar objects.
 }

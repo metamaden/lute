@@ -10,6 +10,7 @@ set_from_sce(
   method = "mean",
   type.variable = "celltype",
   assayname = "counts",
+  make.set.plots = TRUE,
   verbose = FALSE,
   ...
 )
@@ -30,6 +31,8 @@ summaries. If NULL, skip group summaries.}
 
 \item{...}{Additional arguments specified for `sce_groupstat()` summaries by 
 groups (see `?sce_groupstat` for details).}
+
+\item{make_set_plots}{Whether to make standard set plots (e.g. heatmap, PCA).}
 }
 \value{
 `SummarizedExperimentTypes` object.
