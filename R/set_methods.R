@@ -193,10 +193,16 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
     }
     return(dfr)
   }))
+  # metadata
+  new.md <- list(assay.info = list(
+    type = typevar, 
+    groupvar = groupvar
+  ))
   # make new set object
   lassays <- list(mexpr); names(lassays) <- paste0(assayname, "_bytype")
   new.set.md <- list(assay.info = list(typevar = typevar))
-  set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, colData = cd)
+  set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, colData = cd,
+                                   metadata = new.md)
   return(set)
 }
 
