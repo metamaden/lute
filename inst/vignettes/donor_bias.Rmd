@@ -368,27 +368,17 @@ ggplot(dfres, aes(x = offset, y = rmse, fill = offset)) +
 We can evaluate the impact of using a variance-based weighting scheme to correct
 for donor-specific biases.
 
+First, set the parameters for the experiment. We initially produce a pseudobulked $Y$ object 
+with high donor-specific variances for 10 donors.
+
 ```{r}
-ndonor = 2
-gindexv = c(1, 2)
-offseti <- 1e3
-
-# get random base data
-df <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
-                              sd.offset.pos = offseti, sd.offset.neg = offseti)
-# make adj data -- divide variances
-df.adj <- df
-varv <- rowVars(as.matrix(df.adj[,seq(ndonor)]))
-df.adj[,ndonor+1] <- df.adj[,ndonor+1]/varv
-df.adj[,ndonor+2] <- df.adj[,ndonor+2]/varv
-
 # get decon results
 # note: we need to use the same pseudobulked Y data in each case.
 # make the ypb from sim data with high donor variances
 set.seed(0)
-ndonor <- 10
+ndonor <- 100
 gindexv <- c(1, 2)
-offseti <- 1e3
+offseti <- 25
 df <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
                               sd.offset.pos = offseti, 
                               sd.offset.neg = offseti)
@@ -397,34 +387,56 @@ lsv <- list(c(1, 1))
 lgv <- list(list(c(df[1:2,3]),c(df[3:4,3])))
 lexpt <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
                               return.lres = T)
+ypb <- lexpt$lres$expt1$lexpt$Y
+```
 
+Next, we simulate a new $Z$ signature matrix from a new randomization with the
+same amount of donor-specific variation. Using this and the previously generated
+pseudobulked $Y$ object, we generate our unadjusted predictions.
 
-
-
-# unadjusted
-lpv <- list(c(0.25, 0.75))
-lsv <- list(c(1, 1))
-lgv <- list(list(c(df[1:2,3]),c(df[3:4,3])))
+```{r}
+# get the unadjusted predictions from new simulated donor data
+set.seed(1)
+df.new <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
+                                  sd.offset.pos = offseti,
+                                  sd.offset.neg = offseti)
+lgv <- list(list(c(df.new[1:2,ndonor+1]),
+                 c(df.new[3:4,ndonor+1])))
 lexpt.unadj <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
                               return.lres = T)
-# adjusted
-lpv <- list(c(0.25, 0.75))
-lsv <- list(c(1,1))
+zunadj <- lexpt.unadj$lres$expt1$lexpt$Z
+punadj <- predtype(Z = zadj, Y = ypb, strict_method = "nnls",
+                   proportions = TRUE, verbose = TRUE)
+punadj # [1] 0.6020402 0.3979598
+```
+
+Finally we repeat predictions using the same $Z$ signature matrix, but adding
+an adjustment on the between-donor variances for each gene in each type. Here,
+we simply divide the marker signals by the variances. We use the resulting 
+adjusted $Z$ signature matrix to produced our adjusted proportion predictions.
+
+```{r}
+# get the adjusted predictions from new simulated donor data
+# make adj data -- divide variances
+df.adj <- df
+varv <- rowVars(as.matrix(df.adj[,seq(ndonor)]))
+df.adj[,ndonor+1] <- df.adj[,ndonor+1]/varv
+df.adj[,ndonor+2] <- df.adj[,ndonor+2]/varv
 lgv <- list(list(c(df.adj[1:2,3]),c(df.adj[3:4,3])))
 lexpt.adj <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
                             return.lres = T)
 # get predictions on Y (built from Z_unadj)
 yunadj <- lexpt.unadj$lres$expt1$lexpt$Y
 zadj <- lexpt.adj$lres$expt1$lexpt$Z
-padj <- predtype(Z = zadj, Y = yunadj, strict_method = "nnls",
+padj <- predtype(Z = zadj, Y = ypb, strict_method = "nnls",
                     proportions = TRUE, verbose = TRUE)
-
-padj-rev(unlist(lpv))
-
-
 ```
 
-Compare adjusted and unadjusted results.
+Comparing the adjusted and unadjusted data, we see the variance adjustment 
+produced accurate predictions whereas the unadjusted predictions are considerably
+inaccurate.
 
 ```{r}
+dft <- data.frame(unadj = punadj, adj = padj, true = unlist(lpv))
+knitr::kable(dft, align = "c")
 ```
