@@ -422,3 +422,23 @@ groupadj_mgvdenom_fromrd <- function(set,
 #-------------------
 # 4. set simulations
 #-------------------
+
+#-------------
+# 5. set plots
+#-------------
+# Make standard plots for set objects
+
+#' get_set_plots
+#'
+#'
+get_set_plots <- function(){}
+
+#' get_set_heatmap
+#'
+#'
+get_set_heatmap <- function(scale.color = TRUE){}
+
+#' get_set_pca
+#'
+#'
+get_set_pca <- function(){}
