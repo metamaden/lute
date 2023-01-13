@@ -435,8 +435,72 @@ get_set_plots <- function(){}
 
 #' get_set_heatmap
 #'
-#'
-get_set_heatmap <- function(scale.color = TRUE){}
+#' @param
+#' @param
+#' @param
+#' @param
+#' @param
+#' @param
+#' @param
+#' @param
+#' @param
+get_set_heatmap <- function(set, assayname = "logcounts_bytype",
+                            typevar = NULL, groupvar = NULL, 
+                            markertypevar = NULL,
+                            randcol.seednum = 0, scale.color = TRUE,
+                            verbose = FALSE){
+  if(!is(set,  "SummarizedExperimentTypes")){
+    stop(paste0("Error: set must be an object of class ",
+                "SummarizedExperimentTypes or similar."))
+  }
+  cd <- colData(set)
+  if(verbose){message("Checking variables...")}
+  if(is(typevar, "NULL")){
+    if(verbose){message("Taking assay colnames as type variable.")}
+    set[[typevar]] <- colnames(set)
+  }
+  # heatmap of marker logcounts
+  set.seed(2)
+  # get legend character string
+  if(is(groupvar, "NULL")){
+    topanno.str <- paste0("HeatmapAnnotation(", typevar, " = set[[", typevarv, 
+                          "]], annotation_name_side = 'left')")  
+  } else{
+    groupvar.cond <- groupvar %in% colnames(cd)
+    if(!groupvar.cond){stop("Error: group variable not found in colData.")}
+    groupvarv <- set[[groupvar]]
+    topanno.str <- paste0("HeatmapAnnotation(", typevar, " = set[[", typevarv,
+                          "]], ",groupvar," = set[[",groupvar,
+                          "]], annotation_name_side = 'left')") 
+  }
+  topanno <- eval(parse(text = topanno.str)) # parse string as command
+  # parse left anno
+  leftanno <- NULL
+  if(!is(markertypevar, "NULL")){
+    rd <- rowData(set)
+    if(markertypevar %in% colnames(rd)){
+      if(verbose){message("Getting marker type variable from rowData...")}
+      leftanno <- rowAnnotation(marker_type = rowData(sef)$marker.type)
+    } else{
+      if(verbose){message("Warning: didn't find marker type variable in ",
+                          "rowData colnames.")}
+    }
+  }
+  # parse legend key/heatmap name
+  if(!assayname in names(assays(set))){
+    stop("Error: assayname '",assayname,"' not found in set assays.")}
+  legend.str <- assayname
+  if(scale.color = TRUE){legend.str <- paste0(legend.str, "\nscaled")}
+  stat.type <- NULL; ai <- metadata(set)$assay.info
+  if(type %in% names(ai)){
+    legend.str <- paste0(ai[["type"]], "\n", legend.str)
+  }
+  legend.str[1] <- toupper(legend.str[i])
+  hm <- Heatmap(assays(setf)[[assayname]], name = legend.str, 
+                show_column_dend = F, top_annotation = topanno,
+                left_annotation = leftanno)
+  hm
+}
 
 #' get_set_pca
 #'
