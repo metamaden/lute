@@ -201,12 +201,11 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
   ))
   # make new set object
   lassays <- list(mexpr); names(lassays) <- paste0("summarized_", assayname)
-  new.set.md <- list(assay.info = new.md)
   new.set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, 
-                                       colData = cd, metadata = new.md)
+                                       colData = cd, metadata = lmd)
   # parse standard plot options
   if(make.set.plots){
-    lp <- get_set_plots(set = set, group.variable = group.variable,
+    lp <- get_set_plots(set = new.set, group.variable = group.variable,
                         type.variable = type.variable, verbose = verbose, ...)
     metadata(new.set)[["set_plots"]] <- lp
   }
@@ -239,7 +238,7 @@ set_from_set <- function(set, group.variable = "donor", type.variable = "celltyp
                          make.set.plots = TRUE, verbose = FALSE, ...){
   # check set class
   setclass.cond <- (is(set, "SummarizedExperimentTypes")|
-                      is(set, "RangedSummarizedExperiment Types"))
+                      is(set, "RangedSummarizedExperimentTypes"))
   if(!setclass.cond){
     stop("set must be of class SummarizedExperimentTypes or similar.")}
   
@@ -521,8 +520,8 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
                             type.variable = NULL, group.variable = NULL, 
                             mtype.variable = NULL, randcol.seednum = 0, 
                             scale.hmdata = TRUE, hm.topanno = NULL, 
-                            hm.leftanno = NULL,verbose = FALSE){
-  require(ComplexHeatmap)
+                            hm.leftanno = NULL, verbose = FALSE){
+  suppressPackageStartupMessages(require(ComplexHeatmap))
   if(!is(set,  "SummarizedExperimentTypes")){
     stop(paste0("Error: set must be an object of class ",
                 "SummarizedExperimentTypes or similar."))
@@ -541,8 +540,7 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
   # parse top annotation options
   if(is(hm.topanno, "NULL")){
     if(verbose){message("Making new top annotation from arguments...")}
-    set.seed(randcol.seednum)
-    cd <- colData(set)
+    set.seed(randcol.seednum); cd <- colData(set); topanno.str <- NULL
     if(verbose){message("Checking variables...")}
     if(is(type.variable, "NULL")){
       if(verbose){message("Taking assay colnames as type variable.")}
