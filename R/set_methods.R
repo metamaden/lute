@@ -283,9 +283,10 @@ set_from_set <- function(set, groupvar = "donor", typevar = "celltype",
                  set.original = set)
   
   # make new set object
-  set.new <- SummarizedExperimentTypes(assays = list(assayname = new.assay), 
-                                   rowData = new.rd, colData = new.cd,
-                                   metadata = new.md)
+  la <- list(assayname = new.assay)
+  names(la) <- paste0(assayname, "_bytype")
+  set.new <- SummarizedExperimentTypes(assays = la, rowData = new.rd, 
+                                       colData = new.cd, metadata = new.md)
   return(set.new)
 }
 
