@@ -376,18 +376,15 @@ with high donor-specific variances for 10 donors.
 # note: we need to use the same pseudobulked Y data in each case.
 # make the ypb from sim data with high donor variances
 set.seed(0)
-ndonor <- 100
+ndonor <- 10
 gindexv <- c(1, 2)
-offseti <- 25
+offseti <- 1
 df <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
                               sd.offset.pos = offseti, 
                               sd.offset.neg = offseti)
-lpv <- list(c(0.25, 0.75))
-lsv <- list(c(1, 1))
-lgv <- list(list(c(df[1:2,3]),c(df[3:4,3])))
-lexpt <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
-                              return.lres = T)
-ypb <- lexpt$lres$expt1$lexpt$Y
+Z <- matrix(df[,ndonor+1], nrow = 2)
+P <- c(0.25, 0.75)
+Ypb <- t(t(P) %*% t(Z))
 ```
 
 Next, we simulate a new $Z$ signature matrix from a new randomization with the
@@ -397,17 +394,15 @@ pseudobulked $Y$ object, we generate our unadjusted predictions.
 ```{r}
 # get the unadjusted predictions from new simulated donor data
 set.seed(1)
+ndonor <- 10
+gindexv <- c(1, 2)
+offseti <- 50
 df.new <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
                                   sd.offset.pos = offseti,
                                   sd.offset.neg = offseti)
-lgv <- list(list(c(df.new[1:2,ndonor+1]),
-                 c(df.new[3:4,ndonor+1])))
-lexpt.unadj <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
-                              return.lres = T)
-zunadj <- lexpt.unadj$lres$expt1$lexpt$Z
-punadj <- predtype(Z = zadj, Y = ypb, strict_method = "nnls",
+Zunadj <- matrix(df.new[,ndonor+1], nrow = 2)
+punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
                    proportions = TRUE, verbose = TRUE)
-punadj # [1] 0.6020402 0.3979598
 ```
 
 Finally we repeat predictions using the same $Z$ signature matrix, but adding
@@ -421,15 +416,9 @@ adjusted $Z$ signature matrix to produced our adjusted proportion predictions.
 df.adj <- df
 varv <- rowVars(as.matrix(df.adj[,seq(ndonor)]))
 df.adj[,ndonor+1] <- df.adj[,ndonor+1]/varv
-df.adj[,ndonor+2] <- df.adj[,ndonor+2]/varv
-lgv <- list(list(c(df.adj[1:2,3]),c(df.adj[3:4,3])))
-lexpt.adj <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
-                            return.lres = T)
-# get predictions on Y (built from Z_unadj)
-yunadj <- lexpt.unadj$lres$expt1$lexpt$Y
-zadj <- lexpt.adj$lres$expt1$lexpt$Z
-padj <- predtype(Z = zadj, Y = ypb, strict_method = "nnls",
-                    proportions = TRUE, verbose = TRUE)
+Zadj <- matrix(df.adj[,ndonor+1], nrow = 2)
+padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
+                 proportions = TRUE, verbose = TRUE)
 ```
 
 Comparing the adjusted and unadjusted data, we see the variance adjustment 
