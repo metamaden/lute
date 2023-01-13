@@ -501,7 +501,7 @@ get_set_plots <- function(set, lplots = c("hm"),
 #' @param randcol.seednum Number for random seed to make random colors.
 #' @param scale.hmdata Whether to rescale heatmap data with scale().
 #' @param verbose Whether to show verbose status messages.
-#' @results Returns heatmap object returned from ComplexHeatmap::Heatmap()
+#' @returns Returns heatmap object returned from ComplexHeatmap::Heatmap()
 #' @examples 
 #' # get randomized singlecellexperiment
 #' sce <- random_sce()

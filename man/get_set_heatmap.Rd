@@ -40,6 +40,9 @@ makes this annotatiomn using set rowData and other specified arguments.}
 
 \item{verbose}{Whether to show verbose status messages.}
 }
+\value{
+Returns heatmap object returned from ComplexHeatmap::Heatmap()
+}
 \description{
 Make a standard heatmap of set marker expression with row (marker) and 
 column (type) annotations.
