@@ -435,8 +435,34 @@ groupadj_mgvdenom_fromrd <- function(set,
 
 #' get_set_plots
 #'
+#' Makes standard plots for SummarizedExperimentTypes and similar objects.
 #'
-get_set_plots <- function(){}
+#' @param lplots List of plot types to make. Accepts "pca" and "hm".
+#'
+get_set_plots <- function(set, assayname = "summarized_counts", 
+                          type.variable = NULL, group.variable = NULL,
+                          mtype.variable = NULL, randcol.seednum = 0, 
+                          scale.hmdata = TRUE,
+                          lplots = c("hm"), verbose, ...){
+  lp <- list()
+  if("hm" %in% lplots|"heatmap" %in% lplots){
+    if(verbose){message("Making new heatmap...")}
+    lp[["heatmap"]] <- get_set_heatmap(set = set, 
+                                       assayname = assayname,
+                                       type.variable = type.variable, 
+                                       group.variable = group.variable,
+                                       mtype.variable = mtype.variable,
+                                       randcol.seednum = randcol.seednum,
+                                       scale.hmdata = scale.hmdata,
+                                       scale.hmdata = scale.hmdata,
+                                       hm.leftanno = hm.leftanno,
+                                       verbose = verbose)
+  }
+  if("pca" %in% lplots|"principalcomponentanalysis" %in% lplots){
+    if(verbose){message("Making new PCA...")}
+  }
+  return(lp)
+}
 
 #' get_set_heatmap
 #'
