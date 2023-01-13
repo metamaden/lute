@@ -77,7 +77,7 @@ predtype <- function(Z, Y, strict_method = "nnls", proportions = TRUE,
 #' lres <- decon_results(lgv, lpv, lsv)
 #' @seealso decon_analysis
 #' @export
-decon_results <- function(lgv, lpv, lsv, strict_method = "nnls", 
+decon_results <- function(lgv, lpv, lsv = NULL, strict_method = "nnls", 
                           proportions = TRUE, verbose = FALSE){
   if(verbose){message("found ",length(lgv)," expt to run...")}
   # check provided object lengths
@@ -149,6 +149,7 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 #' @param lsv List of size factor values. If length(lsv) > length(lpv), only use
 #' up to the number of iterations in lpv. If NULL, S-transformation experiments
 #' aren't performed, and Y is calculated as $P*Z$ rather than $P*ZS$.
+#' @param return.lres Whether to return full simulation metadata.
 #' @param verbose Whether to show verbose status updates.
 #' @param lgv List of marker expression for reference/signature matrix Z. If 
 #' length(lgv) > length(lpv), only use up to the number of iterations in lpv.
@@ -163,7 +164,7 @@ decon_results <- function(lgv, lpv, lsv, strict_method = "nnls",
 # lres <- decon_analysis(lgv, lpv, lsv)
 #' @seealso decon_results, 
 #' @export
-decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE, 
+decon_analysis <- function(lgv, lpv, lsv = NULL, return.lres = FALSE, verbose = FALSE,
                            sce = NULL, ...){
   num.iter <- length(lgv)
   num.types <- length(lpv[[1]])
@@ -199,6 +200,10 @@ decon_analysis <- function(lgv, lpv, lsv, verbose = FALSE,
   if(nrow(dfres) > 3){
     if(verbose){message("Getting by type across simulations...")}
     lr[["dfres.k"]] <- dfres_k(dfres)
+  }
+  if(return.lres){
+    if(verbose){message("Appending full simulation metadata...")}
+    lr[["lres"]] <- lres
   }
   return(lr)
 }

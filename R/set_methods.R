@@ -614,4 +614,6 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
 #' @examples 
 #' @export
 get_set_pca <- function(set, assayname = "logcounts_bytype",
-                        type.variable = NULL, group.variable = NULL){}
+                        type.variable = NULL, group.variable = NULL){
+  
+}

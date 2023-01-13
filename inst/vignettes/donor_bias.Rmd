@@ -362,3 +362,69 @@ ggplot(dfres, aes(x = offset, y = rmse, fill = offset)) +
   geom_violin(draw_quantiles = 0.5) + theme_bw() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+# Use variance-based weighting
+
+We can evaluate the impact of using a variance-based weighting scheme to correct
+for donor-specific biases.
+
+```{r}
+ndonor = 2
+gindexv = c(1, 2)
+offseti <- 1e3
+
+# get random base data
+df <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
+                              sd.offset.pos = offseti, sd.offset.neg = offseti)
+# make adj data -- divide variances
+df.adj <- df
+varv <- rowVars(as.matrix(df.adj[,seq(ndonor)]))
+df.adj[,ndonor+1] <- df.adj[,ndonor+1]/varv
+df.adj[,ndonor+2] <- df.adj[,ndonor+2]/varv
+
+# get decon results
+# note: we need to use the same pseudobulked Y data in each case.
+# make the ypb from sim data with high donor variances
+set.seed(0)
+ndonor <- 10
+gindexv <- c(1, 2)
+offseti <- 1e3
+df <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
+                              sd.offset.pos = offseti, 
+                              sd.offset.neg = offseti)
+lpv <- list(c(0.25, 0.75))
+lsv <- list(c(1, 1))
+lgv <- list(list(c(df[1:2,3]),c(df[3:4,3])))
+lexpt <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
+                              return.lres = T)
+
+
+
+
+# unadjusted
+lpv <- list(c(0.25, 0.75))
+lsv <- list(c(1, 1))
+lgv <- list(list(c(df[1:2,3]),c(df[3:4,3])))
+lexpt.unadj <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
+                              return.lres = T)
+# adjusted
+lpv <- list(c(0.25, 0.75))
+lsv <- list(c(1,1))
+lgv <- list(list(c(df.adj[1:2,3]),c(df.adj[3:4,3])))
+lexpt.adj <- decon_analysis(lgv = lgv, lpv = lpv, lsv = lsv,
+                            return.lres = T)
+# get predictions on Y (built from Z_unadj)
+yunadj <- lexpt.unadj$lres$expt1$lexpt$Y
+zadj <- lexpt.adj$lres$expt1$lexpt$Z
+padj <- predtype(Z = zadj, Y = yunadj, strict_method = "nnls",
+                    proportions = TRUE, verbose = TRUE)
+
+padj-rev(unlist(lpv))
+
+
+```
+
+Compare adjusted and unadjusted results.
+
+```{r}
+```
