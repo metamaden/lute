@@ -6,7 +6,7 @@
 \usage{
 sce_groupstat(
   scef,
-  groupvar,
+  group.variable,
   ugroupv,
   assayname = "counts",
   summarytype = "rowData",
@@ -18,10 +18,10 @@ sce_groupstat(
 \item{scef}{Filtered `SingleCellExperiment` object. Should reflect the data
 for a specific type.}
 
-\item{groupvar}{Variable containing group information on scef colData.}
+\item{group.variable}{Variable containing group information on scef colData.}
 
 \item{ugroupv}{Vector of all unique groups to consider, of which levels in
-groupvar entries should be identical or a subset.}
+group.variable entries should be identical or a subset.}
 
 \item{summarytype}{Whether to summarize data on rowData (e.g. one entry per 
 row/gene), or otherwise use the colData collapsed on means (e.g. take the 

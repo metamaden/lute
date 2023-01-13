@@ -6,7 +6,7 @@
 \usage{
 groupadj_mgvdenom_fromrd(
   set,
-  groupvar_pattern = "donor.*",
+  gvariable_pattern = "donor.*",
   assayname = "counts",
   rd.method.str = "mgvdenom",
   verbose = FALSE
@@ -15,7 +15,7 @@ groupadj_mgvdenom_fromrd(
 \arguments{
 \item{set}{A SummarizedExperimentTypes}
 
-\item{groupvar_pattern}{String pattern to identify group-level summaries from
+\item{gvariable_pattern}{String pattern to identify group-level summaries from
 rowData column labels with grepl.}
 
 \item{assayname}{Name of original assays data to adjust, as identifiable from

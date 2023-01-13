@@ -7,9 +7,9 @@
 get_set_heatmap(
   set,
   assayname = "logcounts_bytype",
-  typevar = NULL,
-  groupvar = NULL,
-  markertypevar = NULL,
+  type.variable = NULL,
+  group.variable = NULL,
+  mtype.variable = NULL,
   randcol.seednum = 0,
   scale.color = TRUE,
   verbose = FALSE

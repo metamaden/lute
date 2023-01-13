@@ -6,8 +6,8 @@
 \usage{
 set_from_set(
   set,
-  groupvar = "donor",
-  typevar = "celltype",
+  group.variable = "donor",
+  type.variable = "celltype",
   method = "mean",
   assayname = "counts_bytype",
   verbose = FALSE,
@@ -17,9 +17,9 @@ set_from_set(
 \arguments{
 \item{set}{An object of type SummarizedExperimentTypes or similar.}
 
-\item{groupvar}{Name of variable containing group level information.}
+\item{group.variable}{Name of variable containing group level information.}
 
-\item{typevar}{Name of variable containing type level information.}
+\item{type.variable}{Name of variable containing type level information.}
 
 \item{method}{Statistical method to summarize types on group levels for new
 assays. Can be either of "mean" or "median".}
@@ -38,7 +38,7 @@ by each type across any available groups.
 \examples{
 sce <- random_sce()
 sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
-sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
-set <- set_from_sce(sce, groupvar = "donor", typevar = "typevar")
-set2 <- set_from_set(set, typevar = "celltype", groupvar = "donor")
+sce[["type.variable"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
+set <- set_from_sce(sce, group.variable = "donor", type.variable = "celltype")
+set2 <- set_from_set(set, type.variable = "celltype", group.variable = "donor")
 }

@@ -6,9 +6,9 @@
 \usage{
 set_from_sce(
   sce,
-  groupvar = NULL,
+  group.variable = NULL,
   method = "mean",
-  typevar = "celltype",
+  type.variable = "celltype",
   assayname = "counts",
   verbose = FALSE,
   ...
@@ -17,12 +17,12 @@ set_from_sce(
 \arguments{
 \item{sce}{`SingleCellExperiment` object.}
 
-\item{groupvar}{Variable containing group-level labels used for group-wise
+\item{group.variable}{Variable containing group-level labels used for group-wise
 summaries. If NULL, skip group summaries.}
 
 \item{method}{Method to summarize assays on types.}
 
-\item{typevar}{Variable containing the type-level labels.}
+\item{type.variable}{Variable containing the type-level labels.}
 
 \item{assayname}{Name of assays data in assays(sce).}
 
