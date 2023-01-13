@@ -195,7 +195,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
   }))
   # metadata
   new.md <- list(assay.info = list(
-    method = method, sce.assayname = assayname, 
+    stat.method = method, sce.assayname = assayname, 
     type = type.variable, group.variable = group.variable
   ))
   # make new set object
@@ -282,7 +282,8 @@ set_from_set <- function(set, group.variable = "donor", type.variable = "celltyp
   }))
   rownames(new.rd) <- rownames(set)
   # metadata
-  new.md <- list(assay.info = list(type.variable = type.variable, 
+  new.md <- list(assay.info = list(stat.method = method,
+                                   type.variable = type.variable,
                                    group.variable = group.variable),
                  set.original = set)
   
@@ -450,9 +451,11 @@ get_set_plots <- function(){}
 #' @param
 #' @param
 get_set_heatmap <- function(set, assayname = "logcounts_bytype",
-                            type.variable = NULL, group.variable = NULL, 
+                            type.variable = NULL, 
+                            group.variable = NULL, 
                             mtype.variable = NULL,
-                            randcol.seednum = 0, scale.color = TRUE,
+                            randcol.seednum = 0, 
+                            scale.color = TRUE,
                             verbose = FALSE){
   require(ComplexHeatmap)
   if(!is(set,  "SummarizedExperimentTypes")){
@@ -468,18 +471,22 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
   # heatmap of marker logcounts
   set.seed(randcol.seednum)
   # get legend character string
-  gvariable.cond <- group.variable %in% colnames(cd)
-  if(is(group.variable, "NULL")|!gvariable.cond){
+  if(is(group.variable, "NULL")){
     if(verbose){message("Proceeding without specifying group variable...")}
     topanno.str <- paste0("HeatmapAnnotation(", 
                           type.variable, " = set[[type.variable]],", 
                           "annotation_name_side = 'left')")
   } else{
-    if(verbose){message("Proceeding with specified group variable...")}
-    topanno.str <- paste0("HeatmapAnnotation(", 
-                          type.variable, " = set[[type.variable]],",
-                          group.variable," = set[[group.variable]], ",
-                          "annotation_name_side = 'left')")
+    if(group.variable %in% colnames(cd)){
+      if(verbose){message("Proceeding with specified group variable...")}
+      topanno.str <- paste0("HeatmapAnnotation(", 
+                            type.variable, " = set[[type.variable]],",
+                            group.variable," = set[[group.variable]], ",
+                            "annotation_name_side = 'left')")
+    } else{
+      if(verbose){message("Warning: group variable '", 
+                          group.variable,"' not found in colData.")}
+    }
   }
   topanno <- eval(parse(text = topanno.str)) # parse string as command
   # parse left anno
@@ -495,7 +502,8 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
   }
   # parse legend key/heatmap name
   if(!assayname %in% names(assays(set))){
-    if(verbose){message("Warning: assayname '",assayname,"' not found in set assays.")}
+    if(verbose){message("Warning: assayname '",assayname,
+                        "' not found in set assays.")}
     if(verbose){message("Checking available assays...")}
     assayname <- names(assays(set))[1]
     if(is(assayname, "NULL")){stop("Error: no assay names in set.")} else{
@@ -509,9 +517,13 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
     hm.data <- scale(hm.data)
     if(verbose){message("Scaling heatmap data...")}
   }
-  stat.type <- NULL; ai <- metadata(set)$assay.info
   if(verbose){message("Formatting legend/heatmap name...")}
-  if(type %in% names(ai)){legend.str <- paste0(ai[["type"]], "\n", legend.str)}
+  if("assay.info" %in% names(metadata(set))){
+    ai <- metadata(set)$assay.info  
+    if("stat.method" %in% names(ai)){
+      legend.str <- paste0(ai[["stat.method"]], "\n", legend.str)
+    }
+  }
   lv <- unlist(strsplit(legend.str, ""))
   lv[1] <- toupper(lv[1])
   legend.final <- paste0(lv, collapse = "")

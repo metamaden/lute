@@ -17,3 +17,5 @@ set2 <- set_from_set(set, typevar = "celltype", groupvar = "donor")
 # test heatmap
 set[["donor"]] <- gsub(".*;", "", set[["type"]])
 set[["typevar"]] <- gsub(";.*", "", set[["type"]])
+
+get_set_heatmap(set)
