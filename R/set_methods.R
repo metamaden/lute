@@ -495,7 +495,7 @@ get_set_plots <- function(set, lplots = c("hm"),
 #' @param hm.topanno Optional object produced using HeatmapAnnotation(). If NULL,
 #' makes this annotation using set colData and other specified arguments.
 #' @param hm.leftanno Optional object produced using rowAnnotation(). If NULL,
-#' makes this annotatiomn using set rowData and other specified arguments.
+#' makes this annotation using set rowData and other specified arguments.
 #' @param assayname Name of assays matrix in set object to plot.
 #' @param type.variable Variable name for type labels in set colData.
 #' @param group.variable Variable name for type labels in set colData.
@@ -605,5 +605,13 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
 
 #' get_set_pca
 #'
-#'
-get_set_pca <- function(){}
+#' @param set A SummarizedExperimentTypes object or similar.
+#' @param assayname Name of assays matrix in set object to plot.
+#' @param type.variable Variable name for type labels in set colData.
+#' @param group.variable Variable name for type labels in set colData.
+#' @param verbose Whether to show verbose status messages.
+#' @returns Returns PCA results with plots.
+#' @examples 
+#' @export
+get_set_pca <- function(set, assayname = "logcounts_bytype",
+                        type.variable = NULL, group.variable = NULL){}
