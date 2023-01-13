@@ -2,7 +2,7 @@
 % Please edit documentation in R/set_methods.R
 \name{make_new_assaydata}
 \alias{make_new_assaydata}
-\title{convert_sce}
+\title{make_new_assaydata}
 \usage{
 make_new_assaydata(ma, method = "mean", na.rm = TRUE, verbose = FALSE)
 }
@@ -15,9 +15,13 @@ Accepts tables of type data.frame, matrix, or DelayedArray.}
 \item{na.rm}{Option for NA removal.}
 
 \item{verbose}{Whether to show verbose status messages.}
-
-\item{make_new_assaydata}{}
+}
+\value{
+Assay data matrix.
 }
 \description{
-Manage conversions to a `SummarizedExperimentTypes` object.
+Efficiently makes the new assay data by summarizing sce assays with context
+sensitivity. Currently supports summary functions using either 
+DelayedMartrixStats (if a `DelayedArray` object provided) and Matrix (all 
+other inputs).
 }

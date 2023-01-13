@@ -310,23 +310,19 @@ set_from_set <- function(set, group.variable = "donor", type.variable = "celltyp
   return(set.new)
 }
 
-#' convert_sce
-#'
-#' Manage conversions to a `SummarizedExperimentTypes` object.
-#'
-#' @param
-#' @param 
-#' 
-#'
-
 #' make_new_assaydata
-#' 
+#'
+#' Efficiently makes the new assay data by summarizing sce assays with context
+#' sensitivity. Currently supports summary functions using either 
+#' DelayedMartrixStats (if a `DelayedArray` object provided) and Matrix (all 
+#' other inputs).
+#'
 #' @param ma Assay data matrix (cols = samples/cells/donors, rows = genes/loci).
 #' Accepts tables of type data.frame, matrix, or DelayedArray.
 #' @param method Statistical method to perform summary.
 #' @param na.rm Option for NA removal.
 #' @param verbose Whether to show verbose status messages.
-#' @returns 
+#' @returns Assay data matrix.
 #' @export
 make_new_assaydata <- function(ma, method = "mean", na.rm = TRUE, verbose = FALSE){
   if(verbose){message("Parsing ma class...")}
