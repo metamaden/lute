@@ -441,66 +441,94 @@ get_set_plots <- function(){}
 
 #' get_set_heatmap
 #'
-#' @param
-#' @param
-#' @param
-#' @param
-#' @param
-#' @param
-#' @param
-#' @param
-#' @param
+#' Make a standard heatmap of set marker expression with row (marker) and 
+#' column (type) annotations.
+#' 
+#' @param set A SummarizedExperimentTypes object or similar.
+#' @param hm.topanno Optional object produced using HeatmapAnnotation(). If NULL,
+#' makes this annotation using set colData and other specified arguments.
+#' @param hm.leftanno Optional object produced using rowAnnotation(). If NULL,
+#' makes this annotatiomn using set rowData and other specified arguments.
+#' @param assayname Name of assays matrix in set object to plot.
+#' @param type.variable Variable name for type labels in set colData.
+#' @param group.variable Variable name for type labels in set colData
+#' @param mtype.variable Variable name for marker labels in rowData.
+#' @param randcol.seednum Number for random seed to make random colors.
+#' @param scale.hmdata Whether to rescale heatmap data with scale().
+#' @param verbose Whether to show verbose status messages.
+#' @results Returns heatmap object returned from ComplexHeatmap::Heatmap()
+#' @examples 
+#' sce <- random_sce()
+#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
+#' sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
+#' # make new set from sce
+#' set <- set_from_sce(sce, type.variable = "typevar")
+#' set[["donor"]] <- gsub(".*;", "", set[["type"]])
+#' set[["typevar"]] <- gsub(";.*", "", set[["type"]])
+#' rowData(set)$marker_type <- c(rep("type1", 10), rep("type2", 10))
+#' get_set_heatmap(set, type.variable = "typevar", group.variable = "donor",
+#'                 mtype.variable = "marker_type")
+#' @export
 get_set_heatmap <- function(set, assayname = "logcounts_bytype",
-                            type.variable = NULL, 
-                            group.variable = NULL, 
-                            mtype.variable = NULL,
-                            randcol.seednum = 0, 
-                            scale.color = TRUE,
-                            verbose = FALSE){
+                            type.variable = NULL, group.variable = NULL, 
+                            mtype.variable = NULL, randcol.seednum = 0, 
+                            scale.color = TRUE, hm.topanno = NULL, 
+                            hm.leftanno = NULL,verbose = FALSE){
   require(ComplexHeatmap)
   if(!is(set,  "SummarizedExperimentTypes")){
     stop(paste0("Error: set must be an object of class ",
                 "SummarizedExperimentTypes or similar."))
   }
-  cd <- colData(set)
-  if(verbose){message("Checking variables...")}
-  if(is(type.variable, "NULL")){
-    if(verbose){message("Taking assay colnames as type variable.")}
-    type.variable <- "type"; set[[type.variable]] <- colnames(set)
-  }
-  # heatmap of marker logcounts
-  set.seed(randcol.seednum)
-  # get legend character string
-  if(is(group.variable, "NULL")){
-    if(verbose){message("Proceeding without specifying group variable...")}
-    topanno.str <- paste0("HeatmapAnnotation(", 
-                          type.variable, " = set[[type.variable]],", 
-                          "annotation_name_side = 'left')")
-  } else{
-    if(group.variable %in% colnames(cd)){
-      if(verbose){message("Proceeding with specified group variable...")}
+  # parse top annotation options
+  if(is(hm.topanno, "NULL")){
+    if(verbose){message("Making new top annotation from arguments...")}
+    set.seed(randcol.seednum)
+    cd <- colData(set)
+    if(verbose){message("Checking variables...")}
+    if(is(type.variable, "NULL")){
+      if(verbose){message("Taking assay colnames as type variable.")}
+      type.variable <- "type"; set[[type.variable]] <- colnames(set)
+    }
+    if(is(group.variable, "NULL")){
+      if(verbose){message("Proceeding without specifying group variable...")}
       topanno.str <- paste0("HeatmapAnnotation(", 
-                            type.variable, " = set[[type.variable]],",
-                            group.variable," = set[[group.variable]], ",
+                            type.variable, " = set[[type.variable]],", 
                             "annotation_name_side = 'left')")
     } else{
-      if(verbose){message("Warning: group variable '", 
-                          group.variable,"' not found in colData.")}
+      if(group.variable %in% colnames(cd)){
+        if(verbose){message("Proceeding with specified group variable...")}
+        topanno.str <- paste0("HeatmapAnnotation(", 
+                              type.variable, " = set[[type.variable]],",
+                              group.variable," = set[[group.variable]], ",
+                              "annotation_name_side = 'left')")
+      } else{
+        if(verbose){message("Warning: group variable '", 
+                            group.variable,"' not found in colData.")}
+      }
     }
+    topanno <- eval(parse(text = topanno.str)) # parse string as command
+  } else{
+    if(verbose){message("Using provided top annotation...")}
+    topanno <- hm.topanno
   }
-  topanno <- eval(parse(text = topanno.str)) # parse string as command
   # parse left anno
-  leftanno <- NULL
-  if(!is(mtype.variable, "NULL")){
-    rd <- rowData(set)
-    if(mtype.variable %in% colnames(rd)){
-      if(verbose){message("Getting marker type variable from rowData...")}
-      leftanno <- rowAnnotation(marker_type = rd[,mtype.variable])
-    } else{
-      if(verbose){message("Warning: marker type variable not in rowData.")}
+  if(is(hm.leftanno, "NULL")){
+    if(verbose){message("Making left annotation from arguments...")}
+    leftanno <- NULL
+    if(!is(mtype.variable, "NULL")){
+      rd <- rowData(set)
+      if(mtype.variable %in% colnames(rd)){
+        if(verbose){message("Getting marker type variable from rowData...")}
+        leftanno <- rowAnnotation(marker_type = rd[,mtype.variable])
+      } else{
+        if(verbose){message("Warning: marker type variable not in rowData.")}
+      }
     }
+  } else{
+    if(verbose){message("Using provided left annotation...")}
+    leftanno <- hm.leftanno
   }
-  # parse legend key/heatmap name
+  # parse heatmap assays data
   if(!assayname %in% names(assays(set))){
     if(verbose){message("Warning: assayname '",assayname,
                         "' not found in set assays.")}
@@ -511,6 +539,7 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
     }
   }
   hm.data <- assays(set)[[assayname]]
+  # get legend character string
   legend.str <- assayname
   if(scale.color == TRUE){
     legend.str <- paste0(legend.str, "\nscaled")

@@ -12,9 +12,47 @@ get_set_heatmap(
   mtype.variable = NULL,
   randcol.seednum = 0,
   scale.color = TRUE,
+  hm.topanno = NULL,
+  hm.leftanno = NULL,
   verbose = FALSE
 )
 }
+\arguments{
+\item{set}{A SummarizedExperimentTypes object or similar.}
+
+\item{assayname}{Name of assays matrix in set object to plot.}
+
+\item{type.variable}{Variable name for type labels in set colData.}
+
+\item{group.variable}{Variable name for type labels in set colData}
+
+\item{mtype.variable}{Variable name for marker labels in rowData.}
+
+\item{randcol.seednum}{Number for random seed to make random colors.}
+
+\item{hm.topanno}{Optional object produced using HeatmapAnnotation(). If NULL,
+makes this annotation using set colData and other specified arguments.}
+
+\item{hm.leftanno}{Optional object produced using rowAnnotation(). If NULL,
+makes this annotatiomn using set rowData and other specified arguments.}
+
+\item{verbose}{Whether to show verbose status messages.}
+
+\item{scale.hmdata}{Whether to rescale heatmap data with scale().}
+}
 \description{
-get_set_heatmap
+Make a standard heatmap of set marker expression with row (marker) and 
+column (type) annotations.
+}
+\examples{
+sce <- random_sce()
+sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
+sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
+# make new set from sce
+set <- set_from_sce(sce, type.variable = "typevar")
+set[["donor"]] <- gsub(".*;", "", set[["type"]])
+set[["typevar"]] <- gsub(";.*", "", set[["type"]])
+rowData(set)$marker_type <- c(rep("type1", 10), rep("type2", 10))
+get_set_heatmap(set, type.variable = "typevar", group.variable = "donor",
+                mtype.variable = "marker_type")
 }
