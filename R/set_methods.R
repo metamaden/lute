@@ -195,8 +195,8 @@ set_from_sce <- function(sce, groupvar = NULL, method = "mean",
   }))
   # metadata
   new.md <- list(assay.info = list(
-    type = typevar, 
-    groupvar = groupvar
+    method = method, sce.assayname = assayname, 
+    type = typevar, groupvar = groupvar
   ))
   # make new set object
   lassays <- list(mexpr); names(lassays) <- paste0(assayname, "_bytype")
