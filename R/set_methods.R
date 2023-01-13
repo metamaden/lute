@@ -487,16 +487,22 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
     }
   }
   # parse legend key/heatmap name
-  if(!assayname in names(assays(set))){
+  if(!assayname %in% names(assays(set))){
     stop("Error: assayname '",assayname,"' not found in set assays.")}
+  hm.data <- assays(setf)[[assayname]]
   legend.str <- assayname
-  if(scale.color = TRUE){legend.str <- paste0(legend.str, "\nscaled")}
+  if(scale.color == TRUE){
+    legend.str <- paste0(legend.str, "\nscaled")
+    hm.data <- scale(hm.data)
+    if(verbose){message("Scaling heatmap data...")}
+  }
   stat.type <- NULL; ai <- metadata(set)$assay.info
+  # read summary statistic from set metadata, append to legend/name
   if(type %in% names(ai)){
     legend.str <- paste0(ai[["type"]], "\n", legend.str)
   }
   legend.str[1] <- toupper(legend.str[i])
-  hm <- Heatmap(assays(setf)[[assayname]], name = legend.str, 
+  hm <- Heatmap(, name = legend.str, 
                 show_column_dend = F, top_annotation = topanno,
                 left_annotation = leftanno)
   hm
