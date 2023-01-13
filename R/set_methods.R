@@ -108,6 +108,7 @@ sce_groupstat <- function(scef, group.variable, ugroupv,
 #' @param assayname Name of assays data in assays(sce).
 #' @param group.variable Variable containing group-level labels used for group-wise
 #' summaries. If NULL, skip group summaries.
+#' @param make_set_plots Whether to make standard set plots (e.g. heatmap, PCA).
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments specified for `sce_groupstat()` summaries by 
 #' groups (see `?sce_groupstat` for details).
@@ -119,7 +120,7 @@ sce_groupstat <- function(scef, group.variable, ugroupv,
 #'
 set_from_sce <- function(sce, group.variable = NULL, method = "mean", 
                          type.variable = "celltype", assayname = "counts", 
-                         verbose = FALSE, ...){
+                         make.set.plots = TRUE, verbose = FALSE, ...){
   if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
     stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
   typev <- unique(sce[[type.variable]])
@@ -194,10 +195,17 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
     return(dfr)
   }))
   # metadata
-  new.md <- list(assay.info = list(
+  lmd <- list(assay.info = list(
     stat.method = method, sce.assayname = assayname, 
     type.variable = type.variable, group.variable = group.variable
   ))
+  # parse standard plot options
+  if(make_set_plots){
+    lmd[["set_plots"]] <- get_set_plots(set = set, 
+                                        group.variable = group.variable,
+                                        type.variable = type.variable,
+                                        verbose = verbose, ...)
+  }
   # make new set object
   lassays <- list(mexpr); names(lassays) <- paste0("summarized_", assayname)
   new.set.md <- list(assay.info = new.md)
@@ -217,6 +225,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
 #' @param method Statistical method to summarize types on group levels for new
 #' assays. Can be either of "mean" or "median".
 #' @param assayname Name of assays data in provided set object to summarize.
+#' @param make_set_plots Whether to make standard set plots (e.g. heatmap, PCA).
 #' @param verbose Whether to show verbose status messages.
 #' @returns New set object with type data summarized on provided groups.
 #' @examples 
@@ -227,8 +236,8 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
 #' set2 <- set_from_set(set, type.variable = "celltype", group.variable = "donor")
 #' @export
 set_from_set <- function(set, group.variable = "donor", type.variable = "celltype", 
-                         method = "mean", assayname = "counts_bytype",  
-                         verbose = FALSE, ...){
+                         method = "mean", assayname = "summarized_counts",  
+                         make_set_plots = TRUE, verbose = FALSE, ...){
   # check set class
   setclass.cond <- (is(set, "SummarizedExperimentTypes")|
                       is(set, "RangedSummarizedExperiment Types"))
@@ -285,12 +294,19 @@ set_from_set <- function(set, group.variable = "donor", type.variable = "celltyp
   new.md <- list(assay.info = list(stat.method = method,
                                    type.variable = type.variable),
                  set.original = set)
-  
+  lmd <- new.md
+  # parse standard plot options
+  if(make_set_plots){
+    lmd[["set_plots"]] <- get_set_plots(set = set, 
+                                        group.variable = group.variable,
+                                        type.variable = type.variable,
+                                        verbose = verbose, ...)
+  }
   # make new set object
   la <- list(assayname = new.assay)
   names(la) <- paste0("summarized_", gsub(".*_", "", assayname))
   set.new <- SummarizedExperimentTypes(assays = la, rowData = new.rd, 
-                                       colData = new.cd, metadata = new.md)
+                                       colData = new.cd, metadata = lmd)
   return(set.new)
 }
 
