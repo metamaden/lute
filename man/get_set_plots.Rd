@@ -12,6 +12,8 @@ get_set_plots(
   group.variable = NULL,
   mtype.variable = NULL,
   randcol.seednum = 0,
+  hm.topanno = NULL,
+  hm.leftanno = NULL,
   scale.hmdata = TRUE,
   verbose,
   ...
@@ -31,6 +33,12 @@ get_set_plots(
 \item{mtype.variable}{Variable name for marker labels in rowData.}
 
 \item{randcol.seednum}{Number for random seed to make random colors.}
+
+\item{hm.topanno}{Optional object produced using HeatmapAnnotation(). If NULL,
+makes this annotation using set colData and other specified arguments.}
+
+\item{hm.leftanno}{Optional object produced using rowAnnotation(). If NULL,
+makes this annotatiomn using set rowData and other specified arguments.}
 
 \item{scale.hmdata}{Whether to rescale heatmap data with scale().}
 

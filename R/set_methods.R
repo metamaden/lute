@@ -209,7 +209,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
                         type.variable = type.variable, verbose = verbose, ...)
     metadata(new.set)[["set_plots"]] <- lp
   }
-  return(set)
+  return(new.set)
 }
 
 #' set_from_set
@@ -452,6 +452,10 @@ groupadj_mgvdenom_fromrd <- function(set,
 #' @param group.variable Variable name for type labels in set colData.
 #' @param mtype.variable Variable name for marker labels in rowData.
 #' @param randcol.seednum Number for random seed to make random colors.
+#' @param hm.topanno Optional object produced using HeatmapAnnotation(). If NULL,
+#' makes this annotation using set colData and other specified arguments.
+#' @param hm.leftanno Optional object produced using rowAnnotation(). If NULL,
+#' makes this annotatiomn using set rowData and other specified arguments.
 #' @param scale.hmdata Whether to rescale heatmap data with scale().
 #' @param verbose Whether to show verbose status messages.
 #' @returns List of plot objects
@@ -460,6 +464,7 @@ get_set_plots <- function(set, lplots = c("hm"),
                           assayname = "summarized_counts", 
                           type.variable = NULL, group.variable = NULL,
                           mtype.variable = NULL, randcol.seednum = 0, 
+                          hm.topanno = NULL, hm.leftanno = NULL,
                           scale.hmdata = TRUE, verbose, ...){
   lp <- list()
   if("hm" %in% lplots|"heatmap" %in% lplots){
@@ -470,8 +475,9 @@ get_set_plots <- function(set, lplots = c("hm"),
                                        group.variable = group.variable,
                                        mtype.variable = mtype.variable,
                                        randcol.seednum = randcol.seednum,
-                                       scale.hmdata = scale.hmdata,
+                                       hm.topanno = hm.topanno,
                                        hm.leftanno = hm.leftanno,
+                                       scale.hmdata = scale.hmdata,
                                        verbose = verbose)
   }
   if("pca" %in% lplots|"principalcomponentanalysis" %in% lplots){
@@ -499,22 +505,11 @@ get_set_plots <- function(set, lplots = c("hm"),
 #' @param verbose Whether to show verbose status messages.
 #' @returns Returns heatmap object returned from ComplexHeatmap::Heatmap()
 #' @examples 
-#' # get randomized singlecellexperiment
 #' sce <- random_sce()
 #' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
 #' sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
-#' # make new set from sce
-#' set1 <- set_from_sce(sce, type.variable = "typevar")
-#' set1[["donor"]] <- gsub(".*;", "", set1[["type"]])
-#' set1[["typevar"]] <- gsub(";.*", "", set1[["type"]])
-#' rowData(set1)$marker_type <- c(rep("type1", 10), rep("type2", 10))
-#' # heatmap of type;donor assays
-#' hm1 <- get_set_heatmap(set1, type.variable = "typevar", 
-#'                        group.variable = "donor", mtype.variable = "marker_type")
-#' # heatmap of type assays
-#' set2 <- set_from_set(set1, typevar = "typevar")
-#' hm2 <- get_set_heatmap(set2, type.variable = "type", 
-#'                        mtype.variable = "marker_type")
+#' set <- set_from_sce(sce, group.variable = "donor", type.variable = "typevar")
+#' metadata(set)[["set_plots"]]$heatmap
 #' @export
 get_set_heatmap <- function(set, assayname = "logcounts_bytype",
                             type.variable = NULL, group.variable = NULL, 
@@ -563,7 +558,7 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
                             group.variable,"' not found in colData.")}
       }
     }
-    topanno <- eval(parse(text = topanno.str)) # parse string as command
+    topanno <- eval(parse(text = paste0(topanno.str))) # parse string as command
   } else{
     if(verbose){message("Using provided top annotation...")}
     topanno <- hm.topanno
