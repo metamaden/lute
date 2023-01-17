@@ -30,10 +30,9 @@ offsetv <- c(2, 5, 10)
 num.sim <- 50
 lexpt <- lapply(offsetv, function(offi){
   title.append <- paste0("Offset = ", offi, "\n")
-  donor_marker_experiment(gindexv = c(1,2), num.sim = num.sim, ndonor = ndonor,
+  donor_marker_sfactorsim(gindexv = c(1,2), num.sim = num.sim, ndonor = ndonor,
                           plot.title.append = title.append,
-                          sd.offset.pos = offi,
-                          sd.offset.neg = offi)
+                          sd.offset.pos = offi, sd.offset.neg = offi)
 })
 names(lexpt) <- paste0("offset:", offsetv)
 ```
