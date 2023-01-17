@@ -108,11 +108,12 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
                                 sd.offset.pos = 0, sd.offset.neg = 0)
   ktotal <- length(P); Z <- matrix(df[,"donor1"], ncol = ktotal)
-  P <- c(0.25, 0.75); Ypb <- t(t(P) %*% t(Z)) 
+  P <- c(0.25, 0.75); Ypb <- t(t(P) %*% t(Z))
   if(verbose){message("Getting randomized donor marker data...")}
   ldonordf <- lapply(offsetv, function(offi){
     rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, ktotal = ktotal,
-                            sd.offset.pos = offi, sd.offset.neg = offi)
+                            sd.offset.pos = offi, sd.offset.neg = offi,
+                            seed.num = seed.num)
   })
   names(ldonordf) <- paste0("offset:", offsetv)
   if(verbose){message("Getting type predictions...")}
