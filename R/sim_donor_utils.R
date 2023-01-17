@@ -79,6 +79,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param offsetv Vector of donor offset values. This is used to define the
 #' test groups for donor bias experiments. Equal offsets are applied to positive
 #' and negative marker signal distributions.
+#' @param P Vector of true proportions.
+#' @param donor.adj.method Method to adjust for donor bias.
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
 #' @param ndonor Total number of donors to simulate.
@@ -95,7 +97,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param ... Arguments passed to functions `rand_donor_marker_table()`.
 #' @returns List of experiment results and experiment objects.
 #' @export
-donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75), 
+donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75),
+                                  donor.adj.method = 'var_denom',
                                   gindexv = c(1, 2), ndonor = 10, ktotal = 2,
                                   seed.num = 0, verbose = FALSE, ...){
   
@@ -116,9 +119,8 @@ donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75),
   dfr <- do.call(rbind, lapply(seq(length(ldonordf)), function(ii){
     # simulate donor data
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
-    donor.meanv.unadj <- df[,"donor.combn.all.mean"]
-    varv <- rowVars(as.matrix(df[,seq(ndonor)])) # var across donors
-    donor.meanv.adj <- donor.meanv.unadj/varv
+    donor.unadj <- df[,"donor.combn.all.mean"]
+    donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = "var_denom", ...)
     # get marker tables
     Zunadj <- matrix(donor.meanv.unadj, ncol = ktotal)
     Zadj <- matrix(donor.meanv.adj, ncol = ktotal)
@@ -138,6 +140,53 @@ donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75),
   return(lr)
 }
 
+#' donoradj
+#'
+#' Apply some specified bias adjustment to a vector of marker data.
+#'
+#' @param donorv Vector of markrer signals (e.g. for a donor, for some summaries 
+#' across donors, etc.).
+#' @param donordf A data.frame containing the donor information used for bias
+#' corrections. Should contain donor-specific marker info identifiable by 
+#' column names of the format: "donor"+"[0-9]".
+#' @param method Method to correct for bias. Supports "var_denom", "sd_denom"
+#' @param denom_offset Denominator offset, usually very small, for methods which 
+#' divide by some quantity.
+#' @param bounds_thresh Threshold for denominator offset. Absolute denominator
+#' values above this threshold are set to equal this value.
+#' @param verbose Whether to show verbose status messages.
+#' @returns Vector of same length as donorv, containing the bias-adjusted 
+#' values.
+#' @export
+donoradj <- function(donorv, donordf, method = "var_denom", denom_offset = 1e-3,
+                     bounds_thresh = NULL, verbose = FALSE, ...){
+  donor.adj <- NA
+  if(verbose){message("Getting donor marker data...")}
+  cnv <- colnames(donordf)
+  donorcol <- cnv[grepl("^donor[0-9]$", cnv)]
+  if(verbose){message("Found ",length(donorcol),
+                      " columns of donor marker data in donordf")}
+  dff <- donordf[,donorcol]
+  if(verbose){message("Getting adjusted data...")}
+  if(grepl(".*_denom$", method)){
+    if(verbose){message("Parsing denominator adjustment...")}
+    if(method == "var_denom"){
+      denomv <- rowVars(as.matrix(dff))
+    } else if(method == "sd_denom"){
+      denomv <- rowSds(as.matrix(dff))
+    } else{
+      stop("Error, invalid adjustment method provided.")
+    }
+    denomv <- denomv + denom_offset
+    if(!is(bounds_thresh, "NULL")){
+      denomv[which(abs(denomv) >= bounds_thresh)] <- bounds_thresh
+    }
+    donor.adj <- donorv/denomv
+  } else{
+    stop("Error, invalid adjustment method provided.")
+  }
+  return(donor.adj)
+}
 
 
 #---------------------
