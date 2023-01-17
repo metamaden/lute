@@ -4,7 +4,15 @@
 \alias{decon_analysis}
 \title{decon_analysis}
 \usage{
-decon_analysis(lgv, lpv, lsv, verbose = FALSE, sce = NULL, ...)
+decon_analysis(
+  lgv,
+  lpv,
+  lsv = NULL,
+  return.lres = FALSE,
+  verbose = FALSE,
+  sce = NULL,
+  ...
+)
 }
 \arguments{
 \item{lgv}{List of marker expression for reference/signature matrix Z. If 
@@ -17,6 +25,8 @@ for the run.}
 \item{lsv}{List of size factor values. If length(lsv) > length(lpv), only use
 up to the number of iterations in lpv. If NULL, S-transformation experiments
 aren't performed, and Y is calculated as $P*Z$ rather than $P*ZS$.}
+
+\item{return.lres}{Whether to return full simulation metadata.}
 
 \item{verbose}{Whether to show verbose status updates.}
 

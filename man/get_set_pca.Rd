@@ -4,7 +4,26 @@
 \alias{get_set_pca}
 \title{get_set_pca}
 \usage{
-get_set_pca()
+get_set_pca(
+  set,
+  assayname = "logcounts_bytype",
+  type.variable = NULL,
+  group.variable = NULL
+)
+}
+\arguments{
+\item{set}{A SummarizedExperimentTypes object or similar.}
+
+\item{assayname}{Name of assays matrix in set object to plot.}
+
+\item{type.variable}{Variable name for type labels in set colData.}
+
+\item{group.variable}{Variable name for type labels in set colData.}
+
+\item{verbose}{Whether to show verbose status messages.}
+}
+\value{
+Returns PCA results with plots.
 }
 \description{
 get_set_pca

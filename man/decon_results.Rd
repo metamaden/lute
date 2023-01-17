@@ -7,7 +7,7 @@
 decon_results(
   lgv,
   lpv,
-  lsv,
+  lsv = NULL,
   strict_method = "nnls",
   proportions = TRUE,
   verbose = FALSE

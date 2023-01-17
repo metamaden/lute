@@ -101,8 +101,6 @@ donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75),
                                   donor.adj.method = 'var_denom',
                                   gindexv = c(1, 2), ndonor = 10, ktotal = 2,
                                   seed.num = 0, verbose = FALSE, ...){
-  
-  
   if(verbose){message("Making new pseudobulk sample...")}
   P <- c(0.25, 0.75)
   Ypb <- t(t(P) %*% t(Z)) 
@@ -114,29 +112,32 @@ donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75),
                             sd.offset.pos = offi, sd.offset.neg = offi)
   })
   names(ldonordf) <- paste0("offset:", offsetv)
-  
   if(verbose){message("Getting type predictions...")}
+  cname.data <- "donor.combn.all.mean"
   dfr <- do.call(rbind, lapply(seq(length(ldonordf)), function(ii){
     # simulate donor data
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
-    donor.unadj <- df[,"donor.combn.all.mean"]
-    donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = "var_denom", ...)
+    donor.unadj <- df[,cname.data]
+    # donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = "var_denom", ...)
+    donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = donor.adj.method)
     # get marker tables
-    Zunadj <- matrix(donor.meanv.unadj, ncol = ktotal)
-    Zadj <- matrix(donor.meanv.adj, ncol = ktotal)
+    Zunadj <- matrix(donor.unadj, ncol = ktotal)
+    Zadj <- matrix(donor.adjv, ncol = ktotal)
     # get predictions
     punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
                        proportions = TRUE, verbose = TRUE)
     padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
                      proportions = TRUE, verbose = TRUE)
     # append results
-    dfres <- data.frame(prop.type = c(rep("punadj", 2), rep("padj", 2)),
-                        prop.pred = c(punadj, padj), prop.true = c(rep(P, 2)),
-                        type.index = c(rep(seq(ktotal), 2)))
-    dfres$offset <- gsub(".*:", "", namei)
-    dfres
+    data.frame(prop.type = c(rep("punadj", 2), rep("padj", 2)),
+               prop.pred = c(punadj, padj), prop.true = c(rep(P, 2)),
+               type.index = c(rep(seq(ktotal), 2)),
+               offset = rep(gsub(".*:", "", namei), 4))
   }))
-  
+  # get return object
+  lmd.adj <- list(donor.adj.method = donor.adj.method, ...)
+  lmd <- list(offsetv = offsetv, P = P, donor.adj.info = lmd.adj)
+  lr <- list(dfres = dfr, ldonordf, Ypb = Ypb, metadata = lmd)
   return(lr)
 }
 
@@ -163,7 +164,7 @@ donoradj <- function(donorv, donordf, method = "var_denom", denom_offset = 1e-3,
   donor.adj <- NA
   if(verbose){message("Getting donor marker data...")}
   cnv <- colnames(donordf)
-  donorcol <- cnv[grepl("^donor[0-9]$", cnv)]
+  donorcol <- cnv[grepl("^donor\\d+$", cnv)]
   if(verbose){message("Found ",length(donorcol),
                       " columns of donor marker data in donordf")}
   dff <- donordf[,donorcol]
