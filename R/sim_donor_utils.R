@@ -97,7 +97,7 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param ... Arguments passed to functions `rand_donor_marker_table()`.
 #' @returns List of experiment results and experiment objects.
 #' @export
-donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75),
+donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                                   donor.adj.method = 'var_denom',
                                   gindexv = c(1, 2), ndonor = 10, ktotal = 2,
                                   seed.num = 0, verbose = FALSE, ...){
@@ -113,7 +113,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75),
   })
   names(ldonordf) <- paste0("offset:", offsetv)
   if(verbose){message("Getting type predictions...")}
-  cname.data <- "donor.combn.all.mean"
+  cname.data <- "donor.combn.all.mean"; ptruev <- rep(P, 2) # set params
   dfr <- do.call(rbind, lapply(seq(length(ldonordf)), function(ii){
     # simulate donor data
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
@@ -129,9 +129,10 @@ donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75),
     padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
                      proportions = TRUE, verbose = TRUE)
     # append results
+    ppredv <- c(punadj, padj); biasv <- ptruev - ppredv
     data.frame(prop.type = c(rep("punadj", 2), rep("padj", 2)),
-               prop.pred = c(punadj, padj), prop.true = c(rep(P, 2)),
-               type.index = c(rep(seq(ktotal), 2)),
+               prop.pred = ppredv, prop.true = ptruev, bias = biasv,
+               type.index = rep(seq(ktotal), 2),
                offset = rep(gsub(".*:", "", namei), 4))
   }))
   # get return object
