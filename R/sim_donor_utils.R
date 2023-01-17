@@ -86,7 +86,6 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
 #' @param ndonor Total number of donors to simulate.
-#' @param ktotal Total K types to simulate.
 #' @param sd.offset.pos Poisson dist mean for randomization of offsets for
 #' positive marker signals.
 #' @param sd.offset.neg Poisson dist mean for randomization of offsets for
@@ -101,7 +100,7 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @export
 donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                                   donor.adj.method = 'var_denom',
-                                  gindexv = c(1, 2), ndonor = 10, ktotal = 2,
+                                  gindexv = c(1, 2), ndonor = 10,
                                   seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
   if(verbose){message("Making new pseudobulk sample...")}
