@@ -5,7 +5,7 @@
 \title{donor_marker_biasexpt}
 \usage{
 donor_marker_biasexpt(
-  offsetv = c(1, 1000),
+  offsetv = c(1, 10),
   P = c(0.25, 0.75),
   donor.adj.method = "var_denom",
   gindexv = c(1, 2),
@@ -34,7 +34,7 @@ for details.}
 
 \item{seed.num}{Seed value for random sizes in lsv, in case lsv is NULL.}
 
-\item{...}{Arguments passed to functions `rand_donor_marker_table()`.}
+\item{...}{Arguments passed to function `donoradj()`.}
 
 \item{sd.offset.pos}{Poisson dist mean for randomization of offsets for
 positive marker signals.}
@@ -52,5 +52,7 @@ predictions. Automatically generates values for lpv, lsv if none passed.}
 List of experiment results and experiment objects.
 }
 \description{
-Compare predictions with and without donor bias corrections.
+Compare predictions with and without donor bias corrections. Parses various
+methods for performing the donor bias adjustment, returning predicted 
+type proportions for adjusted and unadjusted signature matrices.
 }

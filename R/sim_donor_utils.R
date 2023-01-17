@@ -133,9 +133,9 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     # append results
     ppredv <- c(punadj, padj); biasv <- ptruev - ppredv
     dfi <- data.frame(prop.type = c(rep("punadj", 2), rep("padj", 2)),
-               prop.pred = ppredv, prop.true = ptruev, bias = biasv,
-               type.index = rep(seq(ktotal), 2),
-               offset = rep(gsub(".*:", "", namei), 4))
+                      prop.pred = ppredv, prop.true = ptruev, bias = biasv,
+                      type.index = rep(seq(ktotal), 2),
+                      offset = rep(gsub(".*:", "", namei), 4))
     list(dfi = dfi, donor.unadj = donor.unadj, donor.adj = donor.adjv)
   })
   dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
