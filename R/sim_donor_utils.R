@@ -122,7 +122,8 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
     donor.unadj <- df[,cname.data]
     # donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = donor.adj.method, ...)
-    donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = donor.adj.method)
+    donor.adjv <- donoradj(donor.unadj = donor.unadj, df = df, 
+                           donor.adj.method = donor.adj.method)
     # get marker tables
     Zunadj <- matrix(donor.unadj, ncol = ktotal)
     Zadj <- matrix(donor.adjv, ncol = ktotal)
