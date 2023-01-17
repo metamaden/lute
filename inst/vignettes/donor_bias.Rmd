@@ -363,6 +363,106 @@ ggplot(dfres, aes(x = offset, y = rmse, fill = offset)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+# Compare low and high donor variances
+
+Get pseudobulk sample 
+
+```{r}
+# get decon results
+# note: we need to use the same pseudobulked Y data in each case.
+# make the ypb from sim data with high donor variances
+set.seed(0)
+ndonor <- 1
+gindexv <- c(1, 2)
+offseti <- 0
+P <- c(0.25, 0.75)
+
+# get random marker data
+df <- rand_donor_marker_table(ndonor = ndonor, 
+                              gindexv = gindexv,
+                              sd.offset.pos = offseti, 
+                              sd.offset.neg = offseti)
+Z <- matrix(df[,1], nrow = 2)
+Ypb <- t(t(P) %*% t(Z)) # make new pseudobulk sample
+```
+
+```{r}
+ndonor = 10
+gindexv = c(1, 2)
+offsetv <- c(1, 1e3)
+num.sim <- 1
+lexpt <- lapply(offsetv, function(offi){
+  title.append <- paste0("Offset = ", offi, "\n")
+  donor_marker_experiment(gindexv = c(1,2), num.sim = num.sim, 
+                          ndonor = ndonor,
+                          plot.title.append = title.append,
+                          sd.offset.pos = offi,
+                          sd.offset.neg = offi)
+})
+names(lexpt) <- paste0("offset:", offsetv)
+```
+
+```{r}
+lexpt$`offset:1`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
+```
+
+```{r}
+lexpt$`offset:1000`$lpca.markers$pca.bydonortype$scatterplot.pc1.pc2
+```
+Get predictions from low variance condition.
+
+```{r}
+# simulate donor data
+namei <- names(lexpt)[1]
+df <- lexpt[[namei]]$marker.table
+donor.meanv.unadj <- df[,"donor.combn.all.mean"]
+varv <- rowVars(as.matrix(df[,seq(10)])) # var across donors
+donor.meanv.adj <- donor.meanv.unadj/varv
+# get predictions
+# get unadj pval
+Zunadj <- matrix(donor.meanv.unadj, nrow = 2)
+punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
+                   proportions = TRUE, verbose = TRUE)
+# get adj pval
+Zadj <- matrix(donor.meanv.adj, nrow = 2)
+padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
+                 proportions = TRUE, verbose = TRUE)
+# append results
+dfres <- data.frame(ptype = c(rep(punadj, 2), rep(padj, 2)),
+                    prop = c(punadj, padj),
+                    celltype = c(rep(c("neuron", "non-neuron"), 2)))
+dfres$offset <- gsub(".*:", "", namei)
+```
+
+Get predictions from high variance condition.
+
+```{r}
+# simulate donor data
+df <- lexpt$`offset:1000`$marker.table
+donor.meanv.unadj <- df[,"donor.combn.all.mean"]
+varv <- rowVars(as.matrix(df[,seq(10)])) # var across donors
+donor.meanv.adj <- donor.meanv.unadj/varv
+# get predictions
+# get unadj pval
+Zunadj <- matrix(donor.meanv.unadj, nrow = 2)
+punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
+                   proportions = TRUE, verbose = TRUE)
+# get adj pval
+Zadj <- matrix(donor.meanv.adj, nrow = 2)
+padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
+                 proportions = TRUE, verbose = TRUE)
+# append results
+dfres <- data.frame(ptype = c(rep(punadj, 2), rep(padj, 2)),
+                    prop = c(punadj, padj),
+                    celltype = c(rep(c("neuron", "non-neuron"), 2)))
+dfres$offset <- gsub(".*:", "", namei)
+```
+
+Compare outcomes.
+
+```{r}
+```
+
 # Use variance-based weighting
 
 We can evaluate the impact of using a variance-based weighting scheme to correct
