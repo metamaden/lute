@@ -74,7 +74,9 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 
 #' donor_marker_biasexpt
 #'
-#' Compare predictions with and without donor bias corrections.
+#' Compare predictions with and without donor bias corrections. Parses various
+#' methods for performing the donor bias adjustment, returning predicted 
+#' type proportions for adjusted and unadjusted signature matrices.
 #' 
 #' @param offsetv Vector of donor offset values. This is used to define the
 #' test groups for donor bias experiments. Equal offsets are applied to positive
@@ -94,16 +96,16 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param run.decon Whether to run deconvolution experiments, returning 
 #' predictions. Automatically generates values for lpv, lsv if none passed.
 #' @param seed.num Seed value for random sizes in lsv, in case lsv is NULL.
-#' @param ... Arguments passed to functions `rand_donor_marker_table()`.
+#' @param ... Arguments passed to function `donoradj()`.
 #' @returns List of experiment results and experiment objects.
 #' @export
 donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                                   donor.adj.method = 'var_denom',
                                   gindexv = c(1, 2), ndonor = 10, ktotal = 2,
                                   seed.num = 0, verbose = FALSE, ...){
+  set.seed(seed.num)
   if(verbose){message("Making new pseudobulk sample...")}
-  P <- c(0.25, 0.75)
-  Ypb <- t(t(P) %*% t(Z)) 
+  P <- c(0.25, 0.75); Ypb <- t(t(P) %*% t(Z)) 
   if(verbose){message("Getting randomized donor marker data...")}
   # offsetv <- c(1, 1e3)
   ktotal <- length(P)
@@ -114,11 +116,11 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   names(ldonordf) <- paste0("offset:", offsetv)
   if(verbose){message("Getting type predictions...")}
   cname.data <- "donor.combn.all.mean"; ptruev <- rep(P, 2) # set params
-  dfr <- do.call(rbind, lapply(seq(length(ldonordf)), function(ii){
+  lexpt <- lapply(seq(length(ldonordf)), function(ii){
     # simulate donor data
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
     donor.unadj <- df[,cname.data]
-    # donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = "var_denom", ...)
+    # donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = donor.adj.method, ...)
     donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = donor.adj.method)
     # get marker tables
     Zunadj <- matrix(donor.unadj, ncol = ktotal)
@@ -130,15 +132,19 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                      proportions = TRUE, verbose = TRUE)
     # append results
     ppredv <- c(punadj, padj); biasv <- ptruev - ppredv
-    data.frame(prop.type = c(rep("punadj", 2), rep("padj", 2)),
+    dfi <- data.frame(prop.type = c(rep("punadj", 2), rep("padj", 2)),
                prop.pred = ppredv, prop.true = ptruev, bias = biasv,
                type.index = rep(seq(ktotal), 2),
                offset = rep(gsub(".*:", "", namei), 4))
-  }))
+    list(dfi = dfi, donor.unadj = donor.unadj, donor.adj = donor.adjv)
+  })
+  dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
+  ldonorv <- lapply(lexpt, function(ii){ii[c("donor.unadj", "donor.adj")]})
+  names(ldonorv) <- names(ldonordf)
   # get return object
   lmd.adj <- list(donor.adj.method = donor.adj.method, ...)
   lmd <- list(offsetv = offsetv, P = P, donor.adj.info = lmd.adj)
-  lr <- list(dfres = dfr, ldonordf, Ypb = Ypb, metadata = lmd)
+  lr <- list(dfres = dfr, ldonorv = ldonorv, ldonordf = ldonordf, Ypb = Ypb, metadata = lmd)
   return(lr)
 }
 
