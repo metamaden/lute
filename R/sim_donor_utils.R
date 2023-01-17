@@ -76,6 +76,9 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #'
 #' Compare predictions with and without donor bias corrections.
 #' 
+#' @param offsetv Vector of donor offset values. This is used to define the
+#' test groups for donor bias experiments. Equal offsets are applied to positive
+#' and negative marker signal distributions.
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
 #' @param ndonor Total number of donors to simulate.
@@ -92,14 +95,45 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param ... Arguments passed to functions `rand_donor_marker_table()`.
 #' @returns List of experiment results and experiment objects.
 #' @export
-donor_marker_biasexpt <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
-                                  sd.offset.pos = 5, sd.offset.neg = 5,
-                                  lpv = c(0.25, 0.75), run.decon = TRUE, 
+donor_marker_biasexpt <- function(offsetv = c(1, 1e3), P = c(0.25, 0.75), 
+                                  gindexv = c(1, 2), ndonor = 10, ktotal = 2,
                                   seed.num = 0, verbose = FALSE, ...){
   
   
+  if(verbose){message("Making new pseudobulk sample...")}
+  P <- c(0.25, 0.75)
+  Ypb <- t(t(P) %*% t(Z)) 
+  if(verbose){message("Getting randomized donor marker data...")}
+  # offsetv <- c(1, 1e3)
+  ktotal <- length(P)
+  ldonordf <- lapply(offsetv, function(offi){
+    rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, ktotal = ktotal,
+                            sd.offset.pos = offi, sd.offset.neg = offi)
+  })
+  names(ldonordf) <- paste0("offset:", offsetv)
   
-  
+  if(verbose){message("Getting type predictions...")}
+  dfr <- do.call(rbind, lapply(seq(length(ldonordf)), function(ii){
+    # simulate donor data
+    namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
+    donor.meanv.unadj <- df[,"donor.combn.all.mean"]
+    varv <- rowVars(as.matrix(df[,seq(ndonor)])) # var across donors
+    donor.meanv.adj <- donor.meanv.unadj/varv
+    # get marker tables
+    Zunadj <- matrix(donor.meanv.unadj, ncol = ktotal)
+    Zadj <- matrix(donor.meanv.adj, ncol = ktotal)
+    # get predictions
+    punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
+                       proportions = TRUE, verbose = TRUE)
+    padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
+                     proportions = TRUE, verbose = TRUE)
+    # append results
+    dfres <- data.frame(prop.type = c(rep("punadj", 2), rep("padj", 2)),
+                        prop.pred = c(punadj, padj), prop.true = c(rep(P, 2)),
+                        type.index = c(rep(seq(ktotal), 2)))
+    dfres$offset <- gsub(".*:", "", namei)
+    dfres
+  }))
   
   return(lr)
 }
