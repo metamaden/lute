@@ -99,7 +99,7 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @returns List of experiment results and experiment objects.
 #' @export
 donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
-                                  donor.adj.method = 'var_denom',
+                                  donor.adj.method = 'limma',
                                   gindexv = c(1, 2), ndonor = 10,
                                   seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
@@ -122,7 +122,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
     donor.unadj <- df[,cname.data]
     # donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = donor.adj.method, ...)
-    donor.adjv <- donoradj(donor.unadj = donor.unadj, df = df, 
+    donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
                            donor.adj.method = donor.adj.method)
     # get marker tables
     Zunadj <- matrix(donor.unadj, ncol = ktotal)
@@ -159,7 +159,8 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' @param donordf A data.frame containing the donor information used for bias
 #' corrections. Should contain donor-specific marker info identifiable by 
 #' column names of the format: "donor"+"[0-9]".
-#' @param method Method to correct for bias. Supports "var_denom", "sd_denom"
+#' @param method Method to correct for bias. Supports "var_denom", "sd_denom",
+#' "sctransform",
 #' @param denom_offset Denominator offset, usually very small, for methods which 
 #' divide by some quantity.
 #' @param bounds_thresh Threshold for denominator offset. Absolute denominator
@@ -168,12 +169,11 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' @returns Vector of same length as donorv, containing the bias-adjusted 
 #' values.
 #' @export
-donoradj <- function(donorv, donordf, method = "var_denom", denom_offset = 1e-3,
+donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
                      bounds_thresh = NULL, verbose = FALSE, ...){
   donor.adj <- NA
   if(verbose){message("Getting donor marker data...")}
-  cnv <- colnames(donordf)
-  donorcol <- cnv[grepl("^donor\\d+$", cnv)]
+  cnv <- colnames(donordf); donorcol <- cnv[grepl("^donor\\d+$", cnv)]
   if(verbose){message("Found ",length(donorcol),
                       " columns of donor marker data in donordf")}
   dff <- donordf[,donorcol]
@@ -192,8 +192,8 @@ donoradj <- function(donorv, donordf, method = "var_denom", denom_offset = 1e-3,
       denomv[which(abs(denomv) >= bounds_thresh)] <- bounds_thresh
     }
     donor.adj <- donorv/denomv
-  } else{
-    stop("Error, invalid adjustment method provided.")
+  } else if(method == "limma"){
+    donor.adj <- rowMeans(limma::removeBatchEffect(dff, batch = colnames(dff)))
   }
   return(donor.adj)
 }
