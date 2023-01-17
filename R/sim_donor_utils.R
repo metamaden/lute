@@ -41,7 +41,6 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
                                     verbose = FALSE, ...){
   if(verbose){message("Getting random marker table...")}
   dt <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, 
-                                ktotal = ktotal, 
                                 sd.offset.pos = sd.offset.pos,
                                 sd.offset.neg = sd.offset.neg, 
                                 ...)
@@ -211,7 +210,6 @@ donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
 #' @param gindexv Vector of marker indices. Index values correspond to the k types,
 #' and each index position represents a marker (e.g. c(1,2,2) means two markers 
 #' for the second type, etc.).
-#' @param ktotal Total types to simulate.
 #' @param lambda.pos Value of lambda (Poisson dist. mean) for "positive" marker 
 #' status (e.g. mean of dist. for k when marker is positive for k, negative for 
 #' not-k).
@@ -237,7 +235,7 @@ donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
 #' 
 #' @seealso random_lgv
 #' @export
-rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), ktotal = 2, 
+rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), 
                                     lambda.pos = 20, lambda.neg = 2,
                                     sd.offset.pos = 10, sd.offset.neg = 2, 
                                     seed.num = 0, verbose = FALSE, ...){
@@ -254,10 +252,8 @@ rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), ktotal = 2,
   meanv.neg[meanv.neg < 0] <- -1*meanv.neg[meanv.neg < 0]
   # get matrix of markers (rows) by donors (cols)
   md <- do.call(cbind, lapply(seq(ndonor), function(ii){
-    unlist(random_lgv(gindexv, num.iter = 1, ktotal = ktotal,
-                      lambda.pos = meanv.pos[ii],
-                      lambda.neg = meanv.neg[ii], 
-                      ...))
+    unlist(random_lgv(gindexv, num.iter = 1, lambda.pos = meanv.pos[ii],
+                      lambda.neg = meanv.neg[ii], ...))
   }))
   md <- as.data.frame(md)
   colnames(md) <- paste0("donor", seq(ndonor))

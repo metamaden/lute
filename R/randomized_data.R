@@ -49,7 +49,6 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
 #' @param gindexv Vector of marker indices. Index values correspond to the k types,
 #' and each index position represents a marker (e.g. c(1,2,2) means two markers 
 #' for the second type, etc.).
-#' @param ktotal Total types to simulate.
 #' @param num.iter Total simulation iterations.
 #' @param lambda.pos Value of lambda (Poisson dist. mean) for "positive" marker 
 #' status (e.g. mean of dist. for k when marker is positive for k, negative for 
@@ -64,13 +63,12 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
 #' set.seed(0)
 #' random_lgv(gindexv = c(rep(1, 10), rep(2, 5)))
 #' @export
-random_lgv <- function(gindexv, ktotal = 2, num.iter = 1, lambda.pos = 25, 
+random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, 
                        lambda.neg = 2, seed.num = 0){
-  set.seed(seed.num)
+  set.seed(seed.num); ktotal <- length(unique(gindexv))
   lgv <- lapply(seq(ktotal), function(ki){
     gmarkerv <- gindexv
-    which.pos <- which(gindexv==ki)
-    which.neg <- which(!gindexv==ki)
+    which.pos <- which(gindexv==ki); which.neg <- which(!gindexv==ki)
     gmarkerv[which.pos] <- rpois(lambda = lambda.pos, n = length(which.pos))
     gmarkerv[which.neg] <- rpois(lambda = lambda.neg, n = length(which.neg))
     gmarkerv
