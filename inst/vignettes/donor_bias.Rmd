@@ -400,6 +400,10 @@ P <- c(0.25, 0.75)
 Ypb <- t(t(P) %*% t(Z)) 
 ```
 
+## Get predictions with low donor offset
+
+To predict the proportions using the 
+
 ```{r}
 ndonor = 10
 gindexv = c(1, 2)
