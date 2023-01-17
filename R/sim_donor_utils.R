@@ -8,7 +8,7 @@
 # experiment function
 #--------------------
 
-#' donor_marker_experiment
+#' donor_marker_sfactor_simulations
 #'
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
@@ -33,7 +33,7 @@
 #' @examples 
 #' donor_marker_experiment()
 #' @export
-donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2, 
+donor_marker_sfactor_simulations <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2, 
                                     num.sim = 1, sd.offset.pos = 5, 
                                     sd.offset.neg = 5, lpv = NULL, lsv = NULL, 
                                     run.decon = TRUE, seed.num = 0, 
@@ -71,6 +71,64 @@ donor_marker_experiment <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
   }
   return(lr)
 }
+
+#' donor_marker_biasexpt
+#'
+#' Compare predictions with and without donor bias corrections.
+#' 
+#' @param gindexv
+#' @param ndonor
+#' @param ktotal
+#' @param sd.offset.pos
+#' @param sd.offset.neg
+#' @param lpv
+#' @param run.decon
+#' @param seed.num
+#' @param plot.title.append
+#' @param verbose
+#' @param ...
+#' @returns List of experiment results and experiment objects.
+#' @export
+#'
+donor_marker_biasexpt <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
+                                  sd.offset.pos = 5, sd.offset.neg = 5,
+                                  lpv = NULL, run.decon = TRUE, seed.num = 0, 
+                                  plot.title.append = NULL, 
+                                  verbose = FALSE, ...){
+  if(verbose){message("Getting random marker table...")}
+  dt <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, 
+                                ktotal = ktotal, 
+                                sd.offset.pos = sd.offset.pos,
+                                sd.offset.neg = sd.offset.neg, 
+                                ...)
+  lpca.markers <- pcaplots_donor(dt = dt, title.append = plot.title.append)
+  lr <- list(marker.table = dt, lpca.markers = lpca.markers)
+  # manage deconvolution experiments
+  if(run.decon){
+    if(verbose){message("Running deconvolution experiment...")}
+    if(is(lpv, "NULL")){lpv <- make_lpv(ktotal)[seq(num.sim)]}
+    if(is(lsv, "NULL")){
+      set.seed(seed.num)
+      sizev <- sample(100, ktotal)
+      lsv <- lapply(seq(num.sim), function(ii){sizev})
+    }
+    # run decon
+    cndv <- colnames(dt)[grepl("donor", colnames(dt))]
+    ld <- lapply(cndv, function(donori){
+      cnvf <- c(donori, "type"); dtf <- dt[,cnvf]
+      lgvi <- lapply(seq(ktotal), function(jj){
+        dtf[dtf[,2]==paste0("type", jj),1]
+      })
+      # rep up to num sim
+      lgv.in <- lapply(seq(num.sim), function(ii){lgvi})
+      decon_analysis(lgv = lgv.in, lpv = lpv, lsv = lsv)
+    })
+    names(ld) <- cndv; lr$decon.results<- ld
+  }
+  return(lr)
+}
+
+
 
 #---------------------
 # experiment utilities

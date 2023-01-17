@@ -365,7 +365,11 @@ ggplot(dfres, aes(x = offset, y = rmse, fill = offset)) +
 
 # Compare low and high donor variances
 
-Get pseudobulk sample 
+## Make a new pseudobulked sample with no offset
+
+We start by generating a pseudobulk sample `Ypb` by simulating marker data for a
+single donor. For this, we need to specify the `gindexv` and `sd.offset...` 
+arguments.
 
 ```{r}
 # get decon results
@@ -375,15 +379,25 @@ set.seed(0)
 ndonor <- 1
 gindexv <- c(1, 2)
 offseti <- 0
-P <- c(0.25, 0.75)
-
 # get random marker data
-df <- rand_donor_marker_table(ndonor = ndonor, 
-                              gindexv = gindexv,
-                              sd.offset.pos = offseti, 
-                              sd.offset.neg = offseti)
-Z <- matrix(df[,1], nrow = 2)
-Ypb <- t(t(P) %*% t(Z)) # make new pseudobulk sample
+df <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
+                              sd.offset.pos = offseti, sd.offset.neg = offseti)
+```
+
+We take the first column in `df`, titled `"donor1"`, as the simulated marker 
+data.
+
+```{r}
+Z <- matrix(df[,"donor1"], nrow = 2)
+```
+
+Now make the new pseudobulked sample `Ypb` using the marker data and by setting
+the true proportions `P` as 0.75 for type1 and 0.25 for type2.
+
+```{r}
+# make new pseudobulk sample
+P <- c(0.25, 0.75)
+Ypb <- t(t(P) %*% t(Z)) 
 ```
 
 ```{r}
