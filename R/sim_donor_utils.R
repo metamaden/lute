@@ -105,10 +105,11 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                                   seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
   if(verbose){message("Making new pseudobulk sample...")}
+  df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
+                                sd.offset.pos = 0, sd.offset.neg = 0)
+  ktotal <- length(P); Z <- matrix(df[,"donor1"], ncol = ktotal)
   P <- c(0.25, 0.75); Ypb <- t(t(P) %*% t(Z)) 
   if(verbose){message("Getting randomized donor marker data...")}
-  # offsetv <- c(1, 1e3)
-  ktotal <- length(P)
   ldonordf <- lapply(offsetv, function(offi){
     rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, ktotal = ktotal,
                             sd.offset.pos = offi, sd.offset.neg = offi)
@@ -144,7 +145,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   # get return object
   lmd.adj <- list(donor.adj.method = donor.adj.method, ...)
   lmd <- list(offsetv = offsetv, P = P, donor.adj.info = lmd.adj)
-  lr <- list(dfres = dfr, ldonorv = ldonorv, ldonordf = ldonordf, Ypb = Ypb, metadata = lmd)
+  lr <- list(dfres = dfres, ldonorv = ldonorv, ldonordf = ldonordf, Ypb = Ypb, metadata = lmd)
   return(lr)
 }
 
