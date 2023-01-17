@@ -107,7 +107,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
                                 sd.offset.pos = 0, sd.offset.neg = 0)
   ktotal <- length(P); Z <- matrix(df[,"donor1"], ncol = ktotal)
-  P <- c(0.25, 0.75); Ypb <- t(t(P) %*% t(Z))
+  Ypb <- t(t(P) %*% t(Z))
   if(verbose){message("Getting randomized donor marker data...")}
   ldonordf <- lapply(offsetv, function(offi){
     rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, ktotal = ktotal,
