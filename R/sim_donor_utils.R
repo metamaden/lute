@@ -81,7 +81,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' test groups for donor bias experiments. Equal offsets are applied to positive
 #' and negative marker signal distributions.
 #' @param P Vector of true proportions.
-#' @param donor.adj.method Method to adjust for donor bias.
+#' @param donor.adj.method Method to adjust for donor bias. Can be either 
+#' "limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
 #' @param ndonor Total number of donors to simulate.
@@ -98,7 +99,7 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @returns List of experiment results and experiment objects.
 #' @export
 donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
-                                  donor.adj.method = 'limma',
+                                  donor.adj.method = NULL,
                                   gindexv = c(1, 2), ndonor = 10,
                                   seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
