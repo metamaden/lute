@@ -97,6 +97,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param seed.num Seed value for random sizes in lsv, in case lsv is NULL.
 #' @param ... Arguments passed to function `donoradj()`.
 #' @returns List of experiment results and experiment objects.
+#' @examples 
+#' donor_marker_biasexpt()
 #' @export
 donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                                   donor.adj.method = NULL,
@@ -110,34 +112,39 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   Ypb <- t(t(P) %*% t(Z))
   if(verbose){message("Getting randomized donor marker data...")}
   ldonordf <- lapply(offsetv, function(offi){
-    rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, ktotal = ktotal,
+    rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
                             sd.offset.pos = offi, sd.offset.neg = offi,
                             seed.num = seed.num)
   })
   names(ldonordf) <- paste0("offset:", offsetv)
   if(verbose){message("Getting type predictions...")}
-  cname.data <- "donor.combn.all.mean"; ptruev <- rep(P, 2) # set params
+  cname.data <- "donor.combn.all.mean"
+  type.indexv <- seq(ktotal)
+  offsetv <- rep(gsub(".*:", "", namei), 2)
   lexpt <- lapply(seq(length(ldonordf)), function(ii){
     # simulate donor data
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
     donor.unadj <- df[,cname.data]
-    # donor.adjv <- donoradj(donor.unadj, df, donor.adj.method = donor.adj.method, ...)
-    donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
-                           donor.adj.method = donor.adj.method)
-    # get marker tables
     Zunadj <- matrix(donor.unadj, ncol = ktotal)
-    Zadj <- matrix(donor.adjv, ncol = ktotal)
-    # get predictions
     punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
                        proportions = TRUE, verbose = TRUE)
-    padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
-                     proportions = TRUE, verbose = TRUE)
+    prop.typev <- rep("punadj", ktotal); ppredv <- punadj; ptruev <- P
+    if(!is(donor.adj.method, "NULL")){
+      donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
+                             donor.adj.method = donor.adj.method, ...)
+      Zadj <- matrix(donor.adjv, ncol = ktotal)
+      padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
+                       proportions = TRUE, verbose = TRUE)
+      ptruev <- c(ptruev, P); ppredv <- c(ppredv, padj)
+      prop.typev <- c(prop.typev, rep("padj", ktotal))
+      type.indexv <- rep(type.indexv, 2)
+      offsetv <- rep(offsetv, 2)
+    }
     # append results
-    ppredv <- c(punadj, padj); biasv <- ptruev - ppredv
-    dfi <- data.frame(prop.type = c(rep("punadj", 2), rep("padj", 2)),
-                      prop.pred = ppredv, prop.true = ptruev, bias = biasv,
-                      type.index = rep(seq(ktotal), 2),
-                      offset = rep(gsub(".*:", "", namei), 4))
+    biasv <- ptruev - ppredv
+    dfi <- data.frame(prop.type = prop.typev, prop.pred = ppredv, 
+                      prop.true = ptruev, bias = biasv, 
+                      type.index = type.indexv, offset = offsetv)
     list(dfi = dfi, donor.unadj = donor.unadj, donor.adj = donor.adjv)
   })
   dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))

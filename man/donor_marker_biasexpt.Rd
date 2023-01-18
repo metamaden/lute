@@ -7,7 +7,7 @@
 donor_marker_biasexpt(
   offsetv = c(1, 10),
   P = c(0.25, 0.75),
-  donor.adj.method = "limma",
+  donor.adj.method = NULL,
   gindexv = c(1, 2),
   ndonor = 10,
   seed.num = 0,
@@ -22,7 +22,8 @@ and negative marker signal distributions.}
 
 \item{P}{Vector of true proportions.}
 
-\item{donor.adj.method}{Method to adjust for donor bias.}
+\item{donor.adj.method}{Method to adjust for donor bias. Can be either 
+"limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.}
 
 \item{gindexv}{Vector of type indices for the G markers. See `?random_lgv` 
 for details.}
