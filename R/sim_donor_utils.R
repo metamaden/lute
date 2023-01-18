@@ -120,10 +120,10 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   if(verbose){message("Getting type predictions...")}
   cname.data <- "donor.combn.all.mean"
   type.indexv <- seq(ktotal)
-  offsetv <- rep(gsub(".*:", "", namei), 2)
   lexpt <- lapply(seq(length(ldonordf)), function(ii){
     # simulate donor data
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
+    offsetv <- rep(gsub(".*:", "", namei), ktotal)
     donor.unadj <- df[,cname.data]
     Zunadj <- matrix(donor.unadj, ncol = ktotal)
     punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
@@ -144,7 +144,8 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     biasv <- ptruev - ppredv
     dfi <- data.frame(prop.type = prop.typev, prop.pred = ppredv, 
                       prop.true = ptruev, bias = biasv, 
-                      type.index = type.indexv, offset = offsetv)
+                      type.index = type.indexv, 
+                      offset = offsetv)
     list(dfi = dfi, donor.unadj = donor.unadj, donor.adj = donor.adjv)
   })
   dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
