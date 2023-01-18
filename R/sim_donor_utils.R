@@ -206,7 +206,22 @@ donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
     }
     donor.adj <- donorv/denomv
   } else if(method == "limma"){
-    donor.adj <- rowMeans(limma::removeBatchEffect(dff, batch = colnames(dff)))
+    dfl <- do.call(rbind, lapply(unique(donordf$marker), function(mi){
+      marker.filt <- which(donordf$marker==mi)
+      dfi <- dff[marker.filt,]
+      data.frame(marker = unlist(dfi), 
+                 markername = rep(mi, length(marker.filt)),
+                 donor = rep(colnames(dfi), each = nrow(dfi)), 
+                 type = rep(donordf[marker.filt,]$type, ncol(dfi)))
+    }))
+    mdat <- matrix(dfl$marker, nrow = length(unique(dfl$markername)), byrow = T)
+    
+    donor.adj <- rowMeans(limma::removeBatchEffect(t(mdat), 
+                                                   batch = dfl$donor,
+                                                   covariates = dfl$type))
+    
+    donor.adj <- rowMeans(limma::removeBatchEffect(t(mdat), 
+                                                   batch = dfl$donor))
   }
   return(donor.adj)
 }
