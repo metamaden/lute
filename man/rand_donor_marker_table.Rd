@@ -7,7 +7,6 @@
 rand_donor_marker_table(
   ndonor = 2,
   gindexv = c(1, 2),
-  ktotal = 2,
   lambda.pos = 20,
   lambda.neg = 2,
   sd.offset.pos = 10,
@@ -23,8 +22,6 @@ rand_donor_marker_table(
 \item{gindexv}{Vector of marker indices. Index values correspond to the k types,
 and each index position represents a marker (e.g. c(1,2,2) means two markers 
 for the second type, etc.).}
-
-\item{ktotal}{Total types to simulate.}
 
 \item{lambda.pos}{Value of lambda (Poisson dist. mean) for "positive" marker 
 status (e.g. mean of dist. for k when marker is positive for k, negative for 

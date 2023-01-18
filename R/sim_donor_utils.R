@@ -240,7 +240,7 @@ rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2),
                                     sd.offset.pos = 10, sd.offset.neg = 2, 
                                     seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
-  nmarkers <- length(gindexv)
+  nmarkers <- length(gindexv); ktotal <- length(unique(gindexv))
   # draw random offsets from normal dist
   offposv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.pos)
   offnegv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.neg)
@@ -255,8 +255,7 @@ rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2),
     unlist(random_lgv(gindexv, num.iter = 1, lambda.pos = meanv.pos[ii],
                       lambda.neg = meanv.neg[ii], ...))
   }))
-  md <- as.data.frame(md)
-  colnames(md) <- paste0("donor", seq(ndonor))
+  md <- as.data.frame(md); colnames(md) <- paste0("donor", seq(ndonor))
   if(ndonor > 1){
     if(verbose){message("Getting donor summary columns...")}
     which.cnv.donor <- which(grepl("donor", colnames(md)))
@@ -321,7 +320,7 @@ pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor")
     title.str.pt <- paste0(title.append, title.str.pt)}
   # make scatterplot
   gg.pt <- ggplot(dfp, aes(x = x, y = y, color = donor, 
-                           shape = donor.summary)) + 
+                           shape = donor.summary)) + theme_bw() +
     geom_point(size = 4, alpha = 0.5) + xlab(colnames(dfp)[1]) +
     ylab(colnames(dfp)[2]) + ggtitle(title.str.pt)
   # get screeplot data
@@ -381,7 +380,7 @@ pca_bydonortype <- function(dt,
     title.str.pt <- paste0(title.append, title.str.pt)}
   # plot scatterplot, first 2 pc's
   gg.pt <- ggplot(dfp, aes(x = x, y = y, color = donor, shape = type)) + 
-    geom_point(size = 4, alpha = 0.5) + ggtitle(title.str.pt) +
+    theme_bw() + geom_point(size = 4, alpha = 0.5) + ggtitle(title.str.pt) +
     xlab(colnames(dfp)[1]) + ylab(colnames(dfp)[2])
   # get screeplot data
   dfp2 <- data.frame(pc = colnames(rpca$x), sd = rpca$sdev)

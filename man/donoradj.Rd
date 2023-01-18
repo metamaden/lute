@@ -7,7 +7,7 @@
 donoradj(
   donorv,
   donordf,
-  method = "var_denom",
+  method = "limma",
   denom_offset = 0.001,
   bounds_thresh = NULL,
   verbose = FALSE,
@@ -22,7 +22,8 @@ across donors, etc.).}
 corrections. Should contain donor-specific marker info identifiable by 
 column names of the format: "donor"+"[0-9]".}
 
-\item{method}{Method to correct for bias. Supports "var_denom", "sd_denom"}
+\item{method}{Method to correct for bias. Supports "var_denom", "sd_denom",
+"sctransform",}
 
 \item{denom_offset}{Denominator offset, usually very small, for methods which 
 divide by some quantity.}

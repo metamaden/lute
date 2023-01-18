@@ -7,10 +7,9 @@
 donor_marker_biasexpt(
   offsetv = c(1, 10),
   P = c(0.25, 0.75),
-  donor.adj.method = "var_denom",
+  donor.adj.method = "limma",
   gindexv = c(1, 2),
   ndonor = 10,
-  ktotal = 2,
   seed.num = 0,
   verbose = FALSE,
   ...
@@ -29,8 +28,6 @@ and negative marker signal distributions.}
 for details.}
 
 \item{ndonor}{Total number of donors to simulate.}
-
-\item{ktotal}{Total K types to simulate.}
 
 \item{seed.num}{Seed value for random sizes in lsv, in case lsv is NULL.}
 

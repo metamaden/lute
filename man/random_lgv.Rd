@@ -6,7 +6,6 @@
 \usage{
 random_lgv(
   gindexv,
-  ktotal = 2,
   num.iter = 1,
   lambda.pos = 25,
   lambda.neg = 2,
@@ -17,8 +16,6 @@ random_lgv(
 \item{gindexv}{Vector of marker indices. Index values correspond to the k types,
 and each index position represents a marker (e.g. c(1,2,2) means two markers 
 for the second type, etc.).}
-
-\item{ktotal}{Total types to simulate.}
 
 \item{num.iter}{Total simulation iterations.}
 
