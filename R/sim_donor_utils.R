@@ -31,7 +31,7 @@
 #' signal table, results of PCA on marker table, and results and plots of 
 #' deconvolution predictions.
 #' @examples 
-#' donor_marker_experiment()
+#' donor_marker_sfactorsim()
 #' @export
 donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2, 
                                     num.sim = 1, sd.offset.pos = 5, 
@@ -178,6 +178,8 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' @param verbose Whether to show verbose status messages.
 #' @returns Vector of same length as donorv, containing the bias-adjusted 
 #' values.
+#' @examples 
+#' donordf <- 
 #' @export
 donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
                      bounds_thresh = NULL, verbose = FALSE, ...){
