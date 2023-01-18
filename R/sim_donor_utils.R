@@ -179,7 +179,8 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' @returns Vector of same length as donorv, containing the bias-adjusted 
 #' values.
 #' @examples 
-#' donordf <- 
+#' donordf <- rand_donor_marker_table()
+#' donoradj(donordf$donor.combn.all.mean, donordf)
 #' @export
 donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
                      bounds_thresh = NULL, verbose = FALSE, ...){
@@ -240,11 +241,11 @@ donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
 #' @returns return 
 #' @examples
 #' 
-#' get_donor_marker_flattable(ndonor = 2, gindexv = c(1,2))
+#' rand_donor_marker_table(ndonor = 2, gindexv = c(1,2))
 #' 
-#' get_donor_marker_flattable(ndonor = 10, gindexv = c(1,1,2))
+#' rand_donor_marker_table(ndonor = 10, gindexv = c(1,1,2))
 #' 
-#' get_donor_marker_flattable(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
+#' rand_donor_marker_table(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
 #' 
 #' @seealso random_lgv
 #' @export
