@@ -612,6 +612,11 @@ get_set_heatmap <- function(set, assayname = "logcounts_bytype",
 #' @param verbose Whether to show verbose status messages.
 #' @returns Returns PCA results with plots.
 #' @examples 
+#' sce <- random_sce()
+#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8))
+#' sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
+#' set <- set_from_sce(sce, group.variable = "donor", type.variable = "typevar")
+#' get_set_pca(set, assayname = "summarized_counts", type.variable = "type")
 #' @export
 get_set_pca <- function(set, assayname = "logcounts_bytype",
                         type.variable = NULL, group.variable = NULL){

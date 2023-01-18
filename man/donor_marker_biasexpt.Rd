@@ -54,3 +54,6 @@ Compare predictions with and without donor bias corrections. Parses various
 methods for performing the donor bias adjustment, returning predicted 
 type proportions for adjusted and unadjusted signature matrices.
 }
+\examples{
+donor_marker_biasexpt()
+}

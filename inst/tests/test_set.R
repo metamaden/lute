@@ -22,3 +22,5 @@ sce[["typevar"]] <- paste0(sce[["celltype"]], ";", sce[["donor"]])
 set <- set_from_sce(sce, group.variable = "donor", type.variable = "typevar")
 metadata(set)[["set_plots"]]$heatmap
 
+get_set_pca(set, assayname = "summarized_counts", type.variable = "type")
+
