@@ -129,6 +129,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
                        proportions = TRUE, verbose = TRUE)
     prop.typev <- rep("punadj", ktotal); ppredv <- punadj; ptruev <- P
+    lr <- list(donor.unadj = donor.unadj)
     if(!is(donor.adj.method, "NULL")){
       donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
                              donor.adj.method = donor.adj.method, ...)
@@ -139,6 +140,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
       prop.typev <- c(prop.typev, rep("padj", ktotal))
       type.indexv <- rep(type.indexv, 2)
       offsetv <- rep(offsetv, 2)
+      lr[["donor.adj"]] <- donor.adjv
     }
     # append results
     biasv <- ptruev - ppredv
@@ -146,7 +148,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                       prop.true = ptruev, bias = biasv, 
                       type.index = type.indexv, 
                       offset = offsetv)
-    list(dfi = dfi, donor.unadj = donor.unadj, donor.adj = donor.adjv)
+    lr[["dfi"]] <- dfi; return(lr)
   })
   dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
   ldonorv <- lapply(lexpt, function(ii){ii[c("donor.unadj", "donor.adj")]})
