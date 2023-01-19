@@ -117,47 +117,10 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   cname.data <- "donor.combn.all.mean"
   type.indexv <- seq(ktotal)
   lexpt <- lapply(seq(length(ldonordf)), function(ii){
-    # simulate donor data
-    lr <- list() # begin return list
     namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]] # get full donordf
     offsetv <- rep(gsub(".*:", "", namei), ktotal)
-    donor.unadj <- df[,cname.data] # get donor summary data
-    Zunadj <- matrix(donor.unadj, ncol = ktotal)
-    punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
-                       proportions = TRUE, verbose = TRUE)
-    prop.typev <- rep("punadj", ktotal); ppredv <- punadj; ptruev <- P
-    lr[["donor.unadj"]] <- donor.unadj
-    if(!is(donor.adj.method, "NULL")){
-      donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
-                             donor.adj.method = donor.adj.method, ...)
-      Zadj <- matrix(donor.adjv, ncol = ktotal)
-      padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
-                       proportions = TRUE, verbose = TRUE)
-      ptruev <- c(ptruev, P); ppredv <- c(ppredv, padj)
-      prop.typev <- c(prop.typev, rep("padj", ktotal))
-      type.indexv <- rep(type.indexv, 2)
-      offsetv <- rep(offsetv, 2)
-      lr[["donor.adj"]] <- donor.adjv
-      # parse plot arg
-      if(plot.biasadj){
-        plot.titlestr <- paste0("Bias adj. results\n")
-        plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
-        dfp <- data.frame(unadj = lr[["donor.unadj"]], adj = lr[["donor.adj"]],
-                          marker = df$marker, type = df$type)
-        lr[["ggpt.biasadj"]] <- ggplot(dfp, aes(x = unadj, y = adj, 
-                                                color = marker, shape = type)) + 
-          theme_bw() + geom_point(alpha = 0.5) + 
-          geom_abline(slope = 1, intercept = 0, color = "black") +
-          ggtitle(plot.titlestr)
-      }
     }
-    # append results
-    biasv <- ptruev - ppredv
-    dfi <- data.frame(prop.type = prop.typev, prop.pred = ppredv, 
-                      prop.true = ptruev, bias = biasv, 
-                      type.index = type.indexv, 
-                      offset = offsetv)
-    lr[["dfi"]] <- dfi; return(lr)
+    ; return(lr)
   })
   # get results df
   dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
@@ -177,15 +140,82 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   return(lr)
 }
 
+#' ypb_fromtypes
+#'
+#' Makes a pseuobulked convoluted signals sample from types data. Uses the 
+#' formula:
+#' 
+#' Y = P * Z
+#' 
+#' @param Z Signature matrix containing pure type signals (rows = markers, 
+#' columns = types).
+#' @param P Vector of true proportions.
+#' @returns Ypb, a new pseudobulked sample of convoluted signals.
+#' @examples 
+#' P <- c(0.75, 0.25)
+#' Z <- matrix(c(0, 1, 0, 1), nrow = 2)
+#' Ypb <- ypb_fromtypes(Z, P)
+#' @export
+ypb_fromtypes <- function(Z, P){
+  t(t(P) %*% t(Z))
+}
+
 #' biasexpt
 #'
 #' Run a single donor bias experiment.
 #' 
-#' @param donordf Donor data.frame.
+#' @param df Donor data.frame.
+#' @param Ypb Pseudobulk sample data.
+#' @param donor.adj.method Method to adjust for donor bias. Can be either 
+#' "limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.
+#' @param plot.biasadj Whether to make scatterplot of donor summary signals
+#' before and after bias adjustment.
+#' @param verbose Whether to show verbose status messages.
 #' @returns lexpt, experiment results list.
-#'
-biasexpt <- function(){
-  
+#' @examples 
+#' donordf <- rand_donor_marker_table()
+#' lexpt <- biasexpt(donordf)
+#' @export
+biasexpt <- function(df, Ypb, donor.adj.method = "combat", 
+                     plot.biasadj = TRUE, verbose = FALSE){
+  lr <- list() # begin return list
+  donor.unadj <- df[,cname.data] # get donor summary data
+  Zunadj <- matrix(donor.unadj, ncol = ktotal)
+  punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
+                     proportions = TRUE, verbose = TRUE)
+  prop.typev <- rep("punadj", ktotal); ppredv <- punadj; ptruev <- P
+  lr[["donor.unadj"]] <- donor.unadj
+  if(!is(donor.adj.method, "NULL")){
+    donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
+                           donor.adj.method = donor.adj.method, ...)
+    Zadj <- matrix(donor.adjv, ncol = ktotal)
+    padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
+                     proportions = TRUE, verbose = TRUE)
+    ptruev <- c(ptruev, P); ppredv <- c(ppredv, padj)
+    prop.typev <- c(prop.typev, rep("padj", ktotal))
+    type.indexv <- rep(type.indexv, 2)
+    offsetv <- rep(offsetv, 2)
+    lr[["donor.adj"]] <- donor.adjv
+    # parse plot arg
+    if(plot.biasadj){
+      plot.titlestr <- paste0("Bias adj. results\n")
+      plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
+      dfp <- data.frame(unadj = lr[["donor.unadj"]], adj = lr[["donor.adj"]],
+                        marker = df$marker, type = df$type)
+      lr[["ggpt.biasadj"]] <- ggplot(dfp, aes(x = unadj, y = adj, 
+                                              color = marker, shape = type)) + 
+        theme_bw() + geom_point(alpha = 0.5) + 
+        geom_abline(slope = 1, intercept = 0, color = "black") +
+        ggtitle(plot.titlestr)
+    }
+  }
+  # append results
+  biasv <- ptruev - ppredv
+  dfi <- data.frame(prop.type = prop.typev, prop.pred = ppredv, 
+                    prop.true = ptruev, bias = biasv, 
+                    type.index = type.indexv, 
+                    offset = offsetv)
+  lr[["dfi"]] <- dfi; return(lr)
 }
 
 #' donoradj
