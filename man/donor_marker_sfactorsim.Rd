@@ -47,6 +47,8 @@ predictions. Automatically generates values for lpv, lsv if none passed.}
 
 \item{seed.num}{Seed value for random sizes in lsv, in case lsv is NULL.}
 
+\item{verbose}{Whether to show verbose status messages.}
+
 \item{...}{Arguments passed to functions `rand_donor_marker_table()`.}
 }
 \value{

@@ -7,7 +7,7 @@
 donoradj(
   donorv,
   donordf,
-  method = "limma",
+  method = "combat",
   denom_offset = 0.001,
   bounds_thresh = NULL,
   verbose = FALSE,
@@ -23,7 +23,7 @@ corrections. Should contain donor-specific marker info identifiable by
 column names of the format: "donor"+"[0-9]".}
 
 \item{method}{Method to correct for bias. Supports "var_denom", "sd_denom",
-"sctransform",}
+"combat".}
 
 \item{denom_offset}{Denominator offset, usually very small, for methods which 
 divide by some quantity.}
@@ -42,5 +42,6 @@ Apply some specified bias adjustment to a vector of marker data.
 }
 \examples{
 donordf <- rand_donor_marker_table()
-donoradj(donordf$donor.combn.all.mean, donordf)
+donorv <- donordf$donor.combn.all.mean
+donoradj(donorv, donordf, method = "combat")
 }

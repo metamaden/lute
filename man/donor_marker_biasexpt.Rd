@@ -8,6 +8,8 @@ donor_marker_biasexpt(
   offsetv = c(1, 10),
   P = c(0.25, 0.75),
   donor.adj.method = NULL,
+  plot.biasadj = TRUE,
+  cname.donorsummary = "donor.combn.all.mean",
   gindexv = c(1, 2),
   ndonor = 10,
   seed.num = 0,
@@ -25,6 +27,12 @@ and negative marker signal distributions.}
 \item{donor.adj.method}{Method to adjust for donor bias. Can be either 
 "limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.}
 
+\item{plot.biasadj}{Whether to make scatterplot of donor summary signals
+before and after bias adjustment.}
+
+\item{cname.donorsummary}{Name of column containing the donor summary data
+with which to perform experiment.}
+
 \item{gindexv}{Vector of type indices for the G markers. See `?random_lgv` 
 for details.}
 
@@ -32,19 +40,9 @@ for details.}
 
 \item{seed.num}{Seed value for random sizes in lsv, in case lsv is NULL.}
 
+\item{verbose}{Whether to show verbose status messages.}
+
 \item{...}{Arguments passed to function `donoradj()`.}
-
-\item{sd.offset.pos}{Poisson dist mean for randomization of offsets for
-positive marker signals.}
-
-\item{sd.offset.neg}{Poisson dist mean for randomization of offsets for
-negative marker signals.}
-
-\item{lpv}{List of length num.sim containing true proportions for each 
-simulated type. Automatically generated if not provided.}
-
-\item{run.decon}{Whether to run deconvolution experiments, returning 
-predictions. Automatically generates values for lpv, lsv if none passed.}
 }
 \value{
 List of experiment results and experiment objects.
@@ -55,5 +53,5 @@ methods for performing the donor bias adjustment, returning predicted
 type proportions for adjusted and unadjusted signature matrices.
 }
 \examples{
-donor_marker_biasexpt()
+lb <- donor_marker_biasexpt()
 }
