@@ -10,8 +10,8 @@ donoradj_combat(df, return.type = "donor.adj", verbose = FALSE)
 \item{df}{Data.frame containing marker signals and pheno data.}
 
 \item{return.type}{Type of data to return. Accepts either "donor.adj" for a 
-vector of adjusted donor signals, or "mexpr" for a matrix of adjusted 
-signals.}
+vector of adjusted donor signals, "mexpr" for a matrix of adjusted 
+signals, or "donordf" for a donordf-type data.frame.}
 
 \item{verbose}{Whether to show verbose status messages.}
 }

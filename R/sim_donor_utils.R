@@ -394,7 +394,7 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #' madj <- donoradj_combat(df, return.type = "mexpr")
 #' df.adj <- donordf_from_mexpr(mexpr = madj)
 #' @export
-donordf_from_mexpr <- function(mexpr){
+donordf_from_mexpr <- function(mexpr, verbose = FALSE){
   typev <- unique(gsub(".*;", "", colnames(madj)))
   df <- do.call(rbind, lapply(seq(nrow(madj)), function(markeri){
     mi <- madj[markeri,,drop=F]
