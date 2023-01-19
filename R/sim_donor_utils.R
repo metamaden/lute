@@ -143,7 +143,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                     plot.biasadj = plot.biasadj,
                     verbose = verbose, ...)
     # append offset values
-    li$dfi$offset <- rep(offsetv, nrow(li$dfi$offset)/length(offsetv))
+    li$dfi$offset <- rep(offsetv, nrow(li$dfi)/length(offsetv))
     return(li)
   })
   names(lexpt) <- names(ldonordf)
