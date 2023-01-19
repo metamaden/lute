@@ -62,9 +62,9 @@ lexpt <- lapply(seq(length(ldonordf)), function(ii){
   li <- biasexpt(df = df, Ypb = Ypb, P = P, donor.unadj = donor.unadj,
                  donor.adj.method = donor.adj.method,
                  plot.biasadj = plot.biasadj,
-                 verbose = verbose, ...)
+                 verbose = verbose)
   # append offset values
-  li$dfi$offset <- rep(offsetv, nrow(li$dfi$offset)/length(offsetv))
+  li$dfi$offset <- rep(offsetv, nrow(li$dfi)/length(offsetv))
   return(li)
 })
 names(lexpt) <- names(ldonordf)
