@@ -213,7 +213,7 @@ biasexpt <- function(df, Ypb, P, donor.unadj = NULL,
   type.indexv <- seq(ktotal)
   lr[["donor.unadj"]] <- donor.unadj
   if(!is(donor.adj.method, "NULL")){
-    donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = df, 
+    donor.adjv <- donoradj(df = df, donor.unadj = donor.unadj,
                            donor.adj.method = donor.adj.method, ...)
     lr[["donor.adj"]] <- donor.adjv
     Zadj <- matrix(donor.adjv, ncol = ktotal)
