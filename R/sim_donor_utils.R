@@ -94,9 +94,9 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param offsetv Vector of donor offset values. This is used to define the
 #' test groups for donor bias experiments. Equal offsets are applied to positive
 #' and negative marker signal distributions.
-#' @param P Vector of true proportions.
+#' @param P Vector of true proportions, where each entry corresponds to a type.
 #' @param donor.adj.method Method to adjust for donor bias. Can be either 
-#' "limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.
+#' "limma", "var_denom", "sd_denom", "combat", or NULL. If NULL, skip this step.
 #' @param plot.biasadj Whether to make scatterplot of donor summary signals
 #' before and after bias adjustment.
 #' @param cname.donorsummary Name of column containing the donor summary data
@@ -138,8 +138,9 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     df <- ldonordf[[namei]] # get full donordf
     offsetv <- rep(gsub(".*:", "", namei), ktotal)
     donor.unadj <- df[,cname.donorsummary] # get donor summary datas
-    biasexpt(df = df, Ypb = Ypb, donor.unadj = donor.unadj, 
-             donor.adj.method = donor.adj.method, plot.biasadj = plot.biasadj, 
+    biasexpt(df = df, Ypb = Ypb, P = P, donor.unadj = donor.unadj, 
+             donor.adj.method = donor.adj.method, 
+             plot.biasadj = plot.biasadj, 
              verbose = verbose, ...)
   })
   names(lexpt) <- names(ldonordf)
@@ -168,6 +169,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' @param donor.unadj Vector of unadjusted donor signals.
 #' @param df Donor data.frame.
 #' @param Ypb Pseudobulk sample data.
+#' @param P Vector of true proportions, where each entry corresponds to a type.
 #' @param donor.adj.method Method to adjust for donor bias. Can be either 
 #' "limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.
 #' @param plot.biasadj Whether to make scatterplot of donor summary signals
@@ -186,7 +188,8 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' # get bias expt results
 #' li <- biasexpt(df = donordf, Ypb = Ypb)
 #' @export
-biasexpt <- function(df, Ypb, donor.unadj = NULL, donor.adj.method = "combat", 
+biasexpt <- function(df, Ypb, P = NULL, donor.unadj = NULL, 
+                     donor.adj.method = "combat", 
                      plot.biasadj = TRUE, verbose = FALSE, ...){
   lr <- list() # begin return list
   if(!check_donordf(df)){
