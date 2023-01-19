@@ -9,6 +9,7 @@ donor_marker_biasexpt(
   P = c(0.25, 0.75),
   donor.adj.method = NULL,
   plot.biasadj = TRUE,
+  plot.pca = TRUE,
   cname.donorsummary = "donor.combn.all.mean",
   gindexv = c(1, 2),
   ndonor = 10,
@@ -29,6 +30,9 @@ and negative marker signal distributions.}
 
 \item{plot.biasadj}{Whether to make scatterplot of donor summary signals
 before and after bias adjustment.}
+
+\item{plot.pca}{Whether to include PCA results plots using simulated donor
+signals data.frame.}
 
 \item{cname.donorsummary}{Name of column containing the donor summary data
 with which to perform experiment.}
