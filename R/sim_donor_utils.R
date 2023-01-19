@@ -184,15 +184,22 @@ ypb_fromtypes <- function(Z, P){
 #' @param verbose Whether to show verbose status messages.
 #' @returns lexpt, experiment results list.
 #' @examples 
+#' # simulate donor signals data
 #' donordf <- rand_donor_marker_table()
-#' lexpt <- biasexpt(donordf)
+#' # get ypb
+#' P <- c(0.75, 0.25)
+#' ktotal <- length(P)
+#' Z <- matrix(df[,"donor1"], ncol = ktotal)
+#' Ypb <- ypb_fromtypes(Z = Z, P = P)
+#' # get bias expt results
+#' li <- biasexpt(df = donordf, Ypb = Ypb)
 #' @export
-biasexpt <- function(donor.unadj, df, Ypb, donor.adj.method = "combat", 
+biasexpt <- function(df, Ypb, donor.unadj = NULL, donor.adj.method = "combat", 
                      plot.biasadj = TRUE, verbose = FALSE){
   lr <- list() # begin return list
-  cond.valid.donordf <- check_donordf(df)
-  if(!cond.valid.donordf){
+  if(!check_donordf(df)){
     stop("Data.frame is not a valid simulated donor signals data.frame.")}
+  if(is(donor.unadj, "NULL")){donor.unadj <- df[,"donor.combn.all.mean"]}
   ktotal <- length(unique(df$type))
   Zunadj <- matrix(donor.unadj, ncol = ktotal)
   punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
@@ -201,7 +208,8 @@ biasexpt <- function(donor.unadj, df, Ypb, donor.adj.method = "combat",
   lr[["donor.unadj"]] <- donor.unadj
   if(!is(donor.adj.method, "NULL")){
     donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
-                           donor.adj.method = donor.adj.method, ...)
+                           donor.adj.method = donor.adj.method)
+    lr[["donor.adj"]] <- donor.adjv
     Zadj <- matrix(donor.adjv, ncol = ktotal)
     padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
                      proportions = TRUE, verbose = TRUE)
@@ -209,27 +217,27 @@ biasexpt <- function(donor.unadj, df, Ypb, donor.adj.method = "combat",
     prop.typev <- c(prop.typev, rep("padj", ktotal))
     type.indexv <- rep(type.indexv, 2)
     offsetv <- rep(offsetv, 2)
-    lr[["donor.adj"]] <- donor.adjv
     # parse plot arg
     if(plot.biasadj){
+      require(ggplot2)
       plot.titlestr <- paste0("Bias adj. results\n")
       plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
       dfp <- data.frame(unadj = lr[["donor.unadj"]], adj = lr[["donor.adj"]],
                         marker = df$marker, type = df$type)
       lr[["ggpt.biasadj"]] <- ggplot(dfp, aes(x = unadj, y = adj, 
                                               color = marker, shape = type)) + 
-        theme_bw() + geom_point(alpha = 0.5) + 
+        theme_bw() + geom_point(alpha = 0.5, size = 4) + 
         geom_abline(slope = 1, intercept = 0, color = "black") +
         ggtitle(plot.titlestr)
     }
   }
   # append results
   biasv <- ptruev - ppredv
-  dfi <- data.frame(prop.type = prop.typev, prop.pred = ppredv, 
+  lr[["dfi"]] <- data.frame(prop.type = prop.typev, prop.pred = ppredv, 
                     prop.true = ptruev, bias = biasv, 
                     type.index = type.indexv, 
                     offset = offsetv)
-  lr[["dfi"]] <- dfi; return(lr)
+  return(lr)
 }
 
 #' check_donordf
@@ -240,8 +248,23 @@ biasexpt <- function(donor.unadj, df, Ypb, donor.adj.method = "combat",
 #' @param df Data.frame to check.
 #' @returns boolean, TRUE if df is valid, FALSE otherwise
 #' @export
-check_donordf <- check_donordf(df){
-  
+check_donordf <- function(df){
+  cnv <- colnames(df); lcond <- list()
+  lcond[["cond.donorcol"]] <- grepl("^donor\\d", cnv)
+  lcond[["cond.typecol"]] <- grepl("^type$", cnv)
+  lcond[["cond.markercol"]] <- grepl("^marker$", cnv)
+  lcond[["cond.markertypecol"]] <- grepl("^marker\\.type$", cnv)
+  # evaluate regex
+  cond.allcol <- lapply(lcond, function(ii){length(which(ii)) > 0})
+  cond.allcol <- unlist(cond.allcol)
+  # get final eval
+  cond.output <- length(cond.allcol[cond.allcol])==4
+  if(cond.output){
+    return(TRUE)
+  } else{
+    return(FALSE)
+  }
+  return(NULL)
 }
 
 #' donoradj
