@@ -3,10 +3,23 @@
 # Utilities to perform simulations and randomizations with one or more donors or
 # cell type data sources.
 #
+# Contents:
+#
+# 1. main experiment functions: main experiment wrapper scripts
+#
+# 2. experiment utility methods: methods to manage experiments
+# 
+# 3. donor bias adjustment methods: methods for performing bias adjustments
+#
+# 4. methods for plotting results: plot results of bias adjustments and pca, 
+# returning the plot objects
+#
 
-#--------------------
-# experiment function
-#--------------------
+
+#-----------------------------
+# 1. main experiment functions
+#-----------------------------
+# main experiment wrapper scripts
 
 #' donor_marker_sfactorsim
 #'
@@ -148,26 +161,6 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   return(lr)
 }
 
-#' ypb_fromtypes
-#'
-#' Makes a pseuobulked convoluted signals sample from types data. Uses the 
-#' formula:
-#' 
-#' Y = P * Z
-#' 
-#' @param Z Signature matrix containing pure type signals (rows = markers, 
-#' columns = types).
-#' @param P Vector of true proportions.
-#' @returns Ypb, a new pseudobulked sample of convoluted signals.
-#' @examples 
-#' P <- c(0.75, 0.25)
-#' Z <- matrix(c(0, 1, 0, 1), nrow = 2)
-#' Ypb <- ypb_fromtypes(Z, P)
-#' @export
-ypb_fromtypes <- function(Z, P){
-  t(t(P) %*% t(Z))
-}
-
 #' biasexpt
 #'
 #' Run a single donor bias experiment.
@@ -232,24 +225,29 @@ biasexpt <- function(df, Ypb, donor.unadj = NULL, donor.adj.method = "combat",
   return(lr)
 }
 
-#' ggpt_donorbias
+#------------------------------
+# 2. experiment utility methods
+#------------------------------
+# methods to manage experiments
+
+#' ypb_fromtypes
 #'
-#' Make a scatterplot of the unadjusted and adjusted donor signals.
+#' Makes a pseuobulked convoluted signals sample from types data. Uses the 
+#' formula:
 #' 
-#' @param dfp Plot data.frame, containing columns titled: "unadj" (unadjusted 
-#' donor signals), "adj" (adjusted donor signals), "marker" (marker labels), and
-#' "type" (type labels).
-#' @param method.str Character string describing adjustment method used.
-#' @returns A ggplot scatterplot object.
+#' Y = P * Z
+#' 
+#' @param Z Signature matrix containing pure type signals (rows = markers, 
+#' columns = types).
+#' @param P Vector of true proportions.
+#' @returns Ypb, a new pseudobulked sample of convoluted signals.
+#' @examples 
+#' P <- c(0.75, 0.25)
+#' Z <- matrix(c(0, 1, 0, 1), nrow = 2)
+#' Ypb <- ypb_fromtypes(Z, P)
 #' @export
-ggpt_donorbias <- function(dfp, method.str = "combat"){
-  require(ggplot2)
-  plot.titlestr <- paste0("Bias adj. results\n")
-  plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
-  ggplot(dfp, aes(x = unadj, y = adj, color = marker, shape = type)) + 
-    theme_bw() + geom_point(alpha = 0.5, size = 4) + 
-    geom_abline(slope = 1, intercept = 0, color = "black") +
-    ggtitle(plot.titlestr)
+ypb_fromtypes <- function(Z, P){
+  t(t(P) %*% t(Z))
 }
 
 #' check_donordf
@@ -278,6 +276,93 @@ check_donordf <- function(df){
   }
   return(NULL)
 }
+
+#' rand_donor_marker_table
+#' 
+#' Get a flat table of random donor marker signals by types.
+#' 
+#' @param ndonor Number of donors to simulate.
+#' @param gindexv Vector of marker indices. Index values correspond to the k types,
+#' and each index position represents a marker (e.g. c(1,2,2) means two markers 
+#' for the second type, etc.).
+#' @param lambda.pos Value of lambda (Poisson dist. mean) for "positive" marker 
+#' status (e.g. mean of dist. for k when marker is positive for k, negative for 
+#' not-k).
+#' @param lambda.neg Value of lambda (Poisson dist. mean) for "negative" marker 
+#' status (e.g. mean of dist. for k when marker is positive for not-k, negative 
+#' for k).
+#' @param sd.offset.pos Poisson dist mean for randomization of offsets for
+#' positive marker signals.
+#' @param sd.offset.neg Poisson dist mean for randomization of offsets for
+#' negative marker signals.
+#' @param seed.num Token to set the random seed.
+#' @param vebose Whether to return verbose status messages.
+#' @param ... Additional parameters passed to `random_lgv()` to get marker 
+#' signals.
+#' @returns return 
+#' @examples
+#' 
+#' rand_donor_marker_table(ndonor = 2, gindexv = c(1,2))
+#' 
+#' rand_donor_marker_table(ndonor = 10, gindexv = c(1,1,2))
+#' 
+#' rand_donor_marker_table(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
+#' 
+#' @seealso random_lgv
+#' @export
+rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), 
+                                    lambda.pos = 20, lambda.neg = 2,
+                                    sd.offset.pos = 10, sd.offset.neg = 2, 
+                                    seed.num = 0, verbose = FALSE, ...){
+  set.seed(seed.num)
+  nmarkers <- length(gindexv); ktotal <- length(unique(gindexv))
+  # draw random offsets from normal dist
+  offposv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.pos)
+  offnegv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.neg)
+  # get value vectors
+  meanv.pos <- offposv + lambda.pos
+  meanv.neg <- offnegv + lambda.neg
+  # convert negative means
+  meanv.pos[meanv.pos < 0] <- -1*meanv.pos[meanv.pos < 0]
+  meanv.neg[meanv.neg < 0] <- -1*meanv.neg[meanv.neg < 0]
+  # get matrix of markers (rows) by donors (cols)
+  md <- do.call(cbind, lapply(seq(ndonor), function(ii){
+    unlist(random_lgv(gindexv, num.iter = 1, lambda.pos = meanv.pos[ii],
+                      lambda.neg = meanv.neg[ii], ...))
+  }))
+  md <- as.data.frame(md); colnames(md) <- paste0("donor", seq(ndonor))
+  if(ndonor > 1){
+    if(verbose){message("Getting donor summary columns...")}
+    which.cnv.donor <- which(grepl("donor", colnames(md)))
+    md$donor.combn.all.mean <- apply(md[,which.cnv.donor], 1, mean)
+    md$donor.combn.all.median <- apply(md[,which.cnv.donor], 1, median)
+  }
+  md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
+  md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
+  md$marker.type <- paste0("type", gindexv)
+  return(md)
+}
+
+#' pcaplots_donor
+#'
+#' Make plots of two PCAs: (1) by donor, across markers and types; (2) by donor
+#' and type, across markers.
+#' 
+#' @param dt Donor marker signals table.
+#' @param title.append Optional string to append to plot titles.
+#' @param verbose Whether to show verbose status messages.
+#' @param ... Additional arguments passed to PCA functions.
+#' @returns list of PCA results, plots, and metadata
+#' @export
+pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
+  list(pca.bydonor = pca_bydonor(dt= dt, title.append = title.append, ...), 
+       pca.bydonortype = pca_bydonortype(dt = dt, title.append = title.append, ...))
+}
+
+#---------------------------------
+# 3. donor bias adjustment methods
+#---------------------------------
+# methods for performing bias adjustments
 
 #' donoradj
 #'
@@ -371,95 +456,30 @@ donoradj_combat <- function(df){
   return(madj)
 }
 
-#---------------------
-# experiment utilities
-#---------------------
+#--------------------------------
+# 4. methods for plotting results
+#--------------------------------
+# plot results of bias adjustments and pca, returning the plot objects
 
-#' rand_donor_marker_table
-#' 
-#' Get a flat table of random donor marker signals by types.
-#' 
-#' @param ndonor Number of donors to simulate.
-#' @param gindexv Vector of marker indices. Index values correspond to the k types,
-#' and each index position represents a marker (e.g. c(1,2,2) means two markers 
-#' for the second type, etc.).
-#' @param lambda.pos Value of lambda (Poisson dist. mean) for "positive" marker 
-#' status (e.g. mean of dist. for k when marker is positive for k, negative for 
-#' not-k).
-#' @param lambda.neg Value of lambda (Poisson dist. mean) for "negative" marker 
-#' status (e.g. mean of dist. for k when marker is positive for not-k, negative 
-#' for k).
-#' @param sd.offset.pos Poisson dist mean for randomization of offsets for
-#' positive marker signals.
-#' @param sd.offset.neg Poisson dist mean for randomization of offsets for
-#' negative marker signals.
-#' @param seed.num Token to set the random seed.
-#' @param vebose Whether to return verbose status messages.
-#' @param ... Additional parameters passed to `random_lgv()` to get marker 
-#' signals.
-#' @returns return 
-#' @examples
-#' 
-#' rand_donor_marker_table(ndonor = 2, gindexv = c(1,2))
-#' 
-#' rand_donor_marker_table(ndonor = 10, gindexv = c(1,1,2))
-#' 
-#' rand_donor_marker_table(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
-#' 
-#' @seealso random_lgv
-#' @export
-rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), 
-                                    lambda.pos = 20, lambda.neg = 2,
-                                    sd.offset.pos = 10, sd.offset.neg = 2, 
-                                    seed.num = 0, verbose = FALSE, ...){
-  set.seed(seed.num)
-  nmarkers <- length(gindexv); ktotal <- length(unique(gindexv))
-  # draw random offsets from normal dist
-  offposv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.pos)
-  offnegv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.neg)
-  # get value vectors
-  meanv.pos <- offposv + lambda.pos
-  meanv.neg <- offnegv + lambda.neg
-  # convert negative means
-  meanv.pos[meanv.pos < 0] <- -1*meanv.pos[meanv.pos < 0]
-  meanv.neg[meanv.neg < 0] <- -1*meanv.neg[meanv.neg < 0]
-  # get matrix of markers (rows) by donors (cols)
-  md <- do.call(cbind, lapply(seq(ndonor), function(ii){
-    unlist(random_lgv(gindexv, num.iter = 1, lambda.pos = meanv.pos[ii],
-                      lambda.neg = meanv.neg[ii], ...))
-  }))
-  md <- as.data.frame(md); colnames(md) <- paste0("donor", seq(ndonor))
-  if(ndonor > 1){
-    if(verbose){message("Getting donor summary columns...")}
-    which.cnv.donor <- which(grepl("donor", colnames(md)))
-    md$donor.combn.all.mean <- apply(md[,which.cnv.donor], 1, mean)
-    md$donor.combn.all.median <- apply(md[,which.cnv.donor], 1, median)
-  }
-  md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
-  md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
-  md$marker.type <- paste0("type", gindexv)
-  return(md)
-}
-
-#' pcaplots_donor
+#' ggpt_donorbias
 #'
-#' Make plots of two PCAs: (1) by donor, across markers and types; (2) by donor
-#' and type, across markers.
+#' Make a scatterplot of the unadjusted and adjusted donor signals.
 #' 
-#' @param dt Donor marker signals table.
-#' @param title.append Optional string to append to plot titles.
-#' @param verbose Whether to show verbose status messages.
-#' @param ... Additional arguments passed to PCA functions.
-#' @returns list of PCA results, plots, and metadata
+#' @param dfp Plot data.frame, containing columns titled: "unadj" (unadjusted 
+#' donor signals), "adj" (adjusted donor signals), "marker" (marker labels), and
+#' "type" (type labels).
+#' @param method.str Character string describing adjustment method used.
+#' @returns A ggplot scatterplot object.
 #' @export
-pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
-  list(pca.bydonor = pca_bydonor(dt= dt, title.append = title.append, ...), 
-       pca.bydonortype = pca_bydonortype(dt = dt, title.append = title.append, ...))
+ggpt_donorbias <- function(dfp, method.str = "combat"){
+  require(ggplot2)
+  plot.titlestr <- paste0("Donor signals\n")
+  plot.titlestr <- paste0(plot.titlestr, "Adj. method: ", donor.adj.method)
+  ggplot(dfp, aes(x = unadj, y = adj, color = marker, shape = type)) + 
+    theme_bw() + geom_point(alpha = 0.5, size = 4) + 
+    geom_abline(slope = 1, intercept = 0, color = "black") +
+    ggtitle(plot.titlestr)
 }
-
-#------
-# plots
-#------
 
 #' pca_bydonor
 #'
