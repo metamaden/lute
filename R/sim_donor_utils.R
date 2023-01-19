@@ -380,6 +380,37 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
                                          verbose = verbose, ...))
 }
 
+#' donordf_from_mexpr
+#'
+#' Makes a valid donordf object from an expression matrix (e.g. rows = 
+#' markers/genes, columns = samples/type data)
+#'
+#' @param 
+#' @returns 
+#' @examples 
+#' df <- rand_donor_marker_table()
+#' madj <- donoradj_combat(df, return.type = "mexpr")
+#' df.adj <- donordf_from_mexpr(madj)
+#' @export
+donordf_from_mexpr <- function(){
+  
+  
+  # coerce madj to correct donordf format
+  typev <- unique(gsub(".*;", "", colnames(madj)))
+  dfadj <- do.call(rbind, lapply(seq(nrow(madj)), function(markeri){
+    mi <- madj[markeri,,drop=F]
+    dfi <- do.call(rbind, lapply(typev, function(typei){
+      mi[,grepl(paste0(".*;", typei), colnames(mi))]
+    }))
+    dfi <- as.data.frame(dfi); colnames(dfi) <- gsub(";.*", "", colnames(dfi))
+    dfi$type <- typev; dfi$marker <- paste0("marker",markeri)
+    dfi
+  }))
+  which.donor.cnv <- grepl("^donor\\d", colnames(dfadj))
+  dfadj$donor.combn.all.mean <- rowMeans(as.matrix(dfadj[,which.donor.cnv]))
+  dfadj$donor.combn.all.median <- rowMedians(as.matrix(dfadj[,which.donor.cnv]))
+}
+
 #---------------------------------
 # 3. donor bias adjustment methods
 #---------------------------------

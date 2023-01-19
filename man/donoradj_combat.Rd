@@ -4,7 +4,7 @@
 \alias{donoradj_combat}
 \title{donoradj_combat}
 \usage{
-donoradj_combat(df, return.type = "donor.adj")
+donoradj_combat(df, return.type = "donor.adj", verbose = FALSE)
 }
 \arguments{
 \item{df}{Data.frame containing marker signals and pheno data.}
@@ -12,6 +12,8 @@ donoradj_combat(df, return.type = "donor.adj")
 \item{return.type}{Type of data to return. Accepts either "donor.adj" for a 
 vector of adjusted donor signals, or "mexpr" for a matrix of adjusted 
 signals.}
+
+\item{verbose}{Whether to show verbose status messages.}
 }
 \value{
 madj, matrix of adjusted marker signals.
