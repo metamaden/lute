@@ -223,7 +223,12 @@ donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
     donor.adj <- rowMeans(limma::removeBatchEffect(t(mdat), 
                                                    batch = dfl$donor))
   } else if(method == "combat"){
-    
+    # return the means of adjusted expression
+    madj <- donoradj_combat(df = donordf)
+    ltype <- list(type = gsub(".*;", "", colnames(madj)))
+    dfa <- aggregate(t(madj), by = ltype, FUN = "mean")
+    dfa <- t(dfa[,2:ncol(dfa)])
+    donor.adj <- unlist(lapply(seq(nrow(dfa)), function(ri){dfa[ri,]}))
   }
   return(donor.adj)
 }
@@ -232,17 +237,16 @@ donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
 #'
 #' Use method sva::ComBat() to adjust for donor bias.
 #' 
-#' @param donordf Data.frame containing marker signals and pheno data.
+#' @param df Data.frame containing marker signals and pheno data.
 #' @returns madj, matrix of adjusted marker signals.
 #' @examples 
 #' df <- rand_donor_marker_table()
 #' donoradj_combat(df)
 #' @export
-donoradj_combat <- function(donordf){
-  # use combat
+donoradj_combat <- function(df){
   require(sva)
   # make expr matrix
-  filt.donor <- grepl("donor\\d", colnames(donordf))
+  filt.donor <- grepl("donor\\d", colnames(df))
   mexpr <- do.call(rbind, lapply(unique(df$marker), function(mi){
     dff <- df[df$marker==mi, ]
     unlist(lapply(unique(dff[dff$marker==mi,]$type), function(ti){
@@ -261,6 +265,7 @@ donoradj_combat <- function(donordf){
   batch <- pheno$donor
   madj <- ComBat(dat = mexpr, batch = batch, mod = mod,
                  par.prior = TRUE, prior.plots = FALSE)
+  return(madj)
 }
 
 #---------------------

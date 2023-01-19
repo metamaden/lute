@@ -58,5 +58,5 @@ deconvolution predictions.
 donor_marker_sfactorsim
 }
 \examples{
-donor_marker_experiment()
+donor_marker_sfactorsim()
 }

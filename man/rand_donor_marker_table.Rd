@@ -52,11 +52,11 @@ Get a flat table of random donor marker signals by types.
 }
 \examples{
 
-get_donor_marker_flattable(ndonor = 2, gindexv = c(1,2))
+rand_donor_marker_table(ndonor = 2, gindexv = c(1,2))
 
-get_donor_marker_flattable(ndonor = 10, gindexv = c(1,1,2))
+rand_donor_marker_table(ndonor = 10, gindexv = c(1,1,2))
 
-get_donor_marker_flattable(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
+rand_donor_marker_table(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
 
 }
 \seealso{

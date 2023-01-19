@@ -40,3 +40,7 @@ values.
 \description{
 Apply some specified bias adjustment to a vector of marker data.
 }
+\examples{
+donordf <- rand_donor_marker_table()
+donoradj(donordf$donor.combn.all.mean, donordf)
+}
