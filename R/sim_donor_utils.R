@@ -447,12 +447,13 @@ donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
 #' @param return.type Type of data to return. Accepts either "donor.adj" for a 
 #' vector of adjusted donor signals, or "mexpr" for a matrix of adjusted 
 #' signals.
+#' @param verbose Whether to show verbose status messages.
 #' @returns madj, matrix of adjusted marker signals.
 #' @examples 
 #' df <- rand_donor_marker_table()
 #' donoradj_combat(df)
 #' @export
-donoradj_combat <- function(df, return.type = "donor.adj"){
+donoradj_combat <- function(df, return.type = "donor.adj", verbose = FALSE){
   require(sva)
   # make expr matrix
   filt.donor <- grepl("donor\\d", colnames(df))
@@ -472,8 +473,15 @@ donoradj_combat <- function(df, return.type = "donor.adj"){
   # get combat vars
   mod <- model.matrix(~1, data = pheno)
   batch <- pheno$donor
-  madj <- ComBat(dat = mexpr, batch = batch, mod = mod,
-                 par.prior = TRUE, prior.plots = FALSE)
+  if(verbose){
+    madj <- ComBat(dat = mexpr, batch = batch, mod = mod,
+                   par.prior = TRUE, prior.plots = FALSE)
+  } else{
+    madj <- suppressWarnings(
+      ComBat(dat = mexpr, batch = batch, mod = mod,
+             par.prior = TRUE, prior.plots = FALSE)
+    )
+  }
   if(return.type == "donor.adj"){
     ltype <- list(type = gsub(".*;", "", colnames(madj)))
     dfa <- aggregate(t(madj), by = ltype, FUN = "mean")

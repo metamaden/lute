@@ -4,10 +4,14 @@
 \alias{donoradj_combat}
 \title{donoradj_combat}
 \usage{
-donoradj_combat(df)
+donoradj_combat(df, return.type = "donor.adj")
 }
 \arguments{
 \item{df}{Data.frame containing marker signals and pheno data.}
+
+\item{return.type}{Type of data to return. Accepts either "donor.adj" for a 
+vector of adjusted donor signals, or "mexpr" for a matrix of adjusted 
+signals.}
 }
 \value{
 madj, matrix of adjusted marker signals.
