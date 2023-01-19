@@ -7,7 +7,7 @@
 biasexpt(
   df,
   Ypb,
-  P = NULL,
+  P,
   donor.unadj = NULL,
   donor.adj.method = "combat",
   plot.biasadj = TRUE,

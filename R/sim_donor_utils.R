@@ -381,7 +381,7 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #'
 #' Apply some specified bias adjustment to a vector of marker data.
 #'
-#' @param donordf A data.frame containing the donor information used for bias
+#' @param df A data.frame containing the donor information used for bias
 #' corrections. Should contain donor-specific marker info identifiable by 
 #' @param donorv Vector of markrer signals (e.g. for a donor, for some summaries 
 #' across donors, etc.).
@@ -400,15 +400,15 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #' donorv <- donordf$donor.combn.all.mean
 #' donoradj(donorv, donordf, method = "combat")
 #' @export
-donoradj <- function(donordf, donorv = NULL, method = "combat", denom_offset = 1e-3,
+donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
                      bounds_thresh = NULL, verbose = FALSE, ...){
   donor.adj <- NA
-  if(is(donorv, "NULL")){donorv <- donordf[,"donor.combn.all.mean"]}
+  if(is(donorv, "NULL")){donorv <- df[,"donor.combn.all.mean"]}
   if(verbose){message("Getting donor marker data...")}
-  cnv <- colnames(donordf); donorcol <- cnv[grepl("^donor\\d+$", cnv)]
+  cnv <- colnames(df); donorcol <- cnv[grepl("^donor\\d+$", cnv)]
   if(verbose){message("Found ",length(donorcol),
                       " columns of donor marker data in donordf")}
-  dff <- donordf[,donorcol]
+  dff <- df[,donorcol]
   if(verbose){message("Getting adjusted data...")}
   if(grepl(".*_denom$", method)){
     if(verbose){message("Parsing denominator adjustment...")}
@@ -426,7 +426,7 @@ donoradj <- function(donordf, donorv = NULL, method = "combat", denom_offset = 1
     donor.adj <- donorv/denomv
   } else if(method == "combat"){
     # return the means of adjusted expression
-    madj <- donoradj_combat(df = donordf)
+    madj <- donoradj_combat(df = df)
     ltype <- list(type = gsub(".*;", "", colnames(madj)))
     dfa <- aggregate(t(madj), by = ltype, FUN = "mean")
     dfa <- t(dfa[,2:ncol(dfa)])

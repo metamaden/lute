@@ -5,8 +5,8 @@
 \title{donoradj}
 \usage{
 donoradj(
-  donorv,
-  donordf,
+  df,
+  donorv = NULL,
   method = "combat",
   denom_offset = 0.001,
   bounds_thresh = NULL,
@@ -15,11 +15,11 @@ donoradj(
 )
 }
 \arguments{
-\item{donorv}{Vector of markrer signals (e.g. for a donor, for some summaries 
-across donors, etc.).}
+\item{df}{A data.frame containing the donor information used for bias
+corrections. Should contain donor-specific marker info identifiable by}
 
-\item{donordf}{A data.frame containing the donor information used for bias
-corrections. Should contain donor-specific marker info identifiable by 
+\item{donorv}{Vector of markrer signals (e.g. for a donor, for some summaries 
+across donors, etc.).
 column names of the format: "donor"+"[0-9]".}
 
 \item{method}{Method to correct for bias. Supports "var_denom", "sd_denom",
