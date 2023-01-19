@@ -163,7 +163,10 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   lr[["metadata"]] <- lmd
   # get plot objects
   if(plot.pca){
-    lr[["pca.markers"]] <- pcaplots_donor(dt = df, title.append = NULL)
+    lpca <- lapply(ldonordf, function(dfi){
+      pcaplots_donor(dt = dfi, title.append = NULL)
+    })
+    names(lpca) <- names(ldonordf); lr[["lpca"]] <- lpca
   }
   if(plot.biasadj){
     lpt <- lapply(lexpt, function(ii){ii$ggpt.biasadj})

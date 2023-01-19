@@ -22,23 +22,26 @@ Ypb <- ypb_fromtypes(Z = Z, P = P)
 # get bias expt results
 li <- biasexpt(df = donordf, Ypb = Ypb, P = P)
 
+# get bias expt series
+lb <- donor_marker_biasexpt(df = df, offsetv = c(5, 100), donor.adj.method = "combat")
+
 
 # test donor_marker_biasexpt
 offsetv = c(1, 10)
 P = c(0.25, 0.75)
 donor.adj.method = "combat"
 plot.biasadj = TRUE
+plot.pca = TRUE
 cname.donorsummary = "donor.combn.all.mean"
 gindexv = c(1, 2)
 ndonor = 10
 seed.num = 0
 verbose = FALSE
 
-set.seed(seed.num)
-if(verbose){message("Making new pseudobulk sample...")}
+set.seed(seed.num); lr <- list()
+if(verbose){message("Making pseudobulk sample from types matrix...")}
 df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
                               sd.offset.pos = 0, sd.offset.neg = 0)
-if(verbose){message("Making pseudobulked sample from types matrix...")}
 ktotal <- length(P)
 Z <- matrix(df[,"donor1"], ncol = ktotal)
 Ypb <- ypb_fromtypes(Z = Z, P = P)
@@ -70,11 +73,21 @@ dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
 ldonorv <- lapply(lexpt, function(ii){ii[c("donor.unadj", "donor.adj")]})
 names(ldonorv) <- names(ldonordf)
 # get return object
-lmd.adj <- list(donor.adj.method = donor.adj.method, ...)
+lmd.adj <- list(donor.adj.method = donor.adj.method)
 lmd <- list(offsetv = offsetv, P = P, donor.adj.info = lmd.adj)
-lr <- list(dfres = dfres, ldonorv = ldonorv, ldonordf = ldonordf, 
-           Ypb = Ypb, metadata = lmd)
+lr[["dfres"]] <- dfres
+lr[["ldonorv"]] <- ldonorv
+lr[["ldonordf"]] <- ldonordf
+lr[["Ypb"]] <- Ypb
+lr[["metadata"]] <- lmd
 # get plot objects
+if(plot.pca){
+  lpca <- lapply(ldonordf, function(dfi){
+    pcaplots_donor(dt = df, title.append = NULL)
+  })
+  names(lpca) <- names(ldonordf)
+  lr[["lpca"]] <- lpca
+}
 if(plot.biasadj){
   lpt <- lapply(lexpt, function(ii){ii$ggpt.biasadj})
   names(lpt) <- names(lexpt)
