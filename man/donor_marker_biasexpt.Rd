@@ -22,10 +22,10 @@ donor_marker_biasexpt(
 test groups for donor bias experiments. Equal offsets are applied to positive
 and negative marker signal distributions.}
 
-\item{P}{Vector of true proportions.}
+\item{P}{Vector of true proportions, where each entry corresponds to a type.}
 
 \item{donor.adj.method}{Method to adjust for donor bias. Can be either 
-"limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.}
+"limma", "var_denom", "sd_denom", "combat", or NULL. If NULL, skip this step.}
 
 \item{plot.biasadj}{Whether to make scatterplot of donor summary signals
 before and after bias adjustment.}

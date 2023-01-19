@@ -7,6 +7,7 @@
 biasexpt(
   df,
   Ypb,
+  P = NULL,
   donor.unadj = NULL,
   donor.adj.method = "combat",
   plot.biasadj = TRUE,
@@ -18,6 +19,8 @@ biasexpt(
 \item{df}{Donor data.frame.}
 
 \item{Ypb}{Pseudobulk sample data.}
+
+\item{P}{Vector of true proportions, where each entry corresponds to a type.}
 
 \item{donor.unadj}{Vector of unadjusted donor signals.}
 
