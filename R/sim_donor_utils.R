@@ -86,6 +86,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' "limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.
 #' @param plot.biasadj Whether to make scatterplot of donor summary signals
 #' before and after bias adjustment.
+#' @param cname.donorsummary Name of column containing the donor summary data
+#' with which to perform experiment.
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
 #' @param ndonor Total number of donors to simulate.
@@ -98,14 +100,17 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @export
 donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                                   donor.adj.method = NULL, plot.biasadj = TRUE,
+                                  cname.donorsummary = "donor.combn.all.mean",
                                   gindexv = c(1, 2), ndonor = 10,
                                   seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
   if(verbose){message("Making new pseudobulk sample...")}
   df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
                                 sd.offset.pos = 0, sd.offset.neg = 0)
-  ktotal <- length(P); Z <- matrix(df[,"donor1"], ncol = ktotal)
-  Ypb <- t(t(P) %*% t(Z))
+  if(verbose){message("Making pseudobulked sample from types matrix...")}
+  ktotal <- length(P)
+  Z <- matrix(df[,"donor1"], ncol = ktotal)
+  Ypb <- ypb_fromtypes(Z = Z, P = P)
   if(verbose){message("Getting randomized donor marker data...")}
   ldonordf <- lapply(offsetv, function(offi){
     rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
@@ -114,13 +119,18 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   })
   names(ldonordf) <- paste0("offset:", offsetv)
   if(verbose){message("Getting type predictions...")}
-  cname.data <- "donor.combn.all.mean"
   type.indexv <- seq(ktotal)
   lexpt <- lapply(seq(length(ldonordf)), function(ii){
-    namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]] # get full donordf
+    namei <- names(ldonordf)[ii]
+    df <- ldonordf[[namei]] # get full donordf
     offsetv <- rep(gsub(".*:", "", namei), ktotal)
-    }
-    ; return(lr)
+    donor.unadj <- df[,cname.donorsummary] # get donor summary data
+    
+    biasexpt(donor.unadj = donor.unadj, df = df, Ypb = Ypb, 
+             donor.adj.method = donor.adj.method, plot.biasadj = plot.biasadj, 
+             verbose = verbose)
+    
+    return(lr)
   })
   # get results df
   dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
@@ -164,6 +174,7 @@ ypb_fromtypes <- function(Z, P){
 #'
 #' Run a single donor bias experiment.
 #' 
+#' @param donor.unadj Vector of unadjusted donor signals.
 #' @param df Donor data.frame.
 #' @param Ypb Pseudobulk sample data.
 #' @param donor.adj.method Method to adjust for donor bias. Can be either 
@@ -176,10 +187,13 @@ ypb_fromtypes <- function(Z, P){
 #' donordf <- rand_donor_marker_table()
 #' lexpt <- biasexpt(donordf)
 #' @export
-biasexpt <- function(df, Ypb, donor.adj.method = "combat", 
+biasexpt <- function(donor.unadj, df, Ypb, donor.adj.method = "combat", 
                      plot.biasadj = TRUE, verbose = FALSE){
   lr <- list() # begin return list
-  donor.unadj <- df[,cname.data] # get donor summary data
+  cond.valid.donordf <- check_donordf(df)
+  if(!cond.valid.donordf){
+    stop("Data.frame is not a valid simulated donor signals data.frame.")}
+  ktotal <- length(unique(df$type))
   Zunadj <- matrix(donor.unadj, ncol = ktotal)
   punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
                      proportions = TRUE, verbose = TRUE)
@@ -216,6 +230,18 @@ biasexpt <- function(df, Ypb, donor.adj.method = "combat",
                     type.index = type.indexv, 
                     offset = offsetv)
   lr[["dfi"]] <- dfi; return(lr)
+}
+
+#' check_donordf
+#'
+#' Checks whether data.frame is a valid simulated donor signals data.frame by
+#' evaluating the column names.
+#' 
+#' @param df Data.frame to check.
+#' @returns boolean, TRUE if df is valid, FALSE otherwise
+#' @export
+check_donordf <- check_donordf(df){
+  
 }
 
 #' donoradj
