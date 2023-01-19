@@ -218,16 +218,9 @@ biasexpt <- function(df, Ypb, donor.unadj = NULL, donor.adj.method = "combat",
     offsetv <- rep(offsetv, 2)
     # parse plot arg
     if(plot.biasadj){
-      require(ggplot2)
-      plot.titlestr <- paste0("Bias adj. results\n")
-      plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
       dfp <- data.frame(unadj = lr[["donor.unadj"]], adj = lr[["donor.adj"]],
                         marker = df$marker, type = df$type)
-      lr[["ggpt.biasadj"]] <- ggplot(dfp, aes(x = unadj, y = adj, 
-                                              color = marker, shape = type)) + 
-        theme_bw() + geom_point(alpha = 0.5, size = 4) + 
-        geom_abline(slope = 1, intercept = 0, color = "black") +
-        ggtitle(plot.titlestr)
+      lr[["ggpt.biasadj"]] <- ggpt_donorbias(dfp, method.str = donor.adj.method)
     }
   }
   # append results
@@ -237,6 +230,26 @@ biasexpt <- function(df, Ypb, donor.unadj = NULL, donor.adj.method = "combat",
                     type.index = type.indexv, 
                     offset = offsetv)
   return(lr)
+}
+
+#' ggpt_donorbias
+#'
+#' Make a scatterplot of the unadjusted and adjusted donor signals.
+#' 
+#' @param dfp Plot data.frame, containing columns titled: "unadj" (unadjusted 
+#' donor signals), "adj" (adjusted donor signals), "marker" (marker labels), and
+#' "type" (type labels).
+#' @param method.str Character string describing adjustment method used.
+#' @returns A ggplot scatterplot object.
+#' @export
+ggpt_donorbias <- function(dfp, method.str = "combat"){
+  require(ggplot2)
+  plot.titlestr <- paste0("Bias adj. results\n")
+  plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
+  ggplot(dfp, aes(x = unadj, y = adj, color = marker, shape = type)) + 
+    theme_bw() + geom_point(alpha = 0.5, size = 4) + 
+    geom_abline(slope = 1, intercept = 0, color = "black") +
+    ggtitle(plot.titlestr)
 }
 
 #' check_donordf
