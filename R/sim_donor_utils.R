@@ -432,20 +432,26 @@ donordf_from_mexpr <- function(mexpr){
 
 #' mexpr_from_donordf
 #'
+#' Make and expression matrix from a donordf data.frame. The donordf contains 
+#' one row per marker;type, while the expression matrix contains one row per
+#' marker and one column per donor;type.
 #'
-#'
-#'
-mexpr_from_donordf <- function(){
-  filt.donor <- grepl("donor\\d", colnames(df))
+#' @param df A donordf type data.frame.
+#' @returns mexpr, a new expression matrix (rows = genes/markers, columns = 
+#' samples/types)
+#' @export
+mexpr_from_donordf <- function(df){
+  filt.donor <- grepl("donor\\d", colnames(df)) # get donor signals
   mexpr <- do.call(rbind, lapply(unique(df$marker), function(mi){
     dff <- df[df$marker==mi, ]
     unlist(lapply(unique(dff[dff$marker==mi,]$type), function(ti){
       datv <- dff[dff$type==ti, filt.donor]
       names(datv) <- paste0(colnames(dff[,filt.donor]), ";", ti)
-      return(datv)
+      datv
     }))
   }))
   rownames(mexpr) <- unique(df$marker)
+  return(mexpr)
 }
 
 #---------------------------------
@@ -524,16 +530,7 @@ donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
 donoradj_combat <- function(df, return.type = "donor.adj", verbose = FALSE){
   require(sva)
   # make expr matrix
-  filt.donor <- grepl("donor\\d", colnames(df))
-  mexpr <- do.call(rbind, lapply(unique(df$marker), function(mi){
-    dff <- df[df$marker==mi, ]
-    unlist(lapply(unique(dff[dff$marker==mi,]$type), function(ti){
-      datv <- dff[dff$type==ti, filt.donor]
-      names(datv) <- paste0(colnames(dff[,filt.donor]), ";", ti)
-      return(datv)
-    }))
-  }))
-  rownames(mexpr) <- unique(df$marker)
+  mexpr <- mexpr_from_donordf(df)
   # make pheno 
   cnv <- colnames(mexpr)
   pheno <- data.frame(donor = gsub(";.*", "", cnv),
