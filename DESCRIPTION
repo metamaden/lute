@@ -28,6 +28,7 @@ Suggests:
     glmnet,
     knitr,
     testthat,
+    sva,
     gridExtra,
     rmarkdown,
     BiocStyle,
