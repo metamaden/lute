@@ -138,12 +138,13 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     df <- ldonordf[[namei]] # get full donordf
     offsetv <- rep(gsub(".*:", "", namei), ktotal)
     donor.unadj <- df[,cname.donorsummary] # get donor summary datas
-    dfi <- biasexpt(df = df, Ypb = Ypb, P = P, donor.unadj = donor.unadj,
+    li <- biasexpt(df = df, Ypb = Ypb, P = P, donor.unadj = donor.unadj,
                     donor.adj.method = donor.adj.method,
                     plot.biasadj = plot.biasadj,
                     verbose = verbose, ...)
-    dfi$offset <- rep(offsetv, nrow(dfi)/length(offsetv))
-    return(dfi)
+    # append offset values
+    li$dfi$offset <- rep(offsetv, nrow(li$dfi$offset)/length(offsetv))
+    return(li)
   })
   names(lexpt) <- names(ldonordf)
   # get results df
@@ -201,9 +202,11 @@ biasexpt <- function(df, Ypb, P = NULL, donor.unadj = NULL,
   Zunadj <- matrix(donor.unadj, ncol = ktotal)
   punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
                      proportions = TRUE, verbose = TRUE)
-  prop.typev <- rep("punadj", ktotal); ppredv <- punadj; ptruev <- P
-  lr[["donor.unadj"]] <- donor.unadj
+  # initial variable defs
+  prop.typev <- rep("punadj", ktotal)
+  ppredv <- punadj; ptruev <- P
   type.indexv <- seq(ktotal)
+  lr[["donor.unadj"]] <- donor.unadj
   if(!is(donor.adj.method, "NULL")){
     donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = df, 
                            donor.adj.method = donor.adj.method, ...)
@@ -211,6 +214,7 @@ biasexpt <- function(df, Ypb, P = NULL, donor.unadj = NULL,
     Zadj <- matrix(donor.adjv, ncol = ktotal)
     padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
                      proportions = TRUE, verbose = TRUE)
+    # append to variable defs
     ptruev <- c(ptruev, P); ppredv <- c(ppredv, padj)
     prop.typev <- c(prop.typev, rep("padj", ktotal))
     type.indexv <- rep(type.indexv, 2)
@@ -223,9 +227,9 @@ biasexpt <- function(df, Ypb, P = NULL, donor.unadj = NULL,
   }
   # append results
   biasv <- ptruev - ppredv
-  lr[["dfi"]] <- data.frame(prop.type = prop.typev, prop.pred = ppredv, 
-                    prop.true = ptruev, bias = biasv, 
-                    type.index = type.indexv)
+  lr[["dfi"]] <- data.frame(prop.type = prop.typev, prop.pred = ppredv,
+                            prop.true = ptruev, bias = biasv,
+                            type.index = type.indexv)
   return(lr)
 }
 
