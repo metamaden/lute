@@ -434,11 +434,7 @@ donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
     donor.adj <- donorv/denomv
   } else if(method == "combat"){
     # return the means of adjusted expression
-    madj <- donoradj_combat(df = df)
-    ltype <- list(type = gsub(".*;", "", colnames(madj)))
-    dfa <- aggregate(t(madj), by = ltype, FUN = "mean")
-    dfa <- t(dfa[,2:ncol(dfa)])
-    donor.adj <- unlist(lapply(seq(nrow(dfa)), function(ri){dfa[ri,]}))
+    donor.adj <- donoradj_combat(df = df, return.type = "donor.adj")
   } else{stop("Error, invalid adjustment method provided.")}
   return(donor.adj)
 }
@@ -448,12 +444,15 @@ donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
 #' Use method sva::ComBat() to adjust for donor bias.
 #' 
 #' @param df Data.frame containing marker signals and pheno data.
+#' @param return.type Type of data to return. Accepts either "donor.adj" for a 
+#' vector of adjusted donor signals, or "mexpr" for a matrix of adjusted 
+#' signals.
 #' @returns madj, matrix of adjusted marker signals.
 #' @examples 
 #' df <- rand_donor_marker_table()
 #' donoradj_combat(df)
 #' @export
-donoradj_combat <- function(df){
+donoradj_combat <- function(df, return.type = "donor.adj"){
   require(sva)
   # make expr matrix
   filt.donor <- grepl("donor\\d", colnames(df))
@@ -475,7 +474,19 @@ donoradj_combat <- function(df){
   batch <- pheno$donor
   madj <- ComBat(dat = mexpr, batch = batch, mod = mod,
                  par.prior = TRUE, prior.plots = FALSE)
-  return(madj)
+  if(return.type == "donor.adj"){
+    ltype <- list(type = gsub(".*;", "", colnames(madj)))
+    dfa <- aggregate(t(madj), by = ltype, FUN = "mean")
+    dfa <- t(dfa[,2:ncol(dfa)])
+    donor.adj <- unlist(lapply(seq(nrow(dfa)), function(ri){dfa[ri,]}))
+    return(donor.adj)
+  } else if(return.type == "mexpr"){
+    return(madj)
+  } else{
+    stop("Error, invalid return.type specified. ",
+         "Should be either 'donor.adj' or 'mexpr'.")
+  }
+  return(NULL)
 }
 
 #--------------------------------
