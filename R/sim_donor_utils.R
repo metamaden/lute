@@ -534,7 +534,7 @@ donoradj_combat <- function(df, return.type = "donor.adj", verbose = FALSE){
   cnv <- colnames(mexpr)
   pheno <- data.frame(donor = gsub(";.*", "", cnv),
                       type = gsub(".*;", "", cnv))
-  mod <- model.matrix(~1, data = pheno)
+  mod <- model.matrix(~type, data = pheno)
   batch <- pheno$donor
   if(verbose){message("Running combat...")}
   if(verbose){
