@@ -381,10 +381,10 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #'
 #' Apply some specified bias adjustment to a vector of marker data.
 #'
-#' @param donorv Vector of markrer signals (e.g. for a donor, for some summaries 
-#' across donors, etc.).
 #' @param donordf A data.frame containing the donor information used for bias
 #' corrections. Should contain donor-specific marker info identifiable by 
+#' @param donorv Vector of markrer signals (e.g. for a donor, for some summaries 
+#' across donors, etc.).
 #' column names of the format: "donor"+"[0-9]".
 #' @param method Method to correct for bias. Supports "var_denom", "sd_denom",
 #' "combat".
@@ -400,9 +400,10 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #' donorv <- donordf$donor.combn.all.mean
 #' donoradj(donorv, donordf, method = "combat")
 #' @export
-donoradj <- function(donorv, donordf, method = "combat", denom_offset = 1e-3,
+donoradj <- function(donordf, donorv = NULL, method = "combat", denom_offset = 1e-3,
                      bounds_thresh = NULL, verbose = FALSE, ...){
   donor.adj <- NA
+  if(is(donorv, "NULL")){donorv <- donordf[,"donor.combn.all.mean"]}
   if(verbose){message("Getting donor marker data...")}
   cnv <- colnames(donordf); donorcol <- cnv[grepl("^donor\\d+$", cnv)]
   if(verbose){message("Found ",length(donorcol),

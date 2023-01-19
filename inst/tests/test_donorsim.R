@@ -12,7 +12,7 @@ df <- donordf <- rand_donor_marker_table(ndonor = 10, gindexv = c(1, 2),
                               sd.offset.pos = 5,sd.offset.neg = 5)
 
 # perform combat adj
-donorv.adj <- donoradj(donordf, method = "combat")
+donorv.adj <- donoradj(df = donordf, method = "combat")
 
 # simulate donor signals data
 # get ypb
