@@ -138,10 +138,12 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     df <- ldonordf[[namei]] # get full donordf
     offsetv <- rep(gsub(".*:", "", namei), ktotal)
     donor.unadj <- df[,cname.donorsummary] # get donor summary datas
-    biasexpt(df = df, Ypb = Ypb, P = P, donor.unadj = donor.unadj, 
-             donor.adj.method = donor.adj.method, 
-             plot.biasadj = plot.biasadj, 
-             verbose = verbose, ...)
+    dfi <- biasexpt(df = df, Ypb = Ypb, P = P, donor.unadj = donor.unadj,
+                    donor.adj.method = donor.adj.method,
+                    plot.biasadj = plot.biasadj,
+                    verbose = verbose, ...)
+    dfi$offset <- rep(offsetv, nrow(dfi)/length(offsetv))
+    return(dfi)
   })
   names(lexpt) <- names(ldonordf)
   # get results df
@@ -201,6 +203,7 @@ biasexpt <- function(df, Ypb, P = NULL, donor.unadj = NULL,
                      proportions = TRUE, verbose = TRUE)
   prop.typev <- rep("punadj", ktotal); ppredv <- punadj; ptruev <- P
   lr[["donor.unadj"]] <- donor.unadj
+  type.indexv <- seq(ktotal)
   if(!is(donor.adj.method, "NULL")){
     donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = df, 
                            donor.adj.method = donor.adj.method, ...)
@@ -211,7 +214,6 @@ biasexpt <- function(df, Ypb, P = NULL, donor.unadj = NULL,
     ptruev <- c(ptruev, P); ppredv <- c(ppredv, padj)
     prop.typev <- c(prop.typev, rep("padj", ktotal))
     type.indexv <- rep(type.indexv, 2)
-    offsetv <- rep(offsetv, 2)
     # parse plot arg
     if(plot.biasadj){
       dfp <- data.frame(unadj = lr[["donor.unadj"]], adj = lr[["donor.adj"]],
@@ -223,8 +225,7 @@ biasexpt <- function(df, Ypb, P = NULL, donor.unadj = NULL,
   biasv <- ptruev - ppredv
   lr[["dfi"]] <- data.frame(prop.type = prop.typev, prop.pred = ppredv, 
                     prop.true = ptruev, bias = biasv, 
-                    type.index = type.indexv, 
-                    offset = offsetv)
+                    type.index = type.indexv)
   return(lr)
 }
 
