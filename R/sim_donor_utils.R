@@ -124,14 +124,12 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
     namei <- names(ldonordf)[ii]
     df <- ldonordf[[namei]] # get full donordf
     offsetv <- rep(gsub(".*:", "", namei), ktotal)
-    donor.unadj <- df[,cname.donorsummary] # get donor summary data
-    
-    biasexpt(donor.unadj = donor.unadj, df = df, Ypb = Ypb, 
+    donor.unadj <- df[,cname.donorsummary] # get donor summary datas
+    biasexpt(df = df, Ypb = Ypb, donor.unadj = donor.unadj, 
              donor.adj.method = donor.adj.method, plot.biasadj = plot.biasadj, 
-             verbose = verbose)
-    
-    return(lr)
+             verbose = verbose, ...)
   })
+  names(lexpt) <- names(ldonordf)
   # get results df
   dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
   ldonorv <- lapply(lexpt, function(ii){ii[c("donor.unadj", "donor.adj")]})
@@ -182,6 +180,7 @@ ypb_fromtypes <- function(Z, P){
 #' @param plot.biasadj Whether to make scatterplot of donor summary signals
 #' before and after bias adjustment.
 #' @param verbose Whether to show verbose status messages.
+#' @param ... Additional arguments passed to `donoradj()`.
 #' @returns lexpt, experiment results list.
 #' @examples 
 #' # simulate donor signals data
@@ -195,7 +194,7 @@ ypb_fromtypes <- function(Z, P){
 #' li <- biasexpt(df = donordf, Ypb = Ypb)
 #' @export
 biasexpt <- function(df, Ypb, donor.unadj = NULL, donor.adj.method = "combat", 
-                     plot.biasadj = TRUE, verbose = FALSE){
+                     plot.biasadj = TRUE, verbose = FALSE, ...){
   lr <- list() # begin return list
   if(!check_donordf(df)){
     stop("Data.frame is not a valid simulated donor signals data.frame.")}
@@ -208,7 +207,7 @@ biasexpt <- function(df, Ypb, donor.unadj = NULL, donor.adj.method = "combat",
   lr[["donor.unadj"]] <- donor.unadj
   if(!is(donor.adj.method, "NULL")){
     donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
-                           donor.adj.method = donor.adj.method)
+                           donor.adj.method = donor.adj.method, ...)
     lr[["donor.adj"]] <- donor.adjv
     Zadj <- matrix(donor.adjv, ncol = ktotal)
     padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
