@@ -510,7 +510,8 @@ pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor")
                         title.append = NULL, verbose = FALSE){
   require(ggplot2)
   # run pca
-  df.pca <- t(dt[,grepl("donor", colnames(dt))]); rpca <- prcomp(df.pca)
+  df.pca <- t(dt[,grepl("^donor.*", colnames(dt))])
+  rpca <- prcomp(df.pca)
   # assign pc labels
   percv <- round(100*rpca$sdev/sum(rpca$sdev),0)
   colnames(rpca$x) <- paste0(colnames(rpca$x), " (",percv,"%)")
@@ -520,7 +521,8 @@ pca_bydonor <- function(dt, test.md = list(test = "pca", test.type = "by donor")
   dfp <- as.data.frame(rpca$x)
   dfp$x <- dfp[,1]; dfp$y <- dfp[,2]
   dfp$donor <- rownames(df.pca)
-  dfp$donor.summary <- ifelse(grepl("mean|median", dfp$donor), TRUE, FALSE)
+  dfp$donor.summary <- ifelse(grepl(".*\\.mean$|.*\\.median$", dfp$donor), 
+                              TRUE, FALSE)
   title.str.pt <- paste0("PCA across markers; Num. markers = ", num.markers, 
                       "; Num. types = ", num.types)
   if(!is(title.append, "NULL")){
