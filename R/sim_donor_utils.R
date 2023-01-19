@@ -478,7 +478,7 @@ donoradj_combat <- function(df){
 ggpt_donorbias <- function(dfp, method.str = "combat"){
   require(ggplot2)
   plot.titlestr <- paste0("Donor signals\n")
-  plot.titlestr <- paste0(plot.titlestr, "Adj. method: ", donor.adj.method)
+  plot.titlestr <- paste0(plot.titlestr, "Adj. method: ", method.str)
   ggplot(dfp, aes(x = unadj, y = adj, color = marker, shape = type)) + 
     theme_bw() + geom_point(alpha = 0.5, size = 4) + 
     geom_abline(slope = 1, intercept = 0, color = "black") +
