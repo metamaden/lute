@@ -223,32 +223,45 @@ donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
     donor.adj <- rowMeans(limma::removeBatchEffect(t(mdat), 
                                                    batch = dfl$donor))
   } else if(method == "combat"){
-    # use combat
-    require(sva)
-    # make expr matrix
-    filt.donor <- grepl("donor\\d", colnames(df))
-    mexpr <- do.call(rbind, lapply(unique(df$marker), function(mi){
-      dff <- df[df$marker==mi, ]
-      unlist(lapply(unique(dff[dff$marker==mi,]$type), function(ti){
-        datv <- dff[dff$type==ti, filt.donor]
-        names(datv) <- paste0(colnames(dff[,filt.donor]), ";", ti)
-        return(datv)
-      }))
-    }))
-    rownames(mexpr) <- unique(df$marker)
-    # make pheno 
-    cnv <- colnames(mexpr)
-    pheno <- data.frame(donor = gsub(";.*", "", cnv),
-                        type = gsub(".*;", "", cnv))
-    # get combat vars
-    mod <- model.matrix(~1, data = pheno)
-    batch <- pheno$donor
-    madj <- ComBat(dat = mexpr, batch = batch, mod = mod,
-                   par.prior = TRUE, prior.plots = FALSE)
+    
   }
   return(donor.adj)
 }
 
+#' donoradj_combat
+#'
+#' Use method sva::ComBat() to adjust for donor bias.
+#' 
+#' @param donordf Data.frame containing marker signals and pheno data.
+#' @returns madj, matrix of adjusted marker signals.
+#' @examples 
+#' df <- rand_donor_marker_table()
+#' donoradj_combat(df)
+#' @export
+donoradj_combat <- function(donordf){
+  # use combat
+  require(sva)
+  # make expr matrix
+  filt.donor <- grepl("donor\\d", colnames(donordf))
+  mexpr <- do.call(rbind, lapply(unique(df$marker), function(mi){
+    dff <- df[df$marker==mi, ]
+    unlist(lapply(unique(dff[dff$marker==mi,]$type), function(ti){
+      datv <- dff[dff$type==ti, filt.donor]
+      names(datv) <- paste0(colnames(dff[,filt.donor]), ";", ti)
+      return(datv)
+    }))
+  }))
+  rownames(mexpr) <- unique(df$marker)
+  # make pheno 
+  cnv <- colnames(mexpr)
+  pheno <- data.frame(donor = gsub(";.*", "", cnv),
+                      type = gsub(".*;", "", cnv))
+  # get combat vars
+  mod <- model.matrix(~1, data = pheno)
+  batch <- pheno$donor
+  madj <- ComBat(dat = mexpr, batch = batch, mod = mod,
+                 par.prior = TRUE, prior.plots = FALSE)
+}
 
 #---------------------
 # experiment utilities
