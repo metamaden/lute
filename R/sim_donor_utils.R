@@ -26,6 +26,7 @@
 #' @param run.decon Whether to run deconvolution experiments, returning 
 #' predictions. Automatically generates values for lpv, lsv if none passed.
 #' @param seed.num Seed value for random sizes in lsv, in case lsv is NULL.
+#' @param verbose Whether to show verbose status messages.
 #' @param ... Arguments passed to functions `rand_donor_marker_table()`.
 #' @returns Results of a donor marker experiment, including randomized marker
 #' signal table, results of PCA on marker table, and results and plots of 
@@ -83,27 +84,20 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param P Vector of true proportions.
 #' @param donor.adj.method Method to adjust for donor bias. Can be either 
 #' "limma", "var_denom", "sd_denom", or NULL. If NULL, skip this step.
+#' @param plot.biasadj Whether to make scatterplot of donor summary signals
+#' before and after bias adjustment.
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
 #' @param ndonor Total number of donors to simulate.
-#' @param sd.offset.pos Poisson dist mean for randomization of offsets for
-#' positive marker signals.
-#' @param sd.offset.neg Poisson dist mean for randomization of offsets for
-#' negative marker signals.
-#' @param plot.biasadj Whether to plot scatterplot of bias adjustment results.
-#' Shows the mean donor values before and after adjustment was applied.
-#' @param lpv List of length num.sim containing true proportions for each 
-#' simulated type. Automatically generated if not provided.
-#' @param run.decon Whether to run deconvolution experiments, returning 
-#' predictions. Automatically generates values for lpv, lsv if none passed.
 #' @param seed.num Seed value for random sizes in lsv, in case lsv is NULL.
+#' @param verbose Whether to show verbose status messages.
 #' @param ... Arguments passed to function `donoradj()`.
 #' @returns List of experiment results and experiment objects.
 #' @examples 
-#' donor_marker_biasexpt()
+#' lb <- donor_marker_biasexpt()
 #' @export
 donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
-                                  donor.adj.method = NULL,
+                                  donor.adj.method = NULL, plot.biasadj = TRUE,
                                   gindexv = c(1, 2), ndonor = 10,
                                   seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
@@ -144,18 +138,18 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
       type.indexv <- rep(type.indexv, 2)
       offsetv <- rep(offsetv, 2)
       lr[["donor.adj"]] <- donor.adjv
-    }
-    # parse plot arg
-    if(plot.biasadj){
-      plot.titlestr <- paste0("Bias adj. results\n")
-      plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
-      dfp <- data.frame(unadj = lr[["donor.unadj"]], adj = lr[["donor.adj"]],
-                        marker = df$marker, type = df$type)
-      lr[["ggpt.biasadj"]] <- ggplot(dfp, aes(x = unadj, y = adj, 
-                                              color = marker, shape = type)) + 
-        theme_bw() + geom_point(alpha = 0.5) + 
-        geom_abline(slope = 1, intercept = 0, color = "black") +
-        ggtitle(plot.titlestr)
+      # parse plot arg
+      if(plot.biasadj){
+        plot.titlestr <- paste0("Bias adj. results\n")
+        plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
+        dfp <- data.frame(unadj = lr[["donor.unadj"]], adj = lr[["donor.adj"]],
+                          marker = df$marker, type = df$type)
+        lr[["ggpt.biasadj"]] <- ggplot(dfp, aes(x = unadj, y = adj, 
+                                                color = marker, shape = type)) + 
+          theme_bw() + geom_point(alpha = 0.5) + 
+          geom_abline(slope = 1, intercept = 0, color = "black") +
+          ggtitle(plot.titlestr)
+      }
     }
     # append results
     biasv <- ptruev - ppredv
@@ -165,14 +159,33 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                       offset = offsetv)
     lr[["dfi"]] <- dfi; return(lr)
   })
+  # get results df
   dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
   ldonorv <- lapply(lexpt, function(ii){ii[c("donor.unadj", "donor.adj")]})
   names(ldonorv) <- names(ldonordf)
   # get return object
   lmd.adj <- list(donor.adj.method = donor.adj.method, ...)
   lmd <- list(offsetv = offsetv, P = P, donor.adj.info = lmd.adj)
-  lr <- list(dfres = dfres, ldonorv = ldonorv, ldonordf = ldonordf, Ypb = Ypb, metadata = lmd)
+  lr <- list(dfres = dfres, ldonorv = ldonorv, ldonordf = ldonordf, 
+             Ypb = Ypb, metadata = lmd)
+  # get plot objects
+  if(plot.biasadj){
+    lpt <- lapply(lexpt, function(ii){ii$ggpt.biasadj})
+    names(lpt) <- names(lexpt)
+    lr[["ggpt.biasadj"]] <- lpt
+  }
   return(lr)
+}
+
+#' biasexpt
+#'
+#' Run a single donor bias experiment.
+#' 
+#' @param donordf Donor data.frame.
+#' @returns lexpt, experiment results list.
+#'
+biasexpt <- function(){
+  
 }
 
 #' donoradj
