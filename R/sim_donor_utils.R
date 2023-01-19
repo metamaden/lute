@@ -99,6 +99,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' "limma", "var_denom", "sd_denom", "combat", or NULL. If NULL, skip this step.
 #' @param plot.biasadj Whether to make scatterplot of donor summary signals
 #' before and after bias adjustment.
+#' @param plot.pca Whether to include PCA results plots using simulated donor
+#' signals data.frame.
 #' @param cname.donorsummary Name of column containing the donor summary data
 #' with which to perform experiment.
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
