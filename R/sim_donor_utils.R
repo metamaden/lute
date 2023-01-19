@@ -212,7 +212,7 @@ biasexpt <- function(df, Ypb, P, donor.unadj = NULL,
   ktotal <- length(unique(df$type))
   Zunadj <- matrix(donor.unadj, ncol = ktotal)
   punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
-                     proportions = TRUE, verbose = TRUE)
+                     proportions = TRUE, verbose = verbose)
   # initial variable defs
   prop.typev <- rep("punadj", ktotal)
   ppredv <- punadj; ptruev <- P
@@ -224,7 +224,7 @@ biasexpt <- function(df, Ypb, P, donor.unadj = NULL,
     lr[["donor.adj"]] <- donor.adjv
     Zadj <- matrix(donor.adjv, ncol = ktotal)
     padj <- predtype(Z = Zadj, Y = Ypb, strict_method = "nnls",
-                     proportions = TRUE, verbose = TRUE)
+                     proportions = TRUE, verbose = verbose)
     # append to variable defs
     ptruev <- c(ptruev, P); ppredv <- c(ppredv, padj)
     prop.typev <- c(prop.typev, rep("padj", ktotal))
@@ -543,8 +543,10 @@ donoradj_combat <- function(df, return.type = "donor.adj", verbose = FALSE){
                    par.prior = TRUE, prior.plots = FALSE)
   } else{
     madj <- suppressWarnings(
-      ComBat(dat = mexpr, batch = batch, mod = mod,
-             par.prior = TRUE, prior.plots = FALSE)
+      suppressMessages(
+        ComBat(dat = mexpr, batch = batch, mod = mod,
+               par.prior = TRUE, prior.plots = FALSE)
+      )
     )
   }
   if(return.type == "donor.adj"){
