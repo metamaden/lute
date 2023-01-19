@@ -90,6 +90,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' positive marker signals.
 #' @param sd.offset.neg Poisson dist mean for randomization of offsets for
 #' negative marker signals.
+#' @param plot.biasadj Whether to plot scatterplot of bias adjustment results.
+#' Shows the mean donor values before and after adjustment was applied.
 #' @param lpv List of length num.sim containing true proportions for each 
 #' simulated type. Automatically generated if not provided.
 #' @param run.decon Whether to run deconvolution experiments, returning 
@@ -122,14 +124,15 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   type.indexv <- seq(ktotal)
   lexpt <- lapply(seq(length(ldonordf)), function(ii){
     # simulate donor data
-    namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]]
+    lr <- list() # begin return list
+    namei <- names(ldonordf)[ii]; df <- ldonordf[[namei]] # get full donordf
     offsetv <- rep(gsub(".*:", "", namei), ktotal)
-    donor.unadj <- df[,cname.data]
+    donor.unadj <- df[,cname.data] # get donor summary data
     Zunadj <- matrix(donor.unadj, ncol = ktotal)
     punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
                        proportions = TRUE, verbose = TRUE)
     prop.typev <- rep("punadj", ktotal); ppredv <- punadj; ptruev <- P
-    lr <- list(donor.unadj = donor.unadj)
+    lr[["donor.unadj"]] <- donor.unadj
     if(!is(donor.adj.method, "NULL")){
       donor.adjv <- donoradj(donor.unadj = donor.unadj, donordf = donordf, 
                              donor.adj.method = donor.adj.method, ...)
@@ -141,6 +144,18 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
       type.indexv <- rep(type.indexv, 2)
       offsetv <- rep(offsetv, 2)
       lr[["donor.adj"]] <- donor.adjv
+    }
+    # parse plot arg
+    if(plot.biasadj){
+      plot.titlestr <- paste0("Bias adj. results\n")
+      plot.titlestr <- paste0(plot.titlestr, "Method: ", donor.adj.method)
+      dfp <- data.frame(unadj = lr[["donor.unadj"]], adj = lr[["donor.adj"]],
+                        marker = df$marker, type = df$type)
+      lr[["ggpt.biasadj"]] <- ggplot(dfp, aes(x = unadj, y = adj, 
+                                              color = marker, shape = type)) + 
+        theme_bw() + geom_point(alpha = 0.5) + 
+        geom_abline(slope = 1, intercept = 0, color = "black") +
+        ggtitle(plot.titlestr)
     }
     # append results
     biasv <- ptruev - ppredv
@@ -170,7 +185,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' corrections. Should contain donor-specific marker info identifiable by 
 #' column names of the format: "donor"+"[0-9]".
 #' @param method Method to correct for bias. Supports "var_denom", "sd_denom",
-#' "sctransform",
+#' "sctransform", "combat",
 #' @param denom_offset Denominator offset, usually very small, for methods which 
 #' divide by some quantity.
 #' @param bounds_thresh Threshold for denominator offset. Absolute denominator
@@ -180,9 +195,10 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' values.
 #' @examples 
 #' donordf <- rand_donor_marker_table()
-#' donoradj(donordf$donor.combn.all.mean, donordf)
+#' donorv <- donordf$donor.combn.all.mean
+#' donoradj(donorv, donordf, method = "combat")
 #' @export
-donoradj <- function(donorv, donordf, method = "limma", denom_offset = 1e-3,
+donoradj <- function(donorv, donordf, method = "combat", denom_offset = 1e-3,
                      bounds_thresh = NULL, verbose = FALSE, ...){
   donor.adj <- NA
   if(verbose){message("Getting donor marker data...")}
