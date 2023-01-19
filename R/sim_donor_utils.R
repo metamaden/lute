@@ -430,6 +430,24 @@ donordf_from_mexpr <- function(mexpr){
   return(NULL)
 }
 
+#' mexpr_from_donordf
+#'
+#'
+#'
+#'
+mexpr_from_donordf <- function(){
+  filt.donor <- grepl("donor\\d", colnames(df))
+  mexpr <- do.call(rbind, lapply(unique(df$marker), function(mi){
+    dff <- df[df$marker==mi, ]
+    unlist(lapply(unique(dff[dff$marker==mi,]$type), function(ti){
+      datv <- dff[dff$type==ti, filt.donor]
+      names(datv) <- paste0(colnames(dff[,filt.donor]), ";", ti)
+      return(datv)
+    }))
+  }))
+  rownames(mexpr) <- unique(df$marker)
+}
+
 #---------------------------------
 # 3. donor bias adjustment methods
 #---------------------------------
