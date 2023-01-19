@@ -405,9 +405,20 @@ donordf_from_mexpr <- function(mexpr){
     dfi$type <- typev; dfi$marker <- paste0("marker",markeri)
     dfi
   }))
+  # get donor summaries
   which.donor.cnv <- grepl("^donor\\d", colnames(df))
   df$donor.combn.all.mean <- rowMeans(as.matrix(df[,which.donor.cnv]))
   df$donor.combn.all.median <- rowMedians(as.matrix(df[,which.donor.cnv]))
+  # get marker.type from means
+  markerv <- unique(df$marker)
+  mapv <- unlist(lapply(markerv, function(mi){ # get marker.type mappings
+    dff <- df[df$marker == mi,]
+    max.val <- max(dff[,"donor.combn.all.mean"])
+    max.filt <- dff$donor.combn.all.mean==max.val
+    dff[max.filt,]$type[1]
+  })); names(mapv) <- markerv
+  df$marker.type <- "NA"
+  for(mi in markerv){df[df$marker == mi,]$marker.type <- as.character(mapv[mi])}
   # final check
   if(check_donordf(df)){
     if(verbose){message("donordf conversion success. Returning...")}
