@@ -119,7 +119,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                                   cname.donorsummary = "donor.combn.all.mean",
                                   gindexv = c(1, 2), ndonor = 10,
                                   seed.num = 0, verbose = FALSE, ...){
-  set.seed(seed.num)
+  set.seed(seed.num); lr <- list()
   if(verbose){message("Making pseudobulk sample from types matrix...")}
   df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
                                 sd.offset.pos = 0, sd.offset.neg = 0)
@@ -156,8 +156,11 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   # get return object
   lmd.adj <- list(donor.adj.method = donor.adj.method, ...)
   lmd <- list(offsetv = offsetv, P = P, donor.adj.info = lmd.adj)
-  lr <- list(dfres = dfres, ldonorv = ldonorv, ldonordf = ldonordf, 
-             Ypb = Ypb, metadata = lmd)
+  lr[["dfres"]] <- dfres
+  lr[["ldonorv"]] <- ldonorv
+  lr[["ldonordf"]] <- ldonordf
+  lr[["Ypb"]] <- Ypb
+  lr[["metadata"]] <- lmd
   # get plot objects
   if(plot.pca){
     lr[["pca.markers"]] <- pcaplots_donor(dt = df, title.append = NULL)
@@ -368,8 +371,10 @@ rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2),
 #' @returns list of PCA results, plots, and metadata
 #' @export
 pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
-  list(pca.bydonor = pca_bydonor(dt= dt, title.append = title.append, ...), 
-       pca.bydonortype = pca_bydonortype(dt = dt, title.append = title.append, ...))
+  list(pca.bydonor = pca_bydonor(dt = dt, title.append = title.append, 
+                                 verbose = verbose, ...), 
+       pca.bydonortype = pca_bydonortype(dt = dt, title.append = title.append, 
+                                         verbose = verbose, ...))
 }
 
 #---------------------------------
