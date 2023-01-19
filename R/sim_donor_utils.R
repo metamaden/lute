@@ -519,8 +519,8 @@ donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
 #' 
 #' @param df Data.frame containing marker signals and pheno data.
 #' @param return.type Type of data to return. Accepts either "donor.adj" for a 
-#' vector of adjusted donor signals, or "mexpr" for a matrix of adjusted 
-#' signals.
+#' vector of adjusted donor signals, "mexpr" for a matrix of adjusted 
+#' signals, or "donordf" for a donordf-type data.frame.
 #' @param verbose Whether to show verbose status messages.
 #' @returns madj, matrix of adjusted marker signals.
 #' @examples 
@@ -555,6 +555,9 @@ donoradj_combat <- function(df, return.type = "donor.adj", verbose = FALSE){
     return(donor.adj)
   } else if(return.type == "mexpr"){
     return(madj)
+  } else if(return.type == "donordf"){
+    df.adj <- donordf_from_mexpr(madj, verbose = verbose)
+    return(df.adj)
   } else{
     stop("Error, invalid return.type specified. ",
          "Should be either 'donor.adj' or 'mexpr'.")
