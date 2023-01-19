@@ -120,10 +120,9 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
                                   gindexv = c(1, 2), ndonor = 10,
                                   seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
-  if(verbose){message("Making new pseudobulk sample...")}
+  if(verbose){message("Making pseudobulk sample from types matrix...")}
   df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
                                 sd.offset.pos = 0, sd.offset.neg = 0)
-  if(verbose){message("Making pseudobulked sample from types matrix...")}
   ktotal <- length(P)
   Z <- matrix(df[,"donor1"], ncol = ktotal)
   Ypb <- ypb_fromtypes(Z = Z, P = P)
@@ -197,7 +196,7 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
 #' # get bias expt results
 #' li <- biasexpt(df = donordf, Ypb = Ypb)
 #' @export
-biasexpt <- function(df, Ypb, P = NULL, donor.unadj = NULL, 
+biasexpt <- function(df, Ypb, P, donor.unadj = NULL, 
                      donor.adj.method = "combat", 
                      plot.biasadj = TRUE, verbose = FALSE, ...){
   lr <- list() # begin return list
