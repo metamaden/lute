@@ -276,7 +276,7 @@ check_donordf <- function(df){
 #' corrections. Should contain donor-specific marker info identifiable by 
 #' column names of the format: "donor"+"[0-9]".
 #' @param method Method to correct for bias. Supports "var_denom", "sd_denom",
-#' "sctransform", "combat",
+#' "combat".
 #' @param denom_offset Denominator offset, usually very small, for methods which 
 #' divide by some quantity.
 #' @param bounds_thresh Threshold for denominator offset. Absolute denominator
@@ -312,23 +312,6 @@ donoradj <- function(donorv, donordf, method = "combat", denom_offset = 1e-3,
       denomv[which(abs(denomv) >= bounds_thresh)] <- bounds_thresh
     }
     donor.adj <- donorv/denomv
-  } else if(method == "limma"){
-    dfl <- do.call(rbind, lapply(unique(donordf$marker), function(mi){
-      marker.filt <- which(donordf$marker==mi)
-      dfi <- dff[marker.filt,]
-      data.frame(marker = unlist(dfi), 
-                 markername = rep(mi, length(marker.filt)),
-                 donor = rep(colnames(dfi), each = nrow(dfi)), 
-                 type = rep(donordf[marker.filt,]$type, ncol(dfi)))
-    }))
-    mdat <- matrix(dfl$marker, nrow = length(unique(dfl$markername)), byrow = T)
-    
-    donor.adj <- rowMeans(limma::removeBatchEffect(t(mdat), 
-                                                   batch = dfl$donor,
-                                                   covariates = dfl$type))
-    
-    donor.adj <- rowMeans(limma::removeBatchEffect(t(mdat), 
-                                                   batch = dfl$donor))
   } else if(method == "combat"){
     # return the means of adjusted expression
     madj <- donoradj_combat(df = donordf)
@@ -336,7 +319,7 @@ donoradj <- function(donorv, donordf, method = "combat", denom_offset = 1e-3,
     dfa <- aggregate(t(madj), by = ltype, FUN = "mean")
     dfa <- t(dfa[,2:ncol(dfa)])
     donor.adj <- unlist(lapply(seq(nrow(dfa)), function(ri){dfa[ri,]}))
-  }
+  } else{stop("Error, invalid adjustment method provided.")}
   return(donor.adj)
 }
 
