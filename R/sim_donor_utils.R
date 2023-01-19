@@ -395,9 +395,9 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #' df.adj <- donordf_from_mexpr(mexpr = madj)
 #' @export
 donordf_from_mexpr <- function(mexpr, verbose = FALSE){
-  typev <- unique(gsub(".*;", "", colnames(madj)))
-  df <- do.call(rbind, lapply(seq(nrow(madj)), function(markeri){
-    mi <- madj[markeri,,drop=F]
+  typev <- unique(gsub(".*;", "", colnames(mexpr)))
+  df <- do.call(rbind, lapply(seq(nrow(mexpr)), function(markeri){
+    mi <- mexpr[markeri,,drop=F]
     dfi <- do.call(rbind, lapply(typev, function(typei){
       mi[,grepl(paste0(".*;", typei), colnames(mi))]
     }))
@@ -529,26 +529,24 @@ donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
 #' @export
 donoradj_combat <- function(df, return.type = "donor.adj", verbose = FALSE){
   require(sva)
-  # make expr matrix
-  mexpr <- mexpr_from_donordf(df)
-  # make pheno 
+  if(verbose){message("Getting combat variables...")}
+  mexpr <- mexpr_from_donordf(df) # make expr matrix
   cnv <- colnames(mexpr)
   pheno <- data.frame(donor = gsub(";.*", "", cnv),
                       type = gsub(".*;", "", cnv))
-  # get combat vars
   mod <- model.matrix(~1, data = pheno)
   batch <- pheno$donor
+  if(verbose){message("Running combat...")}
   if(verbose){
     madj <- ComBat(dat = mexpr, batch = batch, mod = mod,
                    par.prior = TRUE, prior.plots = FALSE)
   } else{
-    madj <- suppressWarnings(
-      suppressMessages(
-        ComBat(dat = mexpr, batch = batch, mod = mod,
-               par.prior = TRUE, prior.plots = FALSE)
-      )
+    madj <- suppressMessages(
+      ComBat(dat = mexpr, batch = batch, mod = mod,
+             par.prior = TRUE, prior.plots = FALSE)
     )
   }
+  if(verbose){message("Parsing return.type...")}
   if(return.type == "donor.adj"){
     ltype <- list(type = gsub(".*;", "", colnames(madj)))
     dfa <- aggregate(t(madj), by = ltype, FUN = "mean")
@@ -558,8 +556,7 @@ donoradj_combat <- function(df, return.type = "donor.adj", verbose = FALSE){
   } else if(return.type == "mexpr"){
     return(madj)
   } else if(return.type == "donordf"){
-    df.adj <- donordf_from_mexpr(madj, verbose = verbose)
-    return(df.adj)
+    return(donordf_from_mexpr(mexpr = madj, verbose = verbose))
   } else{
     stop("Error, invalid return.type specified. ",
          "Should be either 'donor.adj' or 'mexpr'.")
