@@ -4,7 +4,7 @@
 \alias{donordf_from_mexpr}
 \title{donordf_from_mexpr}
 \usage{
-donordf_from_mexpr(mexpr)
+donordf_from_mexpr(mexpr, verbose = FALSE)
 }
 \arguments{
 \item{mexpr}{An expression matrix (rows = markers/genes, columns = 
