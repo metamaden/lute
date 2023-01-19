@@ -112,7 +112,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' lb <- donor_marker_biasexpt()
 #' @export
 donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
-                                  donor.adj.method = NULL, plot.biasadj = TRUE,
+                                  donor.adj.method = NULL, 
+                                  plot.biasadj = TRUE, plot.pca = TRUE,
                                   cname.donorsummary = "donor.combn.all.mean",
                                   gindexv = c(1, 2), ndonor = 10,
                                   seed.num = 0, verbose = FALSE, ...){
@@ -157,6 +158,9 @@ donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
   lr <- list(dfres = dfres, ldonorv = ldonorv, ldonordf = ldonordf, 
              Ypb = Ypb, metadata = lmd)
   # get plot objects
+  if(plot.pca){
+    lr[["pca.markers"]] <- pcaplots_donor(dt = df, title.append = NULL)
+  }
   if(plot.biasadj){
     lpt <- lapply(lexpt, function(ii){ii$ggpt.biasadj})
     names(lpt) <- names(lexpt)
