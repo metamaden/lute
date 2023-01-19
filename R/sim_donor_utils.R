@@ -388,7 +388,7 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #' @param mexpr An expression matrix (rows = markers/genes, columns = 
 #' samples/type data).
 #' @param verbose Whether to show verbose status messages.
-#' @returns 
+#' @returns mexpr, a new expression matrix
 #' @examples 
 #' df <- rand_donor_marker_table()
 #' madj <- donoradj_combat(df, return.type = "mexpr")

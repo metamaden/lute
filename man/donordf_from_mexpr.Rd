@@ -12,6 +12,9 @@ samples/type data).}
 
 \item{verbose}{Whether to show verbose status messages.}
 }
+\value{
+mexpr, a new expression matrix
+}
 \description{
 Makes a valid donordf object from an expression matrix (e.g. rows = 
 markers/genes, columns = samples/type data)
