@@ -11,6 +11,8 @@ random_sce(
   expr.mean = 10,
   na.include = FALSE,
   na.fract = 0.2,
+  zero.include = FALSE,
+  zero.fract = 0.2,
   verbose = FALSE,
   seed.num = 0
 )
@@ -27,6 +29,10 @@ random_sce(
 \item{na.include}{Whether to include random NA values.}
 
 \item{na.fract}{Fraction of NA values to include.}
+
+\item{zero.include}{Whether to include random zero-count values.}
+
+\item{zero.fract}{Fraction of zero-count values to include.}
 
 \item{verbose}{Whether to show verbose status messages.}
 
