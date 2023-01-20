@@ -72,6 +72,8 @@ filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
 #' @param assayname Name of assay in assays(sce) to check for NAs.
 #' @param append.metadata Whether to append metadata summary of preprocessing 
 #' parameters and results.
+#' @param new.metadata.name Name of new metadata object to append (see 
+#' append.metadata argument).
 #' @param verbose Whether to include verbose status messages.
 #' @returns scef, filtered SingleCellExperiment with optional appended 
 #' preprocessing metadata.
@@ -85,11 +87,13 @@ filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
 #'    rep("donor2", 5), 
 #'    rep("donor3", 2)
 #' )
-#' scef <- filter_na_cells(sce, "donor", verbose = T)
+#' scef <- filter_na_cells(sce, type.variable = "donor", 
+#'    new.metadata.name = "filter.na.donor", verbose = T)
 #' @export
 filter_na_type <- function(sce, type.variable = "celltype", remove.types = TRUE, 
                            max.gene.na.freq = 0.25, max.cells.na.freq = 0.25, 
                            assayname = "counts", append.metadata = TRUE, 
+                           new.metadata.name = "filter.na.type",
                            verbose = FALSE){
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
@@ -124,25 +128,18 @@ filter_na_type <- function(sce, type.variable = "celltype", remove.types = TRUE,
     if(verbose){message("Appending new metadata...")}
     dftype <- data.frame(type = typev,
                          gene.na.count = typev.gene.count,
-                         gene.na.freq = )
-  }
-  
-  
-  
-  
-  
-  na.freqv <- na.countv/nrow(mexpr); filt.cellv <- na.freqv > max.na.freq
-  scef <- sce[,!filt.cellv] # filter sce
-  if(verbose){message("Filter on cell NA values removed ",
-                      ncol(mexpr)-ncol(mexprf)," cells.")}
-  if(append.metadata){
-    if(verbose)(message("Appending new metadata."))
-    dfmd <- data.frame(
-      cell.uid = colnames(mexpr), na.count = na.countv,
-      na.freq = na.freqv, above.max.na.freq = filt.cellv
+                         gene.na.freq = typev.gene.freq,
+                         eval.max.gene.na.freq = typev.gene.filt)
+    lparam <- list(
+      num.genes.sce.original = nrow(sce),
+      num.cells.sce.original = ncol(sce),
+      max.cells.na.freq = max.cells.na.freq,
+      max.gene.na.freq = max.gene.na.freq
     )
-    lmd <- list(dfmd = dfmd, max.na.freq = max.na.freq, assayname = assayname)
-    metadata(scef)$cell.na.filt <- lmd
+    lmd <- list(parameters = lparam, df.type = dftype,
+                dfna.cell.ct = dfna.ct, dfna.cell.freq = dfna.freq,
+                dfna.cell.thresh = dfna.thresh)
+    metadata(scef)[[new.metadata.name]] <- lmd
   }
   return(scef)
 }
