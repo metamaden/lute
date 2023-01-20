@@ -100,11 +100,32 @@ filter_na_type <- function(sce, type.variable = "celltype", remove.types = TRUE,
   mexpr <- assays(sce)[[assayname]]
   # count nas by type
   typev <- unique(cd[,type.variable])
+  # get cell na stats
   dfna.ct <- do.call(rbind, lapply(typev, function(ti){
     filt.type <- cd[,type.variable]==ti; mexprf <- mexpr[,filt.type]
     apply(mexprf, 1, function(ci){length(which(is.na(ci)))})
   }))
   dfna.freq <- dfna.ct/nrow(mexpr)
+  dfna.thresh <- t(apply(dfna.freq, 1, function(ri){ri > max.cells.na.freq}))
+  rownames(dfna.ct) <- rownames(dfna.freq) <- rownames(dfna.thresh) <- typev
+  # get stats by type
+  typev.gene.count <- unlist(apply(dfna.thresh, 1, function(ri){
+    length(which(ri))}))
+  typev.gene.freq <- typev.gene.count/ncol(dfna.freq)
+  # get filters and apply them
+  typev.gene.filt <- typev.gene.freq > max.gene.na.freq
+  typev.remove <- typev[typev.gene.filt]
+  coldata.filt <- cd[,type.variable] %in% typev.remove
+  cell.uid.filt <- colnames(sce) %in% rownames(cd[coldata.filt,])
+  scef <- sce[,!cell.uid.filt]
+  if(verbose){message("After applying NA filter, removed ",length(typev.remove),
+                      " types and ",ncol(sce)-ncol(scef)," cells...")}
+  if(append.metadata){
+    if(verbose){message("Appending new metadata...")}
+    dftype <- data.frame(type = typev,
+                         gene.na.count = typev.gene.count,
+                         gene.na.freq = )
+  }
   
   
   
