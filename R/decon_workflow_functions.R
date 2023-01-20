@@ -8,6 +8,38 @@
 #
 #
 
+#-----------------------
+# sce summary statistics
+#-----------------------
+
+#'
+#'
+#'
+sce_cell_na_freq <- function(){
+  
+}
+
+#'
+#'
+#'
+sce_gene_na_freq <- function(){
+  
+}
+
+#'
+#'
+#'
+sce_type_na_freq <- function(){
+  
+}
+
+#'
+#'
+#'
+get_na_stats <- function(){
+  
+}
+
 #-------------------------
 # preprocessing -- filters
 #-------------------------
@@ -80,7 +112,8 @@ filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
 #' @examples 
 #' # use to filter cell types
 #' sce <- random_sce(na.include = T, na.fract = 0.4)
-#' scef <- filter_na_cells(sce, verbose = T)
+#' scef <- filter_na_type(sce, verbose = T)
+#' metadata(scef)$filter.na.type$df.type # view summary by type
 #' # can also be used to filter on grouping, such as by donor
 #' colData(sce)$donor <- c(
 #'    rep("donor1", 3), 

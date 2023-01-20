@@ -9,6 +9,8 @@ random_sce(
   num.cells = 10,
   num.types = 2,
   expr.mean = 10,
+  na.include = FALSE,
+  na.fract = 0.2,
   verbose = FALSE,
   seed.num = 0
 )
@@ -21,6 +23,10 @@ random_sce(
 \item{num.types}{Number of cell types to annotate.}
 
 \item{expr.mean}{Poisson dist mean for random expression data.}
+
+\item{na.include}{Whether to include random NA values.}
+
+\item{na.fract}{Fraction of NA values to include.}
 
 \item{verbose}{Whether to show verbose status messages.}
 
