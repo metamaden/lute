@@ -50,7 +50,11 @@ mexpr_na_freq <- function(mexpr, dim.index = 2){
 #' @returns scef, filtered SingleCellExperiment with optional appended 
 #' preprocessing metadata.
 #' @examples 
-#' 
+#' set.seed(0)
+#' sce <- random_sce(zero.include = T, zero.fract = 0.3)
+#' scef <- filter_value_cells(sce, filter.term = "zerocount", verbose = T,
+#'                           max.value.freq = 0.1)
+#' metadata(scef)$filter.zerocount.by.cell$df.cell
 #' @export
 filter_value_cells <- function(sce, filter.term = c("zerocount", "NA"), 
                                remove.cells = TRUE, max.value.freq = 0.25,
@@ -60,15 +64,23 @@ filter_value_cells <- function(sce, filter.term = c("zerocount", "NA"),
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
   cd <- colData(sce); mexpr <- assays(sce)[[assayname]]
-  na.countv <- apply(mexpr, 2, function(ci){length(which(is.na(ci)))})
-  na.freqv <- na.countv/nrow(mexpr); filt.cellv <- na.freqv > max.na.freq
+  value.countv <- apply(mexpr, 2, function(ci){
+    if(filter.term == "NA"){
+      length(which(is.na(ci)))
+    } else{
+      length(which(ci == 0))
+    }
+  })
+  value.freqv <- value.countv/nrow(mexpr)
+  filt.cellv <- value.freqv > max.value.freq
   if(remove.cells){
     scef <- sce[,!filt.cellv];filt.type <- "removed"
   } else{
     scef <- sce; filt.type <- "flagged"
   }
-  if(verbose){message("Filter on cell NA values ",filt.type," ",
-                      ncol(mexpr)-ncol(mexprf)," cells.")}
+  if(verbose){message("Filter on cell ",filter.term," values ",
+                      filt.type, " ", length(which(filt.cellv)),
+                      " cells.")}
   if(append.metadata){
     if(verbose)(message("Appending new metadata."))
     lparam <- list(filter.term = filter.term, max.value.freq = max.value.freq, 
