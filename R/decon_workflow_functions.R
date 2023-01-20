@@ -77,9 +77,10 @@ filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
 #' filter_na_type
 #'
 #' Filter cell types (or other variable groupings) on frequency of genes or
-#' features with cells exceeding some NA threshold (see max.cells.na.freq).
+#' features with cells exceeding some frequency threshold (see max.cells.na.freq).
 #'
 #' @param sce A SingleCellExperiment object.
+#' @param filterterm Term for filter. Either "zerocount" or "NA".
 #' @param type.variable Name of the type variable in sce colData.
 #' @param remove.types Whether to remove cells exceeding NA filter from sce 
 #' prior to returning.
@@ -110,7 +111,7 @@ filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
 #' scef <- filter_na_cells(sce, type.variable = "donor", 
 #'    new.metadata.name = "filter.na.donor", verbose = T)
 #' @export
-filter_na_type <- function(sce, type.variable = "celltype", remove.types = TRUE, 
+filter_value_type <- function(sce, type.variable = "celltype", remove.types = TRUE, 
                            max.gene.na.freq = 0.25, max.cells.na.freq = 0.25, 
                            assayname = "counts", append.metadata = TRUE, 
                            new.metadata.name = "filter.na.type",
@@ -162,13 +163,6 @@ filter_na_type <- function(sce, type.variable = "celltype", remove.types = TRUE,
     metadata(scef)[[new.metadata.name]] <- lmd
   }
   return(scef)
-}
-
-#' filter_na_sce
-#'
-#'
-filter_na_sce <- function(){
-  
 }
 
 #--------------
