@@ -6,26 +6,33 @@
 \usage{
 filter_value_cells(
   sce,
+  filter.term = c("zerocount", "NA"),
   remove.cells = TRUE,
-  max.na.freq = 0.25,
+  max.value.freq = 0.25,
   assayname = "counts",
   append.metadata = TRUE,
+  new.metadata.name = NULL,
   verbose = FALSE
 )
 }
 \arguments{
 \item{sce}{A SingleCellExperiment object.}
 
+\item{filter.term}{Term for filter. Either "zerocount" or "NA".}
+
 \item{remove.cells}{Whether to remove cells exceeding NA filter from sce 
 prior to returning.}
 
-\item{max.na.freq}{The upper threshold for tolerated NA frequency. Cells with 
+\item{max.value.freq}{The upper threshold for tolerated NA frequency. Cells with 
 NA frequency exceeding this are flagged for removal.}
 
 \item{assayname}{Name of assay in assays(sce) to check for NAs.}
 
 \item{append.metadata}{Whether to append metadata summary of preprocessing 
 parameters and results.}
+
+\item{new.metadata.name}{Name of new metadata object to append (see 
+append.metadata argument).}
 
 \item{verbose}{Whether to include verbose status messages.}
 }
@@ -37,6 +44,9 @@ preprocessing metadata.
 Filter cells on NA frequency.
 }
 \examples{
-sce <- random_sce(na.include = T, na.fract = 0.4)
-scef <- filter_value_cells(sce, verbose = T)
+set.seed(0)
+sce <- random_sce(zero.include = T, zero.fract = 0.3)
+scef <- filter_value_cells(sce, filter.term = "zerocount", verbose = T,
+                          max.value.freq = 0.1)
+metadata(scef)$filter.zerocount.by.cell$df.cell
 }

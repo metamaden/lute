@@ -13,7 +13,7 @@ filter_value_type(
   max.cells.value.freq = 0.25,
   assayname = "counts",
   append.metadata = TRUE,
-  new.metadata.name = "filter.na.type",
+  new.metadata.name = NULL,
   verbose = FALSE
 )
 }
@@ -53,16 +53,9 @@ Filter cell types (or other variable groupings) on frequency of genes or
 features with cells exceeding some frequency threshold (see max.cells.na.freq).
 }
 \examples{
-# use to filter cell types
-sce <- random_sce(na.include = T, na.fract = 0.4)
-scef <- filter_value_type(sce, verbose = T)
-metadata(scef)$filter.na.type$df.type # view summary by type
-# can also be used to filter on grouping, such as by donor
-colData(sce)$donor <- c(
-   rep("donor1", 3), 
-   rep("donor2", 5), 
-   rep("donor3", 2)
-)
-scef <- filter_value_type(sce, type.variable = "donor", 
-   new.metadata.name = "filter.na.donor", verbose = T)
+set.seed(0)
+sce <- random_sce(zero.include = T, zero.fract = 0.3)
+scef <- filter_value_type(sce, filter.term = "zerocount", verbose = T,
+max.gene.value.freq = 0.15)
+metadata(scef)$filter.zerocount.by.type$df.type # view new metadata
 }
