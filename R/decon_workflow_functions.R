@@ -36,32 +36,38 @@ mexpr_na_freq <- function(mexpr, dim.index = 2){
 #' Filter cells on NA frequency.
 #'
 #' @param sce A SingleCellExperiment object.
+#' @param filter.term Term for filter. Either "zerocount" or "NA".
 #' @param remove.cells Whether to remove cells exceeding NA filter from sce 
 #' prior to returning.
-#' @param max.na.freq The upper threshold for tolerated NA frequency. Cells with 
+#' @param max.value.freq The upper threshold for tolerated NA frequency. Cells with 
 #' NA frequency exceeding this are flagged for removal.
 #' @param assayname Name of assay in assays(sce) to check for NAs.
 #' @param append.metadata Whether to append metadata summary of preprocessing 
 #' parameters and results.
+#' @param new.metadata.name Name of new metadata object to append (see 
+#' append.metadata argument).
 #' @param verbose Whether to include verbose status messages.
 #' @returns scef, filtered SingleCellExperiment with optional appended 
 #' preprocessing metadata.
 #' @examples 
-#' sce <- random_sce(na.include = T, na.fract = 0.4, 
-#' zero.include = T, zero.fract = 0.4)
-#' scef <- filter_value_cells(sce, verbose = T)
+#' 
 #' @export
-filter_value_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25, 
-                            assayname = "counts", append.metadata = TRUE, 
-                            verbose = FALSE){
+filter_value_cells <- function(sce, filter.term = c("zerocount", "NA"), 
+                               remove.cells = TRUE, max.value.freq = 0.25,
+                               assayname = "counts", append.metadata = TRUE,
+                               new.metadata.name = NULL,
+                               verbose = FALSE){
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
   cd <- colData(sce); mexpr <- assays(sce)[[assayname]]
-  # count nas
   na.countv <- apply(mexpr, 2, function(ci){length(which(is.na(ci)))})
   na.freqv <- na.countv/nrow(mexpr); filt.cellv <- na.freqv > max.na.freq
-  scef <- sce[,!filt.cellv] # filter sce
-  if(verbose){message("Filter on cell NA values removed ",
+  if(remove.cells){
+    scef <- sce[,!filt.cellv];filt.type <- "removed"
+  } else{
+    scef <- sce; filt.type <- "flagged"
+  }
+  if(verbose){message("Filter on cell NA values ",filt.type," ",
                       ncol(mexpr)-ncol(mexprf)," cells.")}
   if(append.metadata){
     if(verbose)(message("Appending new metadata."))
@@ -70,7 +76,10 @@ filter_value_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
       na.freq = na.freqv, above.max.na.freq = filt.cellv
     )
     lmd <- list(dfmd = dfmd, max.na.freq = max.na.freq, assayname = assayname)
-    metadata(scef)$cell.na.filt <- lmd
+    if(is(new.metadata.name, "NULL")){
+      new.metadata.name <- paste0("filter.", filter.term, ".by.cell")
+    }
+    metadata(scef)[[new.metadata.name]] <- lmd
   }
   return(scef)
 }
