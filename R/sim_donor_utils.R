@@ -444,11 +444,15 @@ mexpr_from_donordf <- function(df){
   filt.donor <- grepl("donor\\d", colnames(df)) # get donor signals
   mexpr <- do.call(rbind, lapply(unique(df$marker), function(mi){
     dff <- df[df$marker==mi, ]
-    unlist(lapply(unique(dff[dff$marker==mi,]$type), function(ti){
+    ld <- lapply(unique(dff[dff$marker==mi,]$type), function(ti){
       datv <- dff[dff$type==ti, filt.donor]
+      if(nrow(datv) > 1){
+        stop("Error, more than one unique marker value for each type. ",
+             "Does donordf contain multiple experiment groups?")}
       names(datv) <- paste0(colnames(dff[,filt.donor]), ";", ti)
       datv
-    }))
+    })
+    unlist(ld)
   }))
   rownames(mexpr) <- unique(df$marker)
   return(mexpr)
