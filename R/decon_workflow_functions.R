@@ -12,32 +12,19 @@
 # sce summary statistics
 #-----------------------
 
+#' mexpr_na_freq
 #'
-#'
-#'
-sce_cell_na_freq <- function(){
-  
-}
-
-#'
-#'
-#'
-sce_gene_na_freq <- function(){
-  
-}
-
-#'
-#'
-#'
-sce_type_na_freq <- function(){
-  
-}
-
-#'
-#'
-#'
-get_na_stats <- function(){
-  
+#' Get NA frequency from a 2d matrix.
+#' 
+#' @param mexpr 2d matrix.
+#' @param dim.index Integer for apply index to do NA counts. Either 
+#' @returns list of vectors of NA statistics, including NA counts ("na.countv")
+#' and NA frequencies ("na.freqv")
+#' @export
+mexpr_na_freq <- function(mexpr, dim.index = 2){
+  na.countv <- apply(mexpr, 1, function(ci){length(which(is.na(ci)))})
+  na.freqv <- na.countv/nrow(mexpr)
+  return(list(na.countv = na.countv, na.freqv = na.freqv))
 }
 
 #-------------------------
