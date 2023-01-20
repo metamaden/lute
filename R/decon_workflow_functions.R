@@ -71,11 +71,13 @@ filter_value_cells <- function(sce, filter.term = c("zerocount", "NA"),
                       ncol(mexpr)-ncol(mexprf)," cells.")}
   if(append.metadata){
     if(verbose)(message("Appending new metadata."))
-    dfmd <- data.frame(
-      cell.uid = colnames(mexpr), na.count = na.countv,
-      na.freq = na.freqv, above.max.na.freq = filt.cellv
+    lparam <- list(filter.term = filter.term, max.value.freq = max.value.freq, 
+                   assayname = assayname)
+    df.cell <- data.frame(
+      cell.uid = colnames(mexpr), value.count = value.countv,
+      value.freq = value.freqv, above.max.value.freq = filt.cellv
     )
-    lmd <- list(dfmd = dfmd, max.na.freq = max.na.freq, assayname = assayname)
+    lmd <- list(parameters = lparam, df.cell = df.cell)
     if(is(new.metadata.name, "NULL")){
       new.metadata.name <- paste0("filter.", filter.term, ".by.cell")
     }
