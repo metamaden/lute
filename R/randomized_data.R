@@ -85,16 +85,25 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25,
 #' @param num.types Number of cell types to annotate.
 #' @param expr.mean Poisson dist mean for random expression data.
 #' @param seed.num Seed value for randomization of expression data.
+#' @param na.include Whether to include random NA values.
+#' @param na.fract Fraction of NA values to include.
 #' @param verbose Whether to show verbose status messages.
 #' @return New randomized SingleCellExperiment object.
 #' @examples 
 #' sce <- random_sce()
 #' @export
 random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
-                       expr.mean = 10, verbose = FALSE, seed.num = 0){
+                       expr.mean = 10, na.include = FALSE, na.fract = 0.2, 
+                       verbose = FALSE, seed.num = 0){
   if(verbose){message("Getting random expression data...")}
-  expr.ct <- matrix(rpois(num.cells*num.genes, lambda = expr.mean), 
-                    ncol=num.cells, nrow=num.genes)
+  mdat <- rpois(num.cells*num.genes, lambda = expr.mean)
+  if(na.include){
+    if(verbose){message("Including NA values...")}
+    num.na <- round(length(mdat)*na.fract, digits = 0)
+    na.index <- sample(seq(length(mdat)), num.na)
+    mdat[na.index] <- NA
+  }
+  expr.ct <- matrix(mdat, ncol=num.cells, nrow=num.genes)
   if(verbose){message("Getting new colData...")}
   cellv <- paste0("cell.barcode.", seq(num.cells))
   cpertype <- round(num.cells/num.types, 0)
