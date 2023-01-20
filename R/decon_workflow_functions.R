@@ -18,6 +18,8 @@
 #'
 #' @param sce A SingleCellExperiment object.
 #' @param type.variable Name of the type variable in sce colData.
+#' @param remove.cells Whether to remove cells exceeding NA filter from sce 
+#' prior to returning.
 #' @param max.na.freq The upper threshold for tolerated NA frequency. Cells with NA 
 #' frequency exceeding this are excluded.
 #' @param assayname Name of assay in assays(sce) to check for NAs.
@@ -28,25 +30,22 @@
 #' preprocessing metadata.
 #' @examples 
 #' sce <- random_sce(na.include = T, na.fract = 0.4)
-#' scef <- filter_na_bytype(sce)
-#'
-#'
-filter_na_cells <- function(sce, type.variable = "celltype", max.na.freq = 0.25,
-                            assayname = "counts", append.metadata = TRUE,
-                            verbose = FALSE){
+#' scef <- filter_na_cells(sce, verbose = T)
+#' @export
+filter_na_cells <- function(sce, type.variable = "celltype", remove.cells = TRUE, 
+                            max.na.freq = 0.25, assayname = "counts", 
+                            append.metadata = TRUE, verbose = FALSE){
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
   cd <- colData(sce)
   if(!type.variable %in% colnames(cd)){
     stop("Error, type.variable must be a column name in sce colData.")
   }
-  typev <- unique(cd[,typevar])
-  mexpr <- assays(sce)[[assayname]]
+  typev <- unique(cd[,type.variable]); mexpr <- assays(sce)[[assayname]]
   # count nas
-  na.freqv <- apply(mexpr, 2, function(ci){length(which(is.na(ci)))})
-  na.freqv <- na.freqv/nrow(mexpr)
-  filt.cellv <- na.freqv > max.na.freq
-  mexprf <- mexpr[,!filt.cellv]
+  na.countv <- apply(mexpr, 2, function(ci){length(which(is.na(ci)))})
+  na.freqv <- na.countv/nrow(mexpr); filt.cellv <- na.freqv > max.na.freq
+  scef <- sce[,!filt.cellv] # filter sce
   if(verbose){message("Filter on cell NA values removed ",
                       ncol(mexpr)-ncol(mexprf)," cells.")}
   if(append.metadata){
@@ -55,7 +54,7 @@ filter_na_cells <- function(sce, type.variable = "celltype", max.na.freq = 0.25,
       cell.uid = colnames(mexpr), na.count = na.countv,
       na.freq = na.freqv, above.max.na.freq = filt.cellv
     )
-    lmd <- list(dfmd = dfmd, max.na.freq = max.na.freq, assayname = asayname)
+    lmd <- list(dfmd = dfmd, max.na.freq = max.na.freq, assayname = assayname)
     metadata(scef)$cell.na.filt <- lmd
   }
   return(scef)
@@ -63,10 +62,11 @@ filter_na_cells <- function(sce, type.variable = "celltype", max.na.freq = 0.25,
 
 #' filter_na_type
 #'
+#' Filter types on NA frequency.
 #'
-filter_na_type <- function(sce, type.variable = "celltype", na.freq = 0.25,
-                           assayname = "counts", append.metadata = TRUE,
-                           verbose = FALSE){
+filter_na_type <- function(sce, type.variable = "celltype", remove.types = TRUE, 
+                           na.freq = 0.25, assayname = "counts", 
+                           append.metadata = TRUE, verbose = FALSE){
   
 }
 
