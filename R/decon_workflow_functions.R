@@ -47,7 +47,8 @@ mexpr_na_freq <- function(mexpr, dim.index = 2){
 #' @returns scef, filtered SingleCellExperiment with optional appended 
 #' preprocessing metadata.
 #' @examples 
-#' sce <- random_sce(na.include = T, na.fract = 0.4)
+#' sce <- random_sce(na.include = T, na.fract = 0.4, 
+#' zero.include = T, zero.fract = 0.4)
 #' scef <- filter_value_cells(sce, verbose = T)
 #' @export
 filter_value_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25, 
@@ -98,24 +99,17 @@ filter_value_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
 #' @returns scef, filtered SingleCellExperiment with optional appended 
 #' preprocessing metadata.
 #' @examples 
-#' # use to filter cell types
-#' sce <- random_sce(na.include = T, na.fract = 0.4)
-#' scef <- filter_value_type(sce, verbose = T)
-#' metadata(scef)$filter.na.type$df.type # view summary by type
-#' # can also be used to filter on grouping, such as by donor
-#' colData(sce)$donor <- c(
-#'    rep("donor1", 3), 
-#'    rep("donor2", 5), 
-#'    rep("donor3", 2)
-#' )
-#' scef <- filter_value_type(sce, type.variable = "donor", 
-#'    new.metadata.name = "filter.na.donor", verbose = T)
+#' set.seed(0)
+#' sce <- random_sce(zero.include = T, zero.fract = 0.3)
+#' scef <- filter_value_type(sce, filter.term = "zerocount", verbose = T,
+#' max.gene.value.freq = 0.15)
+#' metadata(scef)$filter.zerocount.by.type$df.type # view new metadata
 #' @export
 filter_value_type <- function(sce, filter.term = c("zerocount", "NA"), 
                               type.variable = "celltype", remove.types = TRUE,
                               max.gene.value.freq = 0.25, max.cells.value.freq = 0.25,
                               assayname = "counts", append.metadata = TRUE,
-                              new.metadata.name = "filter.na.type",
+                              new.metadata.name = NULL,
                               verbose = FALSE){
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
@@ -145,7 +139,7 @@ filter_value_type <- function(sce, filter.term = c("zerocount", "NA"),
     length(which(ri))}))
   typev.gene.freq <- typev.gene.count/ncol(df.cell.freq)
   # get filters and apply them
-  typev.gene.filt <- typev.gene.freq > max.gene.na.freq
+  typev.gene.filt <- typev.gene.freq > max.gene.value.freq
   typev.remove <- typev[typev.gene.filt]
   coldata.filt <- cd[,type.variable] %in% typev.remove
   cell.uid.filt <- colnames(sce) %in% rownames(cd[coldata.filt,])
@@ -154,19 +148,22 @@ filter_value_type <- function(sce, filter.term = c("zerocount", "NA"),
                       " types and ",ncol(sce)-ncol(scef)," cells...")}
   if(append.metadata){
     if(verbose){message("Appending new metadata...")}
-    dftype <- data.frame(type = typev,
-                         gene.na.count = typev.gene.count,
-                         gene.na.freq = typev.gene.freq,
-                         eval.max.gene.na.freq = typev.gene.filt)
+    df.type <- data.frame(type = typev, gene.na.count = typev.gene.count,
+                          gene.na.freq = typev.gene.freq,
+                          eval.max.gene.value.freq = typev.gene.filt)
     lparam <- list(
+      filter.term = filter.term,
       num.genes.sce.original = nrow(sce),
       num.cells.sce.original = ncol(sce),
-      max.cells.na.freq = max.cells.na.freq,
-      max.gene.na.freq = max.gene.na.freq
+      max.cells.value.freq = max.cells.value.freq,
+      max.gene.value.freq = max.gene.value.freq
     )
-    lmd <- list(parameters = lparam, df.type = dftype,
-                dfna.cell.ct = dfna.ct, dfna.cell.freq = dfna.freq,
-                dfna.cell.thresh = dfna.thresh)
+    lmd <- list(parameters = lparam, df.type = df.type,
+                df.cell.ct = df.cell.ct, df.cell.freq = df.cell.freq,
+                df.cell.thresh = df.cell.thresh)
+    if(is(new.metadata.name, "NULL")){
+      new.metadata.name <- paste0("filter.", filter.term, ".by.type")
+    }
     metadata(scef)[[new.metadata.name]] <- lmd
   }
   return(scef)
