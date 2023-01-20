@@ -109,7 +109,7 @@ filter_na_type <- function(sce, type.variable = "celltype", remove.types = TRUE,
     filt.type <- cd[,type.variable]==ti; mexprf <- mexpr[,filt.type]
     apply(mexprf, 1, function(ci){length(which(is.na(ci)))})
   }))
-  dfna.freq <- dfna.ct/nrow(mexpr)
+  dfna.freq <- dfna.ct/ncol(mexpr)
   dfna.thresh <- t(apply(dfna.freq, 1, function(ri){ri > max.cells.na.freq}))
   rownames(dfna.ct) <- rownames(dfna.freq) <- rownames(dfna.thresh) <- typev
   # get stats by type
