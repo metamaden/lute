@@ -31,7 +31,7 @@ mexpr_na_freq <- function(mexpr, dim.index = 2){
 # preprocessing -- filters
 #-------------------------
 
-#' filter_na_cells
+#' filter_value_cells
 #'
 #' Filter cells on NA frequency.
 #'
@@ -48,9 +48,9 @@ mexpr_na_freq <- function(mexpr, dim.index = 2){
 #' preprocessing metadata.
 #' @examples 
 #' sce <- random_sce(na.include = T, na.fract = 0.4)
-#' scef <- filter_na_cells(sce, verbose = T)
+#' scef <- filter_value_cells(sce, verbose = T)
 #' @export
-filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25, 
+filter_value_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25, 
                             assayname = "counts", append.metadata = TRUE, 
                             verbose = FALSE){
   if(!is(sce, "SingleCellExperiment")){
@@ -74,13 +74,13 @@ filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
   return(scef)
 }
 
-#' filter_na_type
+#' filter_value_type
 #'
 #' Filter cell types (or other variable groupings) on frequency of genes or
 #' features with cells exceeding some frequency threshold (see max.cells.na.freq).
 #'
 #' @param sce A SingleCellExperiment object.
-#' @param filterterm Term for filter. Either "zerocount" or "NA".
+#' @param filter.term Term for filter. Either "zerocount" or "NA".
 #' @param type.variable Name of the type variable in sce colData.
 #' @param remove.types Whether to remove cells exceeding NA filter from sce 
 #' prior to returning.
@@ -100,7 +100,7 @@ filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
 #' @examples 
 #' # use to filter cell types
 #' sce <- random_sce(na.include = T, na.fract = 0.4)
-#' scef <- filter_na_type(sce, verbose = T)
+#' scef <- filter_value_type(sce, verbose = T)
 #' metadata(scef)$filter.na.type$df.type # view summary by type
 #' # can also be used to filter on grouping, such as by donor
 #' colData(sce)$donor <- c(
@@ -108,14 +108,15 @@ filter_na_cells <- function(sce, remove.cells = TRUE, max.na.freq = 0.25,
 #'    rep("donor2", 5), 
 #'    rep("donor3", 2)
 #' )
-#' scef <- filter_na_cells(sce, type.variable = "donor", 
+#' scef <- filter_value_type(sce, type.variable = "donor", 
 #'    new.metadata.name = "filter.na.donor", verbose = T)
 #' @export
-filter_value_type <- function(sce, type.variable = "celltype", remove.types = TRUE, 
-                           max.gene.na.freq = 0.25, max.cells.na.freq = 0.25, 
-                           assayname = "counts", append.metadata = TRUE, 
-                           new.metadata.name = "filter.na.type",
-                           verbose = FALSE){
+filter_value_type <- function(sce, filter.term = c("zerocount", "NA"), 
+                              type.variable = "celltype", remove.types = TRUE,
+                              max.gene.value.freq = 0.25, max.cells.value.freq = 0.25,
+                              assayname = "counts", append.metadata = TRUE,
+                              new.metadata.name = "filter.na.type",
+                              verbose = FALSE){
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
   cd <- colData(sce)
@@ -125,18 +126,24 @@ filter_value_type <- function(sce, type.variable = "celltype", remove.types = TR
   mexpr <- assays(sce)[[assayname]]
   # count nas by type
   typev <- unique(cd[,type.variable])
-  # get cell na stats
-  dfna.ct <- do.call(rbind, lapply(typev, function(ti){
+  # get cell value stats
+  df.cell.ct <- do.call(rbind, lapply(typev, function(ti){
     filt.type <- cd[,type.variable]==ti; mexprf <- mexpr[,filt.type]
-    apply(mexprf, 1, function(ci){length(which(is.na(ci)))})
+    if(filter.term == "NA"){
+      apply(mexprf, 1, function(ci){length(which(is.na(ci)))})
+    } else{
+      apply(mexprf, 1, function(ci){length(which(ci==0))})
+    }
   }))
-  dfna.freq <- dfna.ct/ncol(mexpr)
-  dfna.thresh <- t(apply(dfna.freq, 1, function(ri){ri > max.cells.na.freq}))
-  rownames(dfna.ct) <- rownames(dfna.freq) <- rownames(dfna.thresh) <- typev
+  df.cell.freq <- df.cell.ct/ncol(mexpr)
+  df.cell.thresh <- t(apply(df.cell.freq, 1, function(ri){
+    ri > max.cells.value.freq}))
+  rownames(df.cell.ct) <- rownames(df.cell.freq) <- 
+    rownames(df.cell.thresh) <- typev
   # get stats by type
-  typev.gene.count <- unlist(apply(dfna.thresh, 1, function(ri){
+  typev.gene.count <- unlist(apply(df.cell.thresh, 1, function(ri){
     length(which(ri))}))
-  typev.gene.freq <- typev.gene.count/ncol(dfna.freq)
+  typev.gene.freq <- typev.gene.count/ncol(df.cell.freq)
   # get filters and apply them
   typev.gene.filt <- typev.gene.freq > max.gene.na.freq
   typev.remove <- typev[typev.gene.filt]

@@ -87,21 +87,31 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25,
 #' @param seed.num Seed value for randomization of expression data.
 #' @param na.include Whether to include random NA values.
 #' @param na.fract Fraction of NA values to include.
+#' @param zero.include Whether to include random zero-count values.
+#' @param zero.fract Fraction of zero-count values to include.
 #' @param verbose Whether to show verbose status messages.
 #' @return New randomized SingleCellExperiment object.
 #' @examples 
 #' sce <- random_sce()
 #' @export
 random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
-                       expr.mean = 10, na.include = FALSE, na.fract = 0.2, 
+                       expr.mean = 10, 
+                       na.include = FALSE, na.fract = 0.2, 
+                       zero.include = FALSE, zero.fract = 0.2,
                        verbose = FALSE, seed.num = 0){
   if(verbose){message("Getting random expression data...")}
   mdat <- rpois(num.cells*num.genes, lambda = expr.mean)
-  if(na.include){
+  if(na.include){ # manually add NAs
     if(verbose){message("Including NA values...")}
     num.na <- round(length(mdat)*na.fract, digits = 0)
     na.index <- sample(seq(length(mdat)), num.na)
     mdat[na.index] <- NA
+  }
+  if(zero.include){ # manually add zero counts
+    if(verbose){message("Including NA values...")}
+    num.zero <- round(length(mdat)*zero.fract, digits = 0)
+    zero.index <- sample(seq(length(mdat)), num.zero)
+    mdat[zero.index] <- 0
   }
   expr.ct <- matrix(mdat, ncol=num.cells, nrow=num.genes)
   if(verbose){message("Getting new colData...")}
