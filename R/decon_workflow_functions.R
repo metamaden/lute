@@ -18,7 +18,7 @@
 #'
 #' @param sce A SingleCellExperiment object.
 #' @param type.variable Name of the type variable in sce colData.
-#' @param na.freq The upper threshold for tolerated NA frequency. Cells with NA 
+#' @param max.na.freq The upper threshold for tolerated NA frequency. Cells with NA 
 #' frequency exceeding this are excluded.
 #' @param assayname Name of assay in assays(sce) to check for NAs.
 #' @param append.metadata Whether to append metadata summary of preprocessing 
@@ -31,9 +31,9 @@
 #' scef <- filter_na_bytype(sce)
 #'
 #'
-filter_na_cells <- function(sce, type.variable = "celltype", na.freq = 0.25,
-                          assayname = "counts", append.metadata = TRUE,
-                          verbose = FALSE){
+filter_na_cells <- function(sce, type.variable = "celltype", max.na.freq = 0.25,
+                            assayname = "counts", append.metadata = TRUE,
+                            verbose = FALSE){
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
   cd <- colData(sce)
@@ -44,16 +44,29 @@ filter_na_cells <- function(sce, type.variable = "celltype", na.freq = 0.25,
   mexpr <- assays(sce)[[assayname]]
   # count nas
   na.freqv <- apply(mexpr, 2, function(ci){length(which(is.na(ci)))})
-  
-  
-  
-  # append metadata
+  na.freqv <- na.freqv/nrow(mexpr)
+  filt.cellv <- na.freqv > max.na.freq
+  mexprf <- mexpr[,!filt.cellv]
+  if(verbose){message("Filter on cell NA values removed ",
+                      ncol(mexpr)-ncol(mexprf)," cells.")}
+  if(append.metadata){
+    if(verbose)(message("Appending new metadata."))
+    dfmd <- data.frame(
+      cell.uid = colnames(mexpr), na.count = na.countv,
+      na.freq = na.freqv, above.max.na.freq = filt.cellv
+    )
+    lmd <- list(dfmd = dfmd, max.na.freq = max.na.freq, assayname = asayname)
+    metadata(scef)$cell.na.filt <- lmd
+  }
+  return(scef)
 }
 
 #' filter_na_type
 #'
 #'
-filter_na_type <- function(){
+filter_na_type <- function(sce, type.variable = "celltype", na.freq = 0.25,
+                           assayname = "counts", append.metadata = TRUE,
+                           verbose = FALSE){
   
 }
 
