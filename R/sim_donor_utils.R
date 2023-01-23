@@ -304,50 +304,108 @@ check_donordf <- function(df){
 #' @param gindexv Vector of marker indices. Index values correspond to the k types,
 #' and each index position represents a marker (e.g. c(1,2,2) means two markers 
 #' for the second type, etc.).
-#' @param lambda.pos Value of lambda (Poisson dist. mean) for "positive" marker 
-#' status (e.g. mean of dist. for k when marker is positive for k, negative for 
-#' not-k).
-#' @param lambda.neg Value of lambda (Poisson dist. mean) for "negative" marker 
-#' status (e.g. mean of dist. for k when marker is positive for not-k, negative 
-#' for k).
-#' @param sd.offset.pos Poisson dist mean for randomization of offsets for
-#' positive marker signals.
-#' @param sd.offset.neg Poisson dist mean for randomization of offsets for
-#' negative marker signals.
+#' @param method Randomization method passed to random_lgv(). Supports either 
+#' "nbinom" for negative binomial distribution (a.k.a. gamma poisson 
+#' distribution) or "poisson" for poisson distribution.
+#' @param lambda.pos The mean or mu value when marker status is positive.
+#' @param lambda.neg The mean or mu value when marker status is negative.
+#' @param gamma.pos Magnitude of gamma dispersion value when marker status is 
+#' positive.
+#' @param gamma.neg Magnitude of gamma dispersion value when marker status is
+#' negative.
+#' @param lambda.sdoff.pos Offset SD for lambda when marker status positive.
+#' @param lambda.sdoff.neg Offset SD for lambda when marker status negative.
+#' @param gamma.sdoff.pos Offset SD for gamma when marker status positive.
+#' @param gamma.sdoff.neg Offset SD for gamma when marker status negative.
 #' @param seed.num Token to set the random seed.
 #' @param vebose Whether to return verbose status messages.
 #' @param ... Additional parameters passed to `random_lgv()` to get marker 
 #' signals.
-#' @returns return 
+#' @details This function returns random donor marker signal and marker design
+#' details. It supports random marker distributions drawn from either a 
+#' Poisson (e.g. when method == "poisson") or a Negative Binomial/Gamma Poisson
+#' (e.g. when method == "nbinom", the default) distribution. Arguments 
+#' `lambda.pos` and `lambda.neg` correspond to either the means (if method is 
+#' "poisson") or the mu's (if method is "nbinom") of the distributions when the 
+#' marker status is positive or negative.
+#' 
+#' The randomization scheme is to draw a series of random offset values for 
+#' lambda's and gamma's, or one offset for each simulated donor. Values are 
+#' drawn from normal distributions having means of 0 and having SD's as set by
+#' the arguments `lambda.sdoff.pos`, `lambda.sdoff.neg`, `gamma.sdoff.pos`, and
+#' `gamma.sdoff.neg`. These options are then applied to the lambda and gamma 
+#' values specified by arguments `lambda.pos`, `lambda.neg`, `gamma.pos`, and 
+#' `gamma.neg`.
+#' 
+#' The resulting table includes one row for each marker and type. Its columns 
+#' are as follows: 
+#' 
+#' * `donor[0-99]`: Simulated donor signals with one column for eachdonor;
+#' * `donor.combn.all.mean`: Mean donor signals; 
+#' * `donor.combn.all.median`: Median donor signals; 
+#' * `type`: The type label (e.g. a cell type name); 
+#' * `marker`: The marker label (e.g. a gene marker name); 
+#' * `marker.type`: The marker's type (e.g. "type1" means this is a marker of 
+#'    type1, so type1 should have high signal and remaining types should have 
+#'    low signal at this marker).
+#' 
+#' @returns Table (data.frame) of donor marker signal and marker details.
 #' @examples
 #' 
-#' rand_donor_marker_table(ndonor = 2, gindexv = c(1,2))
+#' # simulate with defaults (two donors, two marker, two types)
+#' rand_donor_marker_table()
 #' 
+#' # simulate 10 donors, 2 types, and 3 markers (2 for type1, 1 for type2)
 #' rand_donor_marker_table(ndonor = 10, gindexv = c(1,1,2))
 #' 
+#' # simulate 10 donors, 2 types, and 30 makers (10 for type1, 20 for type2) 
 #' rand_donor_marker_table(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
 #' 
 #' @seealso random_lgv
 #' @export
 rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), 
+                                    method = "nbinom",
                                     lambda.pos = 20, lambda.neg = 2,
-                                    sd.offset.pos = 10, sd.offset.neg = 2, 
+                                    gamma.pos = 1, gamma.neg = 1,
+                                    lambda.sdoff.pos = 0, lambda.sdoff.neg = 0, 
+                                    gamma.sdoff.pos = 10, gamma.sdoff.neg = 10,
                                     seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
   nmarkers <- length(gindexv); ktotal <- length(unique(gindexv))
-  # draw random offsets from normal dist
-  offposv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.pos)
-  offnegv <- rnorm(n = ndonor, mean = 0, sd = sd.offset.neg)
-  # get value vectors
+  
+  # get random hyperparameter offsets from normal dist
+  # get random offsets for means
+  offposv <- rnorm(n = ndonor, mean = 0, sd = lambda.sdoff.pos)
+  offnegv <- rnorm(n = ndonor, mean = 0, sd = lambda.sdoff.neg)
+  # get random offsets for gammas
+  offposv.gamma <- rnorm(n = ndonor, mean = 0, sd = gamma.sdoff.pos)
+  offnegv.gamma <- rnorm(n = ndonor, mean = 0, sd = gamma.sdoff.neg)
+  
+  # get new hyperparameter values
+  # get new means
   meanv.pos <- offposv + lambda.pos
   meanv.neg <- offnegv + lambda.neg
-  # convert negative means
+  # get new gammas
+  gammav.pos <- offposv.gamma + gamma.pos
+  gammav.neg <- offnegv.gamma + gamma.neg
+  
+  # convert negative values
+  # convert means
   meanv.pos[meanv.pos < 0] <- -1*meanv.pos[meanv.pos < 0]
   meanv.neg[meanv.neg < 0] <- -1*meanv.neg[meanv.neg < 0]
+  # convert gammas
+  gammav.pos[gammav.pos < 0] <- -1*gammav.pos[gammav.pos<0]
+  gammav.neg[gammav.neg < 0] <- -1*gammav.neg[gammav.neg<0]
+  
   # get matrix of markers (rows) by donors (cols)
   md <- do.call(cbind, lapply(seq(ndonor), function(ii){
-    unlist(random_lgv(gindexv, num.iter = 1, lambda.pos = meanv.pos[ii],
-                      lambda.neg = meanv.neg[ii], ...))
+    unlist(random_lgv(gindexv, num.iter = 1, 
+                      lambda.pos = meanv.pos[ii],
+                      lambda.neg = meanv.neg[ii], 
+                      gamma.size.pos = gammav.pos[ii],
+                      gamma.size.neg = gammav.neg[ii], 
+                      method = method,
+                      ...))
   }))
   md <- as.data.frame(md); colnames(md) <- paste0("donor", seq(ndonor))
   if(ndonor > 1){

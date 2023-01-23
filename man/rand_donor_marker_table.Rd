@@ -7,10 +7,15 @@
 rand_donor_marker_table(
   ndonor = 2,
   gindexv = c(1, 2),
+  method = "nbinom",
   lambda.pos = 20,
   lambda.neg = 2,
-  sd.offset.pos = 10,
-  sd.offset.neg = 2,
+  gamma.pos = 1,
+  gamma.neg = 1,
+  lambda.sdoff.pos = 0,
+  lambda.sdoff.neg = 0,
+  gamma.sdoff.pos = 10,
+  gamma.sdoff.neg = 10,
   seed.num = 0,
   verbose = FALSE,
   ...
@@ -23,19 +28,27 @@ rand_donor_marker_table(
 and each index position represents a marker (e.g. c(1,2,2) means two markers 
 for the second type, etc.).}
 
-\item{lambda.pos}{Value of lambda (Poisson dist. mean) for "positive" marker 
-status (e.g. mean of dist. for k when marker is positive for k, negative for 
-not-k).}
+\item{method}{Randomization method passed to random_lgv(). Supports either 
+"nbinom" for negative binomial distribution (a.k.a. gamma poisson 
+distribution) or "poisson" for poisson distribution.}
 
-\item{lambda.neg}{Value of lambda (Poisson dist. mean) for "negative" marker 
-status (e.g. mean of dist. for k when marker is positive for not-k, negative 
-for k).}
+\item{lambda.pos}{The mean or mu value when marker status is positive.}
 
-\item{sd.offset.pos}{Poisson dist mean for randomization of offsets for
-positive marker signals.}
+\item{lambda.neg}{The mean or mu value when marker status is negative.}
 
-\item{sd.offset.neg}{Poisson dist mean for randomization of offsets for
-negative marker signals.}
+\item{gamma.pos}{Magnitude of gamma dispersion value when marker status is 
+positive.}
+
+\item{gamma.neg}{Magnitude of gamma dispersion value when marker status is
+negative.}
+
+\item{lambda.sdoff.pos}{Offset SD for lambda when marker status positive.}
+
+\item{lambda.sdoff.neg}{Offset SD for lambda when marker status negative.}
+
+\item{gamma.sdoff.pos}{Offset SD for gamma when marker status positive.}
+
+\item{gamma.sdoff.neg}{Offset SD for gamma when marker status negative.}
 
 \item{seed.num}{Token to set the random seed.}
 
@@ -45,17 +58,49 @@ signals.}
 \item{vebose}{Whether to return verbose status messages.}
 }
 \value{
-return
+Table (data.frame) of donor marker signal and marker details.
 }
 \description{
 Get a flat table of random donor marker signals by types.
 }
+\details{
+This function returns random donor marker signal and marker design
+details. It supports random marker distributions drawn from either a 
+Poisson (e.g. when method == "poisson") or a Negative Binomial/Gamma Poisson
+(e.g. when method == "nbinom", the default) distribution. Arguments 
+`lambda.pos` and `lambda.neg` correspond to either the means (if method is 
+"poisson") or the mu's (if method is "nbinom") of the distributions when the 
+marker status is positive or negative.
+
+The randomization scheme is to draw a series of random offset values for 
+lambda's and gamma's, or one offset for each simulated donor. Values are 
+drawn from normal distributions having means of 0 and having SD's as set by
+the arguments `lambda.sdoff.pos`, `lambda.sdoff.neg`, `gamma.sdoff.pos`, and
+`gamma.sdoff.neg`. These options are then applied to the lambda and gamma 
+values specified by arguments `lambda.pos`, `lambda.neg`, `gamma.pos`, and 
+`gamma.neg`.
+
+The resulting table includes one row for each marker and type. Its columns 
+are as follows: 
+
+* `donor[0-99]`: Simulated donor signals with one column for eachdonor;
+* `donor.combn.all.mean`: Mean donor signals; 
+* `donor.combn.all.median`: Median donor signals; 
+* `type`: The type label (e.g. a cell type name); 
+* `marker`: The marker label (e.g. a gene marker name); 
+* `marker.type`: The marker's type (e.g. "type1" means this is a marker of 
+   type1, so type1 should have high signal and remaining types should have 
+   low signal at this marker).
+}
 \examples{
 
-rand_donor_marker_table(ndonor = 2, gindexv = c(1,2))
+# simulate with defaults (two donors, two marker, two types)
+rand_donor_marker_table()
 
+# simulate 10 donors, 2 types, and 3 markers (2 for type1, 1 for type2)
 rand_donor_marker_table(ndonor = 10, gindexv = c(1,1,2))
 
+# simulate 10 donors, 2 types, and 30 makers (10 for type1, 20 for type2) 
 rand_donor_marker_table(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
 
 }
