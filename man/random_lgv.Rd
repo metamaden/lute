@@ -9,6 +9,9 @@ random_lgv(
   num.iter = 1,
   lambda.pos = 25,
   lambda.neg = 2,
+  method = "nbinom",
+  gamma.size.pos = 10,
+  gamma.size.neg = 10,
   seed.num = 0
 )
 }
@@ -21,11 +24,22 @@ for the second type, etc.).}
 
 \item{lambda.pos}{Value of lambda (Poisson dist. mean) for "positive" marker 
 status (e.g. mean of dist. for k when marker is positive for k, negative for 
-not-k).}
+not-k). This is passed to the argument mu when method is "nbinom".}
 
 \item{lambda.neg}{Value of lambda (Poisson dist. mean) for "negative" marker 
 status (e.g. mean of dist. for k when marker is positive for not-k, negative 
-for k).}
+for k). This is passed to the argument mu when method is "nbinom".}
+
+\item{method}{Type of randomization method to use. Accepts either "poisson"
+for poisson distribution (see `?rpois` for details), or "nbinom" for the 
+negative binomial (a.k.a. gamm poisson) distribution (see `?rnbinom` for 
+details).}
+
+\item{gamma.size.pos}{The gamma distribution magnitude for "positive" markers. 
+This is applied when the "nbinom" method is used.}
+
+\item{gamma.size.neg}{The gamma distribution magnitude for "negative" markers. 
+This is applied when the "nbinom" method is used.}
 
 \item{seed.num}{Seed value for randomization.}
 }

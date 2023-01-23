@@ -52,10 +52,18 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
 #' @param num.iter Total simulation iterations.
 #' @param lambda.pos Value of lambda (Poisson dist. mean) for "positive" marker 
 #' status (e.g. mean of dist. for k when marker is positive for k, negative for 
-#' not-k).
+#' not-k). This is passed to the argument mu when method is "nbinom".
 #' @param lambda.neg Value of lambda (Poisson dist. mean) for "negative" marker 
 #' status (e.g. mean of dist. for k when marker is positive for not-k, negative 
-#' for k).
+#' for k). This is passed to the argument mu when method is "nbinom".
+#' @param method Type of randomization method to use. Accepts either "poisson"
+#' for poisson distribution (see `?rpois` for details), or "nbinom" for the 
+#' negative binomial (a.k.a. gamm poisson) distribution (see `?rnbinom` for 
+#' details).
+#' @param gamma.size.pos The gamma distribution magnitude for "positive" markers. 
+#' This is applied when the "nbinom" method is used.
+#' @param gamma.size.neg The gamma distribution magnitude for "negative" markers. 
+#' This is applied when the "nbinom" method is used.
 #' @param seed.num Seed value for randomization.
 #' @returns Listed lgv object containing the randomized marker values across 
 #' types.
@@ -63,14 +71,25 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
 #' set.seed(0)
 #' random_lgv(gindexv = c(rep(1, 10), rep(2, 5)))
 #' @export
-random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, 
-                       lambda.neg = 2, seed.num = 0){
+random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2, 
+                       method = "nbinom", gamma.size.pos = 10, 
+                       gamma.size.neg = 10, seed.num = 0){
   set.seed(seed.num); ktotal <- length(unique(gindexv))
   lgv <- lapply(seq(ktotal), function(ki){
     gmarkerv <- gindexv
     which.pos <- which(gindexv==ki); which.neg <- which(!gindexv==ki)
-    gmarkerv[which.pos] <- rpois(lambda = lambda.pos, n = length(which.pos))
-    gmarkerv[which.neg] <- rpois(lambda = lambda.neg, n = length(which.neg))
+    if(method == "poisson"){
+      gmarkerv[which.pos] <- rpois(lambda = lambda.pos, n = length(which.pos))
+      gmarkerv[which.neg] <- rpois(lambda = lambda.neg, n = length(which.neg))      
+    } else if(method == "nbinom"){
+      gmarkerv[which.pos] <- rnbinom(size = gamma.size.pos, mu = lambda.pos,
+                                     n = length(which.pos))
+      gmarkerv[which.neg] <- rnbinom(size = gamma.size.neg, mu = lambda.neg,
+                                     n = length(which.neg))
+    } else{
+      stop("Error, invalid method.")
+    }
+
     gmarkerv
   })
   return(lapply(seq(num.iter), function(ii){lgv}))
