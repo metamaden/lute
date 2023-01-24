@@ -138,38 +138,25 @@ mexpr_from_donordf <- function(df){
 #' 
 #' @param df Table of type `data.frame`.
 #' @returns Table of type `donor.data.frame`.
+#' @details Conversion function for `donor.data.frame` class. If missing columns
+#' aren't present in the provided `data.frame`, add them and set their values to
+#' NA.
 #' @example 
-#' df <- data.frame(donor1 = sample(10), marker = c(rep("marker1", 5), rep("marker2", 5)))
+#' df <- data.frame(donor1 = sample(5), marker = rep("marker1", 5))
+#' donordf_from_df(df)
+#' 
 #' @export
 donordf_from_df <- function(df){
-  # parse metadata
-  nmarker <- ndonor <- ntype <- 0; cnv <- colnames(df)
-  filt.donor <- grepl("^donor\\d", cnv)
-  ndonor <- as.integer(length(which(filt.donor)))
+  if(!is(df, "data.frame")){stop("Error, table must be a data.frame.")}
+  cnv <- colnames(df); filt.donor <- grepl("^donor\\d", cnv)
   if(length(which(filt.donor))==0){df$donor1 <- NA}
-  if("marker" %in% cnv){
-    nmarker <- as.integer(length(unique(df[,"marker"])))
-  } else{
-    df$marker <- NA
-    df$marker.type <- NA
-  }
-  if("type" %in% cnv){
-    ntype <- as.integer(length(unique(df[,"type"])))
-  } else{
-    df$type <- NA
-    df$marker.type <- NA
-  }
-  # make new donordf
-  donordf <- new("donor.data.frame", 
-                 donordf = df,
-                 ndonor = ndonor, 
-                 nmarker = nmarker, 
-                 ntype = ntype)
-  # check donordf
-  if(check_donordf(donordf)){
+  if(!"marker" %in% cnv){df$marker <- df$marker.type <- NA}
+  if(!"type" %in% cnv){df$type <- df$marker.type <- NA}
+  donordf <- as(df, "donor.data.frame")
+  if(check_donordf(donordf)){ 
     return(donordf)
   } else{
-    stop("Error, couldn't make new donordf from provided df.")
+    stop("Error, couldn't make new donor.data.frame from provided tables.")
   }
   return(NULL)
 }
