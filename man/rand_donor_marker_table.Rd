@@ -10,12 +10,10 @@ rand_donor_marker_table(
   method = "nbinom",
   lambda.pos = 20,
   lambda.neg = 2,
-  gamma.pos = 1,
-  gamma.neg = 1,
   lambda.sdoff.pos = 0,
   lambda.sdoff.neg = 0,
-  gamma.sdoff.pos = 10,
-  gamma.sdoff.neg = 10,
+  gamma.pos = 10,
+  gamma.neg = 10,
   seed.num = 0,
   verbose = FALSE,
   ...
@@ -36,24 +34,24 @@ distribution) or "poisson" for poisson distribution.}
 
 \item{lambda.neg}{The mean or mu value when marker status is negative.}
 
+\item{lambda.sdoff.pos}{Offset SD for lambda when marker status positive.}
+
+\item{lambda.sdoff.neg}{Offset SD for lambda when marker status negative.}
+
 \item{gamma.pos}{Magnitude of gamma dispersion value when marker status is 
 positive.}
 
 \item{gamma.neg}{Magnitude of gamma dispersion value when marker status is
 negative.}
 
-\item{lambda.sdoff.pos}{Offset SD for lambda when marker status positive.}
-
-\item{lambda.sdoff.neg}{Offset SD for lambda when marker status negative.}
-
-\item{gamma.sdoff.pos}{Offset SD for gamma when marker status positive.}
-
-\item{gamma.sdoff.neg}{Offset SD for gamma when marker status negative.}
-
 \item{seed.num}{Token to set the random seed.}
 
 \item{...}{Additional parameters passed to `random_lgv()` to get marker 
 signals.}
+
+\item{gamma.sdoff.pos}{Offset SD for gamma when marker status positive.}
+
+\item{gamma.sdoff.neg}{Offset SD for gamma when marker status negative.}
 
 \item{vebose}{Whether to return verbose status messages.}
 }

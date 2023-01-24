@@ -87,13 +87,21 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 
 #' donor_marker_biasexpt
 #'
-#' Compare predictions with and without donor bias corrections. Parses various
-#' methods for performing the donor bias adjustment, returning predicted 
-#' type proportions for adjusted and unadjusted signature matrices.
+#' Compare predictions with and without donor bias corrections.
 #' 
-#' @param offsetv Vector of donor offset values. This is used to define the
-#' test groups for donor bias experiments. Equal offsets are applied to positive
-#' and negative marker signal distributions.
+#' @param donordf Donor data.frame. If NULL, makes a new df from provided 
+#' arguments.
+#' @param method Randomization method passed to random_lgv(). Supports either 
+#' "nbinom" for negative binomial distribution (a.k.a. gamma poisson 
+#' distribution) or "poisson" for poisson distribution.
+#' @param lambda.pos The mean or mu value when marker status is positive.
+#' @param lambda.neg The mean or mu value when marker status is negative.
+#' @param lambda.sdoff.pos Offset SD for lambda when marker status positive.
+#' @param lambda.sdoff.neg Offset SD for lambda when marker status negative.
+#' @param gamma.pos Magnitude of gamma dispersion value when marker status is 
+#' positive.
+#' @param gamma.neg Magnitude of gamma dispersion value when marker status is
+#' negative.
 #' @param P Vector of true proportions, where each entry corresponds to a type.
 #' @param donor.adj.method Method to adjust for donor bias. Can be either 
 #' "limma", "var_denom", "sd_denom", "combat", or NULL. If NULL, skip this step.
@@ -102,77 +110,84 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param plot.pca Whether to include PCA results plots using simulated donor
 #' signals data.frame.
 #' @param cname.donorsummary Name of column containing the donor summary data
-#' with which to perform experiment.
+#' with which to perform experiment (default "donor.combn.all.mean" for cross-
+#' donor means).
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
 #' @param ndonor Total number of donors to simulate.
 #' @param seed.num Seed value for random sizes in lsv, in case lsv is NULL.
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Arguments passed to function `donoradj()`.
+#' @details Parses various methods for performing the donor bias adjustment, 
+#' returning predicted type proportions for adjusted and unadjusted signature 
+#' matrices.
+#' 
+#' Performs the following steps:
+#' 
+#' * 1. Make the reference pseudobulked sample `Ypb` from a single simulated 
+#'      donor.
+#' * 2. Simulate donor signals, use the cross-donor means to make the first
+#'      signature matrix `Z1`, and use this to get the first predictions `P1`.
+#' * 3. Adjust the donor signals with a covariate for type, use the means 
+#'      to make the second signature matrix `Z2`, and use this to get the second
+#'      set of predictions `P2`.
+#' * 4. Return donordf, experiment results df, and plots.
+#' 
 #' @returns List of experiment results and experiment objects.
 #' @examples 
 #' lb <- donor_marker_biasexpt()
 #' @export
-donor_marker_biasexpt <- function(offsetv = c(1, 10), P = c(0.25, 0.75),
-                                  donor.adj.method = NULL, 
-                                  plot.biasadj = TRUE, plot.pca = TRUE,
+donor_marker_biasexpt <- function(donordf = NULL, method = "nbinom", 
+                                  lambda.pos = 20, lambda.neg = 2,
+                                  lambda.sdoff.pos = 5, lambda.sdoff.neg = 2,
+                                  gamma.pos = 20, gamma.neg = 2, P = c(0.25, 0.75),
+                                  donor.adj.method = "combat", plot.biasadj = TRUE,
+                                  plot.pca = TRUE,
                                   cname.donorsummary = "donor.combn.all.mean",
-                                  gindexv = c(1, 2), ndonor = 10,
-                                  seed.num = 0, verbose = FALSE, ...){
+                                  gindexv = c(1, 2), ndonor = 10, seed.num = 0,
+                                  verbose = TRUE, ...){
   set.seed(seed.num); lr <- list()
   if(verbose){message("Making pseudobulk sample from types matrix...")}
   df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
-                                sd.offset.pos = 0, sd.offset.neg = 0)
+                                lambda.sdoff.pos = 0, lambda.sdoff.neg = 0)
   ktotal <- length(P)
   Z <- matrix(df[,"donor1"], ncol = ktotal)
   Ypb <- ypb_fromtypes(Z = Z, P = P)
-  if(verbose){message("Getting randomized donor marker data...")}
-  ldonordf <- lapply(offsetv, function(offi){
-    rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv,
-                            sd.offset.pos = offi, sd.offset.neg = offi,
-                            seed.num = seed.num)
-  })
-  names(ldonordf) <- paste0("offset:", offsetv)
+  
+  if(is(donordf, "NULL")){
+    if(verbose){message("Getting randomized donor marker data...")}  
+    donordf <- rand_donor_marker_table(ndonor = ndonor, 
+                                       method = method,
+                                       gindexv = gindexv,
+                                       lambda.sdoff.pos = lambda.sdoff.pos,
+                                       lambda.sdoff.neg = lambda.sdoff.neg,
+                                       gamma.pos = gamma.pos,
+                                       gamma.neg = gamma.neg,
+                                       seed.num = seed.num)
+  } else{
+    if(verbose){message("Checking if provided donordf passes checks...")}
+    if(!check_donordf(donordf)){
+      stop("Error, provided donordf is invalid. ",
+           "Check that it contains all required columns.")}
+  }
+  
   if(verbose){message("Getting type predictions...")}
   type.indexv <- seq(ktotal)
-  lexpt <- lapply(seq(length(ldonordf)), function(ii){
-    namei <- names(ldonordf)[ii]
-    df <- ldonordf[[namei]] # get full donordf
-    offsetv <- rep(gsub(".*:", "", namei), ktotal)
-    donor.unadj <- df[,cname.donorsummary] # get donor summary datas
-    li <- biasexpt(df = df, Ypb = Ypb, P = P, donor.unadj = donor.unadj,
+  donor.unadj <- donordf[,cname.donorsummary] # get donor summary datas
+  lbias <- biasexpt(df = donordf, Ypb = Ypb, P = P, donor.unadj = donor.unadj,
                     donor.adj.method = donor.adj.method,
                     plot.biasadj = plot.biasadj,
                     verbose = verbose, ...)
-    # append offset values
-    li$dfi$offset <- rep(offsetv, nrow(li$dfi)/length(offsetv))
-    return(li)
-  })
-  names(lexpt) <- names(ldonordf)
-  # get results df
-  dfres <- do.call(rbind, lapply(lexpt, function(ii){ii$dfi}))
-  ldonorv <- lapply(lexpt, function(ii){ii[c("donor.unadj", "donor.adj")]})
-  names(ldonorv) <- names(ldonordf)
+  
   # get return object
-  lmd.adj <- list(donor.adj.method = donor.adj.method, ...)
-  lmd <- list(offsetv = offsetv, P = P, donor.adj.info = lmd.adj)
-  lr[["dfres"]] <- dfres
-  lr[["ldonorv"]] <- ldonorv
-  lr[["ldonordf"]] <- ldonordf
+  lr[["dfres"]] <- lbias$dfi # get results df
+  lr[["donordf"]] <- donordf
   lr[["Ypb"]] <- Ypb
-  lr[["metadata"]] <- lmd
-  # get plot objects
-  if(plot.pca){
-    lpca <- lapply(ldonordf, function(dfi){
-      pcaplots_donor(dt = dfi, title.append = NULL)
-    })
-    names(lpca) <- names(ldonordf); lr[["lpca"]] <- lpca
-  }
-  if(plot.biasadj){
-    lpt <- lapply(lexpt, function(ii){ii$ggpt.biasadj})
-    names(lpt) <- names(lexpt)
-    lr[["ggpt.biasadj"]] <- lpt
-  }
+  lr[["adj.method"]] <- method
+  # make new plots
+  if(plot.pca){lr[["lpca"]] <- pcaplots_donor(dt = donordf)}
+  if(plot.biasadj){lr[["ggpt.biasadj"]] <- lbias$ggpt.biasadj}
+  
   return(lr)
 }
 
@@ -366,9 +381,8 @@ check_donordf <- function(df){
 rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), 
                                     method = "nbinom",
                                     lambda.pos = 20, lambda.neg = 2,
-                                    gamma.pos = 1, gamma.neg = 1,
                                     lambda.sdoff.pos = 0, lambda.sdoff.neg = 0, 
-                                    gamma.sdoff.pos = 10, gamma.sdoff.neg = 10,
+                                    gamma.pos = 10, gamma.neg = 10,
                                     seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
   nmarkers <- length(gindexv); ktotal <- length(unique(gindexv))
@@ -377,34 +391,25 @@ rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2),
   # get random offsets for means
   offposv <- rnorm(n = ndonor, mean = 0, sd = lambda.sdoff.pos)
   offnegv <- rnorm(n = ndonor, mean = 0, sd = lambda.sdoff.neg)
-  # get random offsets for gammas
-  offposv.gamma <- rnorm(n = ndonor, mean = 0, sd = gamma.sdoff.pos)
-  offnegv.gamma <- rnorm(n = ndonor, mean = 0, sd = gamma.sdoff.neg)
   
   # get new hyperparameter values
   # get new means
   meanv.pos <- offposv + lambda.pos
   meanv.neg <- offnegv + lambda.neg
-  # get new gammas
-  gammav.pos <- offposv.gamma + gamma.pos
-  gammav.neg <- offnegv.gamma + gamma.neg
   
   # convert negative values
   # convert means
   meanv.pos[meanv.pos < 0] <- -1*meanv.pos[meanv.pos < 0]
   meanv.neg[meanv.neg < 0] <- -1*meanv.neg[meanv.neg < 0]
-  # convert gammas
-  gammav.pos[gammav.pos < 0] <- -1*gammav.pos[gammav.pos<0]
-  gammav.neg[gammav.neg < 0] <- -1*gammav.neg[gammav.neg<0]
   
   # get matrix of markers (rows) by donors (cols)
   md <- do.call(cbind, lapply(seq(ndonor), function(ii){
     unlist(random_lgv(gindexv, num.iter = 1, 
                       lambda.pos = meanv.pos[ii],
                       lambda.neg = meanv.neg[ii], 
-                      gamma.size.pos = gammav.pos[ii],
-                      gamma.size.neg = gammav.neg[ii], 
-                      method = method,
+                      gamma.size.pos = gamma.pos,
+                      gamma.size.neg = gamma.neg, 
+                      method = method, seed.num = ii,
                       ...))
   }))
   md <- as.data.frame(md); colnames(md) <- paste0("donor", seq(ndonor))

@@ -5,23 +5,47 @@
 \title{donor_marker_biasexpt}
 \usage{
 donor_marker_biasexpt(
-  offsetv = c(1, 10),
+  donordf = NULL,
+  method = "nbinom",
+  lambda.pos = 20,
+  lambda.neg = 2,
+  lambda.sdoff.pos = 5,
+  lambda.sdoff.neg = 2,
+  gamma.pos = 20,
+  gamma.neg = 2,
   P = c(0.25, 0.75),
-  donor.adj.method = NULL,
+  donor.adj.method = "combat",
   plot.biasadj = TRUE,
   plot.pca = TRUE,
   cname.donorsummary = "donor.combn.all.mean",
   gindexv = c(1, 2),
   ndonor = 10,
   seed.num = 0,
-  verbose = FALSE,
+  verbose = TRUE,
   ...
 )
 }
 \arguments{
-\item{offsetv}{Vector of donor offset values. This is used to define the
-test groups for donor bias experiments. Equal offsets are applied to positive
-and negative marker signal distributions.}
+\item{donordf}{Donor data.frame. If NULL, makes a new df from provided 
+arguments.}
+
+\item{method}{Randomization method passed to random_lgv(). Supports either 
+"nbinom" for negative binomial distribution (a.k.a. gamma poisson 
+distribution) or "poisson" for poisson distribution.}
+
+\item{lambda.pos}{The mean or mu value when marker status is positive.}
+
+\item{lambda.neg}{The mean or mu value when marker status is negative.}
+
+\item{lambda.sdoff.pos}{Offset SD for lambda when marker status positive.}
+
+\item{lambda.sdoff.neg}{Offset SD for lambda when marker status negative.}
+
+\item{gamma.pos}{Magnitude of gamma dispersion value when marker status is 
+positive.}
+
+\item{gamma.neg}{Magnitude of gamma dispersion value when marker status is
+negative.}
 
 \item{P}{Vector of true proportions, where each entry corresponds to a type.}
 
@@ -35,7 +59,8 @@ before and after bias adjustment.}
 signals data.frame.}
 
 \item{cname.donorsummary}{Name of column containing the donor summary data
-with which to perform experiment.}
+with which to perform experiment (default "donor.combn.all.mean" for cross-
+donor means).}
 
 \item{gindexv}{Vector of type indices for the G markers. See `?random_lgv` 
 for details.}
@@ -52,9 +77,23 @@ for details.}
 List of experiment results and experiment objects.
 }
 \description{
-Compare predictions with and without donor bias corrections. Parses various
-methods for performing the donor bias adjustment, returning predicted 
-type proportions for adjusted and unadjusted signature matrices.
+Compare predictions with and without donor bias corrections.
+}
+\details{
+Parses various methods for performing the donor bias adjustment, 
+returning predicted type proportions for adjusted and unadjusted signature 
+matrices.
+
+Performs the following steps:
+
+* 1. Make the reference pseudobulked sample `Ypb` from a single simulated 
+     donor.
+* 2. Simulate donor signals, use the cross-donor means to make the first
+     signature matrix `Z1`, and use this to get the first predictions `P1`.
+* 3. Adjust the donor signals with a covariate for type, use the means 
+     to make the second signature matrix `Z2`, and use this to get the second
+     set of predictions `P2`.
+* 4. Return donordf, experiment results df, and plots.
 }
 \examples{
 lb <- donor_marker_biasexpt()
