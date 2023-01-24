@@ -132,6 +132,49 @@ mexpr_from_donordf <- function(df){
   return(mexpr)
 }
 
+#' donordf_from_df
+#'
+#' Make a new table of type `donor.data.frame` from a `data.frame`.
+#' 
+#' @param df Table of type `data.frame`.
+#' @returns Table of type `donor.data.frame`.
+#' @example 
+#' df <- data.frame(donor1 = sample(10), marker = c(rep("marker1", 5), rep("marker2", 5)))
+#' @export
+donordf_from_df <- function(df){
+  # parse metadata
+  nmarker <- ndonor <- ntype <- 0; cnv <- colnames(df)
+  filt.donor <- grepl("^donor\\d", cnv)
+  ndonor <- as.integer(length(which(filt.donor)))
+  if(length(which(filt.donor))==0){df$donor1 <- NA}
+  if("marker" %in% cnv){
+    nmarker <- as.integer(length(unique(df[,"marker"])))
+  } else{
+    df$marker <- NA
+    df$marker.type <- NA
+  }
+  if("type" %in% cnv){
+    ntype <- as.integer(length(unique(df[,"type"])))
+  } else{
+    df$type <- NA
+    df$marker.type <- NA
+  }
+  # make new donordf
+  donordf <- new("donor.data.frame", 
+                 donordf = df,
+                 ndonor = ndonor, 
+                 nmarker = nmarker, 
+                 ntype = ntype)
+  # check donordf
+  if(check_donordf(donordf)){
+    return(donordf)
+  } else{
+    stop("Error, couldn't make new donordf from provided df.")
+  }
+  return(NULL)
+}
+
+
 #----------------------
 # 3. generators
 #----------------------
