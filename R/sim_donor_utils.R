@@ -40,7 +40,7 @@
 #' predictions. Automatically generates values for lpv, lsv if none passed.
 #' @param seed.num Seed value for random sizes in lsv, in case lsv is NULL.
 #' @param verbose Whether to show verbose status messages.
-#' @param ... Arguments passed to functions `rand_donor_marker_table()`.
+#' @param ... Arguments passed to functions `random_donordf()`.
 #' @returns Results of a donor marker experiment, including randomized marker
 #' signal table, results of PCA on marker table, and results and plots of 
 #' deconvolution predictions.
@@ -54,10 +54,9 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
                                     plot.title.append = NULL,
                                     verbose = FALSE, ...){
   if(verbose){message("Getting random marker table...")}
-  dt <- rand_donor_marker_table(ndonor = ndonor, gindexv = gindexv, 
-                                sd.offset.pos = sd.offset.pos,
-                                sd.offset.neg = sd.offset.neg, 
-                                ...)
+  dt <- random_donordf(ndonor = ndonor, gindexv = gindexv, 
+                       sd.offset.pos = sd.offset.pos, 
+                       sd.offset.neg = sd.offset.neg, ...)
   lpca.markers <- pcaplots_donor(dt = dt, title.append = plot.title.append)
   lr <- list(marker.table = dt, lpca.markers = lpca.markers)
   # manage deconvolution experiments
@@ -148,22 +147,20 @@ donor_marker_biasexpt <- function(donordf = NULL, method = "nbinom",
                                   verbose = TRUE, ...){
   set.seed(seed.num); lr <- list()
   if(verbose){message("Making pseudobulk sample from types matrix...")}
-  df <- rand_donor_marker_table(ndonor = 1, gindexv = gindexv,
-                                lambda.sdoff.pos = 0, lambda.sdoff.neg = 0)
+  df <- random_donordf(ndonor = 1, gindexv = gindexv,
+                       lambda.sdoff.pos = 0, lambda.sdoff.neg = 0)
   ktotal <- length(P)
   Z <- matrix(df[,"donor1"], ncol = ktotal)
   Ypb <- ypb_fromtypes(Z = Z, P = P)
   
   if(is(donordf, "NULL")){
     if(verbose){message("Getting randomized donor marker data...")}  
-    donordf <- rand_donor_marker_table(ndonor = ndonor, 
-                                       method = method,
-                                       gindexv = gindexv,
-                                       lambda.sdoff.pos = lambda.sdoff.pos,
-                                       lambda.sdoff.neg = lambda.sdoff.neg,
-                                       gamma.pos = gamma.pos,
-                                       gamma.neg = gamma.neg,
-                                       seed.num = seed.num)
+    donordf <- random_donordf(ndonor = ndonor, method = method,
+                              gindexv = gindexv, 
+                              lambda.sdoff.pos = lambda.sdoff.pos,
+                              lambda.sdoff.neg = lambda.sdoff.neg,
+                              gamma.pos = gamma.pos, gamma.neg = gamma.neg,
+                              seed.num = seed.num)
   } else{
     if(verbose){message("Checking if provided donordf passes checks...")}
     if(!check_donordf(donordf)){
@@ -208,7 +205,7 @@ donor_marker_biasexpt <- function(donordf = NULL, method = "nbinom",
 #' @returns lexpt, experiment results list.
 #' @examples 
 #' # simulate donor signals data
-#' donordf <- rand_donor_marker_table()
+#' donordf <- random_donordf()
 #' # get ypb
 #' P <- c(0.75, 0.25)
 #' ktotal <- length(P)
@@ -284,120 +281,6 @@ ypb_fromtypes <- function(Z, P){
   t(t(P) %*% t(Z))
 }
 
-#' rand_donor_marker_table
-#' 
-#' Get a flat table of random donor marker signals by types.
-#' 
-#' @param ndonor Number of donors to simulate.
-#' @param gindexv Vector of marker indices. Index values correspond to the k types,
-#' and each index position represents a marker (e.g. c(1,2,2) means two markers 
-#' for the second type, etc.).
-#' @param method Randomization method passed to random_lgv(). Supports either 
-#' "nbinom" for negative binomial distribution (a.k.a. gamma poisson 
-#' distribution) or "poisson" for poisson distribution.
-#' @param lambda.pos The mean or mu value when marker status is positive.
-#' @param lambda.neg The mean or mu value when marker status is negative.
-#' @param gamma.pos Magnitude of gamma dispersion value when marker status is 
-#' positive.
-#' @param gamma.neg Magnitude of gamma dispersion value when marker status is
-#' negative.
-#' @param lambda.sdoff.pos Offset SD for lambda when marker status positive.
-#' @param lambda.sdoff.neg Offset SD for lambda when marker status negative.
-#' @param gamma.sdoff.pos Offset SD for gamma when marker status positive.
-#' @param gamma.sdoff.neg Offset SD for gamma when marker status negative.
-#' @param seed.num Token to set the random seed.
-#' @param vebose Whether to return verbose status messages.
-#' @param ... Additional parameters passed to `random_lgv()` to get marker 
-#' signals.
-#' @details This function returns random donor marker signal and marker design
-#' details. It supports random marker distributions drawn from either a 
-#' Poisson (e.g. when method == "poisson") or a Negative Binomial/Gamma Poisson
-#' (e.g. when method == "nbinom", the default) distribution. Arguments 
-#' `lambda.pos` and `lambda.neg` correspond to either the means (if method is 
-#' "poisson") or the mu's (if method is "nbinom") of the distributions when the 
-#' marker status is positive or negative.
-#' 
-#' The randomization scheme is to draw a series of random offset values for 
-#' lambda's and gamma's, or one offset for each simulated donor. Values are 
-#' drawn from normal distributions having means of 0 and having SD's as set by
-#' the arguments `lambda.sdoff.pos`, `lambda.sdoff.neg`, `gamma.sdoff.pos`, and
-#' `gamma.sdoff.neg`. These options are then applied to the lambda and gamma 
-#' values specified by arguments `lambda.pos`, `lambda.neg`, `gamma.pos`, and 
-#' `gamma.neg`.
-#' 
-#' The resulting table includes one row for each marker and type. Its columns 
-#' are as follows: 
-#' 
-#' * `donor[0-99]`: Simulated donor signals with one column for eachdonor;
-#' * `donor.combn.all.mean`: Mean donor signals; 
-#' * `donor.combn.all.median`: Median donor signals; 
-#' * `type`: The type label (e.g. a cell type name); 
-#' * `marker`: The marker label (e.g. a gene marker name); 
-#' * `marker.type`: The marker's type (e.g. "type1" means this is a marker of 
-#'    type1, so type1 should have high signal and remaining types should have 
-#'    low signal at this marker).
-#' 
-#' @returns Table (data.frame) of donor marker signal and marker details.
-#' @examples
-#' 
-#' # simulate with defaults (two donors, two marker, two types)
-#' rand_donor_marker_table()
-#' 
-#' # simulate 10 donors, 2 types, and 3 markers (2 for type1, 1 for type2)
-#' rand_donor_marker_table(ndonor = 10, gindexv = c(1,1,2))
-#' 
-#' # simulate 10 donors, 2 types, and 30 makers (10 for type1, 20 for type2) 
-#' rand_donor_marker_table(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
-#' 
-#' @seealso random_lgv
-#' @export
-rand_donor_marker_table <- function(ndonor = 2, gindexv = c(1, 2), 
-                                    method = "nbinom",
-                                    lambda.pos = 20, lambda.neg = 2,
-                                    lambda.sdoff.pos = 0, lambda.sdoff.neg = 0, 
-                                    gamma.pos = 10, gamma.neg = 10,
-                                    seed.num = 0, verbose = FALSE, ...){
-  set.seed(seed.num)
-  nmarkers <- length(gindexv); ktotal <- length(unique(gindexv))
-  
-  # get random hyperparameter offsets from normal dist
-  # get random offsets for means
-  offposv <- rnorm(n = ndonor, mean = 0, sd = lambda.sdoff.pos)
-  offnegv <- rnorm(n = ndonor, mean = 0, sd = lambda.sdoff.neg)
-  
-  # get new hyperparameter values
-  # get new means
-  meanv.pos <- offposv + lambda.pos
-  meanv.neg <- offnegv + lambda.neg
-  
-  # convert negative values
-  # convert means
-  meanv.pos[meanv.pos < 0] <- -1*meanv.pos[meanv.pos < 0]
-  meanv.neg[meanv.neg < 0] <- -1*meanv.neg[meanv.neg < 0]
-  
-  # get matrix of markers (rows) by donors (cols)
-  md <- do.call(cbind, lapply(seq(ndonor), function(ii){
-    unlist(random_lgv(gindexv, num.iter = 1, 
-                      lambda.pos = meanv.pos[ii],
-                      lambda.neg = meanv.neg[ii], 
-                      gamma.size.pos = gamma.pos,
-                      gamma.size.neg = gamma.neg, 
-                      method = method, seed.num = ii,
-                      ...))
-  }))
-  md <- as.data.frame(md); colnames(md) <- paste0("donor", seq(ndonor))
-  if(ndonor > 1){
-    if(verbose){message("Getting donor summary columns...")}
-    which.cnv.donor <- which(grepl("donor", colnames(md)))
-    md$donor.combn.all.mean <- apply(md[,which.cnv.donor], 1, mean)
-    md$donor.combn.all.median <- apply(md[,which.cnv.donor], 1, median)
-  }
-  md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
-  md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
-  md$marker.type <- paste0("type", gindexv)
-  return(md)
-}
-
 #' pcaplots_donor
 #'
 #' Make plots of two PCAs: (1) by donor, across markers and types; (2) by donor
@@ -440,7 +323,7 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #' @returns Vector of same length as donorv, containing the bias-adjusted 
 #' values.
 #' @examples 
-#' donordf <- rand_donor_marker_table()
+#' donordf <- random_donordf()
 #' donorv <- donordf$donor.combn.all.mean
 #' donoradj(donorv, donordf, method = "combat")
 #' @export
@@ -486,7 +369,7 @@ donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
 #' @param verbose Whether to show verbose status messages.
 #' @returns madj, matrix of adjusted marker signals.
 #' @examples 
-#' df <- rand_donor_marker_table()
+#' df <- random_donordf()
 #' donoradj_combat(df)
 #' @export
 donoradj_combat <- function(df, return.type = "donor.adj", verbose = FALSE){
