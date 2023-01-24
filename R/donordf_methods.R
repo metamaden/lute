@@ -141,7 +141,7 @@ mexpr_from_donordf <- function(df){
 #' @details Conversion function for `donor.data.frame` class. If missing columns
 #' aren't present in the provided `data.frame`, add them and set their values to
 #' NA.
-#' @example 
+#' @examples
 #' df <- data.frame(donor1 = sample(5), marker = rep("marker1", 5))
 #' donordf_from_df(df)
 #' 
@@ -162,9 +162,9 @@ donordf_from_df <- function(df){
 }
 
 
-#----------------------
+#--------------
 # 3. generators
-#----------------------
+#--------------
 # functions to generate donor.data.frame objects
 
 #' random_donordf

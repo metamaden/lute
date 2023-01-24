@@ -93,7 +93,7 @@ are as follows:
 }
 \examples{
 # simulate with defaults (two donors, two marker, two types)
-rand_donor_marker_table()
+random_donordf()
 
 # simulate 10 donors, 2 types, and 3 markers (2 for type1, 1 for type2)
 rand_donor_marker_table(ndonor = 10, gindexv = c(1,1,2))
