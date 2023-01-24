@@ -22,7 +22,7 @@
 #' evaluating the column names.
 #' 
 #' @param df Data.frame to check.
-#' @returns boolean, TRUE if df is valid, FALSE otherwise
+#' @returns Check outcome as boolean; TRUE if `df` passes, or FALSE otherwise.
 #' @export
 check_donordf <- function(df){
   cnv <- colnames(df); lcond <- list()
@@ -60,11 +60,12 @@ check_donordf <- function(df){
 #' @param mexpr An expression matrix (rows = markers/genes, columns = 
 #' samples/type data).
 #' @param verbose Whether to show verbose status messages.
-#' @returns mexpr, a new expression matrix
+#' @returns New table of type `donor.data.frame`.
 #' @examples 
 #' df <- rand_donor_marker_table()
 #' madj <- donoradj_combat(df, return.type = "mexpr")
 #' df.adj <- donordf_from_mexpr(mexpr = madj)
+#' 
 #' @export
 donordf_from_mexpr <- function(mexpr, verbose = FALSE){
   typev <- unique(gsub(".*;", "", colnames(mexpr)))
@@ -113,6 +114,7 @@ donordf_from_mexpr <- function(mexpr, verbose = FALSE){
 #' samples/types)
 #' @export
 mexpr_from_donordf <- function(df){
+  if(!check_donordf(df)){stop("Error, table isn't a valid donor.data.frame.")}
   filt.donor <- grepl("donor\\d", colnames(df)) # get donor signals
   mexpr <- do.call(rbind, lapply(unique(df$marker), function(mi){
     dff <- df[df$marker==mi, ]
@@ -244,9 +246,8 @@ random_donordf <- function(ndonor = 2, gindexv = c(1, 2), method = "nbinom",
   md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
   md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
   md$marker.type <- paste0("type", gindexv)
-  # final check
   md <- as(md, "donor.data.frame")
-  if(check_donordf(md)){
+  if(check_donordf(md)){ # final check
     return(md)
   } else{
     stop("Error, couldn't make new donor.data.frame object.")

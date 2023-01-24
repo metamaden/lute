@@ -88,8 +88,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #'
 #' Compare predictions with and without donor bias corrections.
 #' 
-#' @param donordf Donor data.frame. If NULL, makes a new df from provided 
-#' arguments.
+#' @param donordf Table of type `donor.data.frame`. If NULL, attempt to makes a 
+#' new table from the provided arguments.
 #' @param method Randomization method passed to random_lgv(). Supports either 
 #' "nbinom" for negative binomial distribution (a.k.a. gamma poisson 
 #' distribution) or "poisson" for poisson distribution.
@@ -130,7 +130,8 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' * 3. Adjust the donor signals with a covariate for type, use the means 
 #'      to make the second signature matrix `Z2`, and use this to get the second
 #'      set of predictions `P2`.
-#' * 4. Return donordf, experiment results df, and plots.
+#' * 4. Return table of type `donor.data.frame`, experiment results df, and 
+#'      plots.
 #' 
 #' @returns List of experiment results and experiment objects.
 #' @examples 
@@ -206,13 +207,16 @@ donor_marker_biasexpt <- function(donordf = NULL, method = "nbinom",
 #' @examples 
 #' # simulate donor signals data
 #' donordf <- random_donordf()
+#' 
 #' # get ypb
 #' P <- c(0.75, 0.25)
 #' ktotal <- length(P)
 #' Z <- matrix(df[,"donor1"], ncol = ktotal)
 #' Ypb <- ypb_fromtypes(Z = Z, P = P)
+#' 
 #' # get bias expt results
 #' li <- biasexpt(df = donordf, Ypb = Ypb)
+#' 
 #' @export
 biasexpt <- function(df, Ypb, P, donor.unadj = NULL, 
                      donor.adj.method = "combat", 
