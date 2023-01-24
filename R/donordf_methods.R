@@ -30,6 +30,10 @@ check_donordf <- function(df){
   lcond[["cond.typecol"]] <- grepl("^type$", cnv)
   lcond[["cond.markercol"]] <- grepl("^marker$", cnv)
   lcond[["cond.markertypecol"]] <- grepl("^marker\\.type$", cnv)
+  # check class
+  if(!is(df, "donor.data.frame")){
+    stop("table is not a `donor.data.frame` object.")
+  }
   # evaluate regex
   cond.allcol <- lapply(lcond, function(ii){length(which(ii)) > 0})
   cond.allcol <- unlist(cond.allcol)
