@@ -202,7 +202,7 @@ mexpr_from_donordf <- function(df){
 #' # simulate 10 donors, 2 types, and 30 makers (10 for type1, 20 for type2) 
 #' rand_donor_marker_table(ndonor = 10, gindexv = c(rep(1, 10), rep(2, 20)))
 #' 
-#' @seealso random_lgv
+#' @seealso random_lgv, biasexpt, donor_marker_biasexpt
 #' @export
 random_donordf <- function(ndonor = 2, gindexv = c(1, 2), method = "nbinom",
                            lambda.pos = 20, lambda.neg = 2,lambda.sdoff.pos = 0, 

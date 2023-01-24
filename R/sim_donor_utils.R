@@ -84,9 +84,10 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
   return(lr)
 }
 
-#' donor_marker_biasexpt
+#' run_donor_bias_expt
 #'
-#' Compare predictions with and without donor bias corrections.
+#' Run a deconvolution experiment evaluating the impact of donor bias on 
+#' predictions.
 #' 
 #' @param donordf Table of type `donor.data.frame`. If NULL, attempt to makes a 
 #' new table from the provided arguments.
@@ -119,9 +120,10 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param ... Arguments passed to function `donoradj()`.
 #' @details Parses various methods for performing the donor bias adjustment, 
 #' returning predicted type proportions for adjusted and unadjusted signature 
-#' matrices.
+#' matrices. Optionally, can also run PCA and return scatterplots of PCA 
+#' results, deconvolution predictions, and bias.
 #' 
-#' Performs the following steps:
+#' Each individual donor bias experiment consists of the following steps:
 #' 
 #' * 1. Make the reference pseudobulked sample `Ypb` from a single simulated 
 #'      donor.
@@ -136,8 +138,9 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @returns List of experiment results and experiment objects.
 #' @examples 
 #' lb <- donor_marker_biasexpt()
+#' @seealso biasexpt
 #' @export
-donor_marker_biasexpt <- function(donordf = NULL, method = "nbinom", 
+run_donor_bias_expt <- function(donordf = NULL, method = "nbinom", 
                                   lambda.pos = 20, lambda.neg = 2,
                                   lambda.sdoff.pos = 5, lambda.sdoff.neg = 2,
                                   gamma.pos = 20, gamma.neg = 2, P = c(0.25, 0.75),
@@ -174,11 +177,10 @@ donor_marker_biasexpt <- function(donordf = NULL, method = "nbinom",
   donor.unadj <- donordf[,cname.donorsummary] # get donor summary datas
   lbias <- biasexpt(df = donordf, Ypb = Ypb, P = P, donor.unadj = donor.unadj,
                     donor.adj.method = donor.adj.method,
-                    plot.biasadj = plot.biasadj,
-                    verbose = verbose, ...)
+                    plot.biasadj = plot.biasadj, verbose = verbose, ...)
   
   # get return object
-  lr[["dfres"]] <- lbias$dfi # get results df
+  lr[["dfres"]] <- lbias$dfres # get results df
   lr[["donordf"]] <- donordf
   lr[["Ypb"]] <- Ypb
   lr[["adj.method"]] <- method
@@ -191,7 +193,7 @@ donor_marker_biasexpt <- function(donordf = NULL, method = "nbinom",
 
 #' biasexpt
 #'
-#' Run a single donor bias experiment.
+#' Main function to run a donor bias adjustment experiment.
 #' 
 #' @param donor.unadj Vector of unadjusted donor signals.
 #' @param df Donor data.frame.
@@ -217,9 +219,9 @@ donor_marker_biasexpt <- function(donordf = NULL, method = "nbinom",
 #' # get bias expt results
 #' li <- biasexpt(df = donordf, Ypb = Ypb)
 #' 
+#' @seealso run_donor_bias_expt
 #' @export
-biasexpt <- function(df, Ypb, P, donor.unadj = NULL, 
-                     donor.adj.method = "combat", 
+biasexpt <- function(df, Ypb, P, donor.unadj = NULL,donor.adj.method = "combat", 
                      plot.biasadj = TRUE, verbose = FALSE, ...){
   lr <- list() # begin return list
   if(!check_donordf(df)){
@@ -254,7 +256,7 @@ biasexpt <- function(df, Ypb, P, donor.unadj = NULL,
   }
   # append results
   biasv <- ptruev - ppredv
-  lr[["dfi"]] <- data.frame(prop.type = prop.typev, prop.pred = ppredv,
+  lr[["dfres"]] <- data.frame(prop.type = prop.typev, prop.pred = ppredv,
                             prop.true = ptruev, bias = biasv,
                             type.index = type.indexv)
   return(lr)
@@ -330,6 +332,8 @@ pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
 #' donordf <- random_donordf()
 #' donorv <- donordf$donor.combn.all.mean
 #' donoradj(donorv, donordf, method = "combat")
+#' 
+#' @seealso biasexpt, 
 #' @export
 donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
                      bounds_thresh = NULL, verbose = FALSE, ...){
