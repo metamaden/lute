@@ -4,7 +4,12 @@
 \alias{get_groupstat_df}
 \title{get_groupstat_df}
 \usage{
-get_groupstat_df(exprf, groupstat, summarytype)
+get_groupstat_df(
+  exprf,
+  groupstat = c("count", "var"),
+  summarytype = "colData",
+  round.digits = 3
+)
 }
 \arguments{
 \item{exprf}{Filtered expression matrix.}
@@ -12,6 +17,8 @@ get_groupstat_df(exprf, groupstat, summarytype)
 \item{groupstat}{Vector of valid group statistics.}
 
 \item{summarytype}{Type of summary. Either colData or rowData.}
+
+\item{round.digits}{Digits to round.}
 }
 \value{
 Table of type data.frame containing summary statistics.

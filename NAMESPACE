@@ -2,6 +2,7 @@
 
 export(append_gvariable_adj)
 export(biasexpt)
+export(check_coldata)
 export(check_donordf)
 export(compute_type_se)
 export(decon_analysis)

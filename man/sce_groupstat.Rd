@@ -6,11 +6,13 @@
 \usage{
 sce_groupstat(
   sce,
-  group.variable,
+  group.variable = "donor",
   ugroupv = NULL,
   assayname = "counts",
   summarytype = "colData",
   groupstat = c("count", "numzero", "var"),
+  return.tall = FALSE,
+  type.variable = NULL,
   verbose = FALSE
 )
 }
@@ -31,6 +33,11 @@ mean expression across cells for each gene, returning one row per type).}
 "mean", "median", "var", "sd", or "numzero" (i.e. number of zero-value 
 entries).}
 
+\item{return.tall}{Whether to return a tall table. If FALSE, returns the 
+rowData/colData-compatible format with groups in column names.}
+
+\item{type.variable}{Variable containing type labels.}
+
 \item{verbose}{Whether to show verbose status messages.}
 }
 \value{
@@ -44,9 +51,35 @@ Get group-level summary statistics, either on rowData or collapsed colData.
 Computes summary statistics for either rowData (e.g. genes, markers,
 etc.) or colData (e.g. samples, cells, etc.) for an object of class 
 SingleCellExperiment.
+
+Dimensions in the returned object are determined by the argument 
+`return.tall`. When this is TRUE, rows in the returned table correspond to
+donors or donor-types (when `type.variable` is provided) if 
+`summarytype`=="colData", and donor-genes otherwise. When this is FALSE, a 
+colData/rowData-compatible object is returned as specified by `summarytype`.
 }
 \examples{
-sce <- random_sce()
+
+# make random data
+sce = random_sce(zero.include = TRUE, zero.fract = 0.5)
 colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
-dfg <- sce_groupstat(sce, "donor", c("group1", "group2"), "counts", "colData")
+
+# get group summaries across types
+sce_groupstat(sce, summarytype = "colData", return.tall = TRUE)
+
+# get group-gene summaries across types
+sce_groupstat(sce, summarytype = "rowData", return.tall = TRUE)
+
+# get tall table of group-type summaries
+sce_groupstat(sce, type.variable = "celltype", 
+             summarytype = "colData", return.tall = TRUE)
+
+# get coldata-compatible group-type summaries
+sce_groupstat(sce, type.variable = "celltype", 
+             summarytype = "colData", return.tall = FALSE)
+
+# get rowdata-compatible group-type summaries
+sce_groupstat(sce, type.variable = "celltype", 
+             summarytype = "rowData", return.tall = FALSE)
+
 }
