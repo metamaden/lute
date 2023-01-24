@@ -9,6 +9,5 @@
 
 setClass(
   "donor.data.frame",
-  representation(type_summary = "character", annotation = "character"),
   contains = "data.frame"
 )

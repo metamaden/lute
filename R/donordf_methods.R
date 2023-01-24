@@ -184,9 +184,9 @@ mexpr_from_donordf <- function(df){
 #'    type1, so type1 should have high signal and remaining types should have 
 #'    low signal at this marker).
 #' 
-#' @returns Table (data.frame) of donor marker signal and marker details.
+#' @returns New table of type `donor.data.frame` containing donor marker signal 
+#' and marker label details.
 #' @examples
-#' 
 #' # simulate with defaults (two donors, two marker, two types)
 #' rand_donor_marker_table()
 #' 
@@ -198,12 +198,10 @@ mexpr_from_donordf <- function(df){
 #' 
 #' @seealso random_lgv
 #' @export
-random_donordf <- function(ndonor = 2, gindexv = c(1, 2), 
-                                    method = "nbinom",
-                                    lambda.pos = 20, lambda.neg = 2,
-                                    lambda.sdoff.pos = 0, lambda.sdoff.neg = 0, 
-                                    gamma.pos = 10, gamma.neg = 10,
-                                    seed.num = 0, verbose = FALSE, ...){
+random_donordf <- function(ndonor = 2, gindexv = c(1, 2), method = "nbinom",
+                           lambda.pos = 20, lambda.neg = 2,lambda.sdoff.pos = 0, 
+                           lambda.sdoff.neg = 0, gamma.pos = 10, gamma.neg = 10,
+                           seed.num = 0, verbose = FALSE, ...){
   set.seed(seed.num)
   nmarkers <- length(gindexv); ktotal <- length(unique(gindexv))
   
@@ -243,7 +241,12 @@ random_donordf <- function(ndonor = 2, gindexv = c(1, 2),
   md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
   md$marker.type <- paste0("type", gindexv)
   # final check
-  
-  return(md)
+  md <- as(md, "donor.data.frame")
+  if(check_donordf(md)){
+    return(md)
+  } else{
+    stop("Error, couldn't make new donor.data.frame object.")
+  }
+  return(NULL)
 }
 
