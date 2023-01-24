@@ -22,6 +22,6 @@ madj, matrix of adjusted marker signals.
 Use method sva::ComBat() to adjust for donor bias.
 }
 \examples{
-df <- rand_donor_marker_table()
+df <- random_donordf()
 donoradj_combat(df)
 }

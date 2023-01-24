@@ -38,16 +38,22 @@ before and after bias adjustment.}
 lexpt, experiment results list.
 }
 \description{
-Run a single donor bias experiment.
+Main function to run a donor bias adjustment experiment.
 }
 \examples{
 # simulate donor signals data
-donordf <- rand_donor_marker_table()
+donordf <- random_donordf()
+
 # get ypb
 P <- c(0.75, 0.25)
 ktotal <- length(P)
 Z <- matrix(df[,"donor1"], ncol = ktotal)
 Ypb <- ypb_fromtypes(Z = Z, P = P)
+
 # get bias expt results
 li <- biasexpt(df = donordf, Ypb = Ypb)
+
+}
+\seealso{
+run_donor_bias_expt
 }

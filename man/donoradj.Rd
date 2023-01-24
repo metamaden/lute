@@ -41,7 +41,11 @@ values.
 Apply some specified bias adjustment to a vector of marker data.
 }
 \examples{
-donordf <- rand_donor_marker_table()
+donordf <- random_donordf()
 donorv <- donordf$donor.combn.all.mean
 donoradj(donorv, donordf, method = "combat")
+
+}
+\seealso{
+biasexpt,
 }

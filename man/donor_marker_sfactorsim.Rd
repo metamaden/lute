@@ -49,7 +49,7 @@ predictions. Automatically generates values for lpv, lsv if none passed.}
 
 \item{verbose}{Whether to show verbose status messages.}
 
-\item{...}{Arguments passed to functions `rand_donor_marker_table()`.}
+\item{...}{Arguments passed to functions `random_donordf()`.}
 }
 \value{
 Results of a donor marker experiment, including randomized marker
