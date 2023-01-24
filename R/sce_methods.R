@@ -25,6 +25,11 @@
 #' @param verbose Whether to show verbose status messages.
 #' @returns data.frame containing group-level summary statistics for all groups 
 #' specified in ugroupv.
+#' @details Computes summary statistics for either rowData (e.g. genes, markers,
+#' etc.) or colData (e.g. samples, cells, etc.) for an object of class 
+#' SingleCellExperiment.
+#' 
+#' 
 #' @examples 
 #' sce <- random_sce()
 #' colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
