@@ -93,9 +93,10 @@ sce_groupstat <- function(scef, group.variable, ugroupv,
   return(NULL)
 }
 
-#------------------------------------------
-# 2. methods for converting between classes
-#------------------------------------------
+#---------------
+# 2. conversions
+#---------------
+# convert between two classes or two subclasses.
 
 #' set_from_sce
 #'
@@ -184,9 +185,9 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
                       sd.zerocount = sd.zerocount)
     # parse group-level statistics
     if(!is(group.variable, "NULL")){
-      dfg <- sce_groupstat(scef = scef, group.variable = group.variable, ugroupv = ugroupv, 
-                           assayname = assayname, summarytype = "colData", 
-                           verbose = verbose, ...)
+      dfg <- sce_groupstat(scef = scef, group.variable = group.variable, 
+                           ugroupv = ugroupv, assayname = assayname, 
+                           summarytype = "colData", verbose = verbose, ...)
       condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(dfr)
       if(condv){
         if(verbose){message("Binding group-level data.")};dfr <- cbind(dfr, dfg)
