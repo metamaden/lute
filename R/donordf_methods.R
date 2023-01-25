@@ -58,49 +58,52 @@ check_donordf <- function(df){
 #' markers/genes, columns = samples/type data)
 #'
 #' @param mexpr An expression matrix (rows = markers/genes, columns = 
-#' samples/type data).
+#' samples/type data). Column names correspond to the types used.
 #' @param verbose Whether to show verbose status messages.
 #' @returns New table of type `donor.data.frame`.
 #' @examples 
-#' df <- rand_donor_marker_table()
-#' madj <- donoradj_combat(df, return.type = "mexpr")
-#' df.adj <- donordf_from_mexpr(mexpr = madj)
+#' sce = random_sce()
+#' groupv.cd = c(rep("donor1", 7), rep("donor2", 3))
+#' typev.cd = sce[["celltype"]]
+#' mexpr <- assays(sce)$counts
+#' df <- donordf_from_mexpr(mexpr = mexpr, groupv.cd = groupv.cd, 
+#' typev.cd = typev.cd)
 #' 
 #' @export
-donordf_from_mexpr <- function(mexpr, verbose = FALSE){
-  typev <- unique(gsub(".*;", "", colnames(mexpr)))
-  df <- do.call(rbind, lapply(seq(nrow(mexpr)), function(markeri){
-    mi <- mexpr[markeri,,drop=F]
-    dfi <- do.call(rbind, lapply(typev, function(typei){
-      mi[,grepl(paste0(".*;", typei), colnames(mi))]
+donordf_from_mexpr <- function(mexpr, groupv.cd, typev.cd, typev.rd = NULL, 
+                               verbose = FALSE){
+  utypev.cd <- unique(typev.cd)
+  ugroupv.cd <- unique(groupv.cd)
+  
+  if(is(typev.rd, "NULL")){ 
+    # get marker.type var
+    mgk <- do.call(cbind, lapply(utypev.cd, function(ti){
+      matrix(rowMeans(mexpr[,typev.cd==ti]), ncol = 1)
     }))
-    dfi <- as.data.frame(dfi); colnames(dfi) <- gsub(";.*", "", colnames(dfi))
-    dfi$type <- typev; dfi$marker <- paste0("marker",markeri)
-    dfi
-  }))
-  # get donor summaries
-  which.donor.cnv <- grepl("^donor\\d", colnames(df))
-  df$donor.combn.all.mean <- rowMeans(as.matrix(df[,which.donor.cnv]))
-  df$donor.combn.all.median <- rowMedians(as.matrix(df[,which.donor.cnv]))
-  # get marker.type from means
-  markerv <- unique(df$marker)
-  mapv <- unlist(lapply(markerv, function(mi){ # get marker.type mappings
-    dff <- df[df$marker == mi,]
-    max.val <- max(dff[,"donor.combn.all.mean"])
-    max.filt <- dff$donor.combn.all.mean==max.val
-    dff[max.filt,]$type[1]
-  })); names(mapv) <- markerv
-  df$marker.type <- "NA"
-  for(mi in markerv){df[df$marker == mi,]$marker.type <- as.character(mapv[mi])}
-  # final check
-  if(check_donordf(df)){
-    if(verbose){message("donordf conversion success. Returning...")}
-    return(df)
-  } else{
-    stop("Error, couldn't convert mexpr to donordf. ",
-         "Do the mexpr colnames have format donor;type?")
+    typev.rd <- unlist(apply(mgk, 1, function(ri){
+      utypev.cd[ri==max(ri)]}))
   }
-  return(NULL)
+  
+  df <- do.call(cbind, lapply(ugroupv.cd, function(di){
+    filt.donor <- groupv.cd==di
+    do.call(rbind, lapply(utypev.cd, function(ti){
+      filt.type <- filt.donor & typev.cd==ti
+      mdat <- rowMeans(mexpr[,filt.type], na.rm = T)
+      matrix(mdat, ncol = 1)
+    }))
+  }))
+  colnames(df) <- as.character(ugroupv.cd)
+  donor.mean <- rowMeans(df, na.rm = T)
+  donor.median <- rowMedians(df, na.rm = T)
+  df <- as.data.frame(df)
+  df$donor.mean <- donor.mean
+  df$donor.median <- donor.median
+  df$type <- rep(utypev.cd, each = nrow(mexpr))
+  df$marker <- rep(rownames(mexpr), length(utypev.cd))
+  df$marker.type <- rep(typev.rd, length(utypev.cd))
+  df <- as(df, "donor.data.frame")
+  if(!check_donordf(df)){stop("Error, couldn't make new valid donor.data.frame")}
+  return(df)
 }
 
 #' mexpr_from_donordf

@@ -4,6 +4,54 @@
 
 require(lute)
 
+#--------------------------
+# test donordf_from_mexpr()
+#--------------------------
+mexpr
+typev.rd
+groupv.cd
+verbose
+
+mexpr = assays(scef)$logcounts
+typev.rd = NULL
+groupv.cd = scef$donor
+typev.cd = scef$k2
+verbose = T
+
+
+
+utypev.cd <- unique(typev.cd)
+if(is(typev.rd, "NULL")){ 
+  # get marker.type var
+  mgk <- do.call(cbind, lapply(utypev.cd, function(ti){
+    matrix(rowMeans(mexpr[,typev.cd==ti]), ncol = 1)
+  }))
+  typev.rd <- unlist(apply(mgk, 1, function(ri){
+    utypev.cd[ri==max(ri)]}))
+}
+
+df <- do.call(cbind, lapply(udonorv, function(di){
+  filt.donor <- which(donorv==di)
+  do.call(rbind, lapply(utypev.cd, function(ti){
+    filt.type <- filt.donor & which(utypev.cd==ti)
+    matrix(rowMeans(mexpr[,filt.type]), ncol = 1)
+  }))
+}))
+colnames(df) <- as.character(udonorv)
+donor.mean <- rowMeans(df)
+donor.median <- rowMedians(df)
+df <- as.data.frame(df)
+df$donor.mean <- donor.mean
+df$donor.median <- donor.median
+df$type <- rep(utypev.cd, each = nrow(mexpr))
+df$marker <- rep(rownames(mexpr), length(utypev.cd))
+df$marker.type <- typev.rd
+df <- as(df, "donor.data.frame")
+if(!check_donordf(df)){stop("Error, couldn't make new valid donor.data.frame")}
+return(df)
+
+
+
 #-----------------------
 # test random_donordf()
 #-----------------------
