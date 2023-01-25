@@ -24,118 +24,75 @@
 #' Make an object of class `SummarizedExperimentTypes` from an object of class
 #' `SingleCellExperiment` or `SummarizedExperiment`.
 #'
-#' @param sce `SingleCellExperiment` object.
+#' @param sce A `SingleCellExperiment` object.
 #' @param method Method to summarize assays on types.
 #' @param type.variable Variable containing the type-level labels.
 #' @param assayname Name of assays data in assays(sce).
-#' @param group.variable Variable containing group-level labels used for group-wise
-#' summaries. If NULL, skip group summaries.
-#' @param make_set_plots Whether to make standard set plots (e.g. heatmap, PCA).
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments specified for `sce_groupstat()` summaries by 
 #' groups (see `?sce_groupstat` for details).
 #' @returns `SummarizedExperimentTypes` object.
 #' @examples
-#' sce <- random_sce()
-#' set <- set_from_sce(sce)
+#' set <- set_from_sce(random_sce())
 #' @export
-#'
-set_from_sce <- function(sce, group.variable = NULL, method = "mean", 
-                         type.variable = "celltype", assayname = "counts", 
-                         make.set.plots = TRUE, verbose = FALSE, ...){
+set_from_sce <- function(sce, method = "mean", type.variable = "celltype", 
+                         assayname = "counts", verbose = FALSE, ...){
   # run checks
   if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
     stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
+  
+  # get new assays matrix
   typev <- unique(sce[[type.variable]])
-  expr.sce <- assays(sce)$counts
-  if(!is(group.variable, "NULL")){
-    ugroupv <- unique(sce[[group.variable]]) # get all possible group lvls
-  }
-  
-  expr.set <- do.call(cbind, lapply(typev, function(typei){
+  ma <- do.call(cbind, lapply(typev, function(typei){
     if(verbose){message("Summarizing type: ", typei, "...")}
-    scef <- sce[,sce[[type.variable]]==typei]
+    type.filt <- sce[[type.variable]]==typei
+    scef <- sce[,type.filt]
     exprf <- assays(scef)[[assayname]]
-    gene.varv <- apply(exprf,1,var)
-    gene.sdv <- apply(exprf,1,sd)
-    gene.max <- apply(exprf,1,max)
-    gene.min <- apply(exprf,1,min)
-    # get new assay data
-    exprnew <- make_new_assaydata(exprf, method = method, 
-                                  na.rm = T, verbose = verbose)
-    exprnew <- matrix(exprnew, ncol = 1)
-    colnames(exprnew) <- paste0(typei, ";expr")
-    de <- data.frame(var = gene.varv, sdv = gene.sdv, max = gene.max,
-                     min = gene.min)
-    # parse group-level statistics
-    if(!is(group.variable, "NULL")){
-      dfg <- sce_groupstat(sce = sce, group.variable = group.variable,
-                           type.variable = type.variable, 
-                           summarytype = "rowData", return.tall = FALSE, 
-                           assayname = assayname, verbose = verbose)
-      condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(de)
-      if(condv){if(verbose){message("Binding group-level data.")}
-        de <- cbind(de, dfg)}
-    }
-    colnames(de) <- paste0(typei, ";", colnames(de))
-    return(cbind(exprnew, de))
+    mai <- matrix(rowMeans(exprf), ncol = 1)
+    colnames(mai) <- typei
+    return(mai)
   }))
+  rownames(ma) <- rownames(sce)
+  lma <- list(ma); names(lma) <- paste0("summarized_", assayname)
   
-  which.mexpr <- grepl(".*;expr$", colnames(expr.set))
-  mexpr <- expr.set[,which.mexpr] # expr data
-  colnames(mexpr) <- gsub(";expr.*", "", colnames(mexpr))
-  rd <- expr.set[,!which.mexpr] # rowdata
-  
+  # parse metadata
+  # get rowdata
+  rd <- sce_groupstat(sce, group.variable = type.variable, 
+                      summarytype = "rowData", return.tall = FALSE)
+  marker.filt <- grepl(".*;marker$", colnames(rd))
+  rownames(rd) <- rd[,which(marker.filt)[1]]
+  rd$marker <- rd[,which(marker.filt)[1]]
+  rd <- rd[,!marker.filt]
+  rd <- rd[order(match(rd$marker, rownames(ma))),]
+  cond.rd <- identical(rd$type, rownames(ma))
+  if(!cond.rd){
+    message("Warning, couldn't match coldata types to ma types.")
+    rd <- matrix(nrow = nrow(ma), ncol = 0)
+  }
   # get coldata
-  cd.sce <- colData(sce)
-  cd <- do.call(rbind, lapply(typev, function(typei){
-    if(verbose){message("Working on type: ", typei, "...")}
-    scef <- sce[,sce[[type.variable]]==typei]
-    num.cells <- ncol(scef)
-    # parse 0-expr genes/cells
-    count.zeroexpr <- apply(assays(scef)$counts, 1, 
-                            function(ri){length(ri[ri==0])})
-    num.allzeroexpr <- length(which(count.zeroexpr==num.cells))
-    mean.zerocount <- mean(count.zeroexpr)
-    median.zerocount <- median(count.zeroexpr)
-    var.zerocount <- var(count.zeroexpr)
-    sd.zerocount <- sd(count.zeroexpr)
-    # get return df
-    dfr <- data.frame(type = typei,
-                      num.cells = num.cells,
-                      num.allzeroexpr = num.allzeroexpr,
-                      mean.zerocount = mean.zerocount,
-                      median.zerocount = median.zerocount,
-                      var.zerocount = var.zerocount,
-                      sd.zerocount = sd.zerocount)
-    return(dfr)
-  }))
-  # parse group-level statistics
-  if(!is(group.variable, "NULL")){
-    dfg <- sce_groupstat(sce = sce, group.variable = group.variable,
-                         type.variable = type.variable, return.tall = FALSE,
-                         assayname = assayname, summarytype = "colData", 
-                         verbose = verbose)
-    cd <- cbind(dfr, dfg)
+  cd <- sce_groupstat(sce, group.variable = type.variable, 
+                      summarytype = "colData", return.tall = TRUE)
+  rownames(cd) <- cd$group; cd$type <- cd$group
+  cd <- cd[,!colnames(cd)=="group"]
+  cd <- cd[order(match(cd$type, colnames(ma))),]
+  cond.cd <- identical(cd$type, colnames(ma))
+  if(!cond.cd){
+    message("Warning, couldn't match coldata types to ma types.")
+    cd <- matrix(nrow = ncol(ma), ncol = 0)
   }
   
   # metadata
   lmd <- list(assay.info = list(
-    stat.method = method, sce.assayname = assayname, 
-    type.variable = type.variable, group.variable = group.variable
+    stat.method = method, 
+    sce.assayname = assayname, 
+    type.variable = type.variable
   ))
-  # make new set object
-  lassays <- list(mexpr); names(lassays) <- paste0("summarized_", assayname)
-  new.set <- SummarizedExperimentTypes(assays = lassays, rowData = rd, 
-                                       colData = cd, metadata = lmd)
-  # parse standard plot options
-  if(make.set.plots){
-    lp <- get_set_plots(set = new.set, group.variable = group.variable,
-                        type.variable = type.variable, verbose = verbose)
-    metadata(new.set)[["set_plots"]] <- lp
-  }
   
-  return(new.set)
+  # make new set object
+  set <- SummarizedExperimentTypes(assays = lma, rowData = rd, 
+                                   colData = cd, metadata = lmd)
+  
+  return(set)
 }
 
 #' set_from_set

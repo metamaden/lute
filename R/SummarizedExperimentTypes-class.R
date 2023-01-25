@@ -44,7 +44,7 @@ RangedSummarizedExperimentTypes <- function(assays,
 #---------------
 setMethod("show",
           "SummarizedExperimentTypes",
-          function(sce) {
+          function(object) {
             sce <- object
             nmarker <- nrow(sce)
             ntype <- ncol(sce)
