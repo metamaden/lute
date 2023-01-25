@@ -48,8 +48,9 @@ set_from_sce <- function(sce, method = "mean", type.variable = "celltype",
     type.filt <- sce[[type.variable]]==typei
     scef <- sce[,type.filt]
     exprf <- assays(scef)[[assayname]]
-    mai <- matrix(rowMeans(exprf), ncol = 1)
-    colnames(mai) <- typei
+    mai <- make_new_assaydata(exprf, method = "mean", na.rm = TRUE, 
+                              verbose = verbose)
+    mai <- matrix(mai, ncol = 1); colnames(mai) <- typei
     return(mai)
   }))
   rownames(ma) <- rownames(sce)
