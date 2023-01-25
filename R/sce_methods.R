@@ -72,8 +72,8 @@ sce_groupstat <- function(sce, group.variable = "donor",
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
   # check assay signals
-  expr.class <- class(assays(sce)[[assayname]])
-  cond <- expr.class %in% c("matrix", "DelayedArray")
+  expr <- assays(sce)[[assayname]]
+  cond <- is(expr, "matrix")|is(expr, "DelayedArray")
   if(!cond){
     stop("Error, assay signals should be either a matrix or DelayedArray.")}
   # filter group stats
@@ -180,7 +180,8 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
   groupstatf <- groupstat[!grepl("^count.*|^numzero.*", groupstat)]
   mna <- matrix(NA, ncol = length(groupstatf), nrow = nrow(exprff))
   dfti <- as.data.frame(mna); colnames(dfti) <- groupstatf
-  if(length(which(grepl("^count.*", groupstat))) > 0){
+  cond <- length(which(grepl("^count.*", groupstat)))
+  if(cond > 0){
     dfti$count.cells <- ncell; dfti$count.genes <- ngene
   }
   for(ri in seq(nrow(exprff))){

@@ -7,7 +7,6 @@
 sce_groupstat(
   sce,
   group.variable = "donor",
-  ugroupv = NULL,
   assayname = "counts",
   summarytype = "colData",
   groupstat = c("count", "numzero", "var"),
@@ -21,9 +20,6 @@ sce_groupstat(
 for a specific type.}
 
 \item{group.variable}{Variable containing group information on scef colData.}
-
-\item{ugroupv}{Vector of all unique groups to consider. If NULL, considers
-all available group levels in group.variable.}
 
 \item{summarytype}{Whether to summarize data on rowData (e.g. one entry per 
 row/gene), or otherwise use the colData collapsed on means (e.g. take the 
