@@ -113,7 +113,7 @@ sce_groupstat <- function(sce, group.variable = "donor",
   } else{
     dfr <- do.call(cbind, lapply(ldf, function(dfi){
       groupi <- unique(dfi$group)[1]
-      if(summarytype == "rowData"){
+      if(summarytype == "rowData" & !is(type.variable, "NULL")){
         dfi <- do.call(cbind, lapply(utypev, function(typei){
           dfii <- dfi[dfi$type == typei,,drop = F]
           dfii <- dfii[,!colnames(dfii) %in% c("group", "marker", "type")]
@@ -121,7 +121,7 @@ sce_groupstat <- function(sce, group.variable = "donor",
           dfii
         }))
       } else{
-        dfi <- dfi[,!colnames(dfi) %in% c("group", "marker", "type")]
+        dfi <- dfi[,!colnames(dfi) %in% c("group", "type", "marker")]
         colnames(dfi) <- paste0(groupi, ";", colnames(dfi))
       }
       dfi
