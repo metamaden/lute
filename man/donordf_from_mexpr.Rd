@@ -4,11 +4,17 @@
 \alias{donordf_from_mexpr}
 \title{donordf_from_mexpr}
 \usage{
-donordf_from_mexpr(mexpr, verbose = FALSE)
+donordf_from_mexpr(
+  mexpr,
+  groupv.cd,
+  typev.cd,
+  typev.rd = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{mexpr}{An expression matrix (rows = markers/genes, columns = 
-samples/type data).}
+samples/type data). Column names correspond to the types used.}
 
 \item{verbose}{Whether to show verbose status messages.}
 }
@@ -20,8 +26,11 @@ Makes a valid donordf object from an expression matrix (e.g. rows =
 markers/genes, columns = samples/type data)
 }
 \examples{
-df <- rand_donor_marker_table()
-madj <- donoradj_combat(df, return.type = "mexpr")
-df.adj <- donordf_from_mexpr(mexpr = madj)
+sce = random_sce()
+groupv.cd = c(rep("donor1", 7), rep("donor2", 3))
+typev.cd = sce[["celltype"]]
+mexpr <- assays(sce)$counts
+df <- donordf_from_mexpr(mexpr = mexpr, groupv.cd = groupv.cd, 
+typev.cd = typev.cd)
 
 }
