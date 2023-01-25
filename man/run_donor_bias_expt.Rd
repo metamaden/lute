@@ -99,7 +99,7 @@ Each individual donor bias experiment consists of the following steps:
      plots.
 }
 \examples{
-lb <- donor_marker_biasexpt()
+lb <- run_donor_bias_expt()
 }
 \seealso{
 biasexpt
