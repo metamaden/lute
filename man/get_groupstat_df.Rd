@@ -26,3 +26,10 @@ Table of type data.frame containing summary statistics.
 \description{
 Get grouped statistics from an expression matrix.
 }
+\examples{
+sce = random_sce(zero.include = TRUE, zero.fract = 0.5)
+colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
+exprf <- assays(sce)$counts
+get_groupstat_df(exprf)
+
+}

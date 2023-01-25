@@ -129,54 +129,68 @@ parse_ldf <- function(ldf, summarytype)
 #------------------------
 # test get_groupstat_df()
 #------------------------
-# example
-sce = random_sce()
+
+# make random data
+sce = random_sce(zero.include = TRUE, zero.fract = 0.5)
 colData(sce)$donor <- c(rep("donor1", 7), rep("donor2", 3))
 
 # params
-exprf <- assays(sce)$counts
-summarytype = "rowData"
-groupstat <- c("count", "var")
+exprf <- assays(sce)[["counts"]]
+groupstat <- c("numzero", "count", "var")
+summarytype <- "rowData"
 round.digits = 3
 
-get_groupstat_df(exprf = exprf, summarytype = summarytype, 
-                 groupstat = groupstat, round.digits = round.digits)
-
 # parse summarytype
-ngene <- nrow(exprf); ncell <- ncol(exprf)
-if(summarytype == "colData"){
-  exprf <- t(as.matrix(colMeans(exprf)))
-}
+ngene <- nrow(exprf); ncell <- ncol(exprf); exprff <- exprf
+if(summarytype == "colData"){exprff <- t(as.matrix(colMeans(exprf)))}
 # make na matrix
-groupstatf <- groupstat[!grepl("^count.*", groupstat)]
-mna <- matrix(NA, ncol = length(groupstatf), nrow = nrow(exprf))
+groupstatf <- groupstat[!grepl("^count.*|numzero", groupstat)]
+mna <- matrix(NA, ncol = length(groupstatf), nrow = nrow(exprff))
 dfti <- as.data.frame(mna); colnames(dfti) <- groupstatf
 if(length(which(grepl("^count.*", groupstat))) > 0){
   dfti$count.cells <- ncell; dfti$count.genes <- ngene
 }
-for(ri in seq(nrow(exprf))){
-  if(!is(exprf, "NULL")){
+for(ri in seq(nrow(exprff))){
+  if(!is(exprff, "NULL")){
     # get group stats
-    exprfi <- exprf[ri,,drop = F]
+    ei <- exprff[ri,,drop = F]
     if("mean" %in% groupstat){
-      meani <- rowMeans(exprfi)
+      meani <- rowMeans(ei)
       dfti[ri,]$mean <- round(meani, digits = round.digits)
     }
     if("median" %in% groupstat){
-      mediani <- rowMedians(exprfi)
+      mediani <- rowMedians(ei)
       dfti[ri,]$median <- round(mediani, digits = round.digits)
     }
     if("var" %in% groupstat){
-      vari <- rowVars(exprfi)
+      vari <- rowVars(ei)
       dfti[ri,]$var <- round(vari, digits = round.digits)
     }
     if("sd" %in% groupstat){
-      sdi <- rowSds(exprfi)
+      sdi <- rowSds(ei)
       dfti[ri,]$sd <- round(sdi, digits = round.digits)
     }
-    if("numzero" %in% groupstat){
-      dfti[ri,]$numzero <- unlist(
-        apply(exprfi, 1, function(ri){length(which(ri==0))}))
+    if(length(which(grepl("^numzero.*", groupstat)))>0){
+      if(summarytype == "colData"){
+        # get summaries across cells
+        num.cells.zero <- unlist(lapply(seq(nrow(exprf)), function(ri){
+          datv <- exprf[ri,]; length(which(datv==0))
+        }))
+        zct.cell <- mean(num.cells.zero)
+        zfr.cell <- mean(num.cells.zero/ncell)
+        dfti$mean.count.cells.zero <- round(zct.cell, digits = round.digits)
+        dfti$mean.fract.cells.zero <- round(zfr.cell, digits = round.digits)
+        # get summaries across genes
+        num.genes.zero <- unlist(lapply(seq(ncol(exprf)), function(ci){
+          datv <- exprf[ci,]; length(which(datv==0))
+        }))
+        zct.gene <- mean(num.cells.zero)
+        zfr.gene <- mean(num.cells.zero/ncell)
+        dfti$mean.count.genes.zero <- round(zct.gene, digits = round.digits)
+        dfti$mean.fract.genes.zero <- round(zfr.gene, digits = round.digits)
+      } else{
+        dfti$ncell.zero[ri] <- length(which(ei[ri,]==0))
+      }
     }
   }
 }
