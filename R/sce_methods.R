@@ -211,19 +211,13 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
   if(cond > 0){
     if(summarytype == "colData"){
       # get summaries across cells
-      num.cells.zero <- unlist(lapply(seq(nrow(exprf)), function(ri){
-        datv <- exprf[ri,]; length(which(datv==0))
-      }))
-      zct.cell <- median(num.cells.zero)
-      zfr.cell <- median(num.cells.zero/ncell)
+      zct.cell <- median(apply(exprf, 1, function(ri){length(which(ri==0))}))
+      zfr.cell <- median(zct.cell/ncell)
       dfti$median.count.cells.zero <- round(zct.cell, digits = round.digits)
       dfti$median.fract.cells.zero <- round(zfr.cell, digits = round.digits)
       # get summaries across genes
-      num.genes.zero <- unlist(lapply(seq(ncol(exprf)), function(ci){
-        datv <- exprf[,ci]; length(which(datv==0))
-      }))
-      zct.gene <- median(num.cells.zero)
-      zfr.gene <- median(num.cells.zero/ncell)
+      zct.gene <- median(apply(exprf, 2, function(ci){length(which(ci==0))}))
+      zfr.gene <- median(zct.gene/ngene)
       dfti$median.count.genes.zero <- round(zct.gene, digits = round.digits)
       dfti$median.fract.genes.zero <- round(zfr.gene, digits = round.digits)
     } else{
