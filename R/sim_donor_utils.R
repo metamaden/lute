@@ -292,16 +292,17 @@ ypb_fromtypes <- function(Z, P){
 #' Make plots of two PCAs: (1) by donor, across markers and types; (2) by donor
 #' and type, across markers.
 #' 
-#' @param dt Donor marker signals table.
+#' @param donordf Table of class `donor.data.frame`.
 #' @param title.append Optional string to append to plot titles.
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments passed to PCA functions.
 #' @returns list of PCA results, plots, and metadata
 #' @export
-pcaplots_donor <- function(dt, title.append = NULL, verbose = FALSE, ...){
-  list(pca.bydonor = pca_bydonor(dt = dt, title.append = title.append, 
+pcaplots_donor <- function(donordf, title.append = NULL, verbose = FALSE, ...){
+  list(pca.bydonor = pca_bydonor(dt = donordf, title.append = title.append, 
                                  verbose = verbose, ...), 
-       pca.bydonortype = pca_bydonortype(dt = dt, title.append = title.append, 
+       pca.bydonortype = pca_bydonortype(dt = donordf, 
+                                         title.append = title.append, 
                                          verbose = verbose, ...))
 }
 
