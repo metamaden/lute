@@ -29,14 +29,14 @@
 #' @param type.variable Variable containing the type-level labels.
 #' @param assayname Name of assays data in assays(sce).
 #' @param verbose Whether to show verbose status messages.
-#' @param ... Additional arguments specified for `sce_groupstat()` summaries by 
 #' groups (see `?sce_groupstat` for details).
 #' @returns `SummarizedExperimentTypes` object.
 #' @examples
-#' set <- set_from_sce(random_sce())
+#' set <- set_from_sce(random_sce()); show(set)
+#' @seealso sce_groupstat
 #' @export
 set_from_sce <- function(sce, method = "mean", type.variable = "celltype", 
-                         assayname = "counts", verbose = FALSE, ...){
+                         assayname = "counts", verbose = FALSE){
   # run checks
   if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
     stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
@@ -64,9 +64,9 @@ set_from_sce <- function(sce, method = "mean", type.variable = "celltype",
   rd$marker <- rd[,which(marker.filt)[1]]
   rd <- rd[,!marker.filt]
   rd <- rd[order(match(rd$marker, rownames(ma))),]
-  cond.rd <- identical(rd$type, rownames(ma))
+  cond.rd <- identical(rd$marker, rownames(ma))
   if(!cond.rd){
-    message("Warning, couldn't match coldata types to ma types.")
+    message("Warning, couldn't match rowdata markers to ma markers.")
     rd <- matrix(nrow = nrow(ma), ncol = 0)
   }
   # get coldata
