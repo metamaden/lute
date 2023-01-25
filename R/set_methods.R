@@ -45,20 +45,21 @@ set_from_sce <- function(sce, method = "mean", type.variable = "celltype",
   typev <- unique(sce[[type.variable]])
   ma <- do.call(cbind, lapply(typev, function(typei){
     if(verbose){message("Summarizing type: ", typei, "...")}
-    type.filt <- sce[[type.variable]]==typei
-    scef <- sce[,type.filt]
+    type.filt <- sce[[type.variable]]==typei; scef <- sce[,type.filt]
     exprf <- assays(scef)[[assayname]]
-    mai <- make_new_assaydata(exprf, method = "mean", na.rm = TRUE, 
-                              verbose = verbose)
-    mai <- matrix(mai, ncol = 1); colnames(mai) <- typei
-    return(mai)
+    if(ncol(exprf) > 0){
+      mai <- make_new_assaydata(exprf, method = "mean", na.rm = TRUE, 
+                                verbose = verbose)
+      mai <- matrix(mai, ncol = 1); colnames(mai) <- typei
+      return(mai)
+    }
   }))
   rownames(ma) <- rownames(sce)
   lma <- list(ma); names(lma) <- paste0("summarized_", assayname)
   
   # parse metadata
   # get rowdata
-  rd <- sce_groupstat(sce, group.variable = type.variable, 
+  rd <- sce_groupstat(sce, group.variable = type.variable, assayname = assayname,
                       summarytype = "rowData", return.tall = FALSE)
   marker.filt <- grepl(".*;marker$", colnames(rd))
   rownames(rd) <- rd[,which(marker.filt)[1]]
@@ -71,7 +72,7 @@ set_from_sce <- function(sce, method = "mean", type.variable = "celltype",
     rd <- matrix(nrow = nrow(ma), ncol = 0)
   }
   # get coldata
-  cd <- sce_groupstat(sce, group.variable = type.variable, 
+  cd <- sce_groupstat(sce, group.variable = type.variable, assayname = assayname,
                       summarytype = "colData", return.tall = TRUE)
   rownames(cd) <- cd$group; cd$type <- cd$group
   cd <- cd[,!colnames(cd)=="group"]

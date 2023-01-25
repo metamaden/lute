@@ -6,20 +6,14 @@
 \usage{
 set_from_sce(
   sce,
-  group.variable = NULL,
   method = "mean",
   type.variable = "celltype",
   assayname = "counts",
-  make.set.plots = TRUE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
-\item{sce}{`SingleCellExperiment` object.}
-
-\item{group.variable}{Variable containing group-level labels used for group-wise
-summaries. If NULL, skip group summaries.}
+\item{sce}{A `SingleCellExperiment` object.}
 
 \item{method}{Method to summarize assays on types.}
 
@@ -27,12 +21,8 @@ summaries. If NULL, skip group summaries.}
 
 \item{assayname}{Name of assays data in assays(sce).}
 
-\item{verbose}{Whether to show verbose status messages.}
-
-\item{...}{Additional arguments specified for `sce_groupstat()` summaries by 
+\item{verbose}{Whether to show verbose status messages.
 groups (see `?sce_groupstat` for details).}
-
-\item{make_set_plots}{Whether to make standard set plots (e.g. heatmap, PCA).}
 }
 \value{
 `SummarizedExperimentTypes` object.
@@ -42,6 +32,8 @@ Make an object of class `SummarizedExperimentTypes` from an object of class
 `SingleCellExperiment` or `SummarizedExperiment`.
 }
 \examples{
-sce <- random_sce()
-set <- set_from_sce(sce)
+set <- set_from_sce(random_sce()); show(set)
+}
+\seealso{
+sce_groupstat
 }
