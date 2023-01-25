@@ -220,7 +220,7 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
       dfti$median.fract.cells.zero <- round(zfr.cell, digits = round.digits)
       # get summaries across genes
       num.genes.zero <- unlist(lapply(seq(ncol(exprf)), function(ci){
-        datv <- exprf[ci,]; length(which(datv==0))
+        datv <- exprf[,ci]; length(which(datv==0))
       }))
       zct.gene <- median(num.cells.zero)
       zfr.gene <- median(num.cells.zero/ncell)
