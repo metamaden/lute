@@ -61,28 +61,11 @@ set_from_sce <- function(sce, method = "mean", type.variable = "celltype",
   # get rowdata
   rd <- sce_groupstat(sce, group.variable = type.variable, assayname = assayname,
                       summarytype = "rowData", return.tall = FALSE)
-  marker.filt <- grepl(".*;marker$", colnames(rd))
-  rownames(rd) <- rd[,which(marker.filt)[1]]
-  rd$marker <- rd[,which(marker.filt)[1]]
-  rd <- rd[,!marker.filt]
-  rd <- rd[order(match(rd$marker, rownames(ma))),]
-  cond.rd <- identical(rd$marker, rownames(ma))
-  if(!cond.rd){
-    message("Warning, couldn't match rowdata markers to ma markers.")
-    rd <- matrix(nrow = nrow(ma), ncol = 0)
-  }
+  rownames(rd) <- rownames(ma)
   # get coldata
   cd <- sce_groupstat(sce, group.variable = type.variable, assayname = assayname,
                       summarytype = "colData", return.tall = TRUE)
-  rownames(cd) <- cd$group; cd$type <- cd$group
-  cd <- cd[,!colnames(cd)=="group"]
-  cd <- cd[order(match(cd$type, colnames(ma))),]
-  cond.cd <- identical(cd$type, colnames(ma))
-  if(!cond.cd){
-    message("Warning, couldn't match coldata types to ma types.")
-    cd <- matrix(nrow = ncol(ma), ncol = 0)
-  }
-  
+  rownames(cd) <- colnames(ma)
   # metadata
   lmd <- list(assay.info = list(
     stat.method = method, 
