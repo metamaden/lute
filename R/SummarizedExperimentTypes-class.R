@@ -42,16 +42,22 @@ RangedSummarizedExperimentTypes <- function(assays,
 #---------------
 # define methods
 #---------------
-# setMethod("show", 
-#          signature(object = "SummarizedExperimentTypes"), 
-#          function(object) {
-#            callNextMethod()
-#            .show.annotation(annotation(object))
-#            .show.type_summary(type_summary(object))
-#            }
-#          )
-
-
+setMethod("show",
+          "SummarizedExperimentTypes",
+          function(sce) {
+            sce <- object
+            nmarker <- nrow(sce)
+            ntype <- ncol(sce)
+            mdnames <- names(metadata(sce))
+            assaynames <- names(assays(sce))
+            cat("nmarkers: ", nmarker, "\n")
+            cat("ntypes: ", ntype, "\n")
+            cat("assaynames: ", 
+                paste0(assaynames, collapse = ";"), "\n")
+            cat("mdnames: ", 
+                paste0(mdnames, collapse = ";"), "\n")
+          }
+)
 
 
 

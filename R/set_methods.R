@@ -43,6 +43,7 @@
 set_from_sce <- function(sce, group.variable = NULL, method = "mean", 
                          type.variable = "celltype", assayname = "counts", 
                          make.set.plots = TRUE, verbose = FALSE, ...){
+  # run checks
   if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
     stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
   typev <- unique(sce[[type.variable]])
