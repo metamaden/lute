@@ -15,8 +15,6 @@
 #' @param sce Filtered `SingleCellExperiment` object. Should reflect the data
 #' for a specific type.
 #' @param group.variable Variable containing group information on scef colData.
-#' @param ugroupv Vector of all unique groups to consider. If NULL, considers
-#' all available group levels in group.variable.
 #' @param summarytype Whether to summarize data on rowData (e.g. one entry per 
 #' row/gene), or otherwise use the colData collapsed on means (e.g. take the 
 #' mean expression across cells for each gene, returning one row per type).
@@ -64,20 +62,25 @@
 #'              summarytype = "rowData", return.tall = FALSE)
 #' 
 #' @export
-sce_groupstat <- function(sce, group.variable = "donor", ugroupv = NULL, 
+sce_groupstat <- function(sce, group.variable = "donor",  
                           assayname = "counts", summarytype = "colData", 
                           groupstat = c("count", "numzero", "var"),
                           return.tall = FALSE, type.variable = NULL, 
                           verbose = FALSE){
+  # run checks
+  # check sce
   if(!is(sce, "SingleCellExperiment")){
     stop("Error, sce must be a SingleCellExperiment.")}
-  cd <- colData(sce)
-  # function
+  # check assay signals
+  expr.class <- class(assays(sce)[[assayname]])
+  cond <- expr.class %in% c("matrix", "DelayedArray")
+  if(!cond){
+    stop("Error, assay signals should be either a matrix or DelayedArray.")}
+  # filter group stats
   groupstat.filt <- groupstat %in% c("count", "mean", "median", 
                                      "var", "sd", "numzero")
   groupstat <- groupstat[groupstat.filt]
-  
-  if(verbose){message("Checking colData variables...")}
+  if(verbose){message("Checking colData variables...")}; cd <- colData(sce)
   lvar <- check_coldata(cd = cd, var = c(group.variable, type.variable))
   # get group stats df
   ugroupv <- lvar[[group.variable]]$uvec
@@ -210,20 +213,20 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
       num.cells.zero <- unlist(lapply(seq(nrow(exprf)), function(ri){
         datv <- exprf[ri,]; length(which(datv==0))
       }))
-      zct.cell <- mean(num.cells.zero)
-      zfr.cell <- mean(num.cells.zero/ncell)
-      dfti$mean.count.cells.zero <- round(zct.cell, digits = round.digits)
-      dfti$mean.fract.cells.zero <- round(zfr.cell, digits = round.digits)
+      zct.cell <- median(num.cells.zero)
+      zfr.cell <- median(num.cells.zero/ncell)
+      dfti$median.count.cells.zero <- round(zct.cell, digits = round.digits)
+      dfti$median.fract.cells.zero <- round(zfr.cell, digits = round.digits)
       # get summaries across genes
       num.genes.zero <- unlist(lapply(seq(ncol(exprf)), function(ci){
         datv <- exprf[ci,]; length(which(datv==0))
       }))
-      zct.gene <- mean(num.cells.zero)
-      zfr.gene <- mean(num.cells.zero/ncell)
-      dfti$mean.count.genes.zero <- round(zct.gene, digits = round.digits)
-      dfti$mean.fract.genes.zero <- round(zfr.gene, digits = round.digits)
+      zct.gene <- median(num.cells.zero)
+      zfr.gene <- median(num.cells.zero/ncell)
+      dfti$median.count.genes.zero <- round(zct.gene, digits = round.digits)
+      dfti$median.fract.genes.zero <- round(zfr.gene, digits = round.digits)
     } else{
-      dfti$ncell.zero <- apply(exprf, 1, function(ri){
+      dfti$count.cells.zero <- apply(exprf, 1, function(ri){
         length(which(ri == 0))})
     }
   }
