@@ -4,10 +4,10 @@
 \alias{pcaplots_donor}
 \title{pcaplots_donor}
 \usage{
-pcaplots_donor(dt, title.append = NULL, verbose = FALSE, ...)
+pcaplots_donor(donordf, title.append = NULL, verbose = FALSE, ...)
 }
 \arguments{
-\item{dt}{Donor marker signals table.}
+\item{donordf}{Table of class `donor.data.frame`.}
 
 \item{title.append}{Optional string to append to plot titles.}
 

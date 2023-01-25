@@ -17,7 +17,7 @@ run_donor_bias_expt(
   donor.adj.method = "combat",
   plot.biasadj = TRUE,
   plot.pca = TRUE,
-  cname.donorsummary = "donor.combn.all.mean",
+  cname.donorsummary = "donor.mean",
   gindexv = c(1, 2),
   ndonor = 10,
   seed.num = 0,
@@ -59,7 +59,7 @@ before and after bias adjustment.}
 signals data.frame.}
 
 \item{cname.donorsummary}{Name of column containing the donor summary data
-with which to perform experiment (default "donor.combn.all.mean" for cross-
+with which to perform experiment (default "donor.mean" for cross-
 donor means).}
 
 \item{gindexv}{Vector of type indices for the G markers. See `?random_lgv` 

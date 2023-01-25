@@ -110,7 +110,7 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' @param plot.pca Whether to include PCA results plots using simulated donor
 #' signals data.frame.
 #' @param cname.donorsummary Name of column containing the donor summary data
-#' with which to perform experiment (default "donor.combn.all.mean" for cross-
+#' with which to perform experiment (default "donor.mean" for cross-
 #' donor means).
 #' @param gindexv Vector of type indices for the G markers. See `?random_lgv` 
 #' for details.
@@ -137,7 +137,7 @@ donor_marker_sfactorsim <- function(gindexv = c(1, 2), ndonor = 2, ktotal = 2,
 #' 
 #' @returns List of experiment results and experiment objects.
 #' @examples 
-#' lb <- donor_marker_biasexpt()
+#' lb <- run_donor_bias_expt()
 #' @seealso biasexpt
 #' @export
 run_donor_bias_expt <- function(donordf = NULL, method = "nbinom", 
@@ -146,7 +146,7 @@ run_donor_bias_expt <- function(donordf = NULL, method = "nbinom",
                                   gamma.pos = 20, gamma.neg = 2, P = c(0.25, 0.75),
                                   donor.adj.method = "combat", plot.biasadj = TRUE,
                                   plot.pca = TRUE,
-                                  cname.donorsummary = "donor.combn.all.mean",
+                                  cname.donorsummary = "donor.mean",
                                   gindexv = c(1, 2), ndonor = 10, seed.num = 0,
                                   verbose = TRUE, ...){
   set.seed(seed.num); lr <- list()
@@ -226,7 +226,7 @@ biasexpt <- function(df, Ypb, P, donor.unadj = NULL,donor.adj.method = "combat",
   lr <- list() # begin return list
   if(!check_donordf(df)){
     stop("Data.frame is not a valid simulated donor signals data.frame.")}
-  if(is(donor.unadj, "NULL")){donor.unadj <- df[,"donor.combn.all.mean"]}
+  if(is(donor.unadj, "NULL")){donor.unadj <- df[,"donor.mean"]}
   ktotal <- length(unique(df$type))
   Zunadj <- matrix(donor.unadj, ncol = ktotal)
   punadj <- predtype(Z = Zunadj, Y = Ypb, strict_method = "nnls",
@@ -331,7 +331,7 @@ pcaplots_donor <- function(donordf, title.append = NULL, verbose = FALSE, ...){
 #' values.
 #' @examples 
 #' donordf <- random_donordf()
-#' donorv <- donordf$donor.combn.all.mean
+#' donorv <- donordf$donor.mean
 #' donoradj(donorv, donordf, method = "combat")
 #' 
 #' @seealso biasexpt, 
@@ -339,7 +339,7 @@ pcaplots_donor <- function(donordf, title.append = NULL, verbose = FALSE, ...){
 donoradj <- function(df, donorv = NULL, method = "combat", denom_offset = 1e-3,
                      bounds_thresh = NULL, verbose = FALSE, ...){
   donor.adj <- NA
-  if(is(donorv, "NULL")){donorv <- df[,"donor.combn.all.mean"]}
+  if(is(donorv, "NULL")){donorv <- df[,"donor.mean"]}
   if(verbose){message("Getting donor marker data...")}
   cnv <- colnames(df); donorcol <- cnv[grepl("^donor\\d+$", cnv)]
   if(verbose){message("Found ",length(donorcol),

@@ -273,8 +273,8 @@ random_donordf <- function(ndonor = 2, gindexv = c(1, 2), method = "nbinom",
   if(ndonor > 1){
     if(verbose){message("Getting donor summary columns...")}
     which.cnv.donor <- which(grepl("donor", colnames(md)))
-    md$donor.combn.all.mean <- apply(md[,which.cnv.donor], 1, mean)
-    md$donor.combn.all.median <- apply(md[,which.cnv.donor], 1, median)
+    md$donor.mean <- apply(md[,which.cnv.donor], 1, mean)
+    md$donor.median <- apply(md[,which.cnv.donor], 1, median)
   }
   md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
   md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))

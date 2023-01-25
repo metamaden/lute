@@ -42,7 +42,7 @@ Apply some specified bias adjustment to a vector of marker data.
 }
 \examples{
 donordf <- random_donordf()
-donorv <- donordf$donor.combn.all.mean
+donorv <- donordf$donor.mean
 donoradj(donorv, donordf, method = "combat")
 
 }
