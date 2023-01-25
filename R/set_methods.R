@@ -6,23 +6,16 @@
 #
 # Sections:
 #
-#   1. define class functions: Class definitions and methods to make new 
-#       objects.
+#   1. conversions: Between-object class conversions.
 #
-#   2. methods for converting between classes: Between-object class conversions.
+#   2. methods for adjustments: Adjustment and weighting methods.
 #
-#   3. methods for adjustments: Adjustment and weighting methods.
-#
-#   4. set simulations: Methods supporting simultions using 
+#   3. set simulations: Methods supporting simultions using 
 #       SummarizedExperimentTypes objects.
 #
 
-#--------------------------
-# 1. define class functions
-#--------------------------
-
 #---------------
-# 2. conversions
+# 1. conversions
 #---------------
 # convert between two classes or two subclasses.
 
@@ -74,7 +67,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
                      min = gene.min)
     # parse group-level statistics
     if(!is(group.variable, "NULL")){
-      dfg <- sce_groupstat(scef = scef, group.variable = group.variable, ugroupv = ugroupv,
+      dfg <- sce_groupstat(scef = scef, group.variable = group.variable,
                            summarytype = "rowData", assayname = assayname, 
                            verbose = verbose, ...)
       condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(de)
@@ -113,9 +106,9 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
                       sd.zerocount = sd.zerocount)
     # parse group-level statistics
     if(!is(group.variable, "NULL")){
-      dfg <- sce_groupstat(scef = scef, group.variable = group.variable, 
-                           ugroupv = ugroupv, assayname = assayname, 
-                           summarytype = "colData", verbose = verbose, ...)
+      dfg <- sce_groupstat(scef = scef, group.variable = group.variable,
+                           assayname = assayname, summarytype = "colData", 
+                           verbose = verbose, ...)
       condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(dfr)
       if(condv){
         if(verbose){message("Binding group-level data.")};dfr <- cbind(dfr, dfg)
