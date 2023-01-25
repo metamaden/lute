@@ -50,6 +50,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
   if(!is(group.variable, "NULL")){
     ugroupv <- unique(sce[[group.variable]]) # get all possible group lvls
   }
+  
   expr.set <- do.call(cbind, lapply(typev, function(typei){
     if(verbose){message("Summarizing type: ", typei, "...")}
     scef <- sce[,sce[[type.variable]]==typei]
@@ -67,9 +68,10 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
                      min = gene.min)
     # parse group-level statistics
     if(!is(group.variable, "NULL")){
-      dfg <- sce_groupstat(scef = scef, group.variable = group.variable,
-                           summarytype = "rowData", assayname = assayname, 
-                           verbose = verbose, ...)
+      dfg <- sce_groupstat(sce = sce, group.variable = group.variable,
+                           type.variable = type.variable, 
+                           summarytype = "rowData", return.tall = FALSE, 
+                           assayname = assayname, verbose = verbose)
       condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(de)
       if(condv){if(verbose){message("Binding group-level data.")}
         de <- cbind(de, dfg)}
@@ -77,6 +79,7 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
     colnames(de) <- paste0(typei, ";", colnames(de))
     return(cbind(exprnew, de))
   }))
+  
   which.mexpr <- grepl(".*;expr$", colnames(expr.set))
   mexpr <- expr.set[,which.mexpr] # expr data
   colnames(mexpr) <- gsub(";expr.*", "", colnames(mexpr))
@@ -104,18 +107,17 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
                       median.zerocount = median.zerocount,
                       var.zerocount = var.zerocount,
                       sd.zerocount = sd.zerocount)
-    # parse group-level statistics
-    if(!is(group.variable, "NULL")){
-      dfg <- sce_groupstat(scef = scef, group.variable = group.variable,
-                           assayname = assayname, summarytype = "colData", 
-                           verbose = verbose, ...)
-      condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(dfr)
-      if(condv){
-        if(verbose){message("Binding group-level data.")};dfr <- cbind(dfr, dfg)
-      }
-    }
     return(dfr)
   }))
+  # parse group-level statistics
+  if(!is(group.variable, "NULL")){
+    dfg <- sce_groupstat(sce = sce, group.variable = group.variable,
+                         type.variable = type.variable, return.tall = FALSE,
+                         assayname = assayname, summarytype = "colData", 
+                         verbose = verbose)
+    cd <- cbind(dfr, dfg)
+  }
+  
   # metadata
   lmd <- list(assay.info = list(
     stat.method = method, sce.assayname = assayname, 
@@ -128,9 +130,10 @@ set_from_sce <- function(sce, group.variable = NULL, method = "mean",
   # parse standard plot options
   if(make.set.plots){
     lp <- get_set_plots(set = new.set, group.variable = group.variable,
-                        type.variable = type.variable, verbose = verbose, ...)
+                        type.variable = type.variable, verbose = verbose)
     metadata(new.set)[["set_plots"]] <- lp
   }
+  
   return(new.set)
 }
 

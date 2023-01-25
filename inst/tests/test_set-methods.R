@@ -87,18 +87,17 @@ cd <- do.call(rbind, lapply(typev, function(typei){
                     median.zerocount = median.zerocount,
                     var.zerocount = var.zerocount,
                     sd.zerocount = sd.zerocount)
-  # parse group-level statistics
-  if(!is(group.variable, "NULL")){
-    dfg <- sce_groupstat(scef = scef, group.variable = group.variable,
-                         assayname = assayname, summarytype = "colData", 
-                         verbose = verbose, ...)
-    condv <- is(dfg, "data.frame") & nrow(dfg) == nrow(dfr)
-    if(condv){
-      if(verbose){message("Binding group-level data.")};dfr <- cbind(dfr, dfg)
-    }
-  }
   return(dfr)
 }))
+# parse group-level statistics
+if(!is(group.variable, "NULL")){
+  dfg <- sce_groupstat(sce = sce, group.variable = group.variable,
+                       type.variable = type.variable, return.tall = FALSE,
+                       assayname = assayname, summarytype = "colData", 
+                       verbose = verbose)
+  cd <- cbind(dfr, dfg)
+}
+
 # metadata
 lmd <- list(assay.info = list(
   stat.method = method, sce.assayname = assayname, 
@@ -111,6 +110,6 @@ new.set <- SummarizedExperimentTypes(assays = lassays, rowData = rd,
 # parse standard plot options
 if(make.set.plots){
   lp <- get_set_plots(set = new.set, group.variable = group.variable,
-                      type.variable = type.variable, verbose = verbose, ...)
+                      type.variable = type.variable, verbose = verbose)
   metadata(new.set)[["set_plots"]] <- lp
 }
