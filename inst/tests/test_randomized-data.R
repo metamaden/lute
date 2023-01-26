@@ -24,7 +24,7 @@ seed.num = 0
 
 
 if(verbose){message("Getting random expression data...")}
-mdat <- rpois(num.cells*num.genes, lambda = expr.mean)
+mdat <- rnbinom(n = num.cells*num.genes, size = expr.mean, mu = expr.mean)
 if(na.include){ # manually add NAs
   if(verbose){message("Including NA values...")}
   num.na <- round(length(mdat)*na.fract, digits = 0)
@@ -42,10 +42,12 @@ if(verbose){message("Getting new colData...")}
 cellv <- paste0("cell.barcode.", seq(num.cells))
 cpertype <- round(num.cells/num.types, 0)
 
-if(is(fract.types, "NULL")){fract.types = c(0.5, 0.5)}
+if(is(fract.types, "NULL")){
+  fract.types = rep((1/num.types), num.types)}
 typev <- paste0("type", seq(num.types))
 typev <- unlist(lapply(seq(length(typev)), function(ti){
-  rep(typev[ti], fract.types[ti]*num.cells)
+  num <- fract.types[ti]*num.cells; message(num)
+  rep(typev[ti], num)
 }))
 
 cd <- data.frame(cell.id = cellv, celltype = typev)
@@ -55,5 +57,6 @@ genev <- paste0("gene", seq(nrow(expr.ct)))
 rd <- data.frame(gene.id = genev)
 rownames(expr.ct) <- genev
 if(verbose){message("Making new sce object...")}
-sce <- SingleCellExperiment(assays = list(counts=expr.ct), 
-                            colData = cd, rowData = rd)
+sce <- SingleCellExperiment(assays = list(counts=expr.ct), colData = cd, rowData = rd)
+
+

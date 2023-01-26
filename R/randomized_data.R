@@ -114,13 +114,13 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2,
 #' @examples 
 #' sce <- random_sce()
 #' @export
-random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2, 
+random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2, 
                        fract.types = NULL, expr.mean = 10, 
                        na.include = FALSE, na.fract = 0.2, 
                        zero.include = FALSE, zero.fract = 0.2,
                        verbose = FALSE, seed.num = 0){
   if(verbose){message("Getting random expression data...")}
-  mdat <- rpois(num.cells*num.genes, lambda = expr.mean)
+  mdat <- rnbinom(n = num.cells*num.genes, size = expr.mean, mu = expr.mean)
   if(na.include){ # manually add NAs
     if(verbose){message("Including NA values...")}
     num.na <- round(length(mdat)*na.fract, digits = 0)
@@ -138,10 +138,12 @@ random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
   cellv <- paste0("cell.barcode.", seq(num.cells))
   cpertype <- round(num.cells/num.types, 0)
   
-  if(is(fract.types, "NULL")){fract.types = rep(0.5, num.cells)}
+  if(is(fract.types, "NULL")){
+    fract.types = rep((1/num.types), num.types)}
   typev <- paste0("type", seq(num.types))
   typev <- unlist(lapply(seq(length(typev)), function(ti){
-    rep(typev[ti], fract.types[ti]*num.cells)
+    num <- fract.types[ti]*num.cells; message(num)
+    rep(typev[ti], num)
   }))
   
   cd <- data.frame(cell.id = cellv, celltype = typev)
@@ -153,5 +155,6 @@ random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
   if(verbose){message("Making new sce object...")}
   sce <- SingleCellExperiment(assays = list(counts=expr.ct), 
                               colData = cd, rowData = rd)
+  
   return(sce)
 }
