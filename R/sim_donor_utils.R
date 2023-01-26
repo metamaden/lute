@@ -185,7 +185,7 @@ run_donor_bias_expt <- function(donordf = NULL, method = "nbinom",
   lr[["Ypb"]] <- Ypb
   lr[["adj.method"]] <- method
   # make new plots
-  if(plot.pca){lr[["lpca"]] <- pcaplots_donor(dt = donordf)}
+  if(plot.pca){lr[["lpca"]] <- pcaplots_donor(donordf = donordf)}
   if(plot.biasadj){lr[["ggpt.biasadj"]] <- lbias$ggpt.biasadj}
   
   return(lr)
@@ -315,8 +315,7 @@ pcaplots_donor <- function(donordf, title.append = NULL, verbose = FALSE, ...){
 #'
 #' Apply some specified bias adjustment to a vector of marker data.
 #'
-#' @param df A data.frame containing the donor information used for bias
-#' corrections. Should contain donor-specific marker info identifiable by 
+#' @param df A valid `donor.data.frame` object.
 #' @param donorv Vector of markrer signals (e.g. for a donor, for some summaries 
 #' across donors, etc.).
 #' column names of the format: "donor"+"[0-9]".
