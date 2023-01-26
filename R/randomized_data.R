@@ -138,7 +138,7 @@ random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
   cellv <- paste0("cell.barcode.", seq(num.cells))
   cpertype <- round(num.cells/num.types, 0)
   
-  if(is(fract.types, "NULL")){fract.types = c(0.5, 0.5)}
+  if(is(fract.types, "NULL")){fract.types = rep(0.5, num.cells)}
   typev <- paste0("type", seq(num.types))
   typev <- unlist(lapply(seq(length(typev)), function(ti){
     rep(typev[ti], fract.types[ti]*num.cells)
