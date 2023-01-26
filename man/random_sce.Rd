@@ -6,8 +6,9 @@
 \usage{
 random_sce(
   num.genes = 20,
-  num.cells = 10,
+  num.cells = 12,
   num.types = 2,
+  fract.types = NULL,
   expr.mean = 10,
   na.include = FALSE,
   na.fract = 0.2,
@@ -23,6 +24,8 @@ random_sce(
 \item{num.cells}{Numnber of cells to randomize.}
 
 \item{num.types}{Number of cell types to annotate.}
+
+\item{fract.types}{Vector of fractions by type.}
 
 \item{expr.mean}{Poisson dist mean for random expression data.}
 

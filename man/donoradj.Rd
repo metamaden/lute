@@ -15,8 +15,7 @@ donoradj(
 )
 }
 \arguments{
-\item{df}{A data.frame containing the donor information used for bias
-corrections. Should contain donor-specific marker info identifiable by}
+\item{df}{A valid `donor.data.frame` object.}
 
 \item{donorv}{Vector of markrer signals (e.g. for a donor, for some summaries 
 across donors, etc.).
