@@ -120,7 +120,7 @@ random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2,
                        zero.include = FALSE, zero.fract = 0.2,
                        verbose = FALSE, seed.num = 0){
   if(verbose){message("Getting random expression data...")}
-  mdat <- rnbinom(n = num.cells*num.genes, size = expr.mean, mu = expr.mean)
+  mdat <- rnbinom(n = (num.cells*num.genes), size = expr.mean, mu = expr.mean)
   if(na.include){ # manually add NAs
     if(verbose){message("Including NA values...")}
     num.na <- round(length(mdat)*na.fract, digits = 0)
@@ -142,8 +142,7 @@ random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2,
     fract.types = rep((1/num.types), num.types)}
   typev <- paste0("type", seq(num.types))
   typev <- unlist(lapply(seq(length(typev)), function(ti){
-    num <- fract.types[ti]*num.cells; message(num)
-    rep(typev[ti], num)
+    num <- fract.types[ti]*num.cells; rep(typev[ti], num)
   }))
   
   cd <- data.frame(cell.id = cellv, celltype = typev)
