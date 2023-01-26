@@ -102,6 +102,7 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2,
 #' @param num.genes Number of genes to randomize.
 #' @param num.cells Numnber of cells to randomize.
 #' @param num.types Number of cell types to annotate.
+#' @param fract.types Vector of fractions by type.
 #' @param expr.mean Poisson dist mean for random expression data.
 #' @param seed.num Seed value for randomization of expression data.
 #' @param na.include Whether to include random NA values.
@@ -113,8 +114,8 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2,
 #' @examples 
 #' sce <- random_sce()
 #' @export
-random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
-                       expr.mean = 10, 
+random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2, 
+                       fract.types = NULL, expr.mean = 10, 
                        na.include = FALSE, na.fract = 0.2, 
                        zero.include = FALSE, zero.fract = 0.2,
                        verbose = FALSE, seed.num = 0){
@@ -136,7 +137,13 @@ random_sce <- function(num.genes = 20, num.cells = 10, num.types = 2,
   if(verbose){message("Getting new colData...")}
   cellv <- paste0("cell.barcode.", seq(num.cells))
   cpertype <- round(num.cells/num.types, 0)
-  typev <- c(rep("type1", 5), rep("type2", cpertype))
+  
+  if(is(fract.types, "NULL")){fract.types = c(0.5, 0.5)}
+  typev <- paste0("type", seq(num.types))
+  typev <- unlist(lapply(seq(length(typev)), function(ti){
+    rep(typev[ti], fract.types[ti]*num.cells)
+  }))
+  
   cd <- data.frame(cell.id = cellv, celltype = typev)
   colnames(expr.ct) <- cellv
   if(verbose){message("Getting new rowData...")}
