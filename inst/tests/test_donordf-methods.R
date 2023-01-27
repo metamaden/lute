@@ -7,6 +7,9 @@ require(lute)
 #--------------------------
 # test donordf_from_mexpr()
 #--------------------------
+
+# args
+
 mexpr
 typev.rd
 groupv.cd
@@ -18,9 +21,11 @@ groupv.cd = scef$donor
 typev.cd = scef$k2
 verbose = T
 
-
+# function
 
 utypev.cd <- unique(typev.cd)
+ugroupv.cd <- unique(groupv.cd)
+
 if(is(typev.rd, "NULL")){ 
   # get marker.type var
   mgk <- do.call(cbind, lapply(utypev.cd, function(ti){
@@ -30,26 +35,27 @@ if(is(typev.rd, "NULL")){
     utypev.cd[ri==max(ri)]}))
 }
 
-df <- do.call(cbind, lapply(udonorv, function(di){
-  filt.donor <- which(donorv==di)
+df <- do.call(cbind, lapply(ugroupv.cd, function(di){
+  filt.donor <- groupv.cd==di
   do.call(rbind, lapply(utypev.cd, function(ti){
-    filt.type <- filt.donor & which(utypev.cd==ti)
-    matrix(rowMeans(mexpr[,filt.type]), ncol = 1)
+    filt.type <- filt.donor & typev.cd==ti
+    mdat <- rowMeans(mexpr[,filt.type], na.rm = T)
+    matrix(mdat, ncol = 1)
   }))
 }))
-colnames(df) <- as.character(udonorv)
-donor.mean <- rowMeans(df)
-donor.median <- rowMedians(df)
+
+colnames(df) <- as.character(ugroupv.cd)
+donor.mean <- rowMeans(df, na.rm = T)
+donor.median <- rowMedians(df, na.rm = T)
+
 df <- as.data.frame(df)
 df$donor.mean <- donor.mean
 df$donor.median <- donor.median
 df$type <- rep(utypev.cd, each = nrow(mexpr))
 df$marker <- rep(rownames(mexpr), length(utypev.cd))
-df$marker.type <- typev.rd
+df$marker.type <- rep(typev.rd, length(utypev.cd))
 df <- as(df, "donor.data.frame")
 if(!check_donordf(df)){stop("Error, couldn't make new valid donor.data.frame")}
-return(df)
-
 
 
 #-----------------------
