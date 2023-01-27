@@ -37,6 +37,10 @@ if(!is(donordf, "NULL")){
     rep(ti, length(which(ddff$type==ty)))
   }))
 }
+
+if(!nrow(Ypb) == length(gindexv)){
+  stop("Error, couldn't make gindexv from Ypb.")}
+
 df <- random_donordf(ndonor = 1, gindexv = gindexv,
                      lambda.sdoff.pos = 0, lambda.sdoff.neg = 0)
 ktotal <- length(P)
