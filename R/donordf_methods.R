@@ -25,15 +25,19 @@
 #' @returns Check outcome as boolean; TRUE if `df` passes, or FALSE otherwise.
 #' @export
 check_donordf <- function(df){
+  # check class
+  if(!is(df, "donor.data.frame")){
+    stop("Error, df is not an object of class `donor.data.frame`.")
+  }
+  # check type variable
+  if(!is(df$type, "factor")){
+    stop("Error, type variable is not a factor.")
+  }
   cnv <- colnames(df); lcond <- list()
   lcond[["cond.donorcol"]] <- grepl("^donor\\d", cnv)
   lcond[["cond.typecol"]] <- grepl("^type$", cnv)
   lcond[["cond.markercol"]] <- grepl("^marker$", cnv)
   lcond[["cond.markertypecol"]] <- grepl("^marker\\.type$", cnv)
-  # check class
-  if(!is(df, "donor.data.frame")){
-    stop("table is not a `donor.data.frame` object.")
-  }
   # evaluate regex
   cond.allcol <- lapply(lcond, function(ii){length(which(ii)) > 0})
   cond.allcol <- unlist(cond.allcol)
@@ -99,6 +103,7 @@ donordf_from_mexpr <- function(mexpr, groupv.cd, typev.cd, typev.rd = NULL,
   df$donor.mean <- donor.mean
   df$donor.median <- donor.median
   df$type <- rep(utypev.cd, each = nrow(mexpr))
+  df$type <- factor(df$type, levels = unique(df$type)[order(unique(df$type))])
   df$marker <- rep(rownames(mexpr), length(utypev.cd))
   df$marker.type <- rep(typev.rd, length(utypev.cd))
   df <- as(df, "donor.data.frame")
