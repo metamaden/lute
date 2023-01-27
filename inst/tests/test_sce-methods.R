@@ -10,6 +10,85 @@ require(lute)
 #---------------------
 # test sce_groupstat()
 #---------------------
+scef.fname <- "scef-mrb_gmr2-k2-t20_dlpfc.rda"
+sce <- get(load(file.path(save.dpath, scef.fname)))
+
+group.variable = "donor"  
+assayname = "counts"
+summarytype = "rowData"
+groupstat = c("count", "numzero", "var")
+return.tall = FALSE
+type.variable = "k2"
+verbose = FALSE
+
+# run checks
+# check sce
+if(!is(sce, "SingleCellExperiment")){
+  stop("Error, sce must be a SingleCellExperiment.")}
+# check assay signals
+expr <- assays(sce)[[assayname]]
+cond <- is(expr, "matrix")|is(expr, "DelayedArray")
+if(!cond){
+  stop("Error, assay signals should be either a matrix or DelayedArray.")}
+# filter group stats
+groupstat.filt <- groupstat %in% c("count", "mean", "median", 
+                                   "var", "sd", "numzero")
+groupstat <- groupstat[groupstat.filt]
+if(verbose){message("Checking colData variables...")}; cd <- colData(sce)
+lvar <- check_coldata(cd = cd, var = c(group.variable, type.variable))
+# get group stats df
+ugroupv <- lvar[[group.variable]]$uvec
+groupv <- lvar[[group.variable]]$vec
+if(!is(type.variable, "NULL")){
+  utypev <- lvar[[type.variable]]$uvec
+  typev <- lvar[[type.variable]]$vec
+}
+
+ldf <- lapply(ugroupv, function(groupi){
+  if(is(type.variable, "NULL")){
+    exprf <- assays(sce[,groupv==groupi])[[assayname]]
+    dfi <- get_groupstat_df(exprf, groupstat = groupstat, 
+                            summarytype = summarytype)
+    
+  } else{
+    dfi <- do.call(rbind, lapply(utypev, function(typei){
+      sce.filt <- groupv==groupi & typev==typei
+      exprff <- assays(sce[,sce.filt])[[assayname]]
+      dfii <- get_groupstat_df(exprff, groupstat = groupstat, 
+                               summarytype = summarytype)
+      dfii$type <- typei; return(dfii)
+    }))
+  }
+  dfi$group <- groupi
+  dfi
+})
+if(return.tall){
+  dfr <- do.call(rbind, lapply(ldf, function(dfi){dfi}))
+} else{
+  dfr <- do.call(cbind, lapply(ldf, function(dfi){
+    groupi <- unique(dfi$group)[1]
+    if(summarytype == "rowData" & !is(type.variable, "NULL")){
+      dfi <- do.call(cbind, lapply(utypev, function(typei){
+        dfii <- dfi[dfi$type == typei,,drop = F]
+        dfii <- dfii[,!colnames(dfii) %in% c("group", "marker", "type")]
+        colnames(dfii) <- paste0(groupi, ";", typei, ";", colnames(dfii))
+        dfii
+      }))
+    } else{
+      dfi <- dfi[,!colnames(dfi) %in% c("group", "type", "marker")]
+      colnames(dfi) <- paste0(groupi, ";", colnames(dfi))
+    }
+    dfi
+  }))
+  cond <- summarytype == 'colData' & !is(type.variable, "NULL")
+  if(cond){dfr$type <- utypev}
+}
+
+
+
+#---------------------
+# test sce_groupstat()
+#---------------------
 # example
 
 # make random data
