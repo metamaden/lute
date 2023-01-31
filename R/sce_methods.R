@@ -322,6 +322,8 @@ mexpr_nbcoef <- function(mexpr, method.str = "glmGamPoi", verbose = FALSE){
 #' SingleCellExperiment or SummarizedExperiment), or a vector of labels of 
 #' length equal to the number of columns in expr.data (if expr.data is a 
 #' matrix).
+#' @param plot.dispersion Whether to make plots of dispersion using 
+#' `plot_dispersion()` (see `?plot_dispersion` for details).
 #' @param highlight.markers Vector of marker identifiers to highlight in 
 #' dispersion plots. Ignored if NULL (default).
 #' @param assayname Name of the expression assay matrix. Only used if expr.data
@@ -352,21 +354,20 @@ mexpr_nbcoef <- function(mexpr, method.str = "glmGamPoi", verbose = FALSE){
 #' # get some random example sce data
 #' sce.exe <- random_sce()
 #' 
+#' # analyze dispersion
+#' #
 #' # get dispersion results with defaults
 #' ld1 <- sce_dispersion(sce.exe, group.data = "celltype", verbose = TRUE)
-#'
+#' #
 #' # show marker highlights in plots
-ld2 <- sce_dispersion(sce.exe, group.data = "celltype", verbose = TRUE,
-highlight.markers = rownames(sce.exe)[seq(10)])
-
-
-#' # show marker highlights and text labels in plots
-
-ld3 <- sce_dispersion(sce.exe, group.data = "celltype", verbose = TRUE,
-highlight.markers = rownames(sce.exe)[seq(10)], show.marker.labels = TRUE)
-
+#' ld2 <- sce_dispersion(sce.exe, group.data = "celltype", verbose = TRUE,
+#' highlight.markers = rownames(sce.exe)[seq(10)])
+#' # 
+#' # get negative binomial coefficients
+#' ld3 <- sce_dispersion(sce.exe, method.nbstat = TRUE)
+#'
 #' @export
-sce_dispersion <- function(expr.data, group.data = NULL, 
+sce_dispersion <- function(expr.data, group.data = NULL, plot.dispersion = TRUE,
                            highlight.markers = NULL, assayname = "counts", 
                            downsample = TRUE, ds.method = "scuttle",
                            get.nbstat = FALSE, method.nbstat = "glmGamPoi",
@@ -570,8 +571,9 @@ plot_dispersion <- function(dfstat, highlight.markers = NULL,
                             verbose = FALSE){
   if(verbose){message("Plotting dispersion...")}
   # parse marker highlight settings
-  hlm.cond <- !is(highlight.markers, "NULL")
+  hlm.cond <- !is(highlight.markers, "NULL") # get marker plot cond
   if(hlm.cond){
+    # get markerv for new cond
     if("marker" %in% colnames(dfstat)){
       marker.filt <- dfstat$marker %in% highlight.markers
       markerv <- dfstat[marker.filt,]$marker
@@ -579,7 +581,8 @@ plot_dispersion <- function(dfstat, highlight.markers = NULL,
       marker.filt <- rownames(dfstat) %in% highlight.markers
       markerv <- rownames(dfstat[marker.filt,])
     }
-    if(length(markerv) > 0){
+    hlm.cond <- length(markerv) > 0 # overwrite marker plot cond
+    if(hlm.cond){
       dfm <- dfstat[marker.filt,]
     } else{
       message("Warning, no provided highligh markers were found in dfstat.")
