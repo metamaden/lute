@@ -347,10 +347,24 @@ mexpr_nbcoef <- function(mexpr, method.str = "glmGamPoi", verbose = FALSE){
 #' mean and variance relationship. The coefficients for the negative binomial 
 #' distribution can also be generated for each gene in each provided group.
 #' 
-#' @seealso get_dispersion_data, plot_dispersion
+#' @seealso get_dispersion_data, plot_dispersion, mexpr_downsample, mexpr_nbcoef
 #' @examples 
+#' # get some random example sce data
+#' sce.exe <- random_sce()
 #' 
-sce_dispersion(sce, group.data = "k2", verbose = TRUE)
+#' # get dispersion results with defaults
+#' ld1 <- sce_dispersion(sce.exe, group.data = "celltype", verbose = TRUE)
+#'
+#' # show marker highlights in plots
+ld2 <- sce_dispersion(sce.exe, group.data = "celltype", verbose = TRUE,
+highlight.markers = rownames(sce.exe)[seq(10)])
+
+
+#' # show marker highlights and text labels in plots
+
+ld3 <- sce_dispersion(sce.exe, group.data = "celltype", verbose = TRUE,
+highlight.markers = rownames(sce.exe)[seq(10)], show.marker.labels = TRUE)
+
 #' @export
 sce_dispersion <- function(expr.data, group.data = NULL, 
                            highlight.markers = NULL, assayname = "counts", 
@@ -361,10 +375,12 @@ sce_dispersion <- function(expr.data, group.data = NULL,
   lr[["metadata"]] <- list(expr.data.class = class(expr.data)[1], 
                            assayname = assayname, 
                            downsample = list(downsample, ds.method),
-                           nbstat = list(get.nbstat, method.nbstat))
+                           nbstat = list(get.nbstat, method.nbstat),
+                           markers = highlight.markers)
   cond.se <- is(expr.data, "SingleCellExperiment")|
     is(expr.data, "SummarizedExperiment")
   if(cond.se){
+    sce <- expr.data
     mexpr <- assays(sce)[[assayname]]
     mexpr <- as.matrix(mexpr)
     group.vector <- as.character(sce[[group.data]])
@@ -415,6 +431,10 @@ sce_dispersion <- function(expr.data, group.data = NULL,
 #' @returns Table dfstat containing statistics (e.g. "mean" and "var" columns)
 #' to use for dispersion analyses.
 #' @seealso plot_dispersion, sce_dispersion
+#' @examples 
+#' sce.exe <- random_sce() # get a random sce
+#' dfstat <- get_dispersion_data(sce = sce.exe, group.variable = "celltype")
+#' 
 #' @export
 get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
                                 group.variable = NULL, group.vector = NULL,
@@ -470,6 +490,10 @@ get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
 #' NULL (default).
 #' @param hl.color Color of points or smooth for highlighted markers. See details.
 #' @param hl.alpha Transparency of highlighted marker points. See details.
+#' @param show.marker.labels Whether to show marker labels using 
+#' `ggrepel::geom_text_repel()` (see `?ggrepel::geom_text_repel` for details).
+#' @param hl.padding Box outline padding amount for when marker labels are 
+#' shown with `show.marker.labels` (see `ggrepel::geom_text_repel` for details).
 #' @param nrow.facet Number of rows for facet plots. This is only evaluated if 
 #' dfstat contains a column called "group" containing the group labels.
 #' @param title.str Character string of main plot title.
@@ -503,14 +527,40 @@ get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
 #' are plotted, separate points are plotted for the markers provided with
 #' `highlight.markers` which are also discovered in dfstat. In this case, the 
 #' highlighted points are shown with the color specified by `hl.color` and 
-#' transparency level from `hl.alpha`. When `show.points` is `FALSE` but 
-#' `show.smooth` is `TRUE`, this will instead show the smooth of the discovered
-#' markers, where the model color is as specified in `hl.color`.
+#' transparency level from `hl.alpha`. These parameters are also inherited to
+#' show the marker labels with `show.marker.labels` is `TRUE`. When 
+#' `show.points` is `FALSE` but `show.smooth` is `TRUE`, this will instead show 
+#' the smooth of the discovered markers, where the model color is as specified 
+#' in `hl.color`.
 #'
 #' @seealso get_dispersion_data
+#' @examples 
+#' # get dispersion data for plotting
+#' sce.exe <- random_sce() # get a random sce
+#' dfstat <- get_dispersion_data(sce = sce.exe, group.variable = "celltype")
+#' 
+#' # plot dispersion
+#' #
+#' # 1. plot without highlighting markers
+#' ggds1 <- plot_dispersion(dfstat)
+#' markerv <- dfstat$marker[seq(10)] # get markers for highlighting
+#' #
+#' # 2. highlight some markers without labels
+#' markerv <- dfstat$marker[seq(10)]
+#' ggds2 <- plot_dispersion(dfstat, highlight.markers = markerv, 
+#'                         show.marker.labels = FALSE)
+#' #
+#' # 3. highlight some markers with labels
+#' ggds3 <- plot_dispersion(dfstat, highlight.markers = markerv)
+#' #
+#' # 4. show smooths of all genes and markers, without points
+#' ggds4 <- plot_dispersion(dfstat, highlight.markers = markerv, 
+#'                          show.points = FALSE)
+#' 
 #' @export
 plot_dispersion <- function(dfstat, highlight.markers = NULL, 
-                            hl.color = "orange", hl.alpha = 1,
+                            hl.color = "black", hl.alpha = 0.5,
+                            show.marker.labels = TRUE, hl.padding = 0.5,
                             axis.scale = "log10", nrow.facet = 1,
                             title.str = "Dispersion plot", ref.linecol = "red", 
                             xlab.str = "Mean (log10-scaled)",
@@ -530,9 +580,7 @@ plot_dispersion <- function(dfstat, highlight.markers = NULL,
       markerv <- rownames(dfstat[marker.filt,])
     }
     if(length(markerv) > 0){
-      dfstat$marker <- FALSE
-      dfm <- dfstat[marker.filt,]; dfm$marker <- TRUE
-      # dfstat <- rbind(dfstat, dfm)
+      dfm <- dfstat[marker.filt,]
     } else{
       message("Warning, no provided highligh markers were found in dfstat.")
     }
@@ -549,6 +597,13 @@ plot_dispersion <- function(dfstat, highlight.markers = NULL,
     if(hlm.cond){
       ggds <- ggds + geom_point(data = dfm, aes(x = mean, y = var), 
                                 color = hl.color, alpha = hl.alpha)
+      if(show.marker.labels){
+        require(ggrepel)
+        ggds <- ggds + geom_text_repel(data = dfm, 
+                                       aes(x = mean, y = var, label = marker), 
+                                       color = hl.color, alpha = 1,
+                                       box.padding = hl.padding)
+      }
     }
   }
   if(show.smooth){
@@ -564,6 +619,3 @@ plot_dispersion <- function(dfstat, highlight.markers = NULL,
   if(verbose){message("Finished dispersion plot(s). Returning...")}
   return(ggds)
 }
-
-
-
