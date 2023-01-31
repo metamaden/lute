@@ -364,7 +364,7 @@ mexpr_nbcoef <- function(mexpr, method.str = "glmGamPoi", verbose = FALSE){
 #' highlight.markers = rownames(sce.exe)[seq(10)])
 #' # 
 #' # get negative binomial coefficients
-#' ld3 <- sce_dispersion(sce.exe, method.nbstat = TRUE)
+#' ld3 <- sce_dispersion(sce.exe, get.nbstat = TRUE)
 #'
 #' @export
 sce_dispersion <- function(expr.data, group.data = NULL, plot.dispersion = TRUE,
@@ -380,13 +380,19 @@ sce_dispersion <- function(expr.data, group.data = NULL, plot.dispersion = TRUE,
                            markers = highlight.markers)
   cond.se <- is(expr.data, "SingleCellExperiment")|
     is(expr.data, "SummarizedExperiment")
+  group.vector <- NULL
   if(cond.se){
     sce <- expr.data
     mexpr <- assays(sce)[[assayname]]
     mexpr <- as.matrix(mexpr)
-    group.vector <- as.character(sce[[group.data]])
+    if(!is(group.data, "NULL")){
+      group.vector <- as.character(sce[[group.data]])
+    }
   } else{
-    mexpr <- expr.data; group.vector <- group.data
+    mexpr <- expr.data
+    if(!is(group.data, "NULL")){
+      group.vector <- group.data
+    }
   }
   cond.matrix <- is(mexpr, "matrix")
   if(!cond.matrix){
