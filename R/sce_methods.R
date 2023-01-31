@@ -228,3 +228,139 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
   if(summarytype == "rowData"){dfti$marker <- rownames(exprf)}
   return(dfti)
 }
+
+#------
+# plots
+#------
+
+#' get_dispersion_data
+#'
+#' Get data for dispersion analyses and plots.
+#' 
+#' @param dfstat
+#' @param mexpr
+#' @param sce
+#' @param group.variable Name of sce colData variable containing group labels.
+#' @param group.vector Vector of group labels of length equal to number of 
+#' columns in mexpr or sce.
+#' @param title.str Character string for plot titles. Default is to print the
+#' provided assayname.
+#' @param assayname Name of expression assay data contained in provided sce
+#' object and/or used in plot title.
+#' @param reflinecol Color for the reference line.
+#' @param
+#' @param 
+#' @param
+#' @param
+#' @param
+#' 
+#'
+#'
+#' @seealso plot_dispersion
+#' 
+#' @export
+get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL, 
+                            group.variable = NULL, group.vector = NULL,
+                            title.str = NULL, assayname = "counts", 
+                            verbose = FALSE){
+  # parse provided expression data
+  if(is(dfstat, "NULL")){
+    if(is(mexpr, "NULL")){
+      if(is(sce, "NULL")){
+        stop("Error, provide either sce or mexpr.")
+      } else{
+        if(assayname %in% names(assays(sce))){
+          assays(sce)[[assayname]] <- as.matrix(assays(sce)[[assayname]])
+        } else{
+          stop("Error, assayname not in sce assays.")
+        }
+        if(verbose){message("Getting dfstat from sce object...")}
+        dfstat <- sce_groupstat(sce = sce, 
+                                group.variable = group.variable, 
+                                assayname = assayname, 
+                                groupstat = c("mean", "var"), 
+                                summarytype = "rowData",
+                                return.tall = TRUE,
+                                verbose = verbose)
+      }
+    } else{
+      if(verbose){message("Getting dfstat from mexpr object...")}
+      if(is(group.vector, "NULL")){
+        dfstat <- data.frame(var = rowVars(mexpr), mean = rowMeans(mexpr))
+      } else{
+        ugroupv <- unique(group.vector)
+        dfstat <- do.call(rbind, lapply(ugroupv, function(gi){
+          dfsi <- data.frame(var = rowVars(mexpr),
+                             mean = rowMeans(mexpr))
+          dfsi$group = gi; dfsi
+        })
+      }
+    }
+  }
+  if(verbose){message("Checking dfstat...")}
+  cond <- "mean" %in% colnames(dfstat) & "var" %in% colnames(dfstat)
+  if(!cond){stop("Error, dfstat requires columns for mean and variance.")}
+  return(dfstat)
+}
+
+#' plot_dispersion
+#'
+#' @param dfstat Table containing summary statistics for mean ("mean") and 
+#' variance ("var").
+#' @param nrow.facet Number of rows for facet plots. This is only evaluated if 
+#' dfstat contains a column called "group" containing the group labels.
+#' @param title.str Character string of main plot title.
+#' @param xlab.str Character string of the x-axis title.
+#' @param ylab.str Character string of the y-axais title.
+#' @param ref.linecol Color to use for the reference line.
+#' @param show.smooth Whether to show the smooth lines using `geom_smooth()` 
+#' with defaults.
+#' @param smooth.linecol Color to use for smoothed model line.
+#' @param show.points Whether to show the scatter plot points using 
+#' `geom_point()`.
+#' @param point.alpha Transparency level for scatter plot points.
+#' @param verbose Whether to show verbose status messages.
+#' @return A ggplot2 dispersion plot object.
+#' @details Plot the dispersion (means versus variances) for some summary 
+#' statistics as specified in the `dfstat` object. The `dfstat` object should 
+#' include columns for "mean", "var", and optionally for "marker" and "group". 
+#' it should be tall, meaning that each row corresponds to a marker-group 
+#' summary statistic and there will be >= 1 row per marker if there are >= 1 
+#' unique group labels.
+#' 
+#' The dispersion plot is highly customizable. It is shown on either the 
+#' identity or the log10 scale (see `axis.scale` argument). One can plot either
+#' the model smooth of the data (e.g. when `show.smooth==TRUE`, the default),
+#' or the scatter plot points (e.g. when `show.points==TRUE`, the default), or 
+#' both. If more than one group is detected, groups are plotted in separate 
+#' facets using `facet_wrap()` with the number of facet rows as specified by
+#' `nrow.facet` (the default is 1 row).
+#'
+#' @seealso get_dispersion_data
+#' @export
+plot_dispersion <- function(dfstat, axis.scale = "log10", nrow.facet = 1,
+                            title.str = "Dispersion plot", ref.linecol = "red", 
+                            xlab.str = "Mean (log10-scaled)",
+                            ylab.str = "Variance (log10-scaled)",
+                            show.smooth = TRUE, smooth.linecol = "blue", 
+                            show.points = TRUE, point.alpha = 0.5, 
+                            verbose = FALSE){
+  if(verbose){message("Plotting dispersion...")}
+  # get basic plot
+  ggds <- ggplot(dfstat, aes(x = mean, y = var))
+  ggds <- ggds + theme_bw() + ggtitle(title.str) + 
+    geom_abline(slope = 1, intercept = 0, color = ref.linecol) +
+    xlab(xlab.str) + ylab(ylab.str)
+  # parse plot content arguments
+  if(axis.scale == "log10"){ggds <- ggds + scale_x_log10() + scale_y_log10()}
+  if(show.points){ggds <- ggds + geom_point(alpha = point.alpha)}
+  if(show.smooth){ggds <- ggds + geom_smooth(color = smooth.linecol)}
+  if("group" %in% colnames(dfstat)){
+    ggds <- ggds + facet_wrap(~group, nrow = nrow.facet)
+  }
+  if(verbose){message("Finished dispersion plot(s). Returning...")}
+  return(ggds)
+}
+
+
+
