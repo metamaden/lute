@@ -233,29 +233,113 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
 # plots
 #------
 
+#' mexpr_downsample
 #'
+#' Perform downsampling on an expression assay matrix (rows = markers/genes,
+#' columns = cells/samples).
+#' 
+#' @param mexpr Expression assay matrix.
+#' @param ds.method Name of the downsampling method to use. The default option
+#' "scuttle" uses `scuttle::downsampleMatrix()`.
+#' @param verbose Whether to show verbose status messages.
+#' @returns Downsampled expression assay matrix.
+#' @details This function provides a wrapper to call downsampling functions for 
+#' an expression assay matrix. The input matrix show have rows corresponding to
+#' genes or markers, and columns corresponding to cells or samples, and it 
+#' should be a matrix-type object.
+#' 
+#' Downsampling is a technique to select subsets of expression data based on the 
+#' minimum batch-wise observed expression. This can help mitigate batch effects 
+#' in transcriptomics datasets. The operation is a function of the probability
+#' density function or proportions specified for each cell/sample/column in
+#' mexpr. By default, this function uses the formula of min(colsums)/colsums to
+#' define this vector of probabilty densities.
+#' 
+#' @seealso sce_dispersion, get_dispersion_data, plot_dispersion
+#' @export
+mexpr_downsample <- function(mexpr, ds.method = "scuttle", verbose = FALSE){
+  if(!is(mexpr, "matrix")){stop("Error, mexpr should be a matrix.")}
+  if(verbose){message("Getting the proportions vector...")}
+  sumv <- colSums(mexpr); propv <- min(sumv)/sumv
+  if(ds.method == "scuttle"){
+    require(scuttle)
+    if(verbose){message("Using downsampling method ",ds.method,"...")}
+    mexpr <- scuttle::downsampleMatrix(mexpr, prop = propv, bycol = T)
+  } else{
+    stop("Error, didn't recognize ds.method.")
+  }
+  if(verbose){message("Completed downsampling. Returning...")}
+  return(mexpr)
+}
+
+#' mexpr_nbcoef
 #'
+#' Computes the negative binomial distribution coeffcients from an expression
+#' assay matrix
 #'
-#'
-sce_downsample <- function(){
-  
+#' @param mexpr An expression assay matrix (rows = genes/markers, columns = 
+#' cells/samples).
+#' @param method Method used to fit the negative binomial model and compute 
+#' distribution coefficients. If set to "gmlGamPoi" (the default), calls
+#' `gmlGamPoi::glm_gp()` for each gene/row in mexpr.
+#' @param verbose Whether to show verbose status messages.
+#' @returns Results object containing the model coefficients for each gene and
+#' group in mexpr.
+#' @details Fits a negative binomial model for each gene in an expression assay
+#' matrix, returning the distribution coefficients. These are useful for running
+#' simulations using empirical estimates of the distribution coefficients, and
+#' for comparing gene-wise expression distributions. This function is called by 
+#' `sce_dispersion()` (see `?sce_dispersion` for details).
+#' 
+#' @seealso sce_dispersion
+#' @export
+mexpr_nbcoef <- function(mexpr, method = "gmlGamPoi", verbose = FALSE){
+  if(verbose){
+    message("Getting negative binomial model coefficients from mexpr.")}
+  lr <- list()
+  if(method == "gmlGamPoi"){
+    require(gmlGamPoi)
+    if(verbose){message("Using method ", method.str, 
+                        " to get model coefficients...")}
+    lr[["fit"]] <- gmlGamPoi::glm_gp(mexpr)
+  } else{
+    stop("Error, didn't recognize method.")
+  }
+  return(lr)
 }
 
 #' sce_dispersion
 #'
 #' Perform dispersion analysis for a SingleCellExperiment object.
 #' 
-#' @param expr.data
-#' @param group.data
-#' @param assayname
-#' @param downsample
-#' @param verbose
-#' 
+#' @param expr.data Either a matrix, a SingleCellExperiment, or 
+#' SummarizedExperiment object.
+#' @param group.data Either a colData variable name (if expr.data is of type 
+#' SingleCellExperiment or SummarizedExperiment), or a vector of labels of 
+#' length equal to the number of columns in expr.data (if expr.data is a 
+#' matrix).
+#' @param assayname Name of the expression assay matrix. Only used if expr.data
+#' is a SingleCellExperiment or SummarizedExperiment.
+#' @param downsample Whether to perform downsampling by calling 
+#' `mexpr_downsample()` (see `?mexpr_downsample` for details).
+#' @param ds.method Name of the downsampling method to use (only used if 
+#' `downsample` is `TRUE`).
+#' @param verbose Whether to show verbose status messages.
+#' @param ... Additional arguments passed to `plot_dispersion()`.
 #' @returns List of dispersion results, including the summary statistics table
 #' and the dispersion plot.
+#' @details This is the main function to manage a dispersion analysis for a 
+#' SingleCellExperiment, SummarizedExperiment, or matrix of expression assay
+#' data. This generates and checks the group-level summary statistics, then 
+#' produces plots of gene/marker-wise points or model smooths showing the 
+#' mean and variance relationship. The coefficients for the negative binomial 
+#' distribution can also be generated for each gene in each provided group.
+#' 
 #' @seealso get_dispersion_data, plot_dispersion
 #' @export
-sce_dispersion <- function(expr.data, group.data, assayname, downsample = TRUE,
+sce_dispersion <- function(expr.data, group.data, assayname, 
+                           downsample = TRUE, ds.method = "scuttle",
+                           get.negbinom.statistics = TRUE,
                            verbose = FALSE, ...){
   cond.se <- is(expr.data, "SingleCellExperiment")|
     is(expr.data, "SummarizedExperiment")
@@ -263,8 +347,7 @@ sce_dispersion <- function(expr.data, group.data, assayname, downsample = TRUE,
     mexpr <- as.matrix(assays(sce)[[assayname]])
     group.vector <- sce[[group.data]]
   } else{
-    mexpr <- expr.data
-    group.vector <- group.data
+    mexpr <- expr.data; group.vector <- group.data
   }
   cond.matrix <- is(mexpr, "matrix")
   if(!cond.matrix){
@@ -272,7 +355,8 @@ sce_dispersion <- function(expr.data, group.data, assayname, downsample = TRUE,
   ds.str <- ""
   if(downsample){
     if(verbose){message("Performing downsampling...")}
-    mexpr <- sce_downsample(mexpr = expr.data)
+    mexpr <- mexpr_downsample(mexpr = mexpr,
+                              ds.method = ds.method, verbose = verbose)
     ds.str <- "d.s."
   }
   dfstat <- get_dispersion_data(mexpr = mexpr, group.vector = group.vector)
