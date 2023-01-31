@@ -241,8 +241,10 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
 #' @param mexpr Expression assay matrix.
 #' @param ds.method Name of the downsampling method to use. The default option
 #' "scuttle" uses `scuttle::downsampleMatrix()`.
+#' @param as.matrix Whether to convert the downsampled expressiond data to
+#' a matrix object.
 #' @param verbose Whether to show verbose status messages.
-#' @returns Downsampled expression assay matrix.
+#' @returns Matrix containing the downsampled expression assays matrix.
 #' @details This function provides a wrapper to call downsampling functions for 
 #' an expression assay matrix. The input matrix show have rows corresponding to
 #' genes or markers, and columns corresponding to cells or samples, and it 
@@ -257,7 +259,8 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
 #' 
 #' @seealso sce_dispersion, get_dispersion_data, plot_dispersion
 #' @export
-mexpr_downsample <- function(mexpr, ds.method = "scuttle", verbose = FALSE){
+mexpr_downsample <- function(mexpr, ds.method = "scuttle", as.matrix = TRUE,
+                             verbose = FALSE){
   if(!is(mexpr, "matrix")){stop("Error, mexpr should be a matrix.")}
   if(verbose){message("Getting the proportions vector...")}
   sumv <- colSums(mexpr); propv <- min(sumv)/sumv
@@ -268,6 +271,7 @@ mexpr_downsample <- function(mexpr, ds.method = "scuttle", verbose = FALSE){
   } else{
     stop("Error, didn't recognize ds.method.")
   }
+  if(as.matrix){mexpr <- as.matrix(mexpr)}
   if(verbose){message("Completed downsampling. Returning...")}
   return(mexpr)
 }
@@ -279,9 +283,9 @@ mexpr_downsample <- function(mexpr, ds.method = "scuttle", verbose = FALSE){
 #'
 #' @param mexpr An expression assay matrix (rows = genes/markers, columns = 
 #' cells/samples).
-#' @param method Method used to fit the negative binomial model and compute 
+#' @param method.str Method used to fit the negative binomial model and compute 
 #' distribution coefficients. If set to "gmlGamPoi" (the default), calls
-#' `gmlGamPoi::glm_gp()` for each gene/row in mexpr.
+#' `glmGamPoi::glm_gp()` for each gene/row in mexpr.
 #' @param verbose Whether to show verbose status messages.
 #' @returns Results object containing the model coefficients for each gene and
 #' group in mexpr.
@@ -293,15 +297,15 @@ mexpr_downsample <- function(mexpr, ds.method = "scuttle", verbose = FALSE){
 #' 
 #' @seealso sce_dispersion
 #' @export
-mexpr_nbcoef <- function(mexpr, method = "gmlGamPoi", verbose = FALSE){
+mexpr_nbcoef <- function(mexpr, method.str = "glmGamPoi", verbose = FALSE){
   if(verbose){
     message("Getting negative binomial model coefficients from mexpr.")}
   lr <- list()
-  if(method == "gmlGamPoi"){
-    require(gmlGamPoi)
+  if(method.str == "glmGamPoi"){
+    require(glmGamPoi)
     if(verbose){message("Using method ", method.str, 
                         " to get model coefficients...")}
-    lr[["fit"]] <- gmlGamPoi::glm_gp(mexpr)
+    lr[["fit"]] <- glmGamPoi::glm_gp(mexpr)
   } else{
     stop("Error, didn't recognize method.")
   }
@@ -318,12 +322,20 @@ mexpr_nbcoef <- function(mexpr, method = "gmlGamPoi", verbose = FALSE){
 #' SingleCellExperiment or SummarizedExperiment), or a vector of labels of 
 #' length equal to the number of columns in expr.data (if expr.data is a 
 #' matrix).
+#' @param highlight.markers Vector of marker identifiers to highlight in 
+#' dispersion plots. Ignored if NULL (default).
 #' @param assayname Name of the expression assay matrix. Only used if expr.data
 #' is a SingleCellExperiment or SummarizedExperiment.
 #' @param downsample Whether to perform downsampling by calling 
 #' `mexpr_downsample()` (see `?mexpr_downsample` for details).
 #' @param ds.method Name of the downsampling method to use (only used if 
 #' `downsample` is `TRUE`).
+#' @param get.nbstat Compute the negative binomial distribution coefficients 
+#' for each gene/marker. Calls the function `mexpr_nbcoef()` (see 
+#' `?mexpr_nbcoef` for details).
+#' @param method.nbstat Method to compute the negative binomial distribution
+#' coefficients. Should be a valid method recognized by the function 
+#' `mexpr_nbcoef()` (see `?mexpr_nbcoef` for details).
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments passed to `plot_dispersion()`.
 #' @returns List of dispersion results, including the summary statistics table
@@ -336,33 +348,50 @@ mexpr_nbcoef <- function(mexpr, method = "gmlGamPoi", verbose = FALSE){
 #' distribution can also be generated for each gene in each provided group.
 #' 
 #' @seealso get_dispersion_data, plot_dispersion
+#' @examples 
+#' 
+sce_dispersion(sce, group.data = "k2", verbose = TRUE)
 #' @export
-sce_dispersion <- function(expr.data, group.data, assayname, 
+sce_dispersion <- function(expr.data, group.data = NULL, 
+                           highlight.markers = NULL, assayname = "counts", 
                            downsample = TRUE, ds.method = "scuttle",
-                           get.negbinom.statistics = TRUE,
+                           get.nbstat = FALSE, method.nbstat = "glmGamPoi",
                            verbose = FALSE, ...){
+  lr <- list() # begin return list
+  lr[["metadata"]] <- list(expr.data.class = class(expr.data)[1], 
+                           assayname = assayname, 
+                           downsample = list(downsample, ds.method),
+                           nbstat = list(get.nbstat, method.nbstat))
   cond.se <- is(expr.data, "SingleCellExperiment")|
     is(expr.data, "SummarizedExperiment")
   if(cond.se){
-    mexpr <- as.matrix(assays(sce)[[assayname]])
-    group.vector <- sce[[group.data]]
+    mexpr <- assays(sce)[[assayname]]
+    mexpr <- as.matrix(mexpr)
+    group.vector <- as.character(sce[[group.data]])
   } else{
     mexpr <- expr.data; group.vector <- group.data
   }
   cond.matrix <- is(mexpr, "matrix")
   if(!cond.matrix){
     stop("Error, couldn't get matrix of expression data from expr.data.")}
-  ds.str <- ""
+  ds.str <- "" # set plot title character string variable
   if(downsample){
     if(verbose){message("Performing downsampling...")}
-    mexpr <- mexpr_downsample(mexpr = mexpr,
-                              ds.method = ds.method, verbose = verbose)
-    ds.str <- "d.s."
+    mexpr <- mexpr_downsample(mexpr = mexpr, ds.method = ds.method, 
+                              verbose = verbose)
+    ds.str <- "d.s." # update plot title character string variable
+  }
+  if(get.nbstat){
+    if(verbose){message("Computing the negative binomial coefficients...")}
+    nbstat <- mexpr_nbcoef(mexpr, method.str = method.nbstat, 
+                           verbose = verbose)
+    lr[["neg.binom.statistic"]] <- nbstat
   }
   dfstat <- get_dispersion_data(mexpr = mexpr, group.vector = group.vector)
-  title.str <- paste0("Dispersion, ",ds.str, " ", assayname)
-  plot.obj <- plot_dispersion(dfstat = dfstat, title.str = title.str, ...)
   lr[["dfstat"]] <- dfstat
+  title.str <- paste0("Dispersion, ",ds.str, " ", assayname)
+  plot.obj <- plot_dispersion(dfstat = dfstat, title.str = title.str,
+                              highlight.markers = highlight.markers, ...)
   lr[["ggplot.dispersion"]] <- plot.obj
   return(lr)
 }
@@ -402,18 +431,17 @@ get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
           stop("Error, assayname not in sce assays.")
         }
         if(verbose){message("Getting dfstat from sce object...")}
-        dfstat <- sce_groupstat(sce = sce, 
-                                group.variable = group.variable, 
+        dfstat <- sce_groupstat(sce = sce, group.variable = group.variable, 
                                 assayname = assayname, 
                                 groupstat = c("mean", "var"), 
-                                summarytype = "rowData",
-                                return.tall = TRUE,
+                                summarytype = "rowData", return.tall = TRUE,
                                 verbose = verbose)
       }
     } else{
       if(verbose){message("Getting dfstat from mexpr object...")}
       if(is(group.vector, "NULL")){
-        dfstat <- data.frame(var = rowVars(mexpr), mean = rowMeans(mexpr))
+        dfstat <- data.frame(var = rowVars(mexpr), mean = rowMeans(mexpr),
+                             marker = rownames(mexpr))
       } else{
         if(!length(group.vector)==ncol(mexpr)){
           stop("Error, length of group.vector should equal ",
@@ -423,7 +451,8 @@ get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
           mfilt <- group.vector == gi; mef <- mexpr[,mfilt]
           dfsi <- data.frame(var = rowVars(mef), mean = rowMeans(mef))
           dfsi$group = gi; dfsi
-        })
+        }))
+        dfstat$marker <- rep(rownames(mexpr), length(ugroupv))
       }
     }
   }
@@ -437,6 +466,10 @@ get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
 #'
 #' @param dfstat Table containing summary statistics for mean ("mean") and 
 #' variance ("var").
+#' @param highlight.markers Vector of markers to highlight in plots. Ignored if
+#' NULL (default).
+#' @param hl.color Color of points or smooth for highlighted markers. See details.
+#' @param hl.alpha Transparency of highlighted marker points. See details.
 #' @param nrow.facet Number of rows for facet plots. This is only evaluated if 
 #' dfstat contains a column called "group" containing the group labels.
 #' @param title.str Character string of main plot title.
@@ -465,10 +498,20 @@ get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
 #' both. If more than one group is detected, groups are plotted in separate 
 #' facets using `facet_wrap()` with the number of facet rows as specified by
 #' `nrow.facet` (the default is 1 row).
+#' 
+#' Markers can be highlighted in the dispersion plots. By default, when points
+#' are plotted, separate points are plotted for the markers provided with
+#' `highlight.markers` which are also discovered in dfstat. In this case, the 
+#' highlighted points are shown with the color specified by `hl.color` and 
+#' transparency level from `hl.alpha`. When `show.points` is `FALSE` but 
+#' `show.smooth` is `TRUE`, this will instead show the smooth of the discovered
+#' markers, where the model color is as specified in `hl.color`.
 #'
 #' @seealso get_dispersion_data
 #' @export
-plot_dispersion <- function(dfstat, axis.scale = "log10", nrow.facet = 1,
+plot_dispersion <- function(dfstat, highlight.markers = NULL, 
+                            hl.color = "orange", hl.alpha = 1,
+                            axis.scale = "log10", nrow.facet = 1,
                             title.str = "Dispersion plot", ref.linecol = "red", 
                             xlab.str = "Mean (log10-scaled)",
                             ylab.str = "Variance (log10-scaled)",
@@ -476,6 +519,24 @@ plot_dispersion <- function(dfstat, axis.scale = "log10", nrow.facet = 1,
                             show.points = TRUE, point.alpha = 0.5, 
                             verbose = FALSE){
   if(verbose){message("Plotting dispersion...")}
+  # parse marker highlight settings
+  hlm.cond <- !is(highlight.markers, "NULL")
+  if(hlm.cond){
+    if("marker" %in% colnames(dfstat)){
+      marker.filt <- dfstat$marker %in% highlight.markers
+      markerv <- dfstat[marker.filt,]$marker
+    } else{
+      marker.filt <- rownames(dfstat) %in% highlight.markers
+      markerv <- rownames(dfstat[marker.filt,])
+    }
+    if(length(markerv) > 0){
+      dfstat$marker <- FALSE
+      dfm <- dfstat[marker.filt,]; dfm$marker <- TRUE
+      # dfstat <- rbind(dfstat, dfm)
+    } else{
+      message("Warning, no provided highligh markers were found in dfstat.")
+    }
+  }
   # get basic plot
   ggds <- ggplot(dfstat, aes(x = mean, y = var))
   ggds <- ggds + theme_bw() + ggtitle(title.str) + 
@@ -483,8 +544,20 @@ plot_dispersion <- function(dfstat, axis.scale = "log10", nrow.facet = 1,
     xlab(xlab.str) + ylab(ylab.str)
   # parse plot content arguments
   if(axis.scale == "log10"){ggds <- ggds + scale_x_log10() + scale_y_log10()}
-  if(show.points){ggds <- ggds + geom_point(alpha = point.alpha)}
-  if(show.smooth){ggds <- ggds + geom_smooth(color = smooth.linecol)}
+  if(show.points){
+    ggds <- ggds + geom_point(alpha = point.alpha)
+    if(hlm.cond){
+      ggds <- ggds + geom_point(data = dfm, aes(x = mean, y = var), 
+                                color = hl.color, alpha = hl.alpha)
+    }
+  }
+  if(show.smooth){
+    ggds <- ggds + geom_smooth(color = smooth.linecol)
+    if(hlm.cond & !show.points){ # show marker smooth if points not plotted
+      ggds <- ggds + geom_smooth(data = dfm, aes(x = mean, y = var), 
+                                 color = hl.color, alpha = hl.alpha)
+    }
+  }
   if("group" %in% colnames(dfstat)){
     ggds <- ggds + facet_wrap(~group, nrow = nrow.facet)
   }
