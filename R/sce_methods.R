@@ -233,36 +233,79 @@ get_groupstat_df <- function(exprf, groupstat = c("count", "var"),
 # plots
 #------
 
+#'
+#'
+#'
+#'
+sce_downsample <- function(){
+  
+}
+
+#' sce_dispersion
+#'
+#' Perform dispersion analysis for a SingleCellExperiment object.
+#' 
+#' @param expr.data
+#' @param group.data
+#' @param assayname
+#' @param downsample
+#' @param verbose
+#' 
+#' @returns List of dispersion results, including the summary statistics table
+#' and the dispersion plot.
+#' @seealso get_dispersion_data, plot_dispersion
+#' @export
+sce_dispersion <- function(expr.data, group.data, assayname, downsample = TRUE,
+                           verbose = FALSE, ...){
+  cond.se <- is(expr.data, "SingleCellExperiment")|
+    is(expr.data, "SummarizedExperiment")
+  if(cond.se){
+    mexpr <- as.matrix(assays(sce)[[assayname]])
+    group.vector <- sce[[group.data]]
+  } else{
+    mexpr <- expr.data
+    group.vector <- group.data
+  }
+  cond.matrix <- is(mexpr, "matrix")
+  if(!cond.matrix){
+    stop("Error, couldn't get matrix of expression data from expr.data.")}
+  ds.str <- ""
+  if(downsample){
+    if(verbose){message("Performing downsampling...")}
+    mexpr <- sce_downsample(mexpr = expr.data)
+    ds.str <- "d.s."
+  }
+  dfstat <- get_dispersion_data(mexpr = mexpr, group.vector = group.vector)
+  title.str <- paste0("Dispersion, ",ds.str, " ", assayname)
+  plot.obj <- plot_dispersion(dfstat = dfstat, title.str = title.str, ...)
+  lr[["dfstat"]] <- dfstat
+  lr[["ggplot.dispersion"]] <- plot.obj
+  return(lr)
+}
+
 #' get_dispersion_data
 #'
 #' Get data for dispersion analyses and plots.
 #' 
-#' @param dfstat
-#' @param mexpr
-#' @param sce
-#' @param group.variable Name of sce colData variable containing group labels.
-#' @param group.vector Vector of group labels of length equal to number of 
-#' columns in mexpr or sce.
-#' @param title.str Character string for plot titles. Default is to print the
-#' provided assayname.
+#' @param dfstat Table containing statistics for dispersion analysis. Should 
+#' include columns for "mean" and "var".
+#' @param mexpr Matrix of expression assay data (rows = genes/markers, 
+#' columns = cells/samples).
+#' @param sce SingleCellExperiment object containing a assays expression matrix
+#' specified by the `assayname` argument.
 #' @param assayname Name of expression assay data contained in provided sce
 #' object and/or used in plot title.
-#' @param reflinecol Color for the reference line.
-#' @param
-#' @param 
-#' @param
-#' @param
-#' @param
-#' 
-#'
-#'
-#' @seealso plot_dispersion
-#' 
+#' @param group.variable Name of sce colData variable containing group labels.
+#' @param group.vector Vector of group labels of length equal to number of 
+#' columns in mexpr or sce. This is only used if `mexpr` was provided.
+#' @param verbose Whether to show verbose status messages.
+#' @returns Table dfstat containing statistics (e.g. "mean" and "var" columns)
+#' to use for dispersion analyses.
+#' @seealso plot_dispersion, sce_dispersion
 #' @export
-get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL, 
-                            group.variable = NULL, group.vector = NULL,
-                            title.str = NULL, assayname = "counts", 
-                            verbose = FALSE){
+get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
+                                group.variable = NULL, group.vector = NULL,
+                                assayname = "counts", verbose = FALSE){
   # parse provided expression data
   if(is(dfstat, "NULL")){
     if(is(mexpr, "NULL")){
@@ -288,10 +331,13 @@ get_dispersion_data <- function(dfstat = NULL, mexpr = NULL, sce = NULL,
       if(is(group.vector, "NULL")){
         dfstat <- data.frame(var = rowVars(mexpr), mean = rowMeans(mexpr))
       } else{
+        if(!length(group.vector)==ncol(mexpr)){
+          stop("Error, length of group.vector should equal ",
+               "total columns in mexpr.")}
         ugroupv <- unique(group.vector)
         dfstat <- do.call(rbind, lapply(ugroupv, function(gi){
-          dfsi <- data.frame(var = rowVars(mexpr),
-                             mean = rowMeans(mexpr))
+          mfilt <- group.vector == gi; mef <- mexpr[,mfilt]
+          dfsi <- data.frame(var = rowVars(mef), mean = rowMeans(mef))
           dfsi$group = gi; dfsi
         })
       }
