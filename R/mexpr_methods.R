@@ -37,53 +37,66 @@ analyze_anova <- function(sce, ngene.sample = 2000,
 #'
 #' Get a data.frame of ANOVA statistics.
 #' 
-#' @param sce
+#' @param sce SingleCellExperiment or SummarizedExperiment object containing
+#' at least one expression assay data matrix.
+#' @param pheno.df Data.frame containing cell/sample/type phenotype info for the
+#' model matrix. Variables named in argument `model` should be listed here, 
+#' with the exception of "expr", which is defined from the sce expression data 
+#' at runtime.
 #' @param ngene.sample Number of genes to sample at random.
 #' @param model Character string of the model to use. By default, provides an
 #' interaction between donor and cell type, and the response/dependent variable
 #' is the individual gene.
 #' @param seed.num Random seed to set for reproducibility.
-#' @param 
+#' @param verbose Whether to return verbose status messages.
 #' @returns 
 #' @examples 
 #' sce <- random_sce()
-#'
-#'
-get_anova_df <- function(sce, ngene.sample = 2000, 
+#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8), rep("donor1", 2))
+#' dfa <- get_anova_df(sce)
+#' @export
+get_anova_df <- function(sce, pheno.df, ngene.sample = 2000, assayv = "counts",
                          model = "expr ~ celltype * donor",
-                         return.var = c("sumsq", "perc.var"), 
-                         type = "complex"){
-  lr <- lgg <- list()
-  sampv <- sample(seq(nrow(sce)), ngene.sample, replace = T)
-  dfa.all <- do.call(rbind, lapply(names(assays(sce)), function(ai){
-    message("working on assay: ", ai, "...")
+                         return.var = c("perc.var"), verbose = FALSE){
+  set.seed(seed.num)
+  lr <- lgg <- lggj <- lggpt <- list()
+  sampv <- sample(seq(nrow(sce)), ngene.sample, replace = FALSE)
+  dfa <- do.call(rbind, lapply(assayv, function(ai){
+    if(verbose){message("working on assay: ", ai, "...")}
     mi <- assays(sce)[[ai]];
     mi <- mi[sampv,] # get random subset
     maxv <- rowMaxs(mi); mi <- mi[maxv > 0,] # filter all-zeros
-    dfi <- data.frame(expr = mi[1,], 
-                      celltype = sce[["k2"]],
-                      donor = sce[["donor"]])
+    num.na <- apply(mi, 1, function(ri){length(which(is.na(ri)))}) 
+    mi <- mi[which(num.na == 0),] # filter nas
     dfa.mi <- do.call(rbind, lapply(seq(nrow(mi)), function(ii){
-      dfi$expr <- mi[ii,]
-      lmi <- paste0("lm(",model,", data = dfi)")
-      lmi <- eval(parse(text(lmi)))
-      avi <- anova(lmi)
-      perc.var <- 100*avi$`Sum Sq`/sum(avi$`Sum Sq`)
-      data.frame(perc.var.celltype = perc.var[1],
-                 perc.var.donor = perc.var[2],
-                 perc.var.celltype.donor = perc.var[3],
-                 perc.var.residuals = perc.var[4],
-                 marker = rownames(mi)[ii])
+      if(verbose){message("working on gene number ", ii, "...")}
+      dfi <- pheno.df; dfi$expr <- mi[ii,]
+      av.str <- paste0("aov(formula = ",model,", data = dfi)")
+      avi <- eval(parse(text = av.str))
+      ## old method:
+      # lmi <- lm(expr ~ celltype * donor, data = dfi)
+      # avi <- anova(lmi)
+      # perc.var <- 100*avi$`Sum Sq`/sum(avi$`Sum Sq`)
+      ## use limma:
+      # dmat <- model.matrix(~ celltype * donor, data = dfi)
+      # avi <- limma::lmFit(object = mi, design = dmat)
+      dfi <- as.data.frame(matrix(nrow = 1, ncol = 0))
+      namev <- gsub(" ", "", rownames(summary(avi)[[1]]))
+      if("perc.var" %in% return.var){
+        ssqv <- summary(avi)[[1]][[2]] # get sum of squared variances
+        perc.var <- 100*ssqv/sum(ssqv)
+        for(ii in seq(length(perc.var))){
+          dfi[,ncol(dfi) + 1] <- perc.var[ii]
+          colnames(dfi)[ncol(dfi)] <- paste0("perc.var.", namev[ii])
+        }
+      }
+      dfi$marker <- rownames(mi)[ii]; dfi
     }))
-    message("finished anovas")
     dfa.mi <- dfa.mi[!is.na(dfa.mi[,1]),] # filter nas
     dfa.mi$assay <- ai; dfa.mi
   }))
-  lr[["dfa"]] <- dfa.all
-  
-  lgg <- list(gg.jitter = lggj, gg.pt = lggpt)
-  lr <- list(dfa = dfa.all, lgg = lgg)
-  return(lr)
+  if(verbose){message("finished anovas")}
+  return(dfa)
 }
 
 
