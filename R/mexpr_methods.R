@@ -52,14 +52,14 @@ analyze_anova <- function(sce, ngene.sample = 2000,
 #' @param verbose Whether to return verbose status messages.
 #' @returns 
 #' @examples 
-#' sce <- random_sce()
-#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8), rep("donor1", 2))
-#' pheno.df <- data.frame(donor = sce[["donor"]], celltype = sce[["celltype"]])
-#' dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
+sce <- random_sce()
+sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8), rep("donor1", 2))
+pheno.df <- data.frame(donor = sce[["donor"]], celltype = sce[["celltype"]])
+dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
 #' @export
 get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
                          model = "expr ~ celltype * donor",
-                         return.var = c("perc.var"), 
+                         return.var = c("percvar"), 
                          seed.num = 0, verbose = FALSE){
   set.seed(seed.num)
   lr <- lgg <- lggj <- lggpt <- list()
@@ -92,12 +92,12 @@ get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
       # avi <- limma::lmFit(object = mi, design = dmat)
       dfi <- as.data.frame(matrix(nrow = 1, ncol = 0))
       namev <- gsub(" ", "", rownames(summary(avi)[[1]]))
-      if("perc.var" %in% return.var){
+      if("percvar" %in% return.var){
         ssqv <- summary(avi)[[1]][[2]] # get sum of squared variances
         perc.var <- 100*ssqv/sum(ssqv)
         for(ii in seq(length(perc.var))){
           dfi[,ncol(dfi) + 1] <- perc.var[ii]
-          colnames(dfi)[ncol(dfi)] <- paste0("perc.var.", namev[ii])
+          colnames(dfi)[ncol(dfi)] <- paste0("percvar.", namev[ii])
         }
       }
       dfi
@@ -111,39 +111,51 @@ get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
 }
 
 
+#' anova_jitter_plots
 #'
+#' Get jitter scatter plots, grouped by assay, from an anova results data.frame.
 #'
-#'
-#'
-anova_jitter_plots <- function(){
-  lggj <- list()
-  # plot celltype perc var
-  lggj[["celltype"]] <- 
-    ggplot(dfa.all, aes(x = assay, y = perc.var.celltype)) +
-    geom_jitter(alpha = 0.5) + 
-    stat_summary(geom = "crossbar", fun = "mean", color = "red") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    facet_zoom(ylim = c(0, 10))
-  # plot donor perc var
-  lggj[["donor"]] <- ggplot(dfa.all, aes(x = assay, y = perc.var.donor)) +
-    geom_jitter(alpha = 0.5) + 
-    stat_summary(geom = "crossbar", fun = "mean", color = "red") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    facet_zoom(ylim = c(0, 2))
-  # plot celltype.donor perc var
-  lggj[["celltype.donor"]] <- 
-    ggplot(dfa.all, aes(x = assay, y = perc.var.celltype.donor)) +
-    geom_jitter(alpha = 0.5) + 
-    stat_summary(geom = "crossbar", fun = "mean", color = "red") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    facet_zoom(ylim = c(0, 2))
-  # plot residuals perc var  
-  lggj[["residuals"]] <- 
-    ggplot(dfa.all, aes(x = assay, y = perc.var.residuals)) +
-    geom_jitter(alpha = 0.5) + 
-    stat_summary(geom = "crossbar", fun = "mean", color = "red") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    facet_zoom(ylim = c(90, 100))
+#' @param dfa Data.frame containing ANOVA results data, from `get_anova_df()`.
+#' @param zoom.panel Whether to include a zoomed panel. Made by calling 
+#' `ggforce::facet_zoom()`.
+#' @param zoom.ylim Vector of minimum and maximum y-axis limits for zoomed 
+#' panel. Ignored if the `zoom.panel` argument is FALSE.
+#' @examples 
+#' sce <- random_sce()
+#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8), rep("donor1", 2))
+#' pheno.df <- data.frame(donor = sce[["donor"]], celltype = sce[["celltype"]])
+#' dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
+#' lggj <- anova_jitter_plots(dfa)
+#' @export
+anova_jitter_plots <- function(dfa, zoom.panel = TRUE, zoom.ylim = c(0, 20)){
+  require(ggplot2); require(ggforce)
+  # get variables
+  cnv <- colnames(dfa)
+  cnv <- cnv[!cnv %in% c("marker", "assay")]
+  varv <- unique(gsub(".*\\.", "", cnv)) # get variable names
+  metricv <- unique(gsub("\\..*", "", cnv)) # get metric names
+  if(length(metricv)==0|length(varv)==0){
+    stop("Error, couldn't find metrics and variables from dfa colnames.")}
+  # get plots list
+  lggj <- lapply(metricv, function(mi){
+    cnvf <- cnv[grepl(paste0(mi,"\\..*"), cnv)]
+    varvf <- unique(gsub(".*\\.", "", cnvf))
+    li <- lapply(varvf, function(vi){
+      ci <- cnvf[grepl(paste0(".*\\.", vi, "$"), cnvf)]
+      title.str <- paste0(ci)
+      dfp <- data.frame(value = dfa[,ci], assay = dfa$assay)
+      ggj <- ggplot(dfp, aes(x = assay, y = value)) + geom_jitter(alpha = 0.5) + 
+        stat_summary(geom = "crossbar", fun = "mean", color = "red") +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+        ggtitle(title.str)
+      if(zoom.panel){ggj <- ggj + facet_zoom(ylim = zoom.ylim)}
+      return(ggj)
+    })
+    names(li) <- varvf
+    return(li)
+  })
+  names(lggj) <- metricv
+  return(lggj)
 }
 
 #' anova_scatter_plots
