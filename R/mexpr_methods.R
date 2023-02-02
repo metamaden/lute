@@ -43,7 +43,8 @@ analyze_anova <- function(sce, ngene.sample = 2000,
 #' model matrix. Variables named in argument `model` should be listed here, 
 #' with the exception of "expr", which is defined from the sce expression data 
 #' at runtime.
-#' @param ngene.sample Number of genes to sample at random.
+#' @param ngene.sample Number of genes to sample at random. If NULL, fit every
+#' gene in sce.
 #' @param model Character string of the model to use. By default, provides an
 #' interaction between donor and cell type, and the response/dependent variable
 #' is the individual gene.
@@ -53,25 +54,34 @@ analyze_anova <- function(sce, ngene.sample = 2000,
 #' @examples 
 #' sce <- random_sce()
 #' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8), rep("donor1", 2))
-#' dfa <- get_anova_df(sce)
+#' pheno.df <- data.frame(donor = sce[["donor"]], celltype = sce[["celltype"]])
+#' dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
 #' @export
-get_anova_df <- function(sce, pheno.df, ngene.sample = 2000, assayv = "counts",
+get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
                          model = "expr ~ celltype * donor",
-                         return.var = c("perc.var"), verbose = FALSE){
+                         return.var = c("perc.var"), 
+                         seed.num = 0, verbose = FALSE){
   set.seed(seed.num)
   lr <- lgg <- lggj <- lggpt <- list()
-  sampv <- sample(seq(nrow(sce)), ngene.sample, replace = FALSE)
+  if(is(ngene.sample, "NULL")){
+    sampv <- seq(nrow(sce))
+  } else{
+    sampv <- sample(seq(nrow(sce)), ngene.sample, replace = FALSE)
+  }
   dfa <- do.call(rbind, lapply(assayv, function(ai){
     if(verbose){message("working on assay: ", ai, "...")}
-    mi <- assays(sce)[[ai]];
-    mi <- mi[sampv,] # get random subset
-    maxv <- rowMaxs(mi); mi <- mi[maxv > 0,] # filter all-zeros
+    # parse assay subset
+    mi <- assays(sce)[[ai]];mi <- mi[sampv,,drop=F] 
+    # filter all-zeros
+    maxv <- rowMaxs(mi); filt.max <- maxv > 0
+    mi <- mi[filt.max,] 
+    # filter nas
     num.na <- apply(mi, 1, function(ri){length(which(is.na(ri)))}) 
-    mi <- mi[which(num.na == 0),] # filter nas
+    mi <- mi[which(num.na == 0),] 
     dfa.mi <- do.call(rbind, lapply(seq(nrow(mi)), function(ii){
       if(verbose){message("working on gene number ", ii, "...")}
-      dfi <- pheno.df; dfi$expr <- mi[ii,]
-      av.str <- paste0("aov(formula = ",model,", data = dfi)")
+      df.model <- pheno.df; df.model$expr <- mi[ii,]
+      av.str <- paste0("aov(formula = ",model,", data = df.model)")
       avi <- eval(parse(text = av.str))
       ## old method:
       # lmi <- lm(expr ~ celltype * donor, data = dfi)
@@ -90,10 +100,11 @@ get_anova_df <- function(sce, pheno.df, ngene.sample = 2000, assayv = "counts",
           colnames(dfi)[ncol(dfi)] <- paste0("perc.var.", namev[ii])
         }
       }
-      dfi$marker <- rownames(mi)[ii]; dfi
+      dfi
     }))
+    dfa.mi$marker <- rownames(mi); dfa.mi$assay <- ai
     dfa.mi <- dfa.mi[!is.na(dfa.mi[,1]),] # filter nas
-    dfa.mi$assay <- ai; dfa.mi
+    dfa.mi
   }))
   if(verbose){message("finished anovas")}
   return(dfa)
