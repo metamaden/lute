@@ -5,21 +5,28 @@
 \title{anova_scatter_plots}
 \usage{
 anova_scatter_plots(
-  dfa.all,
+  dfa,
   a1 = "counts",
   a2 = "counts_ds_combat",
   regex.cnv = "^perc\\\\.var\\\\..*"
 )
 }
 \arguments{
-\item{dfa.all}{Data.frame of ANOVA results, returned from get_anova_df().}
-
 \item{a1}{Name of first assay, for x-axis.}
 
 \item{a2}{Name of second assay, for y-axis.}
 
 \item{regex.cnv}{Regex pattern to find column names to plot}
+
+\item{dfa.all}{Data.frame of ANOVA results, returned from get_anova_df().}
+}
+\value{
+List of plot objects.
 }
 \description{
-anova_scatter_plots
+Get scatter plots showing variances explained from ANOVAs performed on two
+assay types, a1 (x-axis) and a2 (y-axis)
+}
+\seealso{
+anova_jitter_plots, get_anova_df, analyze_anova
 }

@@ -25,3 +25,6 @@ pheno.df <- data.frame(donor = sce[["donor"]], celltype = sce[["celltype"]])
 dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
 lggj <- anova_jitter_plots(dfa)
 }
+\seealso{
+anova_scatter_plots, get_anova_df, analyze_anova
+}

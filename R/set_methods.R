@@ -30,6 +30,9 @@
 #' @param assayname Name of assays data in assays(sce).
 #' @param make.set.plots Make standard plots of SummarizedExperimentTypes, 
 #' including a heatmap of type-level summaries.
+#' @param get.group.stat Whether to calculate additional grouped summary 
+#' statistics for rowData and colData using `sce_groupstat` (see 
+#' `?sce_groupstat` for details).
 #' @param verbose Whether to show verbose status messages.
 #' groups (see `?sce_groupstat` for details).
 #' @returns `SummarizedExperimentTypes` object.
@@ -50,6 +53,8 @@
 #' @export
 set_from_sce <- function(sce, method = "mean", type.variable = "celltype", 
                          assayname = "counts", make.set.plots = TRUE, 
+                         get.group.stat = FALSE, 
+                         group.statv = c("mean", "var", "numzero"), 
                          verbose = FALSE){
   require(scuttle)
   # run checks
@@ -63,20 +68,22 @@ set_from_sce <- function(sce, method = "mean", type.variable = "celltype",
   # begin new set components
   lma <- list(assays(sce.new)[[assayname]])
   names(lma) <- paste0("summarized_", assayname)
-  set.cd <- colData(sce.new)
-  set.rd <- rowData(sce.new)
   
-  # parse metadata
-  # get rowdata
-  rd.group.statistic <- c("mean", "var", "numzero", "count")
-  rd <- sce_groupstat(sce, group.variable = type.variable, assayname = assayname,
-                      summarytype = "rowData", groupstat = rd.group.statistic, 
-                      return.tall = FALSE)
-  rd <- cbind(rowData(sce.new), rd)
-  # get coldata
-  cd <- sce_groupstat(sce, group.variable = type.variable, assayname = assayname,
-                      summarytype = "colData", return.tall = TRUE)
-  cd <- cbind(colData(sce.new), cd)
+  # parse metadata options
+  if(get.group.stat){
+    rd <- sce_groupstat(sce, group.variable = type.variable, 
+                        assayname = assayname, summarytype = "rowData", 
+                        groupstat = group.statv, return.tall = FALSE)
+    rd <- cbind(rowData(sce.new), rd)
+    cd <- sce_groupstat(sce, group.variable = type.variable, 
+                        assayname = assayname, summarytype = "colData", 
+                        groupstat = group.statv, return.tall = TRUE)
+    cd <- cbind(colData(sce.new), cd)
+  } else{
+    cd <- colData(sce.new)
+    rd <- rowData(sce.new)
+  }
+  
   
   # metadata
   lmd <- list(assay.info = list(

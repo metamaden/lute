@@ -3,6 +3,7 @@
 export(analyze_anova)
 export(analyze_dispersion_est)
 export(anova_jitter_plots)
+export(anova_scatter_plots)
 export(append_gvariable_adj)
 export(biasexpt)
 export(check_coldata)

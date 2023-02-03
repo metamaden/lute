@@ -10,6 +10,8 @@ set_from_sce(
   type.variable = "celltype",
   assayname = "counts",
   make.set.plots = TRUE,
+  get.group.stat = FALSE,
+  group.statv = c("mean", "var", "numzero"),
   verbose = FALSE
 )
 }
@@ -24,6 +26,10 @@ set_from_sce(
 
 \item{make.set.plots}{Make standard plots of SummarizedExperimentTypes, 
 including a heatmap of type-level summaries.}
+
+\item{get.group.stat}{Whether to calculate additional grouped summary 
+statistics for rowData and colData using `sce_groupstat` (see 
+`?sce_groupstat` for details).}
 
 \item{verbose}{Whether to show verbose status messages.
 groups (see `?sce_groupstat` for details).}
