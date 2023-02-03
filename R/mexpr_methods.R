@@ -52,10 +52,11 @@ analyze_anova <- function(sce, ngene.sample = 2000,
 #' @param verbose Whether to return verbose status messages.
 #' @returns 
 #' @examples 
-sce <- random_sce()
-sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8), rep("donor1", 2))
-pheno.df <- data.frame(donor = sce[["donor"]], celltype = sce[["celltype"]])
-dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
+#' sce <- random_sce()
+#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8), rep("donor1", 2))
+#' pheno.df <- data.frame(donor = sce[["donor"]], celltype = sce[["celltype"]])
+#' dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
+#' 
 #' @export
 get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
                          model = "expr ~ celltype * donor",
@@ -206,7 +207,66 @@ anova_scatter_plots <- function(dfa.all, a1 = "counts", a2 = "counts_ds_combat",
 #'
 #'
 analyze_dispersion_est <- function(){
+  # get dispersions by type
+  # compare dispersion coefficients from fitted neg binom 
+  # parse params
+  typevar <- "k2"; marker.name <- "k2_top20"
+  assay.name <- "counts_adj"
+  # get bg genes
+  num.genes.bg <- 1000
+  bg.name <- paste0("bg_", num.genes.bg)
+  genes.samplev <- sample(seq(nrow(sce)), num.genes.bg)
+  # get marker genes
+  genes.markerv <- metadata(sce)[["k2.markers"]][["top20"]]$gene
+  # define categories
+  catv <- c(unique(typev), "all") 
+  # get plot data
+  dfp <- do.call(rbind, lapply(catv, function(typei){
+    # parse filter
+    type.filt <- seq(ncol(sce))
+    if(!typei == "all"){type.filt <- sce[[typevar]] == typei}
+    scef <- sce[,type.filt]
+    
+    # get dispersions
+    mexpr <- assays(scef)[[assay.name]]
+    lglm.bg <- glm_gp(mexpr[genes.samplev,], on_disk = F)
+    lglm.top20 <- glm_gp(mexpr[genes.markerv,], on_disk = F)
+    
+    # get plot data
+    dfp1 <- data.frame(disp = lglm.bg$overdispersions)
+    dfp1$marker.type <- bg.name
+    dfp2 <- data.frame(disp = lglm.top20$overdispersions)
+    dfp2$marker.type <- marker.name
+    dfp <- rbind(dfp1, dfp2)
+    dfp$celltype <- typei
+    return(dfp)
+  }))
+  # set return list
+  ldisp <- list(dfp = dfp)
   
+  # boxplots at 3 zoom levels
+  ldisp[["ggbox"]] <- list()
+  ldisp[["ggbox"]][["zoom1"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+    geom_boxplot() + facet_wrap(~celltype)
+  ldisp[["ggbox"]][["zoom2"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+    geom_boxplot() + facet_wrap(~celltype) + ylim(0, 350)
+  ldisp[["ggbox"]][["zoom3"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+    geom_boxplot() + facet_wrap(~celltype) + ylim(0, 50)
+  
+  # jitter plots at 3 zoom levels
+  ldisp[["ggjitter"]] <- list()
+  ldisp[["ggjitter"]][["zoom1"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+    geom_jitter(alpha = 0.5) + 
+    stat_summary(geom = "crossbar", fun = "median", color = "red") + 
+    facet_wrap(~celltype)
+  ldisp[["ggjitter"]][["zoom2"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+    geom_jitter(alpha = 0.5) + 
+    stat_summary(geom = "crossbar", fun = "median", color = "red") + 
+    facet_wrap(~celltype) + ylim(0, 350)
+  ldisp[["ggjitter"]][["zoom3"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+    geom_jitter(alpha = 0.5) + 
+    stat_summary(geom = "crossbar", fun = "median", color = "red") + 
+    facet_wrap(~celltype) + ylim(0, 50)
 }
 
 #'
@@ -225,66 +285,7 @@ plot_dispersion_coeff <- function(){
   
 }
 
-# get dispersions by type
-# compare dispersion coefficients from fitted neg binom 
-# parse params
-typevar <- "k2"; marker.name <- "k2_top20"
-assay.name <- "counts_adj"
-# get bg genes
-num.genes.bg <- 1000
-bg.name <- paste0("bg_", num.genes.bg)
-genes.samplev <- sample(seq(nrow(sce)), num.genes.bg)
-# get marker genes
-genes.markerv <- metadata(sce)[["k2.markers"]][["top20"]]$gene
-# define categories
-catv <- c(unique(typev), "all") 
-# get plot data
-dfp <- do.call(rbind, lapply(catv, function(typei){
-  # parse filter
-  type.filt <- seq(ncol(sce))
-  if(!typei == "all"){type.filt <- sce[[typevar]] == typei}
-  scef <- sce[,type.filt]
-  
-  # get dispersions
-  mexpr <- assays(scef)[[assay.name]]
-  lglm.bg <- glm_gp(mexpr[genes.samplev,], on_disk = F)
-  lglm.top20 <- glm_gp(mexpr[genes.markerv,], on_disk = F)
-  
-  # get plot data
-  dfp1 <- data.frame(disp = lglm.bg$overdispersions)
-  dfp1$marker.type <- bg.name
-  dfp2 <- data.frame(disp = lglm.top20$overdispersions)
-  dfp2$marker.type <- marker.name
-  dfp <- rbind(dfp1, dfp2)
-  dfp$celltype <- typei
-  return(dfp)
-}))
-# set return list
-ldisp <- list(dfp = dfp)
 
-# boxplots at 3 zoom levels
-ldisp[["ggbox"]] <- list()
-ldisp[["ggbox"]][["zoom1"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-  geom_boxplot() + facet_wrap(~celltype)
-ldisp[["ggbox"]][["zoom2"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-  geom_boxplot() + facet_wrap(~celltype) + ylim(0, 350)
-ldisp[["ggbox"]][["zoom3"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-  geom_boxplot() + facet_wrap(~celltype) + ylim(0, 50)
-
-# jitter plots at 3 zoom levels
-ldisp[["ggjitter"]] <- list()
-ldisp[["ggjitter"]][["zoom1"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-  geom_jitter(alpha = 0.5) + 
-  stat_summary(geom = "crossbar", fun = "median", color = "red") + 
-  facet_wrap(~celltype)
-ldisp[["ggjitter"]][["zoom2"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-  geom_jitter(alpha = 0.5) + 
-  stat_summary(geom = "crossbar", fun = "median", color = "red") + 
-  facet_wrap(~celltype) + ylim(0, 350)
-ldisp[["ggjitter"]][["zoom3"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-  geom_jitter(alpha = 0.5) + 
-  stat_summary(geom = "crossbar", fun = "median", color = "red") + 
-  facet_wrap(~celltype) + ylim(0, 50)
 
 
 

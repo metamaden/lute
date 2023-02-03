@@ -6,7 +6,7 @@
 \usage{
 get_set_heatmap(
   set,
-  assayname = "logcounts_bytype",
+  assayname = "summarized_counts",
   type.variable = NULL,
   group.variable = NULL,
   mtype.variable = NULL,

@@ -9,6 +9,7 @@ set_from_sce(
   method = "mean",
   type.variable = "celltype",
   assayname = "counts",
+  make.set.plots = TRUE,
   verbose = FALSE
 )
 }
@@ -21,6 +22,9 @@ set_from_sce(
 
 \item{assayname}{Name of assays data in assays(sce).}
 
+\item{make.set.plots}{Make standard plots of SummarizedExperimentTypes, 
+including a heatmap of type-level summaries.}
+
 \item{verbose}{Whether to show verbose status messages.
 groups (see `?sce_groupstat` for details).}
 }
@@ -31,8 +35,20 @@ groups (see `?sce_groupstat` for details).}
 Make an object of class `SummarizedExperimentTypes` from an object of class
 `SingleCellExperiment` or `SummarizedExperiment`.
 }
+\details{
+Get a SummarizedExperimentTypes object as a set of summary 
+statistics applied on the indicated types variable across cells from a 
+SingleCellExperiment object.
+
+Type-level summaries are obtained rapidly using the function 
+`scuttle::aggregateAcrossCells()`. Additional summary statistics, such as 
+count summaries of zero-value data, are then calculated using calls to 
+`sce_groupstat()`.
+}
 \examples{
-set <- set_from_sce(random_sce()); show(set)
+sce <- random_sce()
+set <- set_from_sce(sce)
+show(set)
 }
 \seealso{
 sce_groupstat
