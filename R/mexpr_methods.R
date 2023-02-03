@@ -236,7 +236,7 @@ anova_scatter_plots <- function(dfa.all, a1 = "counts", a2 = "counts_ds_combat",
 #' 
 #' @returns Either a SingleCellExperiment object with new metadata, or a list
 #' containing analysis results.
-#' @seealso plot_dispersion_coeff
+#' @seealso plot_dispersion_coeff, get_dispersion_coeff_df
 #' @examples 
 #' sce <- random_sce()
 #' sce <- analyze_dispersion_est(sce, rownames(sce)[seq(5)], "celltype",
@@ -256,15 +256,17 @@ analyze_dispersion_est <- function(sce, genes.markerv, type.varname = "k2",
   ldist <- list()
   # get dispersions by type
   mexpr <- assays(sce)[[assay.name]]; typev <- sce[[type.varname]]
-  dfp <- get_dispersion_df(mexpr = mexpr, typev, bg.name.str = bg.name.str, 
-                           marker.name.str = marker.name.str, 
-                           num.genes.bg = num.genes.bg, method.str = method.str,
-                           seed.num = seed.num, verbose = verbose)
+  dfp <- get_dispersion_coef_df(mexpr = mexpr, typev,
+                                bg.name.str = bg.name.str,
+                                marker.name.str = marker.name.str,
+                                num.genes.bg = num.genes.bg, 
+                                method.str = method.str,
+                                seed.num = seed.num, verbose = verbose)
   ldisp <- list(dfp = dfp) # append results
   # parse plot options
   if(make.plots){
     if(verbose){message("Plotting dispersion point estimates...")}
-    lplot <- plot_dispersion_coeff(dfp, ...)
+    lplot <- plot_dispersion_coef(dfp, ...)
     ldisp[["plots"]] <- lplot
   }
   # parse return options
@@ -277,7 +279,7 @@ analyze_dispersion_est <- function(sce, genes.markerv, type.varname = "k2",
   return(NULL)
 }
 
-#' get_dispersion_df
+#' get_dispersion_coef_df
 #' 
 #' @param mexpr An expression assay matrix (rows = genes/markers, cols = 
 #' cells/samples/types).
@@ -292,8 +294,9 @@ analyze_dispersion_est <- function(sce, genes.markerv, type.varname = "k2",
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments passed to `mexpr_nbcoef()`.
 #' @returns Tall data.frame containing dispersion estimates grouped by types. 
+#' @seealso plot_dispersion_coef, analyze_dispersion_est
 #' @export
-get_dispersion_df <- function(mexpr, typev, bg.name.str = "bg", 
+get_dispersion_coef_df <- function(mexpr, typev, bg.name.str = "bg", 
                               marker.name.str = "top-markers", 
                               num.genes.bg = 1000, method.str = "glmGamPoi",
                               seed.num = 0, verbose = FALSE, ...){
@@ -332,10 +335,10 @@ get_dispersion_df <- function(mexpr, typev, bg.name.str = "bg",
     }
     return(dfpi)
   }))
-  return(dfpi)
+  return(dfp)
 }
 
-#' plot_dispersion_coeff
+#' plot_dispersion_coef
 #'
 #' Plot dispersion coefficients by gene groups and cell types.
 #' 
@@ -356,7 +359,7 @@ get_dispersion_df <- function(mexpr, typev, bg.name.str = "bg",
 #' 
 #' @seealso analyze_dispersion_est
 #' @export
-plot_dispersion_coeff <- function(dfp, make.boxplot = TRUE, 
+plot_dispersion_coef <- function(dfp, make.boxplot = TRUE, 
                                   make.jitter = TRUE, 
                                   box.zoom.ymax = c(350, 50), 
                                   jitter.zoom.ymax = c(350, 50),
