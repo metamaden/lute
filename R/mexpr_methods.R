@@ -41,9 +41,9 @@
 #' @examples 
 #' sce <- random_sce()
 #' sce[["donor"]] <- "donor1" 
-#' sce <- analyze_anova(sce)
+#' sce <- analyze_anova(sce, ngene.sample = 5)
 #' @export
-analyze_anova <- function(sce, ngene.sample = 1000, assayv = "counts",
+analyze_anova <- function(sce, pheno.df, ngene.sample = 1000, assayv = "counts",
                           model = "expr ~ celltype * donor",
                           return.var = c("percvar"), 
                           return.sce = TRUE, plot.results = TRUE, 
@@ -107,18 +107,18 @@ analyze_anova <- function(sce, ngene.sample = 1000, assayv = "counts",
 #' dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
 #' 
 #' @export
-get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, 
+get_anova_df <- function(sce, pheno.df = NULL, ngene.sample = NULL, 
                          assayv = "counts",
                          model = "expr ~ celltype * donor",
                          return.var = c("percvar"), 
                          seed.num = 0, verbose = FALSE){
-  set.seed(seed.num)
-  lr <- lgg <- lggj <- lggpt <- list()
-  if(is(ngene.sample, "NULL")){
-    sampv <- seq(nrow(sce))
-  } else{
-    sampv <- sample(seq(nrow(sce)), ngene.sample, replace = FALSE)
-  }
+  set.seed(seed.num); lr <- lgg <- lggj <- lggpt <- list()
+  # parse bg gene sampling options
+  sampv <- seq(nrow(sce))
+  samp.cond <- !is(ngene.sample, "NULL") & ngene.sample < nrow(sce)
+  if(samp.cond){sampv <- sample(sampv, ngene.sample, replace = FALSE)}
+  # parse pheno.df options
+  if(is(pheno.df, "NULL")){pheno.df <- colData(sce)}
   dfa <- do.call(rbind, lapply(assayv, function(ai){
     if(verbose){message("working on assay: ", ai, "...")}
     # parse assay subset
