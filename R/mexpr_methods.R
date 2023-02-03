@@ -211,12 +211,18 @@ anova_scatter_plots <- function(dfa.all, a1 = "counts", a2 = "counts_ds_combat",
 #' @param sce A SingleCellExperiment object.
 #' @param genes.markerv A vector of marker genes.
 #' @param type.varname Name of the cell types variable in sce colData columns.
+#' @param marker.name.str Character string for marker genes.
+#' @param bg.name.str Character string for background genes.
+#' @param new.md.name Name of new metadata object in sce. Ignored if 
+#' `return.sce` argument is FALSE.
 #' @param assay.name Name of assay in sce to analyze.
 #' @param num.genes.bg Number of random genes to select for background 
 #' estimates.
 #' @param seed.num Number to set the seed for computational reproducibility.
 #' @param make.plots Whether to make boxplots and jitter plots of the 
 #' dispersion coefficients by groups from the specified type variable.
+#' @param method.str Method to fit negative binomial models (see 
+#' `?mexpr_nbcoef()` for details). Defaults to `glmGamPoi` to use `glm_gp()`.
 #' @param return.sce Whether to return a SingleCellExperiment.
 #' @param verbose Whether to show verbose status messages.
 #' @param ... Additional arguments passed to `plot_dispersion_coeff()`
@@ -231,40 +237,57 @@ anova_scatter_plots <- function(dfa.all, a1 = "counts", a2 = "counts_ds_combat",
 #' @returns Either a SingleCellExperiment object with new metadata, or a list
 #' containing analysis results.
 #' @seealso plot_dispersion_coeff
+#' @examples 
+#' sce <- random_sce()
+#' sce <- analyze_dispersion_est(sce, rownames(sce)[seq(5)], "celltype", 
+#'                              assay.name = "counts", num.genes.bg = 10,
+#'                              new.md.name = "dispersion_results")
+#' metadata(sce)[["dispersion_results"]]$plots
+#' 
 #' @export
 analyze_dispersion_est <- function(sce, genes.markerv, type.varname = "k2", 
+                                   marker.name.str = "top-markers", 
+                                   bg.name.str = "bg",
+                                   new.md.name = "dispersion_coefficient_analysis",
                                    assay.name = "counts_adj", num.genes.bg = 100,
-                                   seed.num = 0, make.plots = TRUE,
+                                   seed.num = 0, make.plots = TRUE, 
+                                   method.str = "glmGamPoi",
                                    return.sce = TRUE, verbose = FALSE, ...){
   set.seed(seed.num); ldist <- list()
   # get dispersions by type
   # get bg genes
-  bg.name <- paste0("bg_", num.genes.bg)
-  genes.samplev <- sample(seq(nrow(sce)), num.genes.bg)
+  bg.name <- paste0(bg.name.str, num.genes.bg)
+  genes.samplev <- sample(seq(nrow(sce)), num.genes.bg, replace = FALSE)
   # define categories
-  catv <- c(unique(typev), "all") 
+  typev <- sce[[type.varname]]; catv <- c(unique(typev), "all") 
   # get plot data
   if(verbose){message("Calculating dispersion coefficient point estimates...")}
   dfp <- do.call(rbind, lapply(catv, function(typei){
     if(verbose){message("Working on type category: ",typei,"...")}
     # parse filter
     type.filt <- seq(ncol(sce))
-    if(!typei == "all"){type.filt <- sce[[typevar]] == typei}
+    if(!typei == "all"){type.filt <- sce[[type.varname]] == typei}
     scef <- sce[,type.filt]
     
     # get dispersions
     mexpr <- assays(scef)[[assay.name]]
-    lglm.bg <- mexpr_nbcoef(mexpr[genes.samplev,], method.str = method.str,
-                            verbose = verbose)
-    lglm.top <- mexpr_nbcoef(mexpr[genes.markerv,], method.str = method.str,
-                             verbose = verbose)
+    if(method.str == "glmGamPoi"){
+      lglm.bg <- mexpr_nbcoef(mexpr[genes.samplev,], method.str = method.str,
+                              verbose = verbose)
+      lglm.top <- mexpr_nbcoef(mexpr[genes.markerv,], method.str = method.str,
+                               verbose = verbose)
+      
+      # get plot data
+      dfp1 <- data.frame(disp = lglm.bg$fit$overdispersions)
+      dfp1$marker.type <- bg.name
+      dfp2 <- data.frame(disp = lglm.top$fit$overdispersions)
+      dfp2$marker.type <- marker.name.str
+      dfp <- rbind(dfp1, dfp2); dfp$celltype <- typei
+    } else{
+      stop("Error, didn't recognize method.str. ",
+           "Must be valid method for mexpr_nbcoef().")
+    }
     
-    # get plot data
-    dfp1 <- data.frame(disp = lglm.bg$overdispersions)
-    dfp1$marker.type <- bg.name
-    dfp2 <- data.frame(disp = lglm.top$overdispersions)
-    dfp2$marker.type <- marker.name
-    dfp <- rbind(dfp1, dfp2); dfp$celltype <- typei
     return(dfp)
   }))
   ldisp <- list(dfp = dfp) # append results
@@ -276,7 +299,7 @@ analyze_dispersion_est <- function(sce, genes.markerv, type.varname = "k2",
   }
   # parse return options
   if(return.sce){
-    metadata(sce)[["dispersion_coefficient_analysis"]] <- ldisp
+    metadata(sce)[[new.md.name]] <- ldisp
     return(sce)
   } else{
     return(ldisp)
@@ -310,6 +333,7 @@ plot_dispersion_coeff <- function(dfp, make.boxplot = TRUE,
                                   box.zoom.ymax = c(350, 50), 
                                   jitter.zoom.ymax = c(350, 50),
                                   verbose = FALSE){
+  require(ggplot2)
   lplot <- list()
   if(make.boxplot){
     if(verbose){message("Getting boxplots...")}
