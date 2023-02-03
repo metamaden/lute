@@ -6,7 +6,7 @@
 \usage{
 get_anova_df(
   sce,
-  pheno.df,
+  pheno.df = NULL,
   ngene.sample = NULL,
   assayv = "counts",
   model = "expr ~ celltype * donor",
@@ -34,6 +34,9 @@ is the individual gene.}
 \item{seed.num}{Random seed to set for reproducibility.}
 
 \item{verbose}{Whether to return verbose status messages.}
+}
+\value{
+Data.frame containing ANOVA results terms.
 }
 \description{
 Get a data.frame of ANOVA statistics.

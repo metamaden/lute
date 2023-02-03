@@ -118,7 +118,7 @@ analyze_anova <- function(sce, pheno.df = NULL, ngene.sample = 1000,
 #' is the individual gene.
 #' @param seed.num Random seed to set for reproducibility.
 #' @param verbose Whether to return verbose status messages.
-#' @returns 
+#' @returns Data.frame containing ANOVA results terms.
 #' @examples 
 #' sce <- random_sce()
 #' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 8), rep("donor1", 2))
@@ -409,20 +409,19 @@ get_dispersion_coef_df <- function(mexpr, typev, bg.name.str = "bg",
 #'
 #' Plot dispersion coefficients by gene groups and cell types.
 #' 
-#' @param dfp
-#' @param make.boxplot
-#' @param make.jitter
-#' @param box.zoom.ymax
-#' @param jitter.zoom.ymax
+#' @param dfp Data.frame for plotting.
+#' @param make.boxplot Whether to make ggplot boxplots.
+#' @param make.jitter Whether to make ggplot jitter plots.
+#' @param box.zoom.ymax Vector of y-axis maxima for two zoomed panels.
+#' @param jitter.zoom.ymax Vector of y-axiz maxima for two zoomed panels.
 #' @param verbose Whether to show verbose status messages.
 #' @returns List of ggplot plot objects.
-#' @details Makes summary plots of dispersion point estimates. 
-#' 
-#' Boxplots and jitter plots are generated at 3 zoom levels using the 
-#' `ggforce::facet_zoom()` function. These are: 1. not zoomed; 2. zoom level 1; 
-#' and 3. zoom level 2. The first and second zoom levels are the maximal y-axis
-#' values as specified by the arguments `box.zoom.ymax` and `jitter.zoom.ymax` 
-#' for boxplots and jitter plots, respectively.
+#' @details Makes summary plots of dispersion point estimates. Boxplots and 
+#' jitter plots are generated at 3 zoom levels using the `ggforce::facet_zoom()` 
+#' function. These are: 1. not zoomed; 2. zoom level 1; and 3. zoom level 2. The 
+#' first and second zoom levels are the maximal y-axis values as specified by 
+#' the arguments `box.zoom.ymax` and `jitter.zoom.ymax` for boxplots and jitter 
+#' plots, respectively.
 #' 
 #' @seealso analyze_dispersion_est
 #' @export

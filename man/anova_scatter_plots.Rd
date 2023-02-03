@@ -8,7 +8,7 @@ anova_scatter_plots(
   dfa,
   a1 = "counts",
   a2 = "counts_ds_combat",
-  regex.cnv = "^perc\\\\.var\\\\..*"
+  regex.cnv = "^percvar\\\\..*"
 )
 }
 \arguments{

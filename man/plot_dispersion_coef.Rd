@@ -14,6 +14,16 @@ plot_dispersion_coef(
 )
 }
 \arguments{
+\item{dfp}{Data.frame for plotting.}
+
+\item{make.boxplot}{Whether to make ggplot boxplots.}
+
+\item{make.jitter}{Whether to make ggplot jitter plots.}
+
+\item{box.zoom.ymax}{Vector of y-axis maxima for two zoomed panels.}
+
+\item{jitter.zoom.ymax}{Vector of y-axiz maxima for two zoomed panels.}
+
 \item{verbose}{Whether to show verbose status messages.}
 }
 \value{
@@ -23,13 +33,12 @@ List of ggplot plot objects.
 Plot dispersion coefficients by gene groups and cell types.
 }
 \details{
-Makes summary plots of dispersion point estimates. 
-
-Boxplots and jitter plots are generated at 3 zoom levels using the 
-`ggforce::facet_zoom()` function. These are: 1. not zoomed; 2. zoom level 1; 
-and 3. zoom level 2. The first and second zoom levels are the maximal y-axis
-values as specified by the arguments `box.zoom.ymax` and `jitter.zoom.ymax` 
-for boxplots and jitter plots, respectively.
+Makes summary plots of dispersion point estimates. Boxplots and 
+jitter plots are generated at 3 zoom levels using the `ggforce::facet_zoom()` 
+function. These are: 1. not zoomed; 2. zoom level 1; and 3. zoom level 2. The 
+first and second zoom levels are the maximal y-axis values as specified by 
+the arguments `box.zoom.ymax` and `jitter.zoom.ymax` for boxplots and jitter 
+plots, respectively.
 }
 \seealso{
 analyze_dispersion_est
