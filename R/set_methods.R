@@ -61,6 +61,8 @@ set_from_sce <- function(sce, method = "mean", type.variable = "celltype",
   if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
     stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
   
+  # drop extra assays
+  assays(sce) <- assays(sce)[names(assays(sce)) %in% assayname]
   # get new assays matrix
   typev <- sce[[type.variable]]
   sce.new <- scuttle::aggregateAcrossCells(sce, ids = typev, statistics = method)
