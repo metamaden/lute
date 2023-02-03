@@ -203,25 +203,50 @@ anova_scatter_plots <- function(dfa.all, a1 = "counts", a2 = "counts_ds_combat",
 # dispersion point estimates
 #---------------------------
 
+#' analyze_dispersion_est
 #'
+#' Perform an analysis of dispersion coefficients by fitting negative binomial
+#' models to genes
 #'
-#'
-analyze_dispersion_est <- function(){
+#' @param sce A SingleCellExperiment object.
+#' @param genes.markerv A vector of marker genes.
+#' @param type.varname Name of the cell types variable in sce colData columns.
+#' @param assay.name Name of assay in sce to analyze.
+#' @param num.genes.bg Number of random genes to select for background 
+#' estimates.
+#' @param seed.num Number to set the seed for computational reproducibility.
+#' @param make.plots Whether to make boxplots and jitter plots of the 
+#' dispersion coefficients by groups from the specified type variable.
+#' @param return.sce Whether to return a SingleCellExperiment.
+#' @param verbose Whether to show verbose status messages.
+#' @param ... Additional arguments passed to `plot_dispersion_coeff()`
+#' @details Analyze the dispersion coefficients from a SingleCellExperiment 
+#' object.
+#' 
+#' Returned results format is specified by the `return.sce` argument. If this is
+#' TRUE, the SingleCellExperiment object is returned with a new metadata item 
+#' appended called "dispersion_coefficient_analysis". Otherwise, the results are
+#' returned in a list.
+#' 
+#' @returns Either a SingleCellExperiment object with new metadata, or a list
+#' containing analysis results.
+#' @seealso plot_dispersion_coeff
+#' @export
+analyze_dispersion_est <- function(sce, genes.markerv, type.varname = "k2", 
+                                   assay.name = "counts_adj", num.genes.bg = 100,
+                                   seed.num = 0, make.plots = TRUE,
+                                   return.sce = TRUE, verbose = FALSE, ...){
+  set.seed(seed.num); ldist <- list()
   # get dispersions by type
-  # compare dispersion coefficients from fitted neg binom 
-  # parse params
-  typevar <- "k2"; marker.name <- "k2_top20"
-  assay.name <- "counts_adj"
   # get bg genes
-  num.genes.bg <- 1000
   bg.name <- paste0("bg_", num.genes.bg)
   genes.samplev <- sample(seq(nrow(sce)), num.genes.bg)
-  # get marker genes
-  genes.markerv <- metadata(sce)[["k2.markers"]][["top20"]]$gene
   # define categories
   catv <- c(unique(typev), "all") 
   # get plot data
+  if(verbose){message("Calculating dispersion coefficient point estimates...")}
   dfp <- do.call(rbind, lapply(catv, function(typei){
+    if(verbose){message("Working on type category: ",typei,"...")}
     # parse filter
     type.filt <- seq(ncol(sce))
     if(!typei == "all"){type.filt <- sce[[typevar]] == typei}
@@ -229,60 +254,95 @@ analyze_dispersion_est <- function(){
     
     # get dispersions
     mexpr <- assays(scef)[[assay.name]]
-    lglm.bg <- glm_gp(mexpr[genes.samplev,], on_disk = F)
-    lglm.top20 <- glm_gp(mexpr[genes.markerv,], on_disk = F)
+    lglm.bg <- mexpr_nbcoef(mexpr[genes.samplev,], method.str = method.str,
+                            verbose = verbose)
+    lglm.top <- mexpr_nbcoef(mexpr[genes.markerv,], method.str = method.str,
+                             verbose = verbose)
     
     # get plot data
     dfp1 <- data.frame(disp = lglm.bg$overdispersions)
     dfp1$marker.type <- bg.name
-    dfp2 <- data.frame(disp = lglm.top20$overdispersions)
+    dfp2 <- data.frame(disp = lglm.top$overdispersions)
     dfp2$marker.type <- marker.name
-    dfp <- rbind(dfp1, dfp2)
-    dfp$celltype <- typei
+    dfp <- rbind(dfp1, dfp2); dfp$celltype <- typei
     return(dfp)
   }))
-  # set return list
-  ldisp <- list(dfp = dfp)
-  
-  # boxplots at 3 zoom levels
-  ldisp[["ggbox"]] <- list()
-  ldisp[["ggbox"]][["zoom1"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-    geom_boxplot() + facet_wrap(~celltype)
-  ldisp[["ggbox"]][["zoom2"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-    geom_boxplot() + facet_wrap(~celltype) + ylim(0, 350)
-  ldisp[["ggbox"]][["zoom3"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-    geom_boxplot() + facet_wrap(~celltype) + ylim(0, 50)
-  
-  # jitter plots at 3 zoom levels
-  ldisp[["ggjitter"]] <- list()
-  ldisp[["ggjitter"]][["zoom1"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-    geom_jitter(alpha = 0.5) + 
-    stat_summary(geom = "crossbar", fun = "median", color = "red") + 
-    facet_wrap(~celltype)
-  ldisp[["ggjitter"]][["zoom2"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-    geom_jitter(alpha = 0.5) + 
-    stat_summary(geom = "crossbar", fun = "median", color = "red") + 
-    facet_wrap(~celltype) + ylim(0, 350)
-  ldisp[["ggjitter"]][["zoom3"]] <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
-    geom_jitter(alpha = 0.5) + 
-    stat_summary(geom = "crossbar", fun = "median", color = "red") + 
-    facet_wrap(~celltype) + ylim(0, 50)
+  ldisp <- list(dfp = dfp) # append results
+  # parse plot options
+  if(make.plots){
+    if(verbose){message("Plotting dispersion point estimates...")}
+    lplot <- plot_dispersion_coeff(dfp, ...)
+    ldisp[["plots"]] <- lplot
+  }
+  # parse return options
+  if(return.sce){
+    metadata(sce)[["dispersion_coefficient_analysis"]] <- ldisp
+    return(sce)
+  } else{
+    return(ldisp)
+  }
+  return(NULL)
 }
 
+#' plot_dispersion_coeff
 #'
-#'
-#'
-#'
-est_dispersions <- function(){
-  
-}
-
-#'
-#'
-#'
-#'
-plot_dispersion_coeff <- function(){
-  
+#' Plot dispersion coefficients by gene groups and cell types.
+#' 
+#' @param dfp
+#' @param make.boxplot
+#' @param make.jitter
+#' @param box.zoom.ymax
+#' @param jitter.zoom.ymax
+#' @param verbose Whether to show verbose status messages.
+#' @returns List of ggplot plot objects.
+#' @details Makes summary plots of dispersion point estimates. 
+#' 
+#' Boxplots and jitter plots are generated at 3 zoom levels using the 
+#' `ggforce::facet_zoom()` function. These are: 1. not zoomed; 2. zoom level 1; 
+#' and 3. zoom level 2. The first and second zoom levels are the maximal y-axis
+#' values as specified by the arguments `box.zoom.ymax` and `jitter.zoom.ymax` 
+#' for boxplots and jitter plots, respectively.
+#' 
+#' @seealso analyze_dispersion_est
+#' @export
+plot_dispersion_coeff <- function(dfp, make.boxplot = TRUE, 
+                                  make.jitter = TRUE, 
+                                  box.zoom.ymax = c(350, 50), 
+                                  jitter.zoom.ymax = c(350, 50),
+                                  verbose = FALSE){
+  lplot <- list()
+  if(make.boxplot){
+    if(verbose){message("Getting boxplots...")}
+    # boxplots at 3 zoom levels
+    lggbox <- list()
+    ggbox.zoom1 <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+      geom_boxplot() + facet_wrap(~celltype)
+    ggbox.zoom2 <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+      geom_boxplot() + facet_wrap(~celltype) + ylim(0, box.zoom.ymax[1])
+    ggbox.zoom3 <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+      geom_boxplot() + facet_wrap(~celltype) + ylim(0, box.zoom.ymax[2])
+    lggbox <- list(zoom1 = ggbox.zoom1, zoom2 = ggbox.zoom2, zoom3 = ggbox.zoom3)
+    lplot[["ggplot.boxplot"]] <- lggbox
+  }
+  if(make.jitter){
+    # jitter plots at 3 zoom levels
+    lggj <- list
+    ggj.zoom1 <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+      geom_jitter(alpha = 0.5) + 
+      stat_summary(geom = "crossbar", fun = "median", color = "red") + 
+      facet_wrap(~celltype)
+    ggj.zoom2 <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+      geom_jitter(alpha = 0.5) + 
+      stat_summary(geom = "crossbar", fun = "median", color = "red") + 
+      facet_wrap(~celltype) + ylim(0, jitter.zoom.ymax[1])
+    ggj.zoom3 <- ggplot(dfp, aes(x = marker.type, y = disp)) + 
+      geom_jitter(alpha = 0.5) + 
+      stat_summary(geom = "crossbar", fun = "median", color = "red") + 
+      facet_wrap(~celltype) + ylim(0, jitter.zoom.ymax[2])
+    lggj <- list(zoom1 = ggj.zoom1, zoom2 = ggj.zoom2, zoom3 = ggj.zoom3)
+    lplot[["ggplot.jitter"]] <- lggj
+  }
+  return(lplot)
 }
 
 
