@@ -28,47 +28,59 @@
 #' @param method Method to summarize assays on types.
 #' @param type.variable Variable containing the type-level labels.
 #' @param assayname Name of assays data in assays(sce).
+#' @param make.set.plots Make standard plots of SummarizedExperimentTypes, 
+#' including a heatmap of type-level summaries.
 #' @param verbose Whether to show verbose status messages.
 #' groups (see `?sce_groupstat` for details).
 #' @returns `SummarizedExperimentTypes` object.
+#' @details Get a SummarizedExperimentTypes object as a set of summary 
+#' statistics applied on the indicated types variable across cells from a 
+#' SingleCellExperiment object.
+#' 
+#' Type-level summaries are obtained rapidly using the function 
+#' `scuttle::aggregateAcrossCells()`. Additional summary statistics, such as 
+#' count summaries of zero-value data, are then calculated using calls to 
+#' `sce_groupstat()`.
+#' 
 #' @examples
-#' set <- set_from_sce(random_sce()); show(set)
+#' sce <- random_sce()
+#' set <- set_from_sce(sce)
+#' show(set)
 #' @seealso sce_groupstat
 #' @export
 set_from_sce <- function(sce, method = "mean", type.variable = "celltype", 
-                         assayname = "counts", verbose = FALSE){
+                         assayname = "counts", make.set.plots = TRUE, 
+                         verbose = FALSE){
+  require(scuttle)
   # run checks
   if(!(is(sce, "SingleCellExperiment")|is(sce, "SummarizedExperiment"))){
     stop("sce must be of class SingleCellExperiment or SummarizedExperiment.")}
   
   # get new assays matrix
-  typev <- unique(sce[[type.variable]])
-  ma <- do.call(cbind, lapply(typev, function(typei){
-    if(verbose){message("Summarizing type: ", typei, "...")}
-    type.filt <- sce[[type.variable]]==typei; scef <- sce[,type.filt]
-    exprf <- assays(scef)[[assayname]]
-    if(ncol(exprf) > 0){
-      mai <- make_new_assaydata(exprf, method = "mean", na.rm = TRUE, 
-                                verbose = verbose)
-      mai <- matrix(mai, ncol = 1); colnames(mai) <- typei
-      return(mai)
-    }
-  }))
-  rownames(ma) <- rownames(sce)
-  lma <- list(ma); names(lma) <- paste0("summarized_", assayname)
+  typev <- sce[[type.variable]]
+  sce.new <- scuttle::aggregateAcrossCells(sce, ids = typev, statistics = method)
+  
+  # begin new set components
+  lma <- list(assays(sce.new)[[assayname]])
+  names(lma) <- paste0("summarized_", assayname)
+  set.cd <- colData(sce.new)
+  set.rd <- rowData(sce.new)
   
   # parse metadata
   # get rowdata
+  rd.group.statistic <- c("mean", "var", "numzero", "count")
   rd <- sce_groupstat(sce, group.variable = type.variable, assayname = assayname,
-                      summarytype = "rowData", return.tall = FALSE)
-  rownames(rd) <- rownames(ma)
+                      summarytype = "rowData", groupstat = rd.group.statistic, 
+                      return.tall = FALSE)
+  rd <- cbind(rowData(sce.new), rd)
   # get coldata
   cd <- sce_groupstat(sce, group.variable = type.variable, assayname = assayname,
                       summarytype = "colData", return.tall = TRUE)
-  rownames(cd) <- colnames(ma)
+  cd <- cbind(colData(sce.new), cd)
+  
   # metadata
   lmd <- list(assay.info = list(
-    stat.method = method, 
+    assay.summary.method = method, 
     sce.assayname = assayname, 
     type.variable = type.variable
   ))
@@ -77,6 +89,18 @@ set_from_sce <- function(sce, method = "mean", type.variable = "celltype",
   set <- SummarizedExperimentTypes(assays = lma, rowData = rd, 
                                    colData = cd, metadata = lmd)
   
+  if(make.set.plots){
+    # get marker type variable
+    rd.colname.filt <- grepl(".*;mean$", colnames(rd))
+    rdf <- rd[,rd.colname.filt]; rdf.cnv <- colnames(rdf)
+    rowData(set)$marker.type <- unlist(apply(rdf, 1, function(ri){
+      max.label = rdf.cnv[which(ri==max(ri))][1]
+      type.label.max <- gsub(";.*", "", max.label)
+    }))
+    # plot heatmap with rd mtype anno
+    lp <- get_set_plots(set, mtype.variable = "marker.type", verbose = verbose)  
+    metadata(set)[["set.standard.plots"]] <- lp
+  }
   return(set)
 }
 
@@ -379,7 +403,7 @@ get_set_plots <- function(set, lplots = c("hm"),
 #' set <- set_from_sce(sce, group.variable = "donor", type.variable = "typevar")
 #' metadata(set)[["set_plots"]]$heatmap
 #' @export
-get_set_heatmap <- function(set, assayname = "logcounts_bytype",
+get_set_heatmap <- function(set, assayname = "summarized_counts",
                             type.variable = NULL, group.variable = NULL, 
                             mtype.variable = NULL, randcol.seednum = 0, 
                             scale.hmdata = TRUE, hm.topanno = NULL, 
