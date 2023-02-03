@@ -17,6 +17,7 @@
 #' 
 #' @param sce
 #' @param ngene.sample Number of genes to sample at random.
+#' @param assayv Vector of names of assays to analyze.
 #' @param model Character string of the model to use. By default, provides an
 #' interaction between donor and cell type, and the response/dependent variable
 #' is the individual gene.
@@ -29,31 +30,47 @@
 #' results.
 #' @param md.name Name of new sce metadata. Ignored if return.sce is FALSE.
 #' @param seed.num Random seed to set for reproducibility.
+#' @param zoom.panel Whether to show zoomed panels for jitter plots. 
+#' @param zoom.ylim The y-axis limmits for zoomed panels on jitter plots.
+#' @param verbose Whether to show verbose status messages.
+#' @param ... Additional arguments passed to `anova_scatter_plots()` (see 
+#' `?anova_scatter_plots` for details).
 #' @returns Either a SingleCellExperiment object with results as a new metadata
 #' entry, or a list of ANOVA results objects.
 #' @seealso get_anova_df, anova_jitter_plots, anova_scatter_plots
 #' @examples 
 #' sce <- random_sce()
-#' analyze_anova(sce)
+#' sce[["donor"]] <- "donor1" 
+#' sce <- analyze_anova(sce)
 #' @export
-analyze_anova <- function(sce, ngene.sample = 1000, 
+analyze_anova <- function(sce, ngene.sample = 1000, assayv = "counts",
                           model = "expr ~ celltype * donor",
                           return.var = c("percvar"), 
                           return.sce = TRUE, plot.results = TRUE, 
-                          md.name = "anova_results", seed.num = 0){
+                          md.name = "anova_results", seed.num = 0,
+                          zoom.panel = TRUE, zoom.ylim = c(0, 20),
+                          verbose = FALSE, ...){
   if(verbose){message("Performing ANOVAs...")}; lr <- list()
-  dfa <- get_anova_df(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
-                      model = "expr ~ celltype * donor",
-                      return.var = c("percvar"), seed.num = 0, 
-                      verbose = FALSE)
+  dfa <- get_anova_df(sce = sce, pheno.df = pheno.df, 
+                      ngene.sample = ngene.sample, assayv = assayv,
+                      model = model, return.var = return.var, 
+                      seed.num = seed.num, verbose = verbose)
   lr[["df.anova"]] <- dfa
   if(verbose){message("Getting plots of results...")}
   if(plot.results){
-    lggj <- anova_jitter_plots(dfa, zoom.panel = TRUE, zoom.ylim = c(0, 20))
-    lggpt <- anova_scatter_plots(dfa, a1 = "counts", a2 = "counts_ds_combat", 
-                                 regex.cnv = "^percvar\\..*")
+    lggj <- anova_jitter_plots(dfa, zoom.panel = zoom.panel, 
+                               zoom.ylim = zoom.ylim)
     lr[["ggplot.jitter"]] <- lggj
-    lr[["ggplot.scatterplot"]] <- lggpt
+    lggpt <- list()
+    if(length(assayv) > 1){ # make scatterplots from assay combinations
+      lc <- combn(c(assayv), 2) # make combinations
+      for(ii in seq(ncol(lc))){ # parse assay combinations
+        new.list.name <- paste0("a1:",lc[1,ii],";a2:",lc[2,ii])
+        lggpti <- anova_scatter_plots(dfa, a1 = assayv[1], a2 = assayv[2], ...)
+        lggpt[[new.list.name]] <- lggpti
+      }
+      lr[["ggplot.scatterplots"]] <- lggpt
+    }
   }
   # parse return option
   if(return.sce){
@@ -90,7 +107,8 @@ analyze_anova <- function(sce, ngene.sample = 1000,
 #' dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
 #' 
 #' @export
-get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
+get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, 
+                         assayv = "counts",
                          model = "expr ~ celltype * donor",
                          return.var = c("percvar"), 
                          seed.num = 0, verbose = FALSE){
