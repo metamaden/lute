@@ -20,17 +20,49 @@
 #' @param model Character string of the model to use. By default, provides an
 #' interaction between donor and cell type, and the response/dependent variable
 #' is the individual gene.
+#' @param return.var Vector of variables to return from ANOVA test results (see 
+#' `?get_anova_df` for valid options). By default, returns percentage of sum of
+#' squared variances.
+#' @param return.sce Whether to return the SingleCellExperiment object with 
+#' results stored as new object in metadata. If FALSE, returns results list.
+#' @param plot.results Whether to append jitter plots and scatterplots of the
+#' results.
+#' @param md.name Name of new sce metadata. Ignored if return.sce is FALSE.
 #' @param seed.num Random seed to set for reproducibility.
-#' @param 
-#' @returns 
+#' @returns Either a SingleCellExperiment object with results as a new metadata
+#' entry, or a list of ANOVA results objects.
+#' @seealso get_anova_df, anova_jitter_plots, anova_scatter_plots
 #' @examples 
 #' sce <- random_sce()
+#' analyze_anova(sce)
 #' @export
-analyze_anova <- function(sce, ngene.sample = 2000, 
+analyze_anova <- function(sce, ngene.sample = 1000, 
                           model = "expr ~ celltype * donor",
-                          return.var = c("sumsq", "perc.var"), 
-                          type = "complex"){
-  
+                          return.var = c("percvar"), 
+                          return.sce = TRUE, plot.results = TRUE, 
+                          md.name = "anova_results", seed.num = 0){
+  if(verbose){message("Performing ANOVAs...")}; lr <- list()
+  dfa <- get_anova_df(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
+                      model = "expr ~ celltype * donor",
+                      return.var = c("percvar"), seed.num = 0, 
+                      verbose = FALSE)
+  lr[["df.anova"]] <- dfa
+  if(verbose){message("Getting plots of results...")}
+  if(plot.results){
+    lggj <- anova_jitter_plots(dfa, zoom.panel = TRUE, zoom.ylim = c(0, 20))
+    lggpt <- anova_scatter_plots(dfa, a1 = "counts", a2 = "counts_ds_combat", 
+                                 regex.cnv = "^percvar\\..*")
+    lr[["ggplot.jitter"]] <- lggj
+    lr[["ggplot.scatterplot"]] <- lggpt
+  }
+  # parse return option
+  if(return.sce){
+    if(md.name %in% metadata(sce)){
+      stop("Error, sce already contains metadata of the same name")}
+    metadata(sce)[[md.name]] <- lr
+    return(sce)
+  }
+  return(lr)
 }
 
 #' get_anova_df
@@ -173,7 +205,7 @@ anova_jitter_plots <- function(dfa, zoom.panel = TRUE, zoom.ylim = c(0, 20)){
 #' @seealso anova_jitter_plots, get_anova_df, analyze_anova
 #' @export
 anova_scatter_plots <- function(dfa, a1 = "counts", a2 = "counts_ds_combat", 
-                                regex.cnv = "^perc\\.var\\..*"){
+                                regex.cnv = "^percvar\\..*"){
   # filter dfa
   df1 <- dfa[dfa.all$assay==a1,]; df2 <- dfa[dfa.all$assay==a2,]
   # match dfs
