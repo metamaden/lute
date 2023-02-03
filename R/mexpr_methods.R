@@ -127,6 +127,7 @@ get_anova_df <- function(sce, pheno.df, ngene.sample = NULL, assayv = "counts",
 #' pheno.df <- data.frame(donor = sce[["donor"]], celltype = sce[["celltype"]])
 #' dfa <- get_anova_df(sce = sce, pheno.df = pheno.df)
 #' lggj <- anova_jitter_plots(dfa)
+#' @seealso anova_scatter_plots, get_anova_df, analyze_anova
 #' @export
 anova_jitter_plots <- function(dfa, zoom.panel = TRUE, zoom.ylim = c(0, 20)){
   require(ggplot2); require(ggforce)
@@ -161,42 +162,39 @@ anova_jitter_plots <- function(dfa, zoom.panel = TRUE, zoom.ylim = c(0, 20)){
 
 #' anova_scatter_plots
 #'
+#' Get scatter plots showing variances explained from ANOVAs performed on two
+#' assay types, a1 (x-axis) and a2 (y-axis)
+#' 
 #' @param dfa.all Data.frame of ANOVA results, returned from get_anova_df().
 #' @param a1 Name of first assay, for x-axis.
 #' @param a2 Name of second assay, for y-axis.
 #' @param regex.cnv Regex pattern to find column names to plot
-#'
-anova_scatter_plots <- function(dfa.all, a1 = "counts", a2 = "counts_ds_combat", 
+#' @returns List of plot objects.
+#' @seealso anova_jitter_plots, get_anova_df, analyze_anova
+#' @export
+anova_scatter_plots <- function(dfa, a1 = "counts", a2 = "counts_ds_combat", 
                                 regex.cnv = "^perc\\.var\\..*"){
-  # get dfs
-  df1 <- dfa.all[dfa.all$assay==a1,]
-  df2 <- dfa.all[dfa.all$assay==a2,]
+  # filter dfa
+  df1 <- dfa[dfa.all$assay==a1,]; df2 <- dfa[dfa.all$assay==a2,]
   # match dfs
-  df1 <- df1[!duplicated(df1$marker),]
-  df2 <- df2[!duplicated(df2$marker),]
+  df1 <- df1[!duplicated(df1$marker),]; df2 <- df2[!duplicated(df2$marker),]
   markerv.int <- intersect(df1$marker, df2$marker)
   df1 <- df1[df1$marker %in% markerv.int,]
   df2 <- df2[df2$marker %in% markerv.int,]
   df2 <- df2[order(match(df2$marker, df1$marker)),]
-  # get plots if match successful
+  # check match success
   cond <- identical(as.character(df2$marker), as.character(df1$marker))
-  if(cond){
-    # get colnames to plot
-    cnv <- colnames(df1); cnv <- cnv[grepl(regex.cnv, cnv)]
-    # plot each colname
-    lggi <- lapply(cnv, function(ci){
-      dfp <- data.frame(pv1 = df1[,ci], pv2 = df2[,ci])
-      title.str <- paste0("Percent var. ", gsub(".*\\." , "", ci))
-      ggplot(dfp, aes(x = pv1, y = pv2)) + geom_point(alpha = 0.5) + 
-        geom_abline(slope = 1, intercept = 0, col = "black") +
-        ggtitle(title.str) + xlab(a1) + ylab(a2)
-    })
-    names(lggi) <- cnv
-    return(lggi)
-  } else{
-    stop("Error, couldn't match markers across provided assays.")
-  }
-  return(NULL)
+  if(!cond){stop("Error, couldn't match markers for assays.")}
+  cnv <- colnames(df1); cnv <- cnv[grepl(regex.cnv, cnv)] # colnames to plot
+  lggi <- lapply(cnv, function(ci){ # plot colname matches
+    dfp <- data.frame(pv1 = df1[,ci], pv2 = df2[,ci])
+    title.str <- paste0("Percent var. ", gsub(".*\\." , "", ci))
+    ggplot(dfp, aes(x = pv1, y = pv2)) + geom_point(alpha = 0.5) + 
+      geom_abline(slope = 1, intercept = 0, col = "black") +
+      ggtitle(title.str) + xlab(a1) + ylab(a2)
+  })
+  names(lggi) <- cnv
+  return(lggi)
 }
 
 #---------------------------
