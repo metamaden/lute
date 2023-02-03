@@ -15,7 +15,9 @@
 #' Main function to perform ANOVA analyses on a series of assays, such as from
 #' a SingleCellExperiment or SummarizedExperiment object.
 #' 
-#' @param sce
+#' @param sce A SingleCellExperiment or SummarizedExperiment object.
+#' @param pheno.df Table containing phenotype information. Should include all
+#' variables in provided model except "expr". If NULL, use sce colData.
 #' @param ngene.sample Number of genes to sample at random.
 #' @param assayv Vector of names of assays to analyze.
 #' @param model Character string of the model to use. By default, provides an
@@ -39,16 +41,33 @@
 #' entry, or a list of ANOVA results objects.
 #' @seealso get_anova_df, anova_jitter_plots, anova_scatter_plots
 #' @examples 
+#' # get example data
 #' sce <- random_sce()
-#' sce[["donor"]] <- "donor1" 
-#' sce <- analyze_anova(sce, ngene.sample = 5)
+#' sce[["donor"]] <- c(rep("donor1", 2), rep("donor2", 10))
+#' 
+#' # simple anova
+#' sce <- analyze_anova(sce, model = "expr ~ celltype", ngene.sample = 5)
+#' 
+#' # anova with batch term -- fails, can't overwrite results metadata
+#' sce <- analyze_anova(sce, model = "expr ~ celltype + donor", 
+#'                      ngene.sample = 5)
+#' 
+#' # anova with batch term -- success, writing results to new metadata
+#' new.md.name <- "anova_results_batch_model"
+#' sce <- analyze_anova(sce, model = "expr ~ celltype + donor", 
+#'                      ngene.sample = 5, md.name = new.md.name)
+#' 
+#' # anova with batch interaction term
+#' new.md.name <- "anova_results_batch_interaction_model"
+#' sce <- analyze_anova(sce, model = "expr ~ celltype * donor", 
+#'                      ngene.sample = 5, md.name = new.md.name)
+#' 
 #' @export
-analyze_anova <- function(sce, pheno.df, ngene.sample = 1000, assayv = "counts",
-                          model = "expr ~ celltype * donor",
-                          return.var = c("percvar"), 
-                          return.sce = TRUE, plot.results = TRUE, 
-                          md.name = "anova_results", seed.num = 0,
-                          zoom.panel = TRUE, zoom.ylim = c(0, 20),
+analyze_anova <- function(sce, pheno.df = NULL, ngene.sample = 1000, 
+                          assayv = "counts", model = "expr ~ celltype * donor",
+                          return.var = c("percvar"), return.sce = TRUE, 
+                          plot.results = TRUE, md.name = "anova_results", 
+                          seed.num = 0, zoom.panel = TRUE, zoom.ylim = c(0, 20),
                           verbose = FALSE, ...){
   if(verbose){message("Performing ANOVAs...")}; lr <- list()
   dfa <- get_anova_df(sce = sce, pheno.df = pheno.df, 
@@ -74,7 +93,7 @@ analyze_anova <- function(sce, pheno.df, ngene.sample = 1000, assayv = "counts",
   }
   # parse return option
   if(return.sce){
-    if(md.name %in% metadata(sce)){
+    if(md.name %in% names(metadata(sce))){
       stop("Error, sce already contains metadata of the same name")}
     metadata(sce)[[md.name]] <- lr
     return(sce)
