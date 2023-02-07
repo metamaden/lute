@@ -216,7 +216,7 @@ anova_jitter_plots <- function(dfa, zoom.panel = TRUE, zoom.ylim = c(0, 20)){
       title.str <- paste0(ci)
       dfp <- data.frame(value = dfa[,ci], assay = dfa$assay)
       ggj <- ggplot(dfp, aes(x = assay, y = value)) + geom_jitter(alpha = 0.5) + 
-        stat_summary(geom = "crossbar", fun = "mean", color = "red") +
+        stat_summary(geom = "crossbar", fun = "median", color = "red") +
         theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
         ggtitle(title.str)
       if(zoom.panel){ggj <- ggj + facet_zoom(ylim = zoom.ylim)}
