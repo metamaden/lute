@@ -104,7 +104,7 @@ function (ndonor = 2, gindexv = c(1, 2), method = "nbinom", lambda.pos = 20,
   }
   type.vector <- paste0("type", rep(seq(ktotal), each = nmarkers))
   type.levels <- unique(type.vector)
-  type.levels <- marker.levels[order(type.levels)]
+  type.levels <- type.levels[order(type.levels)]
   type.factor <- factor(type.vector, levels = type.levels)
   md$type <- type.factor
   
