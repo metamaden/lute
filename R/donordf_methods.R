@@ -31,7 +31,7 @@ check_donordf <- function(df){
   }
   # check type variable
   if(!is(df$type, "factor")){
-    stop("Error, type variable is not a factor.")
+    message("Warning, type variable is not an ordered factor.")
   }
   cnv <- colnames(df); lcond <- list()
   lcond[["cond.donorcol"]] <- grepl("^donor\\d", cnv)
@@ -281,9 +281,28 @@ random_donordf <- function(ndonor = 2, gindexv = c(1, 2), method = "nbinom",
     md$donor.mean <- apply(md[,which.cnv.donor], 1, mean)
     md$donor.median <- apply(md[,which.cnv.donor], 1, median)
   }
-  md$type <- paste0("type", rep(seq(ktotal), each = nmarkers))
-  md$marker <- paste0("marker", rep(seq(nmarkers), times = ktotal))
-  md$marker.type <- paste0("type", gindexv)
+  # get type label variable
+  type.vector <- paste0("type", rep(seq(ktotal), each = nmarkers))
+  type.levels <- unique(type.vector)
+  type.levels <- marker.levels[order(type.levels)]
+  type.factor <- factor(type.vector, levels = type.levels)
+  md$type <- type.factor
+  
+  # get marker label variable
+  marker.vector <- paste0("marker", rep(seq(nmarkers), times = ktotal))
+  marker.levels <- unique(marker.vector)
+  marker.levels <- marker.levels[order(marker.levels)]
+  marker.factor <- factor(marker.vector, levels = marker.levels)
+  md$marker <- marker.factor
+  
+  # get marker type
+  marker.type.vector <- paste0("type", gindexv)
+  marker.type.levels <- unique(marker.type.vector)
+  marker.type.levels <- marker.type.levels[order(marker.type.levels)]
+  marker.type.factor <- factor(marker.type.vector, levels = marker.type.levels)
+  md$marker.type <- marker.type.factor
+  
+  # convert to donor.data.frame
   md <- as(md, "donor.data.frame")
   if(check_donordf(md)){ # final check
     return(md)
