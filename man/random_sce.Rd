@@ -9,6 +9,7 @@ random_sce(
   num.cells = 12,
   num.types = 2,
   fract.types = NULL,
+  dispersion = NULL,
   expr.mean = 10,
   na.include = FALSE,
   na.fract = 0.2,
@@ -26,6 +27,9 @@ random_sce(
 \item{num.types}{Number of cell types to annotate.}
 
 \item{fract.types}{Vector of fractions by type.}
+
+\item{dispersion}{Disperison of gene expression. If NULL, uses the mean from 
+expr.mean}
 
 \item{expr.mean}{Poisson dist mean for random expression data.}
 

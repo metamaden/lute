@@ -103,6 +103,8 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2,
 #' @param num.cells Numnber of cells to randomize.
 #' @param num.types Number of cell types to annotate.
 #' @param fract.types Vector of fractions by type.
+#' @param dispersion Disperison of gene expression. If NULL, uses the mean from 
+#' expr.mean
 #' @param expr.mean Poisson dist mean for random expression data.
 #' @param seed.num Seed value for randomization of expression data.
 #' @param na.include Whether to include random NA values.
@@ -115,12 +117,15 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2,
 #' sce <- random_sce()
 #' @export
 random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2, 
-                       fract.types = NULL, expr.mean = 10, 
-                       na.include = FALSE, na.fract = 0.2, 
-                       zero.include = FALSE, zero.fract = 0.2,
-                       verbose = FALSE, seed.num = 0){
+                       fract.types = NULL, dispersion = NULL, 
+                       expr.mean = 10, na.include = FALSE, 
+                       na.fract = 0.2, zero.include = FALSE, 
+                       zero.fract = 0.2, verbose = FALSE, 
+                       seed.num = 0){
   if(verbose){message("Getting random expression data...")}
-  mdat <- rnbinom(n = (num.cells*num.genes), size = expr.mean, mu = expr.mean)
+  if(is(dispersion, "NULL")){dispersion <- expr.mean}
+  mdat <- rnbinom(n = (num.cells*num.genes), 
+                  size = dispersion, mu = expr.mean)
   if(na.include){ # manually add NAs
     if(verbose){message("Including NA values...")}
     num.na <- round(length(mdat)*na.fract, digits = 0)
