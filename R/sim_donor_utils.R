@@ -631,23 +631,30 @@ get_sce_donor_bias <- function(donor.bias.coeff = 1, mean.vector = NULL,
 #' across simulated donors.
 #' @examples
 #' # simulate donor bias cell data, with default settings
-#' lr <- plot_multiple_donor_bias_sce()
+#' # ld <- simulate_sce_donor_bias()
 #' 
 #' # dimensions of final sce object
-#' dim(lr[["sce"]]) 
+#' # dim(ld[["sce"]]) 
 #' 
 #' # show the resulting smooth plot
-#' lr[["ggsmoooth"]]
+#' # ld[["ggsmoooth"]] # overlay
+#' # ld[["ggsmooth"]] + facet_wrap(~donor.coeff) # panels
 #' 
 #' @export
 simulate_sce_donor_bias <- function(donor.coeff.vector = NULL, ...){
+  require(ggplot2)
+  require(SummarizedExperiment)
+  require(SingleCellExperiment)
   lr <- list()
   if(is(donor.coeff.vector, "NULL")){
     donor.coeff.vector <- rnorm(10, mean = 200, sd = 30)
   }
   sce <- do.call(cbind, lapply(donor.coeff.vector, function(ii){
-    scei <- get_sce_donor_bias(ii, ...); scei[["donor.coeff"]] <- ii; scei
+    scei <- get_sce_donor_bias(ii, ...)
+    scei[["donor.coeff"]] <- ii; scei
+    # as(scei, "SummarizedExperiment")
   })) 
+  # sce <- as(sce, "SingleCellExperiment")
   # plot
   dfp <- do.call(rbind, lapply(donor.coeff.vector, function(ii){
     ctf <- counts(sce[,sce[["donor.coeff"]]==ii])

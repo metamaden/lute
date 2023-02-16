@@ -26,12 +26,13 @@ across simulated donors.
 }
 \examples{
 # simulate donor bias cell data, with default settings
-lr <- plot_multiple_donor_bias_sce()
+ld <- simulate_sce_donor_bias()
 
 # dimensions of final sce object
 dim(lr[["sce"]]) 
 
 # show the resulting smooth plot
-lr[["ggsmoooth"]]
+lr[["ggsmoooth"]] # overlay
+lr[["ggsmooth"]] + facet_wrap(~donor.coeff) # panels
 
 }
