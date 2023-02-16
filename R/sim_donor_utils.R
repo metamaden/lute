@@ -618,6 +618,8 @@ get_sce_donor_bias <- function(donor.bias.coeff = 1, mean.vector = NULL,
 #' 
 #' @param donor.coeff.vector Vector of donor bias values. If NULL, uses 
 #' `rnorm(10, mean = 200, sd = 30)`.
+#' @param ... Additional arguments passed to `get_sce_donor_bias()` (see 
+#' `?get_sce_donor_bias` for details).
 #' @returns List containing the sce and ggplot objects.
 #' @details Simulates a new SingleCellExperiment object with included donor bias,
 #' and plots the means and variances on log scale to show dispersion biases 
@@ -633,13 +635,13 @@ get_sce_donor_bias <- function(donor.bias.coeff = 1, mean.vector = NULL,
 #' lr[["ggsmoooth"]]
 #' 
 #' @export
-simulate_sce_donor_bias <- function(donor.coeff.vector = NULL){
+simulate_sce_donor_bias <- function(donor.coeff.vector = NULL, ...){
   lr <- list()
   if(is(donor.coeff.vector, "NULL")){
     donor.coeff.vector <- rnorm(10, mean = 200, sd = 30)
   }
   sce <- do.call(cbind, lapply(donor.coeff.vector, function(ii){
-    scei <- get_sce_donor_bias(ii); scei[["donor.coeff"]] <- ii; scei
+    scei <- get_sce_donor_bias(ii, ...); scei[["donor.coeff"]] <- ii; scei
   })) 
   # plot
   dfp <- do.call(rbind, lapply(donor.coeff.vector, function(ii){

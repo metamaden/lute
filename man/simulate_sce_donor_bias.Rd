@@ -4,11 +4,14 @@
 \alias{simulate_sce_donor_bias}
 \title{simulate_sce_donor_bias}
 \usage{
-simulate_sce_donor_bias(donor.coeff.vector = NULL)
+simulate_sce_donor_bias(donor.coeff.vector = NULL, ...)
 }
 \arguments{
 \item{donor.coeff.vector}{Vector of donor bias values. If NULL, uses 
 `rnorm(10, mean = 200, sd = 30)`.}
+
+\item{...}{Additional arguments passed to `get_sce_donor_bias()` (see 
+`?get_sce_donor_bias` for details).}
 }
 \value{
 List containing the sce and ggplot objects.
