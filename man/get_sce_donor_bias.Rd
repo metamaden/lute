@@ -52,3 +52,7 @@ Where C is the coefficient of donor bias, and M is the distribution mean. This
 formula was chosen because it produces bias that resembles real empirical
 donor biases observed for snRNAseq data.
 }
+\examples{
+sce <- get_sce_donor_bias()
+
+}

@@ -5,6 +5,33 @@
 require(lute)
 
 #--------------------------
+# test get_sce_donor_bias()
+#--------------------------
+donor.bias.coeff = 1
+mean.vector = NULL
+num.cells.iter = 10
+num.genes.iter = 10
+num.types = 1
+seed.num = 0
+
+
+set.seed(seed.num)
+if(is(mean.vector, "NULL")){mean.vector = seq(1, 30, 1)}
+sce <- do.call(rbind, lapply(mean.vector, function(meani){
+  d <- donor.bias.coeff*(meani/(meani^2))
+  scei <- random_sce(num.types = num.types, num.cells = num.cells.iter, 
+             expr.mean = meani, num.genes = num.genes.iter, dispersion = d)
+  scei <- as(scei, "SummarizedExperiment")
+  scei
+}))
+class(sce)
+
+sce <- get_sce_donor_bias()
+
+
+
+
+#--------------------------
 # test donordf_from_mexpr()
 #--------------------------
 

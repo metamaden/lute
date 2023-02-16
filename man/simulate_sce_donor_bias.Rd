@@ -24,3 +24,14 @@ Simulates a new SingleCellExperiment object with included donor bias,
 and plots the means and variances on log scale to show dispersion biases 
 across simulated donors.
 }
+\examples{
+# simulate donor bias cell data, with default settings
+lr <- plot_multiple_donor_bias_sce()
+
+# dimensions of final sce object
+dim(lr[["sce"]]) 
+
+# show the resulting smooth plot
+lr[["ggsmoooth"]]
+
+}

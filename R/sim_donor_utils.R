@@ -584,6 +584,9 @@ pca_bydonortype <- function(dt,
 #' @param num.types Number of cell types to simulate.
 #' @param seed.num Token for the random seed.
 #' @returns New simulated SingleCellExperiment object.
+#' @examples 
+#' sce <- get_sce_donor_bias()
+#' 
 #' @details The arguments num.cells.iter and num.genes.iter specify the cells 
 #' and genes to simulate for each mean specified by the mean.vector argument. 
 #' Thus for a mean.vector argument of length 10, specifying num.cells.iter = 10 
@@ -600,16 +603,18 @@ pca_bydonortype <- function(dt,
 #' donor biases observed for snRNAseq data.
 #' 
 #' @export
-get_sce_donor_bias <- function(donor.bias.coeff = 1, mean.vector = NULL, 
-                            num.cells.iter = 10, num.genes.iter = 10, 
-                            num.types = 1, seed.num = 0){
+get_sce_donor_bias <- function(donor.bias.coeff = 1, mean.vector = NULL,
+                               num.cells.iter = 10, num.genes.iter = 10,
+                               num.types = 1, seed.num = 0){
   set.seed(seed.num)
   if(is(mean.vector, "NULL")){mean.vector = seq(1, 30, 1)}
-  do.call(rbind, lapply(mean.vector, function(meani){
+  sce <- do.call(rbind, lapply(mean.vector, function(meani){
     d <- donor.bias.coeff*(meani/(meani^2))
-    random_sce(num.types = num.types, num.cells = num.cells.iter, 
-               expr.mean = meani, num.genes = num.genes.iter, dispersion = d)
+    scei <- random_sce(num.types = num.types, num.cells = num.cells.iter, 
+                       expr.mean = meani, num.genes = num.genes.iter, dispersion = d)
+    as(scei, "SummarizedExperiment")
   }))
+  return(as(sce, "SingleCellExperiment"))
 }
 
 #' simulate_sce_donor_bias
@@ -624,7 +629,7 @@ get_sce_donor_bias <- function(donor.bias.coeff = 1, mean.vector = NULL,
 #' @details Simulates a new SingleCellExperiment object with included donor bias,
 #' and plots the means and variances on log scale to show dispersion biases 
 #' across simulated donors.
-#' @example 
+#' @examples
 #' # simulate donor bias cell data, with default settings
 #' lr <- plot_multiple_donor_bias_sce()
 #' 
