@@ -563,3 +563,98 @@ pca_bydonortype <- function(dt,
   }
   return(lr)
 }
+
+#------------------------------------------------
+# functions for simulating single cell donor bias
+#------------------------------------------------
+
+
+#' get_sce_donor_bias
+#'
+#' Get a SingleCellExperiment with donor bias incorporated. 
+#' 
+#' @param donor.bias.coeff Coefficient of donor bias. Modifies dispersion of 
+#' local negative binomial distributions for sampling.
+#' @param mean.vector Vector of gene mean values for the sample distribution.
+#' If NULL, uses `seq(1, 30, 1)`.
+#' @param num.cells.iter Number of cells to simulate for each value in the 
+#' mean.vector.
+#' @param num.genes.iter Number of genes to simulate for each value in the
+#' mean.vector.
+#' @param num.types Number of cell types to simulate.
+#' @param seed.num Token for the random seed.
+#' @returns New simulated SingleCellExperiment object.
+#' @details The arguments num.cells.iter and num.genes.iter specify the cells 
+#' and genes to simulate for each mean specified by the mean.vector argument. 
+#' Thus for a mean.vector argument of length 10, specifying num.cells.iter = 10 
+#' and num.genes.iter = 5 produces (`10 * 10 = `) 100 cells and (`5 * 10 = `) 50 
+#' genes.
+#' 
+#' Donor bias is modeled by modifying the dispersion of a negative 
+#' binomial distribution using:
+#' 
+#' C * M/M^2
+#' 
+#' Where C is the coefficient of donor bias, and M is the distribution mean. This
+#' formula was chosen because it produces bias that resembles real empirical
+#' donor biases observed for snRNAseq data.
+#' 
+#' @export
+get_sce_donor_bias <- function(donor.bias.coeff = 1, mean.vector = NULL, 
+                            num.cells.iter = 10, num.genes.iter = 10, 
+                            num.types = 1, seed.num = 0){
+  set.seed(seed.num)
+  if(is(mean.vector, "NULL")){mean.vector = seq(1, 30, 1)}
+  do.call(rbind, lapply(mean.vector, function(meani){
+    d <- donor.bias.coeff*(meani/(meani^2))
+    random_sce(num.types = num.types, num.cells = num.cells.iter, 
+               expr.mean = meani, num.genes = num.genes.iter, dispersion = d)
+  }))
+}
+
+#' simulate_sce_donor_bias
+#'
+#' Simulate and plot donor bias from a SingleCellExperiment.
+#' 
+#' @param donor.coeff.vector Vector of donor bias values. If NULL, uses 
+#' `rnorm(10, mean = 200, sd = 30)`.
+#' @returns List containing the sce and ggplot objects.
+#' @details Simulates a new SingleCellExperiment object with included donor bias,
+#' and plots the means and variances on log scale to show dispersion biases 
+#' across simulated donors.
+#' @example 
+#' # simulate donor bias cell data, with default settings
+#' lr <- plot_multiple_donor_bias_sce()
+#' 
+#' # dimensions of final sce object
+#' dim(lr[["sce"]]) 
+#' 
+#' # show the resulting smooth plot
+#' lr[["ggsmoooth"]]
+#' 
+#' @export
+simulate_sce_donor_bias <- function(donor.coeff.vector = NULL){
+  lr <- list()
+  if(is(donor.coeff.vector, "NULL")){
+    donor.coeff.vector <- rnorm(10, mean = 200, sd = 30)
+  }
+  sce <- do.call(cbind, lapply(donor.coeff.vector, function(ii){
+    scei <- get_sce_donor_bias(ii); scei[["donor.coeff"]] <- ii; scei
+  })) 
+  # plot
+  dfp <- do.call(rbind, lapply(donor.coeff.vector, function(ii){
+    ctf <- counts(sce[,sce[["donor.coeff"]]==ii])
+    dfi <- data.frame(mean = rowMeans(ctf), var = rowVars(ctf))
+    dfi$donor.coeff <- ii; dfi
+  }))
+  dfp$donor.coeff <- as.character(dfp$donor.coeff)
+  ggsm <- ggplot(dfp, aes(x = mean, y = var, color = donor.coeff)) + 
+    geom_abline(slope = 1, intercept = 0) + 
+    scale_x_log10() + scale_y_log10() + geom_smooth() +
+    theme(legend.position = 'none') +
+    xlab('Mean (log10)') + ylab("Var (log10)")
+  # get the return object
+  lr[["sce"]] <- sce; lr[["dfp"]] <- dfp; lr[["ggsmooth"]] <- ggsm
+  return(lr)
+}
+
