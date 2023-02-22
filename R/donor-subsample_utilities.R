@@ -11,6 +11,8 @@
 #' @param sce SingleCellExperiment
 #' @param iterations Total iterations to perform, per valid method specified in 
 #' the methods argument.
+#' @param groups.per.iteration Number of groups to sample per iteration. Total 
+#' groups should exceed this value, otherwise data is treated as a single group.
 #' @param methods Vector of valid deconvolution methods to test.
 #' @param celltype.variable Variable containing cell type labels.
 #' @param group.variable Variable containing group labels for donor/sample/batch.
@@ -31,9 +33,9 @@
 #' where remaining arguments specify details for random iterations. 
 #' 
 #' The fraction of cells per type and group is specified by the fraction.cells 
-#' argument. Since the total cells per type may vary across groups, the total 
-#' cells per iteration and type can also vary unless the sce data has been 
-#' pre-filtered to control for this.
+#' argument. To ensure the same number of cells are sampled across iterations,
+#' the final total of cells by type to sample is taken from the group-wise 
+#' minima.
 #' 
 #' Since it is assumed you will use the same bulk data and true proportions to
 #' evaluate iterations, these data are calculated once using the full sce object.
@@ -54,6 +56,7 @@
 #' 
 #' @export
 prepare_subsample_experiment <- function(sce, iterations = 10, 
+                                         groups.per.iteration = 3,
                                          methods = c("nnls", "music"),
                                          celltype.variable = "k2", 
                                          group.variable = "Sample",
@@ -65,35 +68,55 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
                                          save.paths = list(base.path = "./data/", 
                                                            sce.name = "sce.rda",
                                                            wt.name = "workflow-table.rda",
-                                                           tp.name = "true-proportions.rda")){
-  # randomly take cells from 3 donors at a time
-  # get the exact numbers of cells of each type to sample
-  dft <- as.data.frame(table(sce[[celltype.variable]], 
-                             sce[[sample.variable]]))
-  num.cells.glial <- round(min(dft[dft[,1]=="glial",3])*0.3, 0)
-  num.cells.neuron <- round(min(dft[dft[,1]=="neuron",3])*0.3, 0)
-  # get random cell indices as a list
+                                                           tp.name = "true-proportions.rda",
+                                                           pb.name = "ypb.rda"),
+                                         verbose = TRUE){
+  set.seed(seed.num)
+  
+  # get metadata vectors
   cd <- colData(sce)
-  unique.samples <- unique(cd[,sample.variable])
-  unique.types <- unique(cd[,celltype.variable])
+  groups.vector <- cd[,group.variable]
+  celltype.vector <- cd[,celltype.variable]
+  # get unique groups
+  unique.groups <- unique(groups.vector)
+  # get alphabetized celltype labels
+  unique.type <- unique(celltype.vector)
   unique.types <- unique.types[order(unique.types)]
-  # order s cell size factors
-  S <- S[order(match(names(S), unique.types))]
-  num.cellsv <- c("glial" = num.cells.glial, "neuron" = num.cells.neuron)
+  message("Found ",length(unique.types), " cell type labels: ", 
+          paste0(unique.types, collapse = ";"))
+  # parse scale factors
+  S <- scale.factor
+  S <- S[names(S) %in% unique.types]
+  S <- S[order(match(names(S), names(unique.types)))]
+  message("Found ",length(S), " cell types with scale factors")
+  
+  # prepare iterations parameters
+  if(groups.per.iteration > length(unique.groups)){
+    groups.per.iteration <- "NULL"}
+  # get the exact numbers of cells of each type to sample
+  dft <- as.data.frame(table(celltype.vector, groups.vector))
+  # get cells by group as minima
+  num.cells.vector <- sapply(unique.types, function(ti){
+    round(min(dft[dft[,1]==ti,3])*fraction.cells, 0)})
+  
+  if(verbose){message("Getting random cell indices for iterations...")}
   lindex <- lapply(seq(num.iter), function(ii){
-    set.seed(ii)
-    # get filtered sce data as scef
-    random.samples <-  sample(unique.samples, num.sample.iter)
-    filt <- cd[,sample.variable] %in% random.samples
-    cdf <- cd[filt,]
-    vindex <- which(colnames(sce) %in% unlist(lapply(unique.types, function(typei){
-      sample(rownames(cdf[cdf[,celltype.variable]==typei,]), num.cellsv[typei])
+    if(!is(groups.per.iteration, "NULL")){
+      random.groups <-  sample(unique.groups, groups.per.iteration)
+      cdf <- cd[cd[,group.variable] %in% random.groups,]
+    } else{
+      cdf <- cd
+      random.groups = unique.groups
+    }
+    cell.index.vector <- unlist(lapply(unique.types, function(typei){
+      cell.id.vector <- rownames(cdf[cdf[,celltype.variable]==typei,])
+      sample(cell.id.vector, num.cells.vector[typei])
     })))
-    # return results
-    list(vindex = vindex, samples = random.samples)
+    vindex <- which(colnames(sce) %in% cell.index.vector)
+    list(vindex = vindex, samples = random.groups) # return
   })
   
-  # get pseudobulk data
+  if(verbose){message("Getting pseudobulk and true proportions...")}
   tp <- as.data.frame(table(sce[[celltype.variable]]))
   tp.prop <- tp[,2]; names(tp.prop) <- tp[,1]
   P <- tp.prop/sum(tp.prop)
@@ -103,18 +126,8 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
   ZS <- sweep(Z, 2, S, "*")
   ypb <- t(t(P) %*% t(ZS))
   
-  # save new data
-  # save indices
-  save(lindex, file = lindex.fpath)
-  # save pseudobulk
-  save(ypb, file = ypb.fpath)
-  # save tp
-  save(P, file = tp.fpath)
-  
-  #---------------------
-  # write workflow table
-  #---------------------
-  wt <- do.call(rbind, lapply(methodv, function(methodi){
+  if(verbose){message("Writing new workflow table...")}
+  wt <- do.call(rbind, lapply(methods, function(methodi){
     wti <- data.frame(iterations_index = seq(num.iter))
     wti$method <- methodi
     wti$sample_id <- unlist(lapply(lindex, function(li){
@@ -124,17 +137,40 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
     # manage filepaths
     cnamev <- c("sce_filepath", "bulk_filepath", "list_index_filepath",
                 "true_proportions_filepath")
-    fpathv <- c(file.path("data", sce.fname),
-                file.path("data", ypb.fname),
-                file.path("data", lindex.fname),
-                file.path("data", tp.fname))
+    fpathv <- c(file.path("data", save.paths[["sce.name"]]), 
+                file.path("data", save.paths[["ypb.name"]]),
+                file.path("data", save.paths[["li.name"]]), 
+                file.path("data", save.paths[["tp.name"]]))
     for(ii in seq(length(cnamev))){
       wti[,cnamev[ii]] <- paste0('"$launchDir/', fpathv[ii], '"')}
     wti
   }))
   
-  # save
-  write.csv(wt, file = wt.fpath, row.names = F)
+  if(verbose){message("Saving new data...")}
+  base.path <- sve.paths[["base.path"]]
+  if("ypb" %in% which.save){
+    ypb.fpath <- file.path(base.path, save.paths[["ypb.name"]])
+    save(ypb, file = ypb.fpath)
+  }
+  if("tp" %in% which.save){
+    tp.fpath <- file.path(base.path, save.paths[["tp.name"]])
+    save(P, file = tp.fpath)
+  }
+  if("sce" %in% which.save){
+    sce.fpath <- file.path(base.path, save.paths[["sce.name"]])
+    save(sce, file = sce.fpath)
+  }
+  if("lindex" %in% which.save){
+    li.fpath <- file.path(base.path, save.paths[["li.name"]])
+    save(lindex, file = li.fpath)
+  }
+  if("wt" %in% which.save){
+    wt.fpath <- file.path(base.path, save.paths[["wt.name"]])
+    write.csv(wt, file = wt.fpath, row.names = F)
+  }
+  
+  message("Finished run prep. Returning iterations index list.")
+  return(lindex)
 }
 
 #'
