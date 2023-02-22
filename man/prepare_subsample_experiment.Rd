@@ -16,7 +16,7 @@ prepare_subsample_experiment(
   fraction.cells = 0.25,
   seed.num = 0,
   save.fnstem = "",
-  which.save = c("sce", "tp", "ypb", "wt"),
+  which.save = c("sce", "tp", "ypb", "wt", "li"),
   base.path = "data",
   save.names = list(sce.name = "sce.rda", wt.name = "workflow-table.csv", tp.name =
     "true-proportions.rda", ypb.name = "ypb.rda", li.name = "lindex.rda"),

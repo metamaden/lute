@@ -66,7 +66,7 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
                                          fraction.cells = 0.25,
                                          seed.num = 0,
                                          save.fnstem = "",
-                                         which.save = c("sce", "tp", "ypb", "wt"),
+                                         which.save = c("sce", "tp", "ypb", "wt", "li"),
                                          base.path = "data",
                                          save.names = list(sce.name = "sce.rda",
                                                            wt.name = "workflow-table.csv",
@@ -118,7 +118,6 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
     cell.index.vector <- unlist(lapply(unique.types, function(typei){
       type.filter <- cdf[,celltype.variable]==typei
       cell.id.vector <- rownames(cdf[type.filter,])
-      message("From ", length(cell.id.vector), " getting ", num.cells.vector[typei], " cells.")
       sample(cell.id.vector, num.cells.vector[typei])
     }))
     vindex <- which(colnames(sce) %in% cell.index.vector)
@@ -180,7 +179,7 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
     sce.fpath <- file.path(base.path, save.names[["sce.name"]])
     save(sce, file = sce.fpath)
   }
-  if("lindex" %in% which.save){
+  if("li" %in% which.save){
     li.fpath <- file.path(base.path, save.names[["li.name"]])
     save(lindex, file = li.fpath)
   }
