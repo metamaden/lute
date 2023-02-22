@@ -19,6 +19,10 @@
 #' @param scale.factor Vector of scale factors corresponding to alphebetical order of
 #' unique type labels in celltype.variable.
 #' @param seed.num Random seed for computational reproducibility.
+#' @param which.save Which items to save when running this function. Either "sce" for 
+#' SingleCellExperiment, "tp" for true proportions, "ypb" for pseudobulk, or "wt"
+#' for the `r-nf` compatible workflow table. These objects correspond to filepaths
+#' in save.paths (see details).
 #' @param save.paths List of save path details for new files.
 #' @returns List of iterations data, saving new files as side-effect.
 #' @details Prepares files for a subsampling experiment to evaluate the impact 
@@ -57,6 +61,7 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
                                          number.of.groups = 3,
                                          scale.factor = c(10, 2),
                                          seed.num = 0,
+                                         which.save = c("sce", "tp", "ypb", "wt"),
                                          save.paths = list(base.path = "./data/", 
                                                            sce.name = "sce.rda",
                                                            wt.name = "workflow-table.rda",
@@ -131,3 +136,30 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
   # save
   write.csv(wt, file = wt.fpath, row.names = F)
 }
+
+#'
+#'
+#'
+#'
+analyze_subsample_results <- function(){
+  
+}
+
+#'
+#'
+#'
+#'
+#'
+subsample_summary <- function(){
+  
+}
+
+#'
+#'
+#'
+#'
+#'
+subsample_plots <- function(){
+  
+}
+
