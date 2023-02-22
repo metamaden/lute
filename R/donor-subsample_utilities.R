@@ -13,12 +13,11 @@
 #' the methods argument.
 #' @param groups.per.iteration Number of groups to sample per iteration. Total 
 #' groups should exceed this value, otherwise data is treated as a single group.
-#' @param methods Vector of valid deconvolution methods to test.
+#' @param method.vector Vector of valid deconvolution methods to test.
 #' @param celltype.variable Variable containing cell type labels.
 #' @param assay.name Name of assay in sce to use for pseudobulk.
 #' @param group.variable Variable containing group labels for donor/sample/batch.
 #' @param fraction.cells Fraction of cells, per group and type, to subsample in each iteration.
-#' @param number.of.groups Total groups to sample for each iteration.
 #' @param scale.factor Vector of scale factors corresponding to alphebetical order of
 #' unique type labels in celltype.variable.
 #' @param seed.num Random seed for computational reproducibility.
@@ -60,12 +59,11 @@
 #' @export
 prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10, 
                                          groups.per.iteration = 3,
-                                         methods = c("nnls", "music"),
+                                         method.vector = c("nnls", "music"),
                                          celltype.variable = "k2", 
                                          group.variable = "Sample",
                                          assay.name = "counts_adj",
                                          fraction.cells = 0.25,
-                                         number.of.groups = 3,
                                          seed.num = 0,
                                          save.fnstem = "",
                                          which.save = c("sce", "tp", "ypb", "wt"),
@@ -132,12 +130,14 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   tp.prop <- tp[,2]; names(tp.prop) <- tp[,1]
   P <- tp.prop/sum(tp.prop)
   Z <- do.call(cbind, lapply(unique.types, function(typei){
-    rowMeans(assays(sce)[[assay.name]])
+    type.filter <- sce[[celltype.variable]]==typei
+    scef <- sce[,type.filter]
+    rowMeans(assays(scef)[[assay.name]])
   }))
   ZS <- sweep(Z, 2, S, "*")
   ypb <- t(t(P) %*% t(ZS))
   
-  # parse save filenames
+  if(verbose){message("Parsing save filenames...")}
   if(!save.fnstem==""){
     save.names <- lapply(save.names, function(namei){
       name.str <- unlist(strsplit(namei, "\\."))
@@ -148,22 +148,23 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   }
   
   if(verbose){message("Getting new workflow table...")}
-  wt <- do.call(rbind, lapply(methods, function(methodi){
-    wti <- data.frame(iterations_index = seq(iterations))
-    wti$method <- methodi
-    wti$sample_id <- unlist(lapply(lindex, function(li){paste0(li$samples, collapse = ";")}))
-    wti$celltype_variable <- celltype.variable
-    wti$assay_name <- assay.name
-    # manage filepaths
-    cnamev <- c("sce_filepath", "bulk_filepath", "list_index_filepath",
-                "true_proportions_filepath")
-    fpathv <- c(file.path(base.path, save.names[["sce.name"]]), 
-                file.path(base.path, save.names[["ypb.name"]]),
-                file.path(base.path, save.names[["li.name"]]), 
-                file.path(base.path, save.names[["tp.name"]]))
-    for(ii in seq(length(cnamev))){
-      wti[,cnamev[ii]] <- paste0('"$launchDir/', fpathv[ii], '"')}
-    wti
+  wti <- data.frame(iterations_index = seq(iterations))
+  wti$method <- methodi
+  wti$sample_id <- unlist(lapply(lindex, function(li){
+    paste0(li$samples, collapse = ";")}))
+  wti$celltype_variable <- celltype.variable
+  wti$assay_name <- assay.name
+  # manage filepaths
+  cnamev <- c("sce_filepath", "bulk_filepath", "list_index_filepath",
+              "true_proportions_filepath")
+  fpathv <- c(file.path(base.path, save.names[["sce.name"]]), 
+              file.path(base.path, save.names[["ypb.name"]]),
+              file.path(base.path, save.names[["li.name"]]), 
+              file.path(base.path, save.names[["tp.name"]]))
+  for(ii in seq(length(cnamev))){
+    wti[,cnamev[ii]] <- paste0('"$launchDir/', fpathv[ii], '"')}
+  wt <- do.call(rbind, lapply(method.vector, function(methodi){
+    wti$method <- methodi; wti
   }))
   
   if(verbose){message("Saving new data...")}
