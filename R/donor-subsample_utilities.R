@@ -15,6 +15,7 @@
 #' groups should exceed this value, otherwise data is treated as a single group.
 #' @param methods Vector of valid deconvolution methods to test.
 #' @param celltype.variable Variable containing cell type labels.
+#' @param assay.name Name of assay in sce to use for pseudobulk.
 #' @param group.variable Variable containing group labels for donor/sample/batch.
 #' @param fraction.cells Fraction of cells, per group and type, to subsample in each iteration.
 #' @param number.of.groups Total groups to sample for each iteration.
@@ -62,7 +63,8 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
                                          methods = c("nnls", "music"),
                                          celltype.variable = "k2", 
                                          group.variable = "Sample",
-                                         fraction.cells = 25,
+                                         assay.name = "counts_adj",
+                                         fraction.cells = 0.25,
                                          number.of.groups = 3,
                                          seed.num = 0,
                                          save.fnstem = "",
@@ -99,11 +101,15 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   # get the exact numbers of cells of each type to sample
   dft <- as.data.frame(table(celltype.vector, groups.vector))
   # get cells by group as minima
+  if(fraction.cells > 1){fraction.cells = fraction.cells/100}
+  message("Using cell fraction: ", fraction.cells)
   num.cells.vector <- sapply(unique.types, function(ti){
-    round(min(dft[dft[,1]==ti,3])*fraction.cells, 0)})
+    type.filter <- dft[,1]==ti; dff <- dft[type.filter,]
+    round(min(dff[,3])*fraction.cells, 0)
+  })
   
   if(verbose){message("Getting random cell indices for iterations...")}
-  lindex <- lapply(seq(num.iter), function(ii){
+  lindex <- lapply(seq(iterations), function(ii){
     if(!is(groups.per.iteration, "NULL")){
       random.groups <-  sample(unique.groups, groups.per.iteration)
       cdf <- cd[cd[,group.variable] %in% random.groups,]
@@ -112,7 +118,9 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
       random.groups = unique.groups
     }
     cell.index.vector <- unlist(lapply(unique.types, function(typei){
-      cell.id.vector <- rownames(cdf[cdf[,celltype.variable]==typei,])
+      type.filter <- cdf[,celltype.variable]==typei
+      cell.id.vector <- rownames(cdf[type.filter,])
+      message("From ", length(cell.id.vector), " getting ", num.cells.vector[typei], " cells.")
       sample(cell.id.vector, num.cells.vector[typei])
     }))
     vindex <- which(colnames(sce) %in% cell.index.vector)
@@ -139,9 +147,9 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
     })
   }
   
-  if(verbose){message("Writing new workflow table...")}
+  if(verbose){message("Getting new workflow table...")}
   wt <- do.call(rbind, lapply(methods, function(methodi){
-    wti <- data.frame(iterations_index = seq(num.iter))
+    wti <- data.frame(iterations_index = seq(iterations))
     wti$method <- methodi
     wti$sample_id <- unlist(lapply(lindex, function(li){paste0(li$samples, collapse = ";")}))
     wti$celltype_variable <- celltype.variable
@@ -159,7 +167,6 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   }))
   
   if(verbose){message("Saving new data...")}
-  
   if("ypb" %in% which.save){
     ypb.fpath <- file.path(base.path, save.names[["ypb.name"]])
     save(ypb, file = ypb.fpath)
