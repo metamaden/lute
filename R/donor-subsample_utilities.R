@@ -21,11 +21,13 @@
 #' @param scale.factor Vector of scale factors corresponding to alphebetical order of
 #' unique type labels in celltype.variable.
 #' @param seed.num Random seed for computational reproducibility.
+#' @param save.fnstem Character string stem to append to new saved filenames.
+#' @param base.path Path of directory to store data for workflow run.
 #' @param which.save Which items to save when running this function. Either "sce" for 
 #' SingleCellExperiment, "tp" for true proportions, "ypb" for pseudobulk, or "wt"
 #' for the `r-nf` compatible workflow table. These objects correspond to filepaths
 #' in save.paths (see details).
-#' @param save.paths List of save path details for new files.
+#' @param save.names List of new file names to save.
 #' @returns List of iterations data, saving new files as side-effect.
 #' @details Prepares files for a subsampling experiment to evaluate the impact 
 #' of a group-wise bias effect on deconvolution outcomes. Either real or simulated
@@ -64,12 +66,14 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
                                          number.of.groups = 3,
                                          scale.factor = c(10, 2),
                                          seed.num = 0,
+                                         save.fnstem = "",
                                          which.save = c("sce", "tp", "ypb", "wt"),
-                                         save.paths = list(base.path = "./data/", 
-                                                           sce.name = "sce.rda",
-                                                           wt.name = "workflow-table.rda",
+                                         base.path = "data",
+                                         save.names = list(sce.name = "sce.rda",
+                                                           wt.name = "workflow-table.csv",
                                                            tp.name = "true-proportions.rda",
-                                                           pb.name = "ypb.rda"),
+                                                           ypb.name = "ypb.rda",
+                                                           li.name = "lindex.rda"),
                                          verbose = TRUE){
   set.seed(seed.num)
   
@@ -111,7 +115,7 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
     cell.index.vector <- unlist(lapply(unique.types, function(typei){
       cell.id.vector <- rownames(cdf[cdf[,celltype.variable]==typei,])
       sample(cell.id.vector, num.cells.vector[typei])
-    })))
+    }))
     vindex <- which(colnames(sce) %in% cell.index.vector)
     list(vindex = vindex, samples = random.groups) # return
   })
@@ -126,28 +130,37 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
   ZS <- sweep(Z, 2, S, "*")
   ypb <- t(t(P) %*% t(ZS))
   
+  # parse save filenames
+  if(!save.fnstem==""){
+    save.names <- lapply(save.names, function(namei){
+      name.str <- unlist(strsplit(namei, "\\."))
+      new.name <- paste(name.str[1:length(name.str)-1], save.fnstem, sep = "_")
+      new.name <- paste(new.name, name.str[length(name.str)], sep = ".")
+      return(new.name)
+    })
+  }
+  
   if(verbose){message("Writing new workflow table...")}
   wt <- do.call(rbind, lapply(methods, function(methodi){
     wti <- data.frame(iterations_index = seq(num.iter))
     wti$method <- methodi
-    wti$sample_id <- unlist(lapply(lindex, function(li){
-      paste0(li$samples, collapse = ";")}))
+    wti$sample_id <- unlist(lapply(lindex, function(li){paste0(li$samples, collapse = ";")}))
     wti$celltype_variable <- celltype.variable
     wti$assay_name <- assay.name
     # manage filepaths
     cnamev <- c("sce_filepath", "bulk_filepath", "list_index_filepath",
                 "true_proportions_filepath")
-    fpathv <- c(file.path("data", save.paths[["sce.name"]]), 
-                file.path("data", save.paths[["ypb.name"]]),
-                file.path("data", save.paths[["li.name"]]), 
-                file.path("data", save.paths[["tp.name"]]))
+    fpathv <- c(file.path(base.path, save.names[["sce.name"]]), 
+                file.path(base.path, save.names[["ypb.name"]]),
+                file.path(base.path, save.names[["li.name"]]), 
+                file.path(base.path, save.names[["tp.name"]]))
     for(ii in seq(length(cnamev))){
       wti[,cnamev[ii]] <- paste0('"$launchDir/', fpathv[ii], '"')}
     wti
   }))
   
   if(verbose){message("Saving new data...")}
-  base.path <- sve.paths[["base.path"]]
+  
   if("ypb" %in% which.save){
     ypb.fpath <- file.path(base.path, save.paths[["ypb.name"]])
     save(ypb, file = ypb.fpath)
