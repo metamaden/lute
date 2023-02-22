@@ -57,14 +57,13 @@
 #' names(iterations.list)
 #' 
 #' @export
-prepare_subsample_experiment <- function(sce, iterations = 10, 
+prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10, 
                                          groups.per.iteration = 3,
                                          methods = c("nnls", "music"),
                                          celltype.variable = "k2", 
                                          group.variable = "Sample",
                                          fraction.cells = 25,
                                          number.of.groups = 3,
-                                         scale.factor = c(10, 2),
                                          seed.num = 0,
                                          save.fnstem = "",
                                          which.save = c("sce", "tp", "ypb", "wt"),
@@ -84,7 +83,7 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
   # get unique groups
   unique.groups <- unique(groups.vector)
   # get alphabetized celltype labels
-  unique.type <- unique(celltype.vector)
+  unique.types <- unique(celltype.vector)
   unique.types <- unique.types[order(unique.types)]
   message("Found ",length(unique.types), " cell type labels: ", 
           paste0(unique.types, collapse = ";"))
@@ -162,26 +161,25 @@ prepare_subsample_experiment <- function(sce, iterations = 10,
   if(verbose){message("Saving new data...")}
   
   if("ypb" %in% which.save){
-    ypb.fpath <- file.path(base.path, save.paths[["ypb.name"]])
+    ypb.fpath <- file.path(base.path, save.names[["ypb.name"]])
     save(ypb, file = ypb.fpath)
   }
   if("tp" %in% which.save){
-    tp.fpath <- file.path(base.path, save.paths[["tp.name"]])
+    tp.fpath <- file.path(base.path, save.names[["tp.name"]])
     save(P, file = tp.fpath)
   }
   if("sce" %in% which.save){
-    sce.fpath <- file.path(base.path, save.paths[["sce.name"]])
+    sce.fpath <- file.path(base.path, save.names[["sce.name"]])
     save(sce, file = sce.fpath)
   }
   if("lindex" %in% which.save){
-    li.fpath <- file.path(base.path, save.paths[["li.name"]])
+    li.fpath <- file.path(base.path, save.names[["li.name"]])
     save(lindex, file = li.fpath)
   }
   if("wt" %in% which.save){
-    wt.fpath <- file.path(base.path, save.paths[["wt.name"]])
+    wt.fpath <- file.path(base.path, save.names[["wt.name"]])
     write.csv(wt, file = wt.fpath, row.names = F)
   }
-  
   message("Finished run prep. Returning iterations index list.")
   return(lindex)
 }
