@@ -13,7 +13,8 @@ dfs, data.frame containing summary statistics.
 Get summary statistics for a results table from a subsampling experiment.
 }
 \examples{
-results.table.path <- file.path("inst","examples","results-table.csv")
-results.table.path <- system.file("./inst/examples/results-table.csv", package = 'lute')
-df.stat <- read.csv()
+path <- file.path("inst","examples","results-table.csv")
+path <- system.file("./inst/examples/results-table.csv", package = 'lute')
+results.table <- read.csv(path)
+dfstat <- subsample_summary(results.table)
 }

@@ -207,9 +207,11 @@ analyze_subsample_results <- function(){
 #' @param results.table
 #' @returns dfs, data.frame containing summary statistics.
 #' @examples 
-#' results.table.path <- file.path("inst","examples","results-table.csv")
-#' results.table.path <- system.file("./inst/examples/results-table.csv", package = 'lute')
-#' df.stat <- read.csv()
+#' path <- file.path("inst","examples","results-table.csv")
+#' path <- system.file("./inst/examples/results-table.csv", package = 'lute')
+#' results.table <- read.csv(path)
+#' dfstat <- subsample_summary(results.table)
+#' @export
 subsample_summary <- function(results.table){
   methodv <- c(unique(dfr$deconvolution_method), "all")
   funv <- c("median", "sd", "length")
@@ -251,12 +253,130 @@ subsample_summary <- function(results.table){
   write.csv(dfs, file = file.path(save.dpath, fname))
 }
 
+#' subsample_plots
 #'
+#' Plot results of subsample experiments.
 #'
+#' @param results.table Either a table or a list of such tables, where the list
+#' names correspond to experiment labels to use.
+#' @returns List of ggplot objects
+#' @examples 
+#  # load example results table
+#' path <- file.path("inst","examples","results-table.csv")
+#' path <- system.file("./inst/examples/results-table.csv", package = 'lute')
+#' results.table <- read.csv(path)
 #'
+#' # plot single results table
+#' lgg <- subsample_plots(results.table)
 #'
-#'
-subsample_plots <- function(){
+#' # plot multiple results tables
+#' lgg <- list("expt1" = results.table, "expt2" = results.table)
+#' 
+#' @export
+subsample_plots <- function(results.table){
+  lgg <- list() # start return list
+  # parse input data
+  dfr <- results.table
+  is.list <- is(dfr, "list")
+  if(is.list){
+    dfr <- do.call(rbind, lapply(seq(length(dfr)), function(ii){
+      dfi <- results.table[[ii]]; dfi$experiment <- names(results.table)[ii]
+      dfi
+    }))
+  } else{
+    dfr$experiment <- "NA"
+  }
+  unique.methods <- unique(dfr$deconvolution_method)
+  unique.types <- unique(unlist(strsplit(dfr$type_labels, ";")))
   
+  message("plotting bias")
+  metric.plot <- 'bias'
+  if(length(unique.methods) > 1){
+    message("getting scatter plot of first two methods...")
+    # data by method, with unique id
+    ldfp <- lapply(unique.methods, function(methodi){
+      dfpi <- dfr[dfr$deconvolution_method==methodi,]
+      dfpi$iteration.id <- paste0(dfpi$iterations_index, ";", dfpi$experiment)
+      dfpi
+    })
+    id.order.match <- ldfp[[1]]$iteration.id
+    ldfp <- lapply(ldfp, function(dfpi){
+      dfpi <- dfpi[order(match(dfpi$iteration.id, id.order.match)),]; dfpi
+    })
+    message("preparing plot data...")
+    type.label.vector <- paste0(".type", seq(length(unique.types)))
+    names(type.label.vector) <- unique.types
+    dfp <- do.call(rbind, lapply(type.label.vector, function(typei){
+      var.str <- paste0(metric.plot, typei)
+      dfpi <- do.call(cbind, lapply(unique.methods, function(methodi){
+        unlist(lapply(ldfp, function(dfpi){
+          if(methodi %in% dfpi$deconvolution_method){
+            dfpi[dfpi$deconvolution_method==methodi,var.str]
+          } else{
+            rep("NA", nrow(dfpi))
+          }
+        }))
+      }))
+      dfpi <- as.data.frame(dfpi)
+      for(c in seq(2)){dfpi[,c] <- as.numeric(dfpi[,c])}
+      colnames(dfpi) <- paste0("method", seq(2))
+      dfpi$experiment <- ldfp[[1]]$iteration.id
+      dfpi$type <- names(typev[typev==typei]); dfpi
+    }))
+    method1.name <- unique.methods[1]; method2.name <- unique.methods[2]
+    dfp$experiment.id <- gsub(".*;", "", dfp$experiment)
+    message("getting plot object...")
+    ggpt <- ggplot(dfp, aes(x = method1, y = method2)) + 
+      geom_abline(slope = 1, intercept = 0, color = "black") +
+      geom_hline(yintercept = 0, color = "gray") + 
+      geom_vline(xintercept = 0, color = "gray") +
+      geom_point(alpha = 0.5) + theme_bw() + geom_smooth() +
+      ggtitle("Bias (true - predicted proportions)") +
+      xlab(method1.name) + ylab(method2.name)
+    
+    # get facet
+    lgg[["ggpt.facet.bias.methods"]] <- ggpt + facet_wrap(~type+experiment.id)
+    
+    # get overlays
+    ggpt.ol <- ggplot(dfp, aes(x = method1, y = method2, 
+                               color = experiment.id, group = experiment.id)) + 
+      geom_abline(slope = 1, intercept = 0, color = "black") +
+      geom_hline(yintercept = 0, color = "gray") + 
+      geom_vline(xintercept = 0, color = "gray") +
+      geom_point(alpha = 0.5) + theme_bw() + geom_smooth() +
+      ggtitle("Bias (true - predicted proportions)") +
+      xlab(method1.name) + ylab(method2.name)
+    lgg[["ggpt.overlay.bias.methods"]] <- ggpt.ol
+  }
+  
+  message("getting violin and box plots...")
+  bias.label.vector <- paste0("bias.type", seq(length(unique.types)))
+  dfp <- do.call(rbind, lapply(unique.methods[1:2], function(methodi){
+    dfi <- dfr[dfr$deconvolution_method==methodi,]
+    bias.vector <- unlist(lapply(bias.label.vector, function(labeli){dfi[,labeli]}))
+    dfpi <- data.frame(bias = bias.vector, type = rep(unique.types, each = nrow(dfi)))
+    dfpi$experiment <- rep(dfi$experiment, length(bias.label.vector))
+    dfpi$method <- methodi
+    dfpi
+  }))
+  # get facets
+  ggvp <- ggplot(dfp, aes(x = experiment, y = bias)) + theme_bw() +
+    geom_hline(yintercept = 0, color = "blue") + geom_jitter(alpha = 1e-1) +
+    geom_violin(draw_quantiles = 0.5, color = "black", alpha = 0) +
+    ylab("Bias (true - predicted proportions)") + xlab("Experiment")
+  ggbox <- ggplot(dfp, aes(x = experiment, y = bias)) + theme_bw() +
+    geom_hline(yintercept = 0, color = "black") + geom_jitter(alpha = 5e-1) +
+    geom_boxplot(color = "blue", alpha = 0) + 
+    ylab("Bias (true - predicted proportions)") + xlab("Experiment")
+  if(length(unique.methods) > 1){
+    ggvp <- ggvp + facet_wrap(~type+method)
+    ggbox <- ggbox + facet_wrap(~type+method)
+  } else{
+    ggvp <- ggvp + facet_wrap(~type)
+    ggbox <- ggbox + facet_wrap(~type)
+  }
+  lgg[["ggviolin.facet.bias.methods"]] <- ggvp
+  lgg[["ggboxplot.facet.bias.methods"]] <- ggbox
+  message("Finished all plots. Returning...")
+  return(lgg)
 }
-
