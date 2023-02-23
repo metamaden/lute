@@ -51,11 +51,11 @@
 #'
 #' @examples 
 #' sce <- random_sce()
-#' sce[["donor"]] <- "donor1"
-#' iterations.list <- prepare_subsample_experiment(sce, 
-#' celltype.variable = "celltype", group.variable = "donor")
-#' names(iterations.list)
-#' 
+#' sce[["Sample"]] <- c(rep("sample1", 10), rep("sample2", 2))
+#' list.iter <- prepare_subsample_experiment(sce, groups.per.iteration = 1, 
+#'                                          scale.factor = c(type1=1,type2=1), 
+#'                                          celltype.variable = "celltype", 
+#'                                          assay.name = "counts", which.save = c())
 #' @export
 prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10, 
                                          groups.per.iteration = 3,
@@ -148,7 +148,6 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   
   if(verbose){message("Getting new workflow table...")}
   wti <- data.frame(iterations_index = seq(iterations))
-  wti$method <- methodi
   wti$sample_id <- unlist(lapply(lindex, function(li){
     paste0(li$samples, collapse = ";")}))
   wti$celltype_variable <- celltype.variable
@@ -162,6 +161,7 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
               file.path(base.path, save.names[["tp.name"]]))
   for(ii in seq(length(cnamev))){
     wti[,cnamev[ii]] <- paste0('"$launchDir/', fpathv[ii], '"')}
+  wti$method <- "NA"
   wt <- do.call(rbind, lapply(method.vector, function(methodi){
     wti$method <- methodi; wti
   }))
@@ -188,7 +188,8 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
     write.csv(wt, file = wt.fpath, row.names = F)
   }
   message("Finished run prep. Returning iterations index list.")
-  return(lindex)
+  lr <- list(lindex = lindex, wt = wt)
+  return(lr)
 }
 
 #'
@@ -199,13 +200,55 @@ analyze_subsample_results <- function(){
   
 }
 
+#' subsample_summary
 #'
-#'
-#'
-#'
-#'
-subsample_summary <- function(){
+#' Get summary statistics for a results table from a subsampling experiment.
+#' 
+#' @param results.table
+#' @returns dfs, data.frame containing summary statistics.
+#' @examples 
+#' results.table.path <- file.path("inst","examples","results-table.csv")
+#' results.table.path <- system.file("./inst/examples/results-table.csv", package = 'lute')
+#' df.stat <- read.csv()
+subsample_summary <- function(results.table){
+  methodv <- c(unique(dfr$deconvolution_method), "all")
+  funv <- c("median", "sd", "length")
+  metricv <- c("bias", "rmse.types")
   
+  # prepare results data
+  dfrs1 <- dfr
+  # add type label
+  cnv <- colnames(dfrs1)
+  unique.types <- unique(unlist(strsplit(dfr$type_labels, ";")))
+  unique.types <- unique.types[order(unique.types)]
+  for(typei in unique.types){
+    cn.filt <- grepl(paste0("type", which(unique.types==typei)), cnv)
+    colnames(dfrs1)[cn.filt] <- paste0(colnames(dfrs1)[cn.filt], ".", typei)
+  }
+  # get all method category
+  dfrs2 <- dfrs1; dfrs2$deconvolution_method <- "all"
+  dfrs3 <- rbind(dfrs1, dfrs2) # append all category
+  methods.vector <- dfrs3$deconvolution_method
+  lvar <- list(method = methods.vector)
+  unique.methods <- unique(methods.vector)
+  unique.methods <- unique.methods[order(unique.methods)]
+  # get new colnames for aggregate
+  cnv <- colnames(dfrs3)
+  grepl.str <- paste0(metricv, collapse = "|")
+  cnvf <- cnv[grepl(grepl.str, cnv)]
+  
+  # get aggregate statistics
+  dfs <- do.call(cbind, lapply(funv, function(fi){
+    dfai <- aggregate(dfrs3[,cnvf], lvar, FUN = fi); dfai <- dfai[,2:ncol(dfai)]
+    fi.str <- fi; if(fi=="length"){fi.str <- "count"}
+    colnames(dfai) <- paste0(fi.str, "_", colnames(dfai)); return(dfai)
+  }))
+  dfs$method <- unique.methods; cnv <- colnames(dfs)
+  dfs <- dfs[,c("method", cnv[!cnv=="method"])]
+  
+  # save
+  fname <- "df-sstat-rnf_intra-donor-subsample_ro1-dlpfc.csv"
+  write.csv(dfs, file = file.path(save.dpath, fname))
 }
 
 #'

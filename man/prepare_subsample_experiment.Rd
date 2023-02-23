@@ -87,9 +87,9 @@ parallelization of the iteration runs.
 }
 \examples{
 sce <- random_sce()
-sce[["donor"]] <- "donor1"
-iterations.list <- prepare_subsample_experiment(sce, 
-celltype.variable = "celltype", group.variable = "donor")
-names(iterations.list)
-
+sce[["Sample"]] <- c(rep("sample1", 10), rep("sample2", 2))
+list.iter <- prepare_subsample_experiment(sce, groups.per.iteration = 1, 
+                                         scale.factor = c(type1=1,type2=1), 
+                                         celltype.variable = "celltype", 
+                                         assay.name = "counts", which.save = c())
 }
