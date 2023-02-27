@@ -167,26 +167,31 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   }))
   
   if(verbose){message("Saving new data...")}
-  if("ypb" %in% which.save){
-    ypb.fpath <- file.path(base.path, save.names[["ypb.name"]])
-    save(ypb, file = ypb.fpath)
+  if(dir.exists(base.path)){
+    if("ypb" %in% which.save){
+      ypb.fpath <- file.path(base.path, save.names[["ypb.name"]])
+      save(ypb, file = ypb.fpath)
+    }
+    if("tp" %in% which.save){
+      tp.fpath <- file.path(base.path, save.names[["tp.name"]])
+      save(P, file = tp.fpath)
+    }
+    if("sce" %in% which.save){
+      sce.fpath <- file.path(base.path, save.names[["sce.name"]])
+      save(sce, file = sce.fpath)
+    }
+    if("li" %in% which.save){
+      li.fpath <- file.path(base.path, save.names[["li.name"]])
+      save(lindex, file = li.fpath)
+    }
+    if("wt" %in% which.save){
+      wt.fpath <- file.path(base.path, save.names[["wt.name"]])
+      write.csv(wt, file = wt.fpath, row.names = F)
+    }
+  } else{
+    message("Warning, base.path (",base.path,") not found. Skipping file saves.")
   }
-  if("tp" %in% which.save){
-    tp.fpath <- file.path(base.path, save.names[["tp.name"]])
-    save(P, file = tp.fpath)
-  }
-  if("sce" %in% which.save){
-    sce.fpath <- file.path(base.path, save.names[["sce.name"]])
-    save(sce, file = sce.fpath)
-  }
-  if("li" %in% which.save){
-    li.fpath <- file.path(base.path, save.names[["li.name"]])
-    save(lindex, file = li.fpath)
-  }
-  if("wt" %in% which.save){
-    wt.fpath <- file.path(base.path, save.names[["wt.name"]])
-    write.csv(wt, file = wt.fpath, row.names = F)
-  }
+  
   message("Finished run prep. Returning iterations index list.")
   lr <- list(lindex = lindex, wt = wt)
   return(lr)
