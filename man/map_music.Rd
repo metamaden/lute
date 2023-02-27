@@ -7,6 +7,7 @@
 map_music(
   arguments,
   method = "music.basic",
+  library.name = "MuSiC",
   method.arguments = c(Z = "Z", Y = "Y", S = "S", Sigma = "Sigma", nu = "1e-10",
     iter.max = "100", eps = "0")
 )
@@ -15,6 +16,8 @@ map_music(
 \item{arguments}{List of user-provided arguments.}
 
 \item{method}{Character string of the method.}
+
+\item{library.name}{Name of library to call function from.}
 
 \item{method.arguments}{Arguments required for this method.}
 }

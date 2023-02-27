@@ -188,11 +188,12 @@ map_nnls <- function(arguments, method = "nnls", library.name = "nnls",
 #'
 #' @param arguments List of user-provided arguments.
 #' @param method Character string of the method.
+#' @param library.name Name of library to call function from.
 #' @param method.arguments Arguments required for this method.
 #' @returns List of data and command character string to parse.
 #' 
 #' @export
-map_music <- function(arguments, method = "music.basic", 
+map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
                       method.arguments = c("Z" = "Z", "Y" = "Y", "S" = "S", 
                                            "Sigma" = "Sigma", "nu" = "1e-10", 
                                            "iter.max" = "100", "eps" = "0")){
@@ -234,7 +235,8 @@ map_music <- function(arguments, method = "music.basic",
   final.method.vector <- c(af.user, af.method)
   method.string <- paste0(names(final.method.vector), "=", 
                           final.method.vector, collapse = ",")
-  command.string <- paste0(method, "(", method.string, ")$p.weight")
+  command.string <- paste0(library.name, "::", method, 
+                           "(", method.string, ")$p.weight")
   
   # get final command string in return list
   lr <- lapply(c(af.user, af.method), function(methodi){methodi})
@@ -250,14 +252,16 @@ map_music <- function(arguments, method = "music.basic",
 #'
 #' @param arguments List of user-provided arguments.
 #' @param method Character string of the method.
+#' @param library.name Name of library to call function from.
 #' @param method.arguments Arguments required for this method.
 #' @returns List of data and command character string to parse.
 #' 
 #' @export
-map_deconrnaseq <- function(arguments, method = "DeconRNASeq",
-                     method.arguments = c("signatures" = "Z", 
-                                          "datasets" = "Y", 
-                                          "use.scale" = "FALSE")){
+map_deconrnaseq <- function(arguments, method = "DeconRNASeq", 
+                            library.name = "DeconRNASeq",
+                            method.arguments = c("signatures" = "Z",
+                                                 "datasets" = "Y",
+                                                 "use.scale" = "FALSE")){
   require(DeconRNASeq)
   # parse arguments
   message("filtering provided arguments...")
@@ -292,7 +296,8 @@ map_deconrnaseq <- function(arguments, method = "DeconRNASeq",
   final.method.vector <- final.method.vector[filter.vector]
   method.string <- paste0(names(final.method.vector), "=", 
                           final.method.vector, collapse = ",")
-  command.string <- paste0(method, "(", method.string, ")$out.all[1,]")
+  command.string <- paste0(library.name, "::", 
+                           method, "(", method.string, ")$out.all[1,]")
   
   # get final command string in return list
   lr <- lapply(c(af.user, af.method), function(methodi){methodi})

@@ -7,6 +7,7 @@
 map_deconrnaseq(
   arguments,
   method = "DeconRNASeq",
+  library.name = "DeconRNASeq",
   method.arguments = c(signatures = "Z", datasets = "Y", use.scale = "FALSE")
 )
 }
@@ -14,6 +15,8 @@ map_deconrnaseq(
 \item{arguments}{List of user-provided arguments.}
 
 \item{method}{Character string of the method.}
+
+\item{library.name}{Name of library to call function from.}
 
 \item{method.arguments}{Arguments required for this method.}
 }

@@ -4,12 +4,19 @@
 \alias{map_nnls}
 \title{map_nnls}
 \usage{
-map_nnls(arguments, method = "nnls", method.arguments = c(A = "Z", b = "Y"))
+map_nnls(
+  arguments,
+  method = "nnls",
+  library.name = "nnls",
+  method.arguments = c(A = "Z", b = "Y")
+)
 }
 \arguments{
 \item{arguments}{List of user-provided arguments.}
 
 \item{method}{Character string of the method.}
+
+\item{library.name}{Name of library to call function from.}
 
 \item{method.arguments}{Arguments required for this method.}
 }
