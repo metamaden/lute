@@ -14,6 +14,7 @@
 #'
 #' @param Z Signature matrix of dimensions G (marker genes) x K (types).
 #' @param Y Bulk matrix of dimensions G (marker genes) x J (bulk samples).
+#' @param seed.num Random seed for computational reproducibility.
 #' @param method Character string of a valid deconvolution method to use (see
 #' available methods with `valid_deconvolution_methods()`).
 #' @param arguments List of additional valid arguments for the method.
@@ -71,7 +72,8 @@
 #' ldecon
 #' 
 #' @export
-run_deconvolution <- function(Z, Y, method = "nnls", arguments = list()){
+run_deconvolution <- function(Z, Y, seed.num = 0, method = "nnls", arguments = list()){
+  set.seed(seed.num)
   message("preparing predictions using method ", method, " for :")
   message("G = ", nrow(Z), " marker genes...")
   message("K = ", ncol(Z), " cell types...")
