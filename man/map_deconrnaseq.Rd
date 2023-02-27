@@ -8,7 +8,8 @@ map_deconrnaseq(
   arguments,
   method = "DeconRNASeq",
   library.name = "DeconRNASeq",
-  method.arguments = c(signatures = "Z", datasets = "Y", use.scale = "FALSE")
+  method.arguments = c(signatures = "as.data.frame(Z)", datasets =
+    "as.data.frame(cbind(Y,Y))", use.scale = "FALSE")
 )
 }
 \arguments{

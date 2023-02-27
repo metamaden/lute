@@ -8,6 +8,10 @@
 
 #' run_deconvolution
 #'
+#' Perform deconvolution to predict cell type proportions in mixed samples by
+#' passing standard inputs and getting standard outputs across a number of 
+#' different deconvolution methods/functions.
+#'
 #' @param Z Signature matrix of dimensions G (marker genes) x K (types).
 #' @param Y Bulk matrix of dimensions G (marker genes) x J (bulk samples).
 #' @param method Character string of a valid deconvolution method to use (see
@@ -87,8 +91,7 @@ map_deconvolution_arguments <- function(method, arguments){
 #' @export
 get_deconvolution_predictions <- function(command.list, 
                                           item.vector = c("command.text", 
-                                                          "method", 
-                                                          "seed.num")){
+                                                          "method", "seed.num")){
   # instantiate list objects in environment
   for(name in names(command.list)){
     eval(parse(text = paste0(name, " <- ", command.list[[name]])))
@@ -97,9 +100,15 @@ get_deconvolution_predictions <- function(command.list,
   message("getting predictions...")
   method <- command.list[["method"]]
   command.text <- command.list[["command.str"]]
+  command.text <- paste0("try(", command.text, ", silent = T)")
   t1 <- Sys.time()
   m1 <- gc(); predictions <- eval(parse(text = command.text)); m2 <- gc()
   duration <- Sys.time() - t1
+  if(is(predictions, "try-error")){
+    message("error when evaluating deconvolution method")
+  } else{
+    message("deconvolution method evaluation successful")
+  }
   
   # parse return objects
   # parse timing details
@@ -110,7 +119,9 @@ get_deconvolution_predictions <- function(command.list,
   lmem <- list(start = m1, end = m2, change = m.change, method = "gc")
   lbench <- list(time = ltime, memory = lmem)
   # parse predictions as proportions
-  if(sum(predictions) > 1){predictions <- predictions/sum(predictions)}
+  if(is(predictions, "numeric")){
+    if(sum(predictions) > 1){predictions <- predictions/sum(predictions)}
+  }
   # parse metadata
   lmd <- list(command.text = command.text, method = method, 
               number.of.markers = nrow(Z), number.of.types = ncol(Z),
@@ -259,8 +270,8 @@ map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
 #' @export
 map_deconrnaseq <- function(arguments, method = "DeconRNASeq", 
                             library.name = "DeconRNASeq",
-                            method.arguments = c("signatures" = "Z",
-                                                 "datasets" = "Y",
+                            method.arguments = c("signatures" = "as.data.frame(Z)",
+                                                 "datasets" = "as.data.frame(cbind(Y,Y))",
                                                  "use.scale" = "FALSE")){
   require(DeconRNASeq)
   # parse arguments
@@ -285,7 +296,8 @@ map_deconrnaseq <- function(arguments, method = "DeconRNASeq",
       if(ai == "signatures"){
         Z <- as.data.frame(arguments[["Z"]])
       } else if(ai == "datasets"){
-        Y <- as.data.frame(cbind(arguments[["Y"]], arguments[["Y"]]))
+        Y <- cbind(arguments[["Y"]], arguments[["Y"]])
+        Y <- as.data.frame(Y)
       } else{}
     }
   }

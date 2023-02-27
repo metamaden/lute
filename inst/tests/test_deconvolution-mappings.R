@@ -26,10 +26,8 @@ command.list <- map_music(arguments)
 
 # run deconrnaseq
 method <- "deconrnaseq"
-Yi <- as.data.frame(cbind(Y, Y))
-colnames(Yi) <- paste0("sample", seq(ncol(Yi)))
-
-res <- run_deconvolution(Z = as.data.frame(Z), Y = Yi, method = method)
+Z <- as.data.frame(Z)
+res <- run_deconvolution(Z = Z, Y = Y, method = method)
 
 
 
