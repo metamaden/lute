@@ -127,12 +127,19 @@ get_deconvolution_predictions <- function(command.list,
 # main use functions
 #-------------------
 
-#' use_nnls
+#' map_nnls
 #'
+#' Mapping provided arguments to required arguments for NNLS, using defaults
+#' for any required arguments not provided
 #'
-#'
-map_nnls <- function(arguments, method.arguments = c("A" = "Z", "b" = "Y"), 
-                     method = "nnls"){
+#' @param arguments
+#' @param method
+#' @param method.arguments
+#' @returns List of data and command character string to parse.
+#' 
+#' @export
+map_nnls <- function(arguments, method = "nnls",
+                     method.arguments = c("A" = "Z", "b" = "Y")){
   require(nnls)
   # parse arguments
   message("filtering provided arguments...")
@@ -174,15 +181,21 @@ map_nnls <- function(arguments, method.arguments = c("A" = "Z", "b" = "Y"),
   return(lr)
 }
 
-#' use_music
+#' map_music
+#' 
+#' Mapping provided arguments to required arguments for MuSiC, using defaults
+#' for any required arguments not provided
 #'
-#'
-#'
+#' @param arguments
+#' @param method
+#' @param method.arguments
+#' @returns List of data and command character string to parse.
+#' 
+#' @export
 map_music <- function(arguments, method = "music.basic", 
                       method.arguments = c("Z" = "Z", "Y" = "Y", "S" = "S", 
                                            "Sigma" = "Sigma", "nu" = "1e-10", 
-                                           "iter.max" = "100",
-                                           "eps" = "0")){
+                                           "iter.max" = "100", "eps" = "0")){
   require(MuSiC)
   # parse arguments
   message("filtering provided arguments...")
@@ -230,10 +243,10 @@ map_music <- function(arguments, method = "music.basic",
   return(lr)
 }
 
-#' use_bisque
+#' map_bisque
 #'
 #'
-use_bisque <- function(){
+map_bisque <- function(){
   
 }
 

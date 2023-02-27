@@ -24,3 +24,16 @@ sigma <- matrix(0, ncol = 1, nrow = nrow(Z))
 arguments <- list("sigma = NULL")
 command.list <- map_music(arguments)
 
+# run deconrnaseq
+Yi <- cbind(Y, Y)
+colnames(Yi) <- paste0("sample", seq(2))
+res <- DeconRNASeq(as.data.frame(Yi), as.data.frame(Z), use.scale = FALSE)
+
+source("DeconRNASeq.R")
+
+data(multi_tissue)
+datasets <- x.data[,2:11]
+signatures <- x.signature.filtered.optimal[,2:6]
+proportions <- fraction
+DeconRNASeq(datasets, signatures, proportions, 
+            checksig=FALSE, known.prop = TRUE, use.scale = TRUE)
