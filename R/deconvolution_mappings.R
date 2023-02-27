@@ -28,19 +28,20 @@
 #' bulk samples are provided (e.g. `ncol(Y) > 1`), then results for each
 #' sample are returned in a named list of `deconvolution.results` objects.
 #' 
-#' It solves several issues for calling and benchmarking bulk deconvolution 
-#' methods. First, it provides a standard way of calling deconvolution 
+#' This function addresses several issues found across bulk deconvolution 
+#' methods. First, it provides a standard way of calling the deconvolution 
 #' functions, including a single way of specifying the signature matrix (i.e. 
 #' argument `Z`) and bulk signals matrix (i.e. argument `Y`). This is needed 
-#' because most functions use non-standard ways of refering to these objects,
-#' such as "a", "B", "X", "signatures", etc. Second, predictions are returned 
-#' in standard format including metadata and the character string of the final 
-#' function evaluation. Third, basic benchmarking support is available by default, 
-#' including a timing of the run with `Sys.time()` and an assessment of memory
-#' using `gc()`. These are also provided in the default returned data. Lastly,
-#' results are provided using the `deconvolution.results` object class, which
-#' provides several convenient methods for handling the outputs (see 
-#' `?deconvolution.results` for details)
+#' because most function arguments use non-standard references to these objects,
+#' such as "a", "B", "X", "signatures", etc. 
+#' 
+#' Second, predictions are returned in standard format including metadata and 
+#' the character string of the final function evaluation. Third, basic 
+#' benchmarking support is available by default, including a timing of the run 
+#' with `Sys.time()` and an assessment of memory using `gc()`. These are also 
+#' provided in the default returned data. Lastly, results are provided using the 
+#' `deconvolution.results` object class, which provides several convenient 
+#' methods for handling the outputs (see `?deconvolution.results` for details)
 #' 
 #' Currently supported deconvolution methods include:
 #' 
