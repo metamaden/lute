@@ -8,27 +8,86 @@
 
 #' run_deconvolution
 #'
-#'
-run_deconvolution <- function(method = "nnls", ...){
-  mappings <- map_deconvolution_arguments(...)
-  results <- get_deconvolution_predictions(method = method, mappings = mappings)
-  return(results)
+#' @param Z Signature matrix of dimensions G (marker genes) x K (types).
+#' @param Y Bulk matrix of dimensions G (marker genes) x J (bulk samples).
+#' @param method Character string of a valid deconvolution method to use (see
+#' available methods with `valid_deconvolution_methods()`).
+#' @param arguments List of additional valid arguments for the method.
+#' @returns Object of type `deconvolution.results`, containing predictions, 
+#' metadata, and benchmarking data.
+#' @examples 
+#' 
+#' @export
+run_deconvolution <- function(Z, Y, method = "nnls", arguments = list()){
+  # message("parsing provided arguments...")
+  arguments[["Z"]] <- Z; arguments[["Y"]] <- Y
+  command.list <- map_deconvolution_arguments(method = method, 
+                                              arguments = arguments)
+  lr <- get_deconvolution_predictions(command.list = command.list)
+  return(lr)
 }
 
 #' map_deconvolution_arguments
 #'
-#'
-#'
-map_deconvolution_arguments <- function(){
-  
+#' Wrapper to manage deconvolution method mapping calls.
+#' 
+#' @param method Name of deconvolution method.
+#' @param arguments List of valid arguments.
+#' @returns Result of calling `mapping_[method](...)`
+#' @details See `?valid_deconvolution_methods()` for valid methods and their 
+#' arguments. 
+#' @examples 
+#' 
+#' @export
+map_deconvolution_arguments <- function(method, arguments){
+  command.string <- paste0("map_", method, "(arguments = arguments)")
+  eval(parse(text = command.string))
 }
 
 #' get_deconvolution_predictions
 #'
+#' Parses deconvolution method to get proportions predictions, with timing and
+#' memory usage for benchmarking.
+#' 
+#' @param command.list Valid command list, returned from map_deconvolution_arguments().
+#' @param item.vector Vector of special item names in command.list. These aren't
+#' passed to the deconvolution prediction call.
+#' @returns List containing predictions, metadata, and benchmark data.
+#' @examples
 #'
-#'
-get_deconvolution_predictions <- function(){
+#' @export
+get_deconvolution_predictions <- function(command.list, 
+                                          item.vector = c("command.text", 
+                                                          "method", 
+                                                          "seed.num")){
+  # instantiate list objects in environment
+  for(name in names(command.list)){
+    eval(parse(text = paste0(name, " <- ", command.list[[name]])))
+  }
   
+  # get prediction results
+  method <- command.list[["method"]]
+  command.text <- command.list[["command.str"]]
+  t1 <- Sys.time()
+  m1 <- gc(); predictions <- eval(parse(text = command.text)); m2 <- gc()
+  duration <- Sys.time() - t1
+  
+  # parse return objects
+  # parse timing details
+  ltime <- list(duration <- Sys.time()-t1, units = "sec", 
+                timestamp = as.character(t1), method = "Sys.time()")
+  # parse memory usage details
+  m.change <- m2-m1
+  lmem <- list(start = m1, end = m2, change = m.change, method = "gc")
+  lbench <- list(time = ltime, memory = lmem)
+  # parse predictions as proportions
+  if(sum(predictions) > 1){predictions <- predictions/sum(predictions)}
+  # parse metadata
+  lmd <- list(command.text = command.text, method = method)
+  
+  # return
+  lreturn <- list(predictions = predictions, metadata = lmd, benchmark = lbench)
+  return(lreturn)
 }
 
 #-------------------
@@ -39,16 +98,103 @@ get_deconvolution_predictions <- function(){
 #'
 #'
 #'
-use_nnls <- function(){
+map_nnls <- function(arguments, method.arguments = c("A" = "Z", "b" = "Y"), 
+                     method = "nnls"){
+  require(nnls)
+  # parse arguments
+  message("filtering provided arguments...")
+  filter <- is(arguments, "NULL")|arguments=="NULL"|arguments==""
+  arg.filt <- arguments[filter]
+  message("validating provided arguments...")
+  arg.user <- names(arg.filt)
+  arg.method <- names(method.arguments)
+  overlapping.args <- intersect(arg.user, arg.method)
+  filter.user <- arg.user %in% overlapping.args
+  filter.method <- !arg.method %in% overlapping.args
+  af.user <- arg.filt[filter.user]
+  af.method <- method.arguments[filter.method]
+  message("the following required arguments were provided: ", 
+          paste0(names(af.user), collapse = "; "))
+  if(length(af.method) > 0){
+    message("the following required arguments were not provided: ", 
+            paste0(names(af.method), collapse = "; "))
+    message("parsing defaults for required methods not provided...")
+    for(ai in af.method){
+      if(ai == "A"){
+        a <- arguments[["Z"]]
+      } else if(ai == "b"){
+        b <- arguments[["Y"]]
+      } else{}
+    }
+  }
   
+  # get the command string
+  final.method.vector <- c(af.user, af.method)
+  method.string <- paste0(names(final.method.vector), "=", 
+                          final.method.vector, collapse = ",")
+  command.string <- paste0(method, "(", method.string, ")$x")
+  
+  # get final command string in return list
+  lr <- lapply(c(af.user, af.method), function(methodi){methodi})
+  lr[["command.str"]] <- command.string
+  lr[["method"]] <- method
+  return(lr)
 }
 
 #' use_music
 #'
 #'
 #'
-use_music <- function(){
+map_music <- function(arguments, method = "music.basic", 
+                      method.arguments = c("Z" = "Z", "Y" = "Y", "S" = "S", 
+                                           "Sigma" = "Sigma", "nu" = "1e-10", 
+                                           "iter.max" = "100",
+                                           "eps" = "0")){
+  require(MuSiC)
+  # parse arguments
+  message("filtering provided arguments...")
+  filter <- is(arguments, "NULL")|arguments=="NULL"|arguments==""
+  arg.filt <- arguments[filter]
+  message("validating provided arguments...")
+  arg.user <- names(arg.filt)
+  arg.method <- names(method.arguments)
+  overlapping.args <- intersect(arg.user, arg.method)
+  filter.user <- arg.user %in% overlapping.args
+  filter.method <- !arg.method %in% overlapping.args
+  af.user <- arg.filt[filter.user]
+  af.method <- method.arguments[filter.method]
+  message("the following required arguments were provided: ", 
+          paste0(names(af.user), collapse = "; "))
+  if(length(af.method) > 0){
+    message("the following required arguments were not provided: ", 
+            paste0(names(af.method), collapse = "; "))
+    message("parsing defaults for required methods not provided...")
+    for(ai in af.method){
+      if(ai == "Sigma"){
+        Sigma <- matrix(0, ncol = 1, nrow = nrow(Z))
+      } else if(ai == "S"){
+        eval(parse(text = paste0("S =", rep(1, ncol(Z)))))
+      } else if(ai == "nu"){
+        eval(parse(text = paste0("nu =", 1e-10)))
+      } else if(ai == "iter.max"){
+        eval(parse(text = paste0("iter.max =", 1000)))
+      } else if(ai == "eps"){
+        eval(parse(text = paste0("eps =", 0)))
+      } else{}
+    }
+  }
   
+  # get the command string
+  final.method.vector <- c(af.user, af.method)
+  method.string <- paste0(names(final.method.vector), "=", 
+                          final.method.vector, collapse = ",")
+  command.string <- paste0(method, "(", method.string, ")$p.weight")
+  
+  # get final command string in return list
+  lr <- lapply(c(af.user, af.method), function(methodi){methodi})
+  lr[["command.str"]] <- command.string
+  lr[["method"]] <- method
+  return(lr)
 }
 
 #' use_bisque
