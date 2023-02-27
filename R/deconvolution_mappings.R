@@ -133,11 +133,12 @@ get_deconvolution_predictions <- function(command.list,
 #'
 #' @param arguments List of user-provided arguments.
 #' @param method Character string of the method.
+#' @param library.name Name of library to call function from.
 #' @param method.arguments Arguments required for this method.
 #' @returns List of data and command character string to parse.
 #' 
 #' @export
-map_nnls <- function(arguments, method = "nnls",
+map_nnls <- function(arguments, method = "nnls", library.name = "nnls",
                      method.arguments = c("A" = "Z", "b" = "Y")){
   require(nnls)
   # parse arguments
@@ -171,7 +172,7 @@ map_nnls <- function(arguments, method = "nnls",
   final.method.vector <- c(af.user, af.method)
   method.string <- paste0(names(final.method.vector), "=", 
                           final.method.vector, collapse = ",")
-  command.string <- paste0(method, "(", method.string, ")$x")
+  command.string <- paste0(library.name, "::", method, "(", method.string, ")$x")
   
   # get final command string in return list
   lr <- lapply(c(af.user, af.method), function(methodi){methodi})
