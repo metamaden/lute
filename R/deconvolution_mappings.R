@@ -13,17 +13,47 @@
 #' @param method Character string of a valid deconvolution method to use (see
 #' available methods with `valid_deconvolution_methods()`).
 #' @param arguments List of additional valid arguments for the method.
-#' @returns Object of type `deconvolution.results`, containing predictions, 
-#' metadata, and benchmarking data.
+#' @returns List of objects of type `deconvolution.results` containing 
+#' predictions, metadata, and benchmarking data, organized by J samples in the
+#' provided Y bulk data.
+#' 
 #' @examples 
+#' sce <- random_sce()
+#' typev <- unique(sce[["celltype"]])
+#' Z <- do.call(cbind, lapply(typev, function(typei){
+#' rowMeans(counts(sce[,sce[["celltype"]]==typei]))
+#' }))
+#' colnames(Z) <- c('type1', 'type2')
+#' Y <- matrix(rowMeans(counts(sce)), ncol = 1)
+#' 
+#' # run methods
+#' # run nnls
+#' ldecon <- run_deconvolution(method = "nnls", Y = Y, Z = Z)
+#' 
+#' # inspect results
+#' ldecon
 #' 
 #' @export
 run_deconvolution <- function(Z, Y, method = "nnls", arguments = list()){
-  # message("parsing provided arguments...")
+  message("preparing predictions using method ", method, " for :")
+  message("G = ", nrow(Z), " marker genes...")
+  message("K = ", ncol(Z), " cell types...")
+  message("J = ", ncol(Y), " bulk samples...")
   arguments[["Z"]] <- Z; arguments[["Y"]] <- Y
-  command.list <- map_deconvolution_arguments(method = method, 
-                                              arguments = arguments)
-  lr <- get_deconvolution_predictions(command.list = command.list)
+  if(ncol(Y) > 1){
+    message("parsing multiple bulk samples...")
+    lr <- lapply(seq(ncol(Y)), function(ii){
+      arguments[["Y"]] <- Y[,ii,drop=F]
+      command.list <- map_deconvolution_arguments(method = method, 
+                                                  arguments = arguments)
+      get_deconvolution_predictions(command.list = command.list)
+    })
+    names(lr) <- paste0("bulk_sample", seq(ncol(Y)), ";id:", colnames(Y))
+  } else{
+      command.list <- map_deconvolution_arguments(method = method,
+                                                  arguments = arguments)
+      lr <- get_deconvolution_predictions(command.list = command.list)
+  }
   return(lr)
 }
 
@@ -65,7 +95,7 @@ get_deconvolution_predictions <- function(command.list,
     eval(parse(text = paste0(name, " <- ", command.list[[name]])))
   }
   
-  # get prediction results
+  message("getting predictions...")
   method <- command.list[["method"]]
   command.text <- command.list[["command.str"]]
   t1 <- Sys.time()
@@ -83,11 +113,14 @@ get_deconvolution_predictions <- function(command.list,
   # parse predictions as proportions
   if(sum(predictions) > 1){predictions <- predictions/sum(predictions)}
   # parse metadata
-  lmd <- list(command.text = command.text, method = method)
+  lmd <- list(command.text = command.text, method = method, 
+              number.of.markers = nrow(Z), number.of.types = ncol(Z),
+              markers = rownames(Z), types = colnames(Z), 
+              bulk.samples = colnames(Y))
   
   # return
   lreturn <- list(predictions = predictions, metadata = lmd, benchmark = lbench)
-  return(lreturn)
+  return(as(lreturn, "deconvolution.results"))
 }
 
 #-------------------
