@@ -21,6 +21,38 @@
 #' predictions, metadata, and benchmarking data, organized by J samples in the
 #' provided Y bulk data.
 #' 
+#' @details This is the main function to estimate cell type proportions using 
+#' numerous different reference-based deconvolution methods. It calls several
+#' other functions and provides a standard output from supported methods. 
+#' Currently, one bulk/mixed signals sample is processed at a time. If multiple
+#' bulk samples are provided (e.g. `ncol(Y) > 1`), then results for each
+#' sample are returned in a named list of `deconvolution.results` objects.
+#' 
+#' It solves several issues for calling and benchmarking bulk deconvolution 
+#' methods. First, it provides a standard way of calling deconvolution 
+#' functions, including a single way of specifying the signature matrix (i.e. 
+#' argument `Z`) and bulk signals matrix (i.e. argument `Y`). This is needed 
+#' because most functions use non-standard ways of refering to these objects,
+#' such as "a", "B", "X", "signatures", etc. Second, predictions are returned 
+#' in standard format including metadata and the character string of the final 
+#' function evaluation. Third, basic benchmarking support is available by default, 
+#' including a timing of the run with `Sys.time()` and an assessment of memory
+#' using `gc()`. These are also provided in the default returned data. Lastly,
+#' results are provided using the `deconvolution.results` object class, which
+#' provides several convenient methods for handling the outputs (see 
+#' `?deconvolution.results` for details)
+#' 
+#' Currently supported deconvolution methods include:
+#' 
+#' * nnls : Non-negative least squares (NNLS) function from the `nnls` R package
+#' (available on CRAN).
+#' 
+#' * music : The function `music.basic` from the `MuSiC` R package (available on 
+#' GitHub).
+#' 
+#' * DeconRNASeq : The function `DeconRNASeq` from the `DeconRNASeq` 
+#' R package (available on Bioconductor).
+#' 
 #' @examples 
 #' sce <- random_sce()
 #' typev <- unique(sce[["celltype"]])
