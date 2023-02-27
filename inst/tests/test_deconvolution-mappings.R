@@ -34,12 +34,5 @@ res <- run_deconvolution(Z = Z, Y = Y, method = method)
 library(EPIC)
 
 method <- "epic"
-
-
-res1 <- EPIC(melanoma_data$counts)
-res1$cellFractions
-res2 <- EPIC(melanoma_data$counts, TRef)
-res3 <- EPIC(bulk=melanoma_data$counts, reference=TRef)
-res4 <- EPIC(melanoma_data$counts, reference="TRef")
-res5 <- EPIC(melanoma_data$counts, mRNA_cell_sub=c(Bcells=1, otherCells=5))
-
+Z <- as.data.frame(Z)
+res <- run_deconvolution(Z = Z, Y = Y, method = method)

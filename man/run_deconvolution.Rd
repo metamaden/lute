@@ -4,12 +4,14 @@
 \alias{run_deconvolution}
 \title{run_deconvolution}
 \usage{
-run_deconvolution(Z, Y, method = "nnls", arguments = list())
+run_deconvolution(Z, Y, seed.num = 0, method = "nnls", arguments = list())
 }
 \arguments{
 \item{Z}{Signature matrix of dimensions G (marker genes) x K (types).}
 
 \item{Y}{Bulk matrix of dimensions G (marker genes) x J (bulk samples).}
+
+\item{seed.num}{Random seed for computational reproducibility.}
 
 \item{method}{Character string of a valid deconvolution method to use (see
 available methods with `valid_deconvolution_methods()`).}
@@ -34,30 +36,35 @@ Currently, one bulk/mixed signals sample is processed at a time. If multiple
 bulk samples are provided (e.g. `ncol(Y) > 1`), then results for each
 sample are returned in a named list of `deconvolution.results` objects.
 
-It solves several issues for calling and benchmarking bulk deconvolution 
-methods. First, it provides a standard way of calling deconvolution 
+This function addresses several issues found across bulk deconvolution 
+methods. First, it provides a standard way of calling the deconvolution 
 functions, including a single way of specifying the signature matrix (i.e. 
 argument `Z`) and bulk signals matrix (i.e. argument `Y`). This is needed 
-because most functions use non-standard ways of refering to these objects,
-such as "a", "B", "X", "signatures", etc. Second, predictions are returned 
-in standard format including metadata and the character string of the final 
-function evaluation. Third, basic benchmarking support is available by default, 
-including a timing of the run with `Sys.time()` and an assessment of memory
-using `gc()`. These are also provided in the default returned data. Lastly,
-results are provided using the `deconvolution.results` object class, which
-provides several convenient methods for handling the outputs (see 
-`?deconvolution.results` for details)
+because most function arguments use non-standard references to these objects,
+such as "a", "B", "X", "signatures", etc. 
+
+Second, predictions are returned in standard format including metadata and 
+the character string of the final function evaluation. Third, basic 
+benchmarking support is available by default, including a timing of the run 
+with `Sys.time()` and an assessment of memory using `gc()`. These are also 
+provided in the default returned data. Lastly, results are provided using the 
+`deconvolution.results` object class, which provides several convenient 
+methods for handling the outputs (see `?deconvolution.results` for details)
 
 Currently supported deconvolution methods include:
 
 * nnls : Non-negative least squares (NNLS) function from the `nnls` R package
-(available on CRAN).
+(available on CRAN: https://cran.r-project.org/web/packages/nnls/index.html).
 
 * music : The function `music.basic` from the `MuSiC` R package (available on 
-GitHub).
+GitHub: https://github.com/xuranw/MuSiC).
 
 * DeconRNASeq : The function `DeconRNASeq` from the `DeconRNASeq` 
-R package (available on Bioconductor).
+R package (available on Bioconductor: 
+https://doi.org/doi:10.18129/B9.bioc.DeconRNASeq).
+
+* EPIC : The `EPIC` method from the `EPIC` R package (available on GitHub: 
+https://github.com/GfellerLab/EPIC)
 }
 \examples{
 sce <- random_sce()

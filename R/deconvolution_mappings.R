@@ -47,13 +47,17 @@
 #' Currently supported deconvolution methods include:
 #' 
 #' * nnls : Non-negative least squares (NNLS) function from the `nnls` R package
-#' (available on CRAN).
+#' (available on CRAN: https://cran.r-project.org/web/packages/nnls/index.html).
 #' 
 #' * music : The function `music.basic` from the `MuSiC` R package (available on 
-#' GitHub).
+#' GitHub: https://github.com/xuranw/MuSiC).
 #' 
 #' * DeconRNASeq : The function `DeconRNASeq` from the `DeconRNASeq` 
-#' R package (available on Bioconductor).
+#' R package (available on Bioconductor: 
+#' https://doi.org/doi:10.18129/B9.bioc.DeconRNASeq).
+#' 
+#' * EPIC : The `EPIC` method from the `EPIC` R package (available on GitHub: 
+#' https://github.com/GfellerLab/EPIC)
 #' 
 #' @examples 
 #' sce <- random_sce()
@@ -345,6 +349,66 @@ map_deconrnaseq <- function(arguments, method = "DeconRNASeq",
                           final.method.vector, collapse = ",")
   command.string <- paste0(library.name, "::", 
                            method, "(", method.string, ")$out.all[1,]")
+  
+  # get final command string in return list
+  lr <- lapply(c(af.user, af.method), function(methodi){methodi})
+  lr[["command.str"]] <- command.string
+  lr[["method"]] <- method
+  return(lr)
+}
+
+#' map_epic
+#'
+#' Mapping provided arguments to required arguments for EPIC, using 
+#' defaults for any required arguments not provided
+#'
+#' @param arguments List of user-provided arguments.
+#' @param method Character string of the method.
+#' @param library.name Name of library to call function from.
+#' @param method.arguments Arguments required for this method.
+#' @returns List of data and command character string to parse.
+#' 
+#' @export
+map_epic <- function(arguments, method = "EPIC", library.name = "EPIC",
+                     method.arguments = c("bulk" = "as.data.frame(Y)",
+                                          "reference" = "NA")){
+  require(EPIC)
+  # parse arguments
+  message("filtering provided arguments...")
+  filter <- is(arguments, "NULL")|arguments=="NULL"|arguments==""
+  arg.filt <- arguments[filter]
+  message("validating provided arguments...")
+  arg.user <- names(arg.filt)
+  arg.method <- names(method.arguments)
+  overlapping.args <- intersect(arg.user, arg.method)
+  filter.user <- arg.user %in% overlapping.args
+  filter.method <- !arg.method %in% overlapping.args
+  af.user <- arg.filt[filter.user]
+  af.method <- method.arguments[filter.method]
+  message("the following required arguments were provided: ", 
+          paste0(names(af.user), collapse = "; "))
+  if(length(af.method) > 0){
+    message("the following required arguments were not provided: ", 
+            paste0(names(af.method), collapse = "; "))
+    message("parsing defaults for required methods not provided...")
+    for(ai in names(af.method)){
+      if(ai == "bulk"){
+        af.method[ai] <- "as.data.frame(Y)"
+      } else if(ai == "reference"){
+        af.method[ai] <- paste0("list(refProfiles = Z, ",
+                                "sigGenes = rownames(Z),",
+                                "refProfiles.z = Z)")
+      } else{}
+    }
+  }
+  
+  # get the command string
+  af.user <- af.user[!names(af.user) %in% c("Y", "Z")]
+  final.method.vector <- c(af.user, af.method)
+  method.string <- paste0(names(final.method.vector), "=", 
+                          final.method.vector, collapse = ",")
+  command.string <- paste0(library.name, "::", 
+                           method, "(", method.string, ")$mRNAProportions")
   
   # get final command string in return list
   lr <- lapply(c(af.user, af.method), function(methodi){methodi})
