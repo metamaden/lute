@@ -25,15 +25,13 @@ arguments <- list("sigma = NULL")
 command.list <- map_music(arguments)
 
 # run deconrnaseq
-Yi <- cbind(Y, Y)
-colnames(Yi) <- paste0("sample", seq(2))
-res <- DeconRNASeq(as.data.frame(Yi), as.data.frame(Z), use.scale = FALSE)
+method <- "deconrnaseq"
+Yi <- as.data.frame(cbind(Y, Y))
+colnames(Yi) <- paste0("sample", seq(ncol(Yi)))
 
-source("DeconRNASeq.R")
+res <- run_deconvolution(Z = as.data.frame(Z), Y = Yi, method = method)
 
-data(multi_tissue)
-datasets <- x.data[,2:11]
-signatures <- x.signature.filtered.optimal[,2:6]
-proportions <- fraction
-DeconRNASeq(datasets, signatures, proportions, 
-            checksig=FALSE, known.prop = TRUE, use.scale = TRUE)
+
+
+
+

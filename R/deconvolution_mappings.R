@@ -39,7 +39,8 @@ run_deconvolution <- function(Z, Y, method = "nnls", arguments = list()){
   message("G = ", nrow(Z), " marker genes...")
   message("K = ", ncol(Z), " cell types...")
   message("J = ", ncol(Y), " bulk samples...")
-  arguments[["Z"]] <- Z; arguments[["Y"]] <- Y
+  arguments[["Z"]] <- as.data.frame(Z)
+  arguments[["Y"]] <- as.data.frame(Y)
   if(ncol(Y) > 1){
     message("parsing multiple bulk samples...")
     lr <- lapply(seq(ncol(Y)), function(ii){
@@ -233,6 +234,64 @@ map_music <- function(arguments, method = "music.basic",
   method.string <- paste0(names(final.method.vector), "=", 
                           final.method.vector, collapse = ",")
   command.string <- paste0(method, "(", method.string, ")$p.weight")
+  
+  # get final command string in return list
+  lr <- lapply(c(af.user, af.method), function(methodi){methodi})
+  lr[["command.str"]] <- command.string
+  lr[["method"]] <- method
+  return(lr)
+}
+
+#' map_deconrnaseq
+#'
+#' Mapping provided arguments to required arguments for DeconRNASeq, using 
+#' defaults for any required arguments not provided
+#'
+#' @param arguments List of user-provided arguments.
+#' @param method Character string of the method.
+#' @param method.arguments Arguments required for this method.
+#' @returns List of data and command character string to parse.
+#' 
+#' @export
+map_deconrnaseq <- function(arguments, method = "DeconRNASeq",
+                     method.arguments = c("signatures" = "Z", 
+                                          "datasets" = "Y", 
+                                          "use.scale" = "FALSE")){
+  require(DeconRNASeq)
+  # parse arguments
+  message("filtering provided arguments...")
+  filter <- is(arguments, "NULL")|arguments=="NULL"|arguments==""
+  arg.filt <- arguments[filter]
+  message("validating provided arguments...")
+  arg.user <- names(arg.filt)
+  arg.method <- names(method.arguments)
+  overlapping.args <- intersect(arg.user, arg.method)
+  filter.user <- arg.user %in% overlapping.args
+  filter.method <- !arg.method %in% overlapping.args
+  af.user <- arg.filt[filter.user]
+  af.method <- method.arguments[filter.method]
+  message("the following required arguments were provided: ", 
+          paste0(names(af.user), collapse = "; "))
+  if(length(af.method) > 0){
+    message("the following required arguments were not provided: ", 
+            paste0(names(af.method), collapse = "; "))
+    message("parsing defaults for required methods not provided...")
+    for(ai in names(af.method)){
+      if(ai == "signatures"){
+        Z <- as.data.frame(arguments[["Z"]])
+      } else if(ai == "datasets"){
+        Y <- as.data.frame(cbind(arguments[["Y"]], arguments[["Y"]]))
+      } else{}
+    }
+  }
+  
+  # get the command string
+  final.method.vector <- c(af.user, af.method)
+  filter.vector <- !names(final.method.vector) %in% c("Y", "Z")
+  final.method.vector <- final.method.vector[filter.vector]
+  method.string <- paste0(names(final.method.vector), "=", 
+                          final.method.vector, collapse = ",")
+  command.string <- paste0(method, "(", method.string, ")$out.all[1,]")
   
   # get final command string in return list
   lr <- lapply(c(af.user, af.method), function(methodi){methodi})
