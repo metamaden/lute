@@ -65,8 +65,7 @@ run_deconvolution <- function(Z, Y, method = "nnls", arguments = list()){
 #' @param arguments List of valid arguments.
 #' @returns Result of calling `mapping_[method](...)`
 #' @details See `?valid_deconvolution_methods()` for valid methods and their 
-#' arguments. 
-#' @examples 
+#' arguments.
 #' 
 #' @export
 map_deconvolution_arguments <- function(method, arguments){
@@ -83,7 +82,6 @@ map_deconvolution_arguments <- function(method, arguments){
 #' @param item.vector Vector of special item names in command.list. These aren't
 #' passed to the deconvolution prediction call.
 #' @returns List containing predictions, metadata, and benchmark data.
-#' @examples
 #'
 #' @export
 get_deconvolution_predictions <- function(command.list, 
@@ -132,9 +130,9 @@ get_deconvolution_predictions <- function(command.list,
 #' Mapping provided arguments to required arguments for NNLS, using defaults
 #' for any required arguments not provided
 #'
-#' @param arguments
-#' @param method
-#' @param method.arguments
+#' @param arguments List of user-provided arguments.
+#' @param method Character string of the method.
+#' @param method.arguments Arguments required for this method.
 #' @returns List of data and command character string to parse.
 #' 
 #' @export
@@ -186,9 +184,9 @@ map_nnls <- function(arguments, method = "nnls",
 #' Mapping provided arguments to required arguments for MuSiC, using defaults
 #' for any required arguments not provided
 #'
-#' @param arguments
-#' @param method
-#' @param method.arguments
+#' @param arguments List of user-provided arguments.
+#' @param method Character string of the method.
+#' @param method.arguments Arguments required for this method.
 #' @returns List of data and command character string to parse.
 #' 
 #' @export

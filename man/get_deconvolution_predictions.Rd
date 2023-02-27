@@ -4,8 +4,21 @@
 \alias{get_deconvolution_predictions}
 \title{get_deconvolution_predictions}
 \usage{
-get_deconvolution_predictions()
+get_deconvolution_predictions(
+  command.list,
+  item.vector = c("command.text", "method", "seed.num")
+)
+}
+\arguments{
+\item{command.list}{Valid command list, returned from map_deconvolution_arguments().}
+
+\item{item.vector}{Vector of special item names in command.list. These aren't
+passed to the deconvolution prediction call.}
+}
+\value{
+List containing predictions, metadata, and benchmark data.
 }
 \description{
-get_deconvolution_predictions
+Parses deconvolution method to get proportions predictions, with timing and
+memory usage for benchmarking.
 }

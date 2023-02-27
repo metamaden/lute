@@ -4,8 +4,40 @@
 \alias{run_deconvolution}
 \title{run_deconvolution}
 \usage{
-run_deconvolution(method = "nnls", ...)
+run_deconvolution(Z, Y, method = "nnls", arguments = list())
+}
+\arguments{
+\item{Z}{Signature matrix of dimensions G (marker genes) x K (types).}
+
+\item{Y}{Bulk matrix of dimensions G (marker genes) x J (bulk samples).}
+
+\item{method}{Character string of a valid deconvolution method to use (see
+available methods with `valid_deconvolution_methods()`).}
+
+\item{arguments}{List of additional valid arguments for the method.}
+}
+\value{
+List of objects of type `deconvolution.results` containing 
+predictions, metadata, and benchmarking data, organized by J samples in the
+provided Y bulk data.
 }
 \description{
 run_deconvolution
+}
+\examples{
+sce <- random_sce()
+typev <- unique(sce[["celltype"]])
+Z <- do.call(cbind, lapply(typev, function(typei){
+rowMeans(counts(sce[,sce[["celltype"]]==typei]))
+}))
+colnames(Z) <- c('type1', 'type2')
+Y <- matrix(rowMeans(counts(sce)), ncol = 1)
+
+# run methods
+# run nnls
+ldecon <- run_deconvolution(method = "nnls", Y = Y, Z = Z)
+
+# inspect results
+ldecon
+
 }

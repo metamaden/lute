@@ -4,8 +4,20 @@
 \alias{map_deconvolution_arguments}
 \title{map_deconvolution_arguments}
 \usage{
-map_deconvolution_arguments()
+map_deconvolution_arguments(method, arguments)
+}
+\arguments{
+\item{method}{Name of deconvolution method.}
+
+\item{arguments}{List of valid arguments.}
+}
+\value{
+Result of calling `mapping_[method](...)`
 }
 \description{
-map_deconvolution_arguments
+Wrapper to manage deconvolution method mapping calls.
+}
+\details{
+See `?valid_deconvolution_methods()` for valid methods and their 
+arguments.
 }
