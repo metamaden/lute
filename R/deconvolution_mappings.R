@@ -192,16 +192,13 @@ map_nnls <- function(arguments, method = "nnls", library.name = "nnls",
                      method.arguments = c("A" = "Z", "b" = "Y")){
   require(nnls)
   # parse arguments
-  message("filtering provided arguments...")
-  filter <- is(arguments, "NULL")|arguments=="NULL"|arguments==""
-  arg.filt <- arguments[filter]
   message("validating provided arguments...")
-  arg.user <- names(arg.filt)
+  arg.user <- names(arguments)
   arg.method <- names(method.arguments)
   overlapping.args <- intersect(arg.user, arg.method)
   filter.user <- arg.user %in% overlapping.args
   filter.method <- !arg.method %in% overlapping.args
-  af.user <- arg.filt[filter.user]
+  af.user <- arguments[filter.user]
   af.method <- method.arguments[filter.method]
   message("the following required arguments were provided: ", 
           paste0(names(af.user), collapse = "; "))
@@ -248,6 +245,7 @@ map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
                                            "Sigma" = "Sigma", "nu" = "1e-10", 
                                            "iter.max" = "100", "eps" = "0")){
   require(MuSiC)
+  require(nnls)
   # parse arguments
   message("validating provided arguments...")
   arg.user <- names(arguments)
@@ -313,16 +311,13 @@ map_deconrnaseq <- function(arguments, method = "DeconRNASeq",
                                                  "use.scale" = "FALSE")){
   require(DeconRNASeq)
   # parse arguments
-  message("filtering provided arguments...")
-  filter <- is(arguments, "NULL")|arguments=="NULL"|arguments==""
-  arg.filt <- arguments[filter]
   message("validating provided arguments...")
-  arg.user <- names(arg.filt)
+  arg.user <- names(arguments)
   arg.method <- names(method.arguments)
   overlapping.args <- intersect(arg.user, arg.method)
   filter.user <- arg.user %in% overlapping.args
   filter.method <- !arg.method %in% overlapping.args
-  af.user <- arg.filt[filter.user]
+  af.user <- arguments[filter.user]
   af.method <- method.arguments[filter.method]
   message("the following required arguments were provided: ", 
           paste0(names(af.user), collapse = "; "))
@@ -373,16 +368,13 @@ map_epic <- function(arguments, method = "EPIC", library.name = "EPIC",
                                           "reference" = "NA")){
   require(EPIC)
   # parse arguments
-  message("filtering provided arguments...")
-  filter <- is(arguments, "NULL")|arguments=="NULL"|arguments==""
-  arg.filt <- arguments[filter]
   message("validating provided arguments...")
-  arg.user <- names(arg.filt)
+  arg.user <- names(arguments)
   arg.method <- names(method.arguments)
   overlapping.args <- intersect(arg.user, arg.method)
   filter.user <- arg.user %in% overlapping.args
   filter.method <- !arg.method %in% overlapping.args
-  af.user <- arg.filt[filter.user]
+  af.user <- arguments[filter.user]
   af.method <- method.arguments[filter.method]
   message("the following required arguments were provided: ", 
           paste0(names(af.user), collapse = "; "))
