@@ -244,7 +244,7 @@ map_nnls <- function(arguments, method = "nnls", library.name = "nnls",
 #' 
 #' @export
 map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
-                      method.arguments = c("Z" = "Z", "Y" = "Y", "S" = "S", 
+                      method.arguments = c("X" = "Z", "Y" = "Y", "S" = "S", 
                                            "Sigma" = "Sigma", "nu" = "1e-10", 
                                            "iter.max" = "100", "eps" = "0")){
   require(MuSiC)
@@ -277,6 +277,8 @@ map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
         af.method["iter.max"] = paste0("1000")
       } else if(ai == "eps"){
         af.method["eps"] = 0
+      } else if(ai == "X"){
+        af.method["X"] = "Z"
       } else{}
     }
   }
