@@ -82,8 +82,8 @@ run_deconvolution <- function(Z, Y, seed.num = 0, method = "nnls", arguments = l
   message("G = ", nrow(Z), " marker genes...")
   message("K = ", ncol(Z), " cell types...")
   message("J = ", ncol(Y), " bulk samples...")
-  arguments[["Z"]] <- as.data.frame(Z)
-  arguments[["Y"]] <- as.data.frame(Y)
+  arguments[["Z"]] <- "as.data.frame(Z)"
+  arguments[["Y"]] <- "as.data.frame(Y)"
   if(ncol(Y) > 1){
     message("parsing multiple bulk samples...")
     lr <- lapply(seq(ncol(Y)), function(ii){
@@ -114,7 +114,7 @@ run_deconvolution <- function(Z, Y, seed.num = 0, method = "nnls", arguments = l
 #' @export
 map_deconvolution_arguments <- function(method, arguments){
   command.string <- paste0("map_", method, "(arguments = arguments)")
-  eval(parse(text = command.string))
+  return(eval(parse(text = command.string)))
 }
 
 #' get_deconvolution_predictions
@@ -249,16 +249,13 @@ map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
                                            "iter.max" = "100", "eps" = "0")){
   require(MuSiC)
   # parse arguments
-  message("filtering provided arguments...")
-  filter <- is(arguments, "NULL")|arguments=="NULL"|arguments==""
-  arg.filt <- arguments[filter]
   message("validating provided arguments...")
-  arg.user <- names(arg.filt)
+  arg.user <- names(arguments)
   arg.method <- names(method.arguments)
   overlapping.args <- intersect(arg.user, arg.method)
   filter.user <- arg.user %in% overlapping.args
   filter.method <- !arg.method %in% overlapping.args
-  af.user <- arg.filt[filter.user]
+  af.user <- arguments[filter.user]
   af.method <- method.arguments[filter.method]
   message("the following required arguments were provided: ", 
           paste0(names(af.user), collapse = "; "))
