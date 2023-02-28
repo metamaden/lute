@@ -76,14 +76,14 @@
 #' ldecon
 #' 
 #' @export
-run_deconvolution <- function(Z, Y, seed.num = 0, method = "nnls", arguments = list()){
+run_deconvolution <- function(Z = NULL, Y = NULL, seed.num = 0, method = "nnls", arguments = list()){
   set.seed(seed.num)
   message("preparing predictions using method ", method, " for :")
   message("G = ", nrow(Z), " marker genes...")
   message("K = ", ncol(Z), " cell types...")
   message("J = ", ncol(Y), " bulk samples...")
-  arguments[["Z"]] <- "as.data.frame(Z)"
-  arguments[["Y"]] <- "as.data.frame(Y)"
+  if(!"Z" %in% names(arguments)){arguments[["Z"]] <- Z}
+  if(!"Y" %in% names(arguments)){arguments[["Y"]] <- Y}
   if(ncol(Y) > 1){
     message("parsing multiple bulk samples...")
     lr <- lapply(seq(ncol(Y)), function(ii){
@@ -241,9 +241,10 @@ map_nnls <- function(arguments, method = "nnls", library.name = "nnls",
 #' 
 #' @export
 map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
-                      method.arguments = c("X" = "Z", "Y" = "Y", "S" = "S", 
-                                           "Sigma" = "Sigma", "nu" = "1e-10", 
-                                           "iter.max" = "100", "eps" = "0")){
+                      method.arguments = c("X" = "as.matrix(Z)", "Y" = "as.matrix(Y)", 
+                                           "S" = "S", "Sigma" = "Sigma", 
+                                           "nu" = "1e-10", "iter.max" = "100", 
+                                           "eps" = "0")){
   require(MuSiC)
   require(nnls)
   # parse arguments
@@ -273,12 +274,15 @@ map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
       } else if(ai == "eps"){
         af.method["eps"] = 0
       } else if(ai == "X"){
-        af.method["X"] = "Z"
-      } else{}
+        af.method["X"] = "as.matrix(Z)"
+      } else if(ai == "Ymusic"){
+        af.method["Ymusic"] = "as.matrix(Y)"
+      }else{}
     }
   }
   
   # get the command string
+  message("Note: music.basic() requires that Y and X/Z be matrix objects.")
   final.method.vector <- c(af.user, af.method)
   method.string <- paste0(names(final.method.vector), "=", 
                           final.method.vector, collapse = ",")

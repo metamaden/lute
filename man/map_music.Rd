@@ -8,8 +8,8 @@ map_music(
   arguments,
   method = "music.basic",
   library.name = "MuSiC",
-  method.arguments = c(X = "Z", Y = "Y", S = "S", Sigma = "Sigma", nu = "1e-10",
-    iter.max = "100", eps = "0")
+  method.arguments = c(X = "as.matrix(Z)", Y = "as.matrix(Y)", S = "S", Sigma =
+    "Sigma", nu = "1e-10", iter.max = "100", eps = "0")
 )
 }
 \arguments{

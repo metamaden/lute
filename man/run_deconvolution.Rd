@@ -4,7 +4,13 @@
 \alias{run_deconvolution}
 \title{run_deconvolution}
 \usage{
-run_deconvolution(Z, Y, seed.num = 0, method = "nnls", arguments = list())
+run_deconvolution(
+  Z = NULL,
+  Y = NULL,
+  seed.num = 0,
+  method = "nnls",
+  arguments = list()
+)
 }
 \arguments{
 \item{Z}{Signature matrix of dimensions G (marker genes) x K (types).}

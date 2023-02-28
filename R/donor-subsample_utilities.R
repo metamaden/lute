@@ -133,7 +133,8 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   Z <- do.call(cbind, lapply(unique.types, function(typei){
     type.filter <- sce[[celltype.variable]]==typei
     scef <- sce[,type.filter]
-    rowMeans(assays(scef)[[assay.name]])
+    matrix <- as.matrix(assays(scef)[[assay.name]])
+    rowMeans(matrix)
   }))
   ZS <- sweep(Z, 2, S, "*")
   ypb <- t(t(P) %*% t(ZS))
