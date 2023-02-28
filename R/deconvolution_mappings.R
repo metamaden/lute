@@ -268,15 +268,15 @@ map_music <- function(arguments, method = "music.basic", library.name = "MuSiC",
     message("parsing defaults for required methods not provided...")
     for(ai in af.method){
       if(ai == "Sigma"){
-        Sigma <- matrix(0, ncol = 1, nrow = nrow(Z))
+        af.method["Sigma"] <- paste0("matrix(0, ncol = 1, nrow = nrow(Z))")
       } else if(ai == "S"){
-        eval(parse(text = paste0("S =", rep(1, ncol(Z)))))
+        af.method["S"] = paste0("rep(1, ncol(Z))")
       } else if(ai == "nu"){
-        eval(parse(text = paste0("nu =", 1e-10)))
+        af.method["nu"] = paste0("1e-10")
       } else if(ai == "iter.max"){
-        eval(parse(text = paste0("iter.max =", 1000)))
+        af.method["iter.max"] = paste0("1000")
       } else if(ai == "eps"){
-        eval(parse(text = paste0("eps =", 0)))
+        af.method["eps"] = 0
       } else{}
     }
   }
