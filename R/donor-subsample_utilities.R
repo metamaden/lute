@@ -74,6 +74,8 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
                                                            ypb.name = "ypb.rda",
                                                            li.name = "lindex.rda"),
                                          verbose = TRUE){
+  require(SummarizedExperiment)
+  require(SingleCellExperiment)
   set.seed(seed.num)
   
   # get metadata vectors
