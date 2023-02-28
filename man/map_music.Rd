@@ -8,7 +8,7 @@ map_music(
   arguments,
   method = "music.basic",
   library.name = "MuSiC",
-  method.arguments = c(Z = "Z", Y = "Y", S = "S", Sigma = "Sigma", nu = "1e-10",
+  method.arguments = c(X = "Z", Y = "Y", S = "S", Sigma = "Sigma", nu = "1e-10",
     iter.max = "100", eps = "0")
 )
 }
