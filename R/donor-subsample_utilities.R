@@ -210,14 +210,44 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
 #' @param percent.cells Vector of percentages equal to the number of unique cell 
 #' types in dft.
 #' @returns Vector of numbers of cells by type (organized using `order`).
+#' @details Get cell quantities using either fractions or proportions. If 
+#' proportions are specified, uses the provided specified fraction to get the
+#' absolute amount of the least abundant cell type, then calculates the amount 
+#' of each more abundant cell type.
+
 #' @export
-get_cell_quantities <- function(dft, fraction.cells = NULL, percent.cells = NULL){
-  if(fraction.cells > 1){fraction.cells = fraction.cells/100}
-  message("Using cell fraction: ", fraction.cells)
-  num.cells.vector <- sapply(unique.types, function(ti){
-    type.filter <- dft[,1]==ti; dff <- dft[type.filter,]
-    round(min(dff[,3])*fraction.cells, 0)
+get_cell_quantities <- function(dft, proportion.cells = NULL, 
+                                fraction.cells = 0.25){
+  # get cell types
+  unique.types <- unique(dft[,1])
+  unique.types <- unique.types[order(unique.types)]
+  num.types <- length(unique.types)
+  # check inputs
+  if(sum(fraction.cells) > 1){fraction.cells <- fraction.cells/100}
+  if(sum(proportion.cells) > 1){proportion.cells <- proportion.cells/100}
+  # seed starting cell counts
+  if(length(fraction.cells)==1){fraction.cells <- rep(fraction.cells, num.types)}
+  num.cells.vector <- sapply(seq(num.types), function(ii){
+    typei <- unique.types[ii]; fractioni <- fraction.cells[ii]
+    type.filter <- dft[,1]==typei; dff <- dft[type.filter,]
+    round(min(dff[,3])*fractioni, 0)})
+  if(is(proportion.cells, "NULL")){return(num.cells.vector)}
+  message("Getting counts based on provided proportions...")
+  M1 = min(num.cells.vector)
+  which.min <- which(num.cells.vector==M1)
+  prop.min <- proportion.cells[which.min]
+  types.not.min <- unique.types[!which.min]
+  num.cells.not.min <- sapply(types.not.min, function(typei){
+    return(round(M1/prop.min, 0) - M1)
   })
+  num.cells.vector <- c(M1, num.cells.not.min)
+  
+  
+  
+  message("Returning counts based on provided proportions...")
+  
+  
+  
 }
 
 #'
