@@ -233,21 +233,14 @@ get_cell_quantities <- function(dft, proportion.cells = NULL,
     round(min(dff[,3])*fractioni, 0)})
   if(is(proportion.cells, "NULL")){return(num.cells.vector)}
   message("Getting counts based on provided proportions...")
-  M1 = min(num.cells.vector)
-  which.min <- which(num.cells.vector==M1)
+  count.min <- min(num.cells.vector)
+  which.min <- which(num.cells.vector==count.min)[1]
   prop.min <- proportion.cells[which.min]
-  types.not.min <- unique.types[!which.min]
-  num.cells.not.min <- sapply(types.not.min, function(typei){
-    return(round(M1/prop.min, 0) - M1)
-  })
-  num.cells.vector <- c(M1, num.cells.not.min)
-  
-  
-  
-  message("Returning counts based on provided proportions...")
-  
-  
-  
+  total.cells <- prop.min/count.min
+  proportion.not.min <- proportion.cells[2:length(proportion.cells)]
+  count.not.min <- proportion.not.min * T # remaining counts
+  counts.final <- c(count.min, count.not.min)
+  return(counts.final)
 }
 
 #'
