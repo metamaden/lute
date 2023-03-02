@@ -82,21 +82,22 @@ run_deconvolution <- function(Z = NULL, Y = NULL, seed.num = 0, method = "nnls",
   message("G = ", nrow(Z), " marker genes...")
   message("K = ", ncol(Z), " cell types...")
   message("J = ", ncol(Y), " bulk samples...")
-  if(!"Z" %in% names(arguments)){arguments[["Z"]] <- Z}
-  if(!"Y" %in% names(arguments)){arguments[["Y"]] <- Y}
+  if(!"Z" %in% names(arguments)){arguments[["Z"]] <- "Z"}
+  if(!"Y" %in% names(arguments)){arguments[["Y"]] <- "Y"}
   if(ncol(Y) > 1){
     message("parsing multiple bulk samples...")
     lr <- lapply(seq(ncol(Y)), function(ii){
       arguments[["Y"]] <- Y[,ii,drop=F]
       command.list <- map_deconvolution_arguments(method = method, 
                                                   arguments = arguments)
-      get_deconvolution_predictions(command.list = command.list)
+      get_deconvolution_predictions(Z = Z, Y = Y, command.list = command.list)
     })
     names(lr) <- paste0("bulk_sample", seq(ncol(Y)), ";id:", colnames(Y))
   } else{
       command.list <- map_deconvolution_arguments(method = method,
                                                   arguments = arguments)
-      lr <- get_deconvolution_predictions(command.list = command.list)
+      lr <- get_deconvolution_predictions(Z = Z, Y = Y, 
+                                          command.list = command.list)
   }
   return(lr)
 }
@@ -122,13 +123,15 @@ map_deconvolution_arguments <- function(method, arguments){
 #' Parses deconvolution method to get proportions predictions, with timing and
 #' memory usage for benchmarking.
 #' 
+#' @param Y bulk sample.
+#' @param Z signature matrix.
 #' @param command.list Valid command list, returned from map_deconvolution_arguments().
 #' @param item.vector Vector of special item names in command.list. These aren't
 #' passed to the deconvolution prediction call.
 #' @returns List containing predictions, metadata, and benchmark data.
 #'
 #' @export
-get_deconvolution_predictions <- function(command.list, 
+get_deconvolution_predictions <- function(Y, Z, command.list, 
                                           item.vector = c("command.text", 
                                                           "method", "seed.num")){
   # instantiate list objects in environment

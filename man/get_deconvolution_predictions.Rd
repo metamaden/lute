@@ -5,11 +5,17 @@
 \title{get_deconvolution_predictions}
 \usage{
 get_deconvolution_predictions(
+  Y,
+  Z,
   command.list,
   item.vector = c("command.text", "method", "seed.num")
 )
 }
 \arguments{
+\item{Y}{bulk sample.}
+
+\item{Z}{signature matrix.}
+
 \item{command.list}{Valid command list, returned from map_deconvolution_arguments().}
 
 \item{item.vector}{Vector of special item names in command.list. These aren't
