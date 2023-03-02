@@ -107,7 +107,7 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   dft <- as.data.frame(table(celltype.vector, groups.vector))
   
   # parse cell amount param
-  num.cells.vector <- cell.get_cell_quantities(cell.proportions, count.minimum)
+  num.cells.vector <- get_cell_quantities(cell.proportions, count.minimum)
   
   if(verbose){message("Getting random cell indices for iterations...")}
   lindex <- lapply(seq(iterations), function(ii){

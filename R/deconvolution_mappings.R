@@ -82,8 +82,8 @@ run_deconvolution <- function(Z = NULL, Y = NULL, seed.num = 0, method = "nnls",
   message("G = ", nrow(Z), " marker genes...")
   message("K = ", ncol(Z), " cell types...")
   message("J = ", ncol(Y), " bulk samples...")
-  if(!"Z" %in% names(arguments)){arguments[["Z"]] <- Z}
-  if(!"Y" %in% names(arguments)){arguments[["Y"]] <- Y}
+  if(!"Z" %in% names(arguments)){arguments[["Z"]] <- "Z"}
+  if(!"Y" %in% names(arguments)){arguments[["Y"]] <- "Y"}
   if(ncol(Y) > 1){
     message("parsing multiple bulk samples...")
     lr <- lapply(seq(ncol(Y)), function(ii){
@@ -208,9 +208,9 @@ map_nnls <- function(arguments, method = "nnls", library.name = "nnls",
     message("parsing defaults for required methods not provided...")
     for(ai in af.method){
       if(ai == "A"){
-        a <- arguments[["Z"]]
+        af.method[[ai]] <- arguments[["Z"]]
       } else if(ai == "b"){
-        b <- arguments[["Y"]]
+        af.method[[ai]] <- arguments[["Y"]]
       } else{}
     }
   }
