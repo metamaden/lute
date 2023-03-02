@@ -100,13 +100,12 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
     groups.per.iteration <- "NULL"}
   # get the exact numbers of cells of each type to sample
   dft <- as.data.frame(table(celltype.vector, groups.vector))
-  # get cells by group as minima
-  if(fraction.cells > 1){fraction.cells = fraction.cells/100}
-  message("Using cell fraction: ", fraction.cells)
-  num.cells.vector <- sapply(unique.types, function(ti){
-    type.filter <- dft[,1]==ti; dff <- dft[type.filter,]
-    round(min(dff[,3])*fraction.cells, 0)
-  })
+  
+  
+  # parse cell amount param
+  
+  num.cells.vector <- get_cell_amounts()
+  
   
   if(verbose){message("Getting random cell indices for iterations...")}
   lindex <- lapply(seq(iterations), function(ii){
@@ -198,6 +197,27 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   message("Finished run prep. Returning iterations index list.")
   lr <- list(lindex = lindex, wt = wt)
   return(lr)
+}
+
+#' get_cell_quantities
+#' 
+#' Get the number of each cell type to use across subsample iterations
+#'
+#' @param dft Table data frame containing the number of cells (column 3) by 
+#' cell type (column 1) and some group/batch/sample ID variable (column 2).
+#' @param fraction.cells Vector of fractions equal to the number of unique cell 
+#' types in dft.
+#' @param percent.cells Vector of percentages equal to the number of unique cell 
+#' types in dft.
+#' @returns Vector of numbers of cells by type (organized using `order`).
+#' @export
+get_cell_quantities <- function(dft, fraction.cells = NULL, percent.cells = NULL){
+  if(fraction.cells > 1){fraction.cells = fraction.cells/100}
+  message("Using cell fraction: ", fraction.cells)
+  num.cells.vector <- sapply(unique.types, function(ti){
+    type.filter <- dft[,1]==ti; dff <- dft[type.filter,]
+    round(min(dff[,3])*fraction.cells, 0)
+  })
 }
 
 #'
