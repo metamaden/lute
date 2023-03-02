@@ -17,7 +17,10 @@
 #' @param celltype.variable Variable containing cell type labels.
 #' @param assay.name Name of assay in sce to use for pseudobulk.
 #' @param group.variable Variable containing group labels for donor/sample/batch.
-#' @param fraction.cells Fraction of cells, per group and type, to subsample in each iteration.
+#' @param cell.proportions Cell type proportions used to calculate number of cells
+#' of each type to take, per iteration.
+#' @param count.minimum Number of cells to take for the least abundant cell type,
+#' according to proportions provdided in `cell.proportions` argument.
 #' @param scale.factor Vector of scale factors corresponding to alphebetical order of
 #' unique type labels in celltype.variable.
 #' @param seed.num Random seed for computational reproducibility.
@@ -63,7 +66,9 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
                                          celltype.variable = "k2", 
                                          group.variable = "Sample",
                                          assay.name = "counts_adj",
-                                         fraction.cells = 0.25,
+                                         cell.proportions = c("glial" = 0.3, 
+                                                              "neuron" = 0.7),
+                                         count.minimum = 200,
                                          seed.num = 0,
                                          save.fnstem = "",
                                          which.save = c("sce", "tp", "ypb", "wt", "li"),
@@ -101,11 +106,8 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
   # get the exact numbers of cells of each type to sample
   dft <- as.data.frame(table(celltype.vector, groups.vector))
   
-  
   # parse cell amount param
-  
-  num.cells.vector <- get_cell_amounts()
-  
+  num.cells.vector <- cell.get_cell_quantities(cell.proportions, count.minimum)
   
   if(verbose){message("Getting random cell indices for iterations...")}
   lindex <- lapply(seq(iterations), function(ii){
@@ -203,45 +205,39 @@ prepare_subsample_experiment <- function(sce, scale.factor, iterations = 10,
 #' 
 #' Get the number of each cell type to use across subsample iterations
 #'
-#' @param dft Table data frame containing the number of cells (column 3) by 
-#' cell type (column 1) and some group/batch/sample ID variable (column 2).
-#' @param fraction.cells Vector of fractions equal to the number of unique cell 
-#' types in dft.
-#' @param percent.cells Vector of percentages equal to the number of unique cell 
-#' types in dft.
-#' @returns Vector of numbers of cells by type (organized using `order`).
-#' @details Get cell quantities using either fractions or proportions. If 
-#' proportions are specified, uses the provided specified fraction to get the
-#' absolute amount of the least abundant cell type, then calculates the amount 
-#' of each more abundant cell type.
-
+#' @param proportions Vector of target proportions by cell type.
+#' @param num.min Known quantity of cells for minimum proportion cell type(s).
+#' @returns Vector of cell counts according to specified proportions.
+#' @details Gets cell quantities from a provided proportions on minimum count of
+#' least-abundant type according to proportions.
+#' @examples 
+#' get_cell_quantities(c("glial" = 0.3, "neuron" = 0.7), 100)
+#' # glial   neuron 
+#' # 100.0000 233.3333 
+#' 
+#' get_cell_quantities(c("glial" = 0.3, "neuron" = 0.7), 200)
+#' # glial   neuron 
+#' # 200.0000 466.6667 
+#' 
+#' get_cell_quantities(c("glial" = 0.3, "neuron" = 5), 200)
+#' # glial   neuron 
+#' # 200.000 3333.333 
+#' 
+#' get_cell_quantities(c("glial" = 0.3, "neuron" = 5, "other" = 0.1), 200)
+#' # glial neuron  other 
+#' # 600  10000    200 
+#' 
 #' @export
-get_cell_quantities <- function(dft, proportion.cells = NULL, 
-                                fraction.cells = 0.25){
-  # get cell types
-  unique.types <- unique(dft[,1])
-  unique.types <- unique.types[order(unique.types)]
-  num.types <- length(unique.types)
-  # check inputs
-  if(sum(fraction.cells) > 1){fraction.cells <- fraction.cells/100}
-  if(sum(proportion.cells) > 1){proportion.cells <- proportion.cells/100}
-  # seed starting cell counts
-  if(length(fraction.cells)==1){fraction.cells <- rep(fraction.cells, num.types)}
-  num.cells.vector <- sapply(seq(num.types), function(ii){
-    typei <- unique.types[ii]; fractioni <- fraction.cells[ii]
-    type.filter <- dft[,1]==typei; dff <- dft[type.filter,]
-    round(min(dff[,3])*fractioni, 0)})
-  if(is(proportion.cells, "NULL")){return(num.cells.vector)}
-  message("Getting counts based on provided proportions...")
-  count.min <- min(num.cells.vector)
-  which.min <- which(num.cells.vector==count.min)[1]
-  prop.min <- proportion.cells[which.min]
-  total.cells <- prop.min/count.min
-  proportion.not.min <- proportion.cells[2:length(proportion.cells)]
-  count.not.min <- proportion.not.min * T # remaining counts
-  counts.final <- c(count.min, count.not.min)
-  return(counts.final)
+get_cell_quantities <- function(proportions = c("glial" = 0.3, "neuron" = 0.7), 
+                                num.min = 100){
+  if(sum(proportions) > 1){proportions <- proportions/sum(proportions)}
+  return(proportions * num.min/min(proportions))
 }
+
+
+
+
+
 
 #'
 #'

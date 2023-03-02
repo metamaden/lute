@@ -13,7 +13,8 @@ prepare_subsample_experiment(
   celltype.variable = "k2",
   group.variable = "Sample",
   assay.name = "counts_adj",
-  fraction.cells = 0.25,
+  cell.proportions = c(glial = 0.3, neuron = 0.7),
+  count.minimum = 200,
   seed.num = 0,
   save.fnstem = "",
   which.save = c("sce", "tp", "ypb", "wt", "li"),
@@ -43,7 +44,11 @@ groups should exceed this value, otherwise data is treated as a single group.}
 
 \item{assay.name}{Name of assay in sce to use for pseudobulk.}
 
-\item{fraction.cells}{Fraction of cells, per group and type, to subsample in each iteration.}
+\item{cell.proportions}{Cell type proportions used to calculate number of cells
+of each type to take, per iteration.}
+
+\item{count.minimum}{Number of cells to take for the least abundant cell type,
+according to proportions provdided in `cell.proportions` argument.}
 
 \item{seed.num}{Random seed for computational reproducibility.}
 
