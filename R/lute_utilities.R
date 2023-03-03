@@ -45,5 +45,3 @@
 .z_operator <- function(datav){
   rowMeans(datav)
 }
-
-
