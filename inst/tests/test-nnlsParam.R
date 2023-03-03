@@ -3,10 +3,15 @@ source("lute_utilities.R")
 source("DeconParam.R")
 source("nnlsParam.R")
 # example
-y <- matrix(rnbinom(n=10, size=10, mu=10), ncol = 1)
-z <- matrix(rnbinom(n=20, size=10, mu=10), ncol = 2)
-rownames(y) <- rownames(z) <- paste0("marker", seq(nrow(y)))
-colnames(z) <- paste0("type", seq(ncol(z)))
-s <- c(1, 10)
-param <- nnlsParam(s = s, y = y, z = z)
-results <- deconvolution(param)
+lexample <- .get_decon_example_data()
+param <- nnlsParam(s = lexample[["s"]], 
+                   y = lexample[["y"]], 
+                   z = lexample[["z"]])
+# return only predicted proportions
+deconvolution(param)
+# type1      type2 
+# 0.48908543 0.05896868
+# return full results
+param@return.info <- T
+names(deconvolution(param))
+# [1] "predictions" "result.info" "metadata"
