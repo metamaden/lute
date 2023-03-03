@@ -16,47 +16,60 @@
 #' @param Y Bulk matrix of dimensions G (marker genes) x J (bulk samples).
 #' @param seed.num Random seed for computational reproducibility.
 #' @param method Character string of a valid deconvolution method to use (see
-#' available methods with `valid_deconvolution_methods()`).
+#' available methods with \code{valid_deconvolution_methods()}).
 #' @param arguments List of additional valid arguments for the method.
-#' @returns List of objects of type `deconvolution.results` containing 
+#' @returns List of objects of type \code{deconvolution.results} containing 
 #' predictions, metadata, and benchmarking data, organized by J samples in the
 #' provided Y bulk data.
+#' 
+#' @seealso 
+#' 
+#' \code{\link{map_deconvolution_arguments}}, for the mapping function
+#' 
+#' \code{\link{get_deconvolution_predictions}}, for the prediction management 
+#' function
+#' 
+#' \code{\link{map_nnls}}, for the default method maps
 #' 
 #' @details This is the main function to estimate cell type proportions using 
 #' numerous different reference-based deconvolution methods. It calls several
 #' other functions and provides a standard output from supported methods. 
 #' Currently, one bulk/mixed signals sample is processed at a time. If multiple
-#' bulk samples are provided (e.g. `ncol(Y) > 1`), then results for each
-#' sample are returned in a named list of `deconvolution.results` objects.
+#' bulk samples are provided (e.g. \code{ncol(Y) > 1}), then results for each
+#' sample are returned in a named list of \code{deconvolution.results} objects.
 #' 
+#' @section Issues addressed by this function 
 #' This function addresses several issues found across bulk deconvolution 
 #' methods. First, it provides a standard way of calling the deconvolution 
 #' functions, including a single way of specifying the signature matrix (i.e. 
-#' argument `Z`) and bulk signals matrix (i.e. argument `Y`). This is needed 
+#' argument \code{Z}) and bulk signals matrix (i.e. argument \code{Y}). This is needed 
 #' because most function arguments use non-standard references to these objects,
 #' such as "a", "B", "X", "signatures", etc. 
 #' 
 #' Second, predictions are returned in standard format including metadata and 
 #' the character string of the final function evaluation. Third, basic 
 #' benchmarking support is available by default, including a timing of the run 
-#' with `Sys.time()` and an assessment of memory using `gc()`. These are also 
+#' with \code{Sys.time()} and an assessment of memory using \code{gc()}. These are also 
 #' provided in the default returned data. Lastly, results are provided using the 
-#' `deconvolution.results` object class, which provides several convenient 
-#' methods for handling the outputs (see `?deconvolution.results` for details)
+#' \code{deconvolution.results} object class, which provides several convenient 
+#' methods for handling the outputs (see ?\code{\link{deconvolution.results}} for details)
 #' 
-#' Currently supported deconvolution methods include:
+#' @section Currently supported deconvolution methods
 #' 
-#' * nnls : Non-negative least squares (NNLS) function from the `nnls` R package
+#' Details about the deconvolution algorithms currently supported by 
+#' \code{run_deconvolution} are as follows:
+#' 
+#' * nnls : Non-negative least squares (NNLS) function from the \code{nnls} R package
 #' (available on CRAN: https://cran.r-project.org/web/packages/nnls/index.html).
 #' 
-#' * music : The function `music.basic` from the `MuSiC` R package (available on 
+#' * music : The function \code{music.basic} from the \code{MuSiC} R package (available on 
 #' GitHub: https://github.com/xuranw/MuSiC).
 #' 
-#' * DeconRNASeq : The function `DeconRNASeq` from the `DeconRNASeq` 
+#' * DeconRNASeq : The function \code{DeconRNASeq} from the \code{DeconRNASeq} 
 #' R package (available on Bioconductor: 
 #' https://doi.org/doi:10.18129/B9.bioc.DeconRNASeq).
 #' 
-#' * EPIC : The `EPIC` method from the `EPIC` R package (available on GitHub: 
+#' * EPIC : The function \code{EPIC} from the \code{EPIC} R package (available on GitHub: 
 #' https://github.com/GfellerLab/EPIC)
 #' 
 #' @examples 

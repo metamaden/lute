@@ -20,12 +20,12 @@ run_deconvolution(
 \item{seed.num}{Random seed for computational reproducibility.}
 
 \item{method}{Character string of a valid deconvolution method to use (see
-available methods with `valid_deconvolution_methods()`).}
+available methods with \code{valid_deconvolution_methods()}).}
 
 \item{arguments}{List of additional valid arguments for the method.}
 }
 \value{
-List of objects of type `deconvolution.results` containing 
+List of objects of type \code{deconvolution.results} containing 
 predictions, metadata, and benchmarking data, organized by J samples in the
 provided Y bulk data.
 }
@@ -39,8 +39,8 @@ This is the main function to estimate cell type proportions using
 numerous different reference-based deconvolution methods. It calls several
 other functions and provides a standard output from supported methods. 
 Currently, one bulk/mixed signals sample is processed at a time. If multiple
-bulk samples are provided (e.g. `ncol(Y) > 1`), then results for each
-sample are returned in a named list of `deconvolution.results` objects.
+bulk samples are provided (e.g. \code{ncol(Y) > 1}), then results for each
+sample are returned in a named list of \code{deconvolution.results} objects.
 
 This function addresses several issues found across bulk deconvolution 
 methods. First, it provides a standard way of calling the deconvolution 
@@ -88,4 +88,12 @@ ldecon <- run_deconvolution(method = "nnls", Y = Y, Z = Z)
 # inspect results
 ldecon
 
+}
+\seealso{
+\code{\link{map_deconvolution_arguments}}, for the mapping function
+
+\code{\link{get_deconvolution_predictions}}, for the prediction management 
+function
+
+\code{\link{map_nnls}}, for the default method maps
 }
