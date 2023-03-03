@@ -45,3 +45,15 @@
 .z_operator <- function(datav){
   rowMeans(datav)
 }
+
+.get_decon_example_data <- function(seed.num=0){
+  set.seed(seed.num)
+  set.seed(0)
+  y <- matrix(rnbinom(n=10, size=10, mu=10), ncol = 1)
+  z <- matrix(rnbinom(n=20, size=10, mu=10), ncol = 2)
+  rownames(y) <- rownames(z) <- paste0("marker", seq(nrow(y)))
+  colnames(z) <- paste0("type", seq(ncol(z)))
+  colnames(y) <- paste0("sample", seq(ncol(y)))
+  s <- c(1, 10)
+  return(list(z = z, y = y, s = s))
+}
