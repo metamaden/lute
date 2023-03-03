@@ -1,0 +1,12 @@
+source("lute_generics.R")
+source("lute_utilities.R")
+source("DeconParam.R")
+source("nnlsParam.R")
+# example
+y <- matrix(rnbinom(n=10, size=10, mu=10), ncol = 1)
+z <- matrix(rnbinom(n=20, size=10, mu=10), ncol = 2)
+rownames(y) <- rownames(z) <- paste0("marker", seq(nrow(y)))
+colnames(z) <- paste0("type", seq(ncol(z)))
+s <- c(1, 10)
+param <- nnlsParam(s = s, y = y, z = z)
+results <- deconvolution(param)
