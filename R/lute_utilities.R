@@ -33,9 +33,13 @@
   Znew <- .get_z_from_sce(sce, assay.name, celltype.variable)
   P <- prop.table(table(ltype[["character"]]))
   P <- P[order(match(names(P), ltype[["unique.types"]]))]
-  ZSnew <- sweep(Znew, 2, S, "*")
+  ZSnew <- .zstransform(z, s)
   ypb <- t(t(P) %*% t(ZSnew))
   return(ypb)
+}
+
+.zstransform <- function(z, s){
+  sweep(z, 2, s, FUN = "*")
 }
 
 .z_operator <- function(datav){
