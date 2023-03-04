@@ -57,3 +57,10 @@
   s <- c(1, 10)
   return(list(z = z, y = y, s = s))
 }
+
+.get_zvar <- function(z){
+  z.var <- matrix(0, nrow = nrow(z), ncol = ncol(z))
+  rownames(z.var) <- rownames(z)
+  colnames(z.var) <- colnames(z)
+  z.var
+}
