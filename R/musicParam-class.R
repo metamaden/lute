@@ -22,8 +22,7 @@
 #' # [1] "predictions" "result.info" "metadata"
 #'
 setClass("musicParam", contains="deconParam", 
-         slots=c(sigma = "matrix", 
-                 nu = "numeric", eps = "numeric", 
+         slots=c(sigma = "matrix", nu = "numeric", eps = "numeric", 
                  iter.max = "numeric", return.info = "logical"))
 
 #' Function to get nnlsParam
