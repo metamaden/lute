@@ -4,6 +4,7 @@
 #' method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
 #' 
 #' @include lute_generics.R
+#' @include deconParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{deconrnaseqParam}.
 #' @rdname deconrnaseqParam-class

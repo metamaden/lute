@@ -3,6 +3,7 @@
 #' Uses nnls::nnls().
 #' 
 #' @include lute_generics.R
+#' @include deconParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{nnlsParam}.
 #' @rdname nnlsParam-class

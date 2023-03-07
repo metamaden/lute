@@ -4,6 +4,7 @@
 #' algorithm.
 #' 
 #' @include lute_generics.R
+#' @include deconParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{musicParam}.
 #' @rdname musicParam-class
