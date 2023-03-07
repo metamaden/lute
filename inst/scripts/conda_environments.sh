@@ -46,4 +46,7 @@ conda env export > music.yml
 #--------------------
 conda create --name epic --clone r_4
 conda activate epic
+R
+devtools::install_github("GfellerLab/EPIC")
 
+conda env export > epic.yml
