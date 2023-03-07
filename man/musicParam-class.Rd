@@ -3,7 +3,8 @@
 \docType{class}
 \name{musicParam-class}
 \alias{musicParam-class}
-\title{Run MuSiC}
+\alias{MuSiCParam-class}
+\title{musicParam-class}
 \description{
 Applies the MuSiC::music.basic() implementation of the MuSiC deconvolution 
 algorithm.

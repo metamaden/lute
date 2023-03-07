@@ -3,7 +3,8 @@
 \docType{class}
 \name{epicParam-class}
 \alias{epicParam-class}
-\title{Run EPIC}
+\alias{EPICParam-class}
+\title{epicParam-class}
 \description{
 Runs the EPIC::EPIC() deconvolution algorithm.
 }

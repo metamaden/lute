@@ -3,7 +3,8 @@
 \docType{class}
 \name{nnlsParam-class}
 \alias{nnlsParam-class}
-\title{Non-negative least squares}
+\alias{NNLSParam-class}
+\title{nnlsParam-class}
 \description{
 Uses nnls::nnls().
 }

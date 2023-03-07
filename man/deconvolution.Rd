@@ -2,12 +2,13 @@
 % Please edit documentation in R/lute_generics.R
 \name{deconvolution}
 \alias{deconvolution}
+\alias{deconvolute}
 \title{deconvolution}
 \usage{
 deconvolution(object)
 }
 \arguments{
-\item{object}{A \code{\linkS4class{deconParam}}-type object.}
+\item{object}{A \linkS4class{deconParam}-type object.}
 }
 \value{
 By default, return named numeric vector of predicted proportions for each

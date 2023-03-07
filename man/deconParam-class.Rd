@@ -4,13 +4,13 @@
 \name{deconParam-class}
 \alias{deconParam-class}
 \alias{DeconParam-class}
-\title{DeconParam-class}
+\title{deconParam-class}
 \description{
 Defines the parent class for deconvolution method parameters.
 }
 \details{
 Defines the parent class for deconvolution method parameters. For this class,
-the \code{\link{deconvolution}} generic performs several useful housekeeping
+the \link{deconvolution} generic performs several useful housekeeping
 operations for a standard deconvolution run, including inspecting and 
 summarizing properties of the objects z, y, and s.
 }

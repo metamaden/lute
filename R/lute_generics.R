@@ -2,7 +2,7 @@
 #'
 #' Get predicted cell type proportions using a deconvolution method.
 #'
-#' @param object A \code{\linkS4class{deconParam}}-type object.
+#' @param object A \linkS4class{deconParam}-type object.
 #' @return 
 #' By default, return named numeric vector of predicted proportions for each
 #' cell type.

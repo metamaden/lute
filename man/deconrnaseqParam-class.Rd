@@ -3,7 +3,8 @@
 \docType{class}
 \name{deconrnaseqParam-class}
 \alias{deconrnaseqParam-class}
-\title{Mappings for DeconRNASeq}
+\alias{DeconRNASeqParam-class}
+\title{deconrnaseqParam-class}
 \description{
 Main constructor for class to manage mappings to the deconvolution
 method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
