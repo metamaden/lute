@@ -20,5 +20,5 @@ deconvolution(deconparam)
 
 }
 \seealso{
-\code{\link{deconvolution}}
+\link{\code{deconvolution}}
 }

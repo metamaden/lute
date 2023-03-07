@@ -4,6 +4,7 @@
 #' Bisque deconvolution algorithm.
 #' 
 #' @include lute_generics.R
+#' @include deconParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{bisqueParam}.
 #' @rdname bisqueParam-class
@@ -25,7 +26,10 @@
 #' @aliases 
 #' BisqueParam-class
 #'
-setClass("bisqueParam", contains="deconParam", slots=c(return.info = "logical"))
+setClass("bisqueParam", contains="deconParam", 
+         slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet",
+                 batch.variable = "character", celltype.variable = "character",
+                 return.info = "logical"))
 
 #' @export
 bisqueParam <- function(y = NULL, z = NULL, s = NULL, 
@@ -34,6 +38,16 @@ bisqueParam <- function(y = NULL, z = NULL, s = NULL,
                         celltype.variable = "celltype",
                         return.info = FALSE) {
   if(is(s, "NULL")){s <- rep(1, ncol(z))}
+  
+  # check y.eset/y
+  if(is(y, "NULL")){
+    if(is(y.eset, "NULL")){
+      stop("Error, need to provide either y or bulk.eset.")
+    } else{
+      message("Getting y from provided bulk.eset...")
+      y <- exprs(y.eset)
+    }
+  }
   if(is(y.eset, "NULL")){
     message("Making ExpressionSet from provided y...")
     y.assay <- y; y.colname <- colnames(y.assay)
@@ -46,6 +60,7 @@ bisqueParam <- function(y = NULL, z = NULL, s = NULL,
     y.eset <- ExpressionSet(assayData = y.assay,
                             phenoData = AnnotatedDataFrame(df.y.pheno))
   }
+  
   # check sc.eset
   if(is(sc.eset, "NULL")){
     stop("Error, no single-cell ExpressionSet provided.")  
@@ -55,10 +70,10 @@ bisqueParam <- function(y = NULL, z = NULL, s = NULL,
     stop("Error, didn't find batch id variable ",batch.variable,
          " in sc.eset coldata.")
   }
-  if(!celltype.variable %in% colnames(colData(sc.eset)){
+  if(!celltype.variable %in% colnames(colData(sc.eset))){
     stop("Error, didn't find celltype id variable ", celltype.variable, 
          " in sc.eset coldata.")
-  })
+  }
   if(is(z, "NULL")){
     message("Getting z from sc.eset...")
     z <- .get_z_from_sce(SingleCellExperiment(sc.eset))
@@ -74,7 +89,15 @@ bisqueParam <- function(y = NULL, z = NULL, s = NULL,
   message("Found ", length(id.overlap), " overlapping batch ids...")
   message("Found ", length(id.onlybulk), " bulk-only batch ids...")
   message("Found ", length(id.onlybulk), " sc-only batch ids...")
-  new("bisqueParam", y = y, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset, 
+  if(length(id.overlap) == 0){
+    stop("Error, no overlapping markers in y.eset and sc.eset.")
+  } else if(length(id.unique) >= length(id.bulk)){
+    stop("Error, no unique bulk samples provided which aren't also in sc.eset.")
+  } else{
+    message("Finished validating batch ids.")
+  }
+  new("bisqueParam", y = y, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset,
+      batch.variable = batch.variable, celltype.variable = celltype.variable,
       return.info = return.info)
 }
 
@@ -87,8 +110,8 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
   y.eset <- object[["y.eset"]]
   sc.eset <- object[["sc.eset"]]
   # get predictions
-  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset, 
-                                                        sc.eset = z.eset)
+  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset,
+                                                   sc.eset = z.eset)
   lr <- predictions <- results$bulk.props
   # lr <- proportions$bulk.props[,1]
   if(object[["return.info"]]){
