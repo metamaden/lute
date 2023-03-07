@@ -39,3 +39,5 @@ BiocManager::install("Biobase")
 BiocManager::install("SingleCellExperiment")
 devtools::install_github("xuranw/MuSiC")
 
+conda env export > music.yml
+

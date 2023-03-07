@@ -4,9 +4,7 @@ source("./R/deconParam-class.R")
 source("./R/musicParam-class.R")
 # example
 lexample <- .get_decon_example_data()
-param <- musicParam(s = lexample[["s"]], 
-                   y = lexample[["y"]], 
-                   z = lexample[["z"]])
+param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 
 # return only predicted proportions
 deconvolution(param)
