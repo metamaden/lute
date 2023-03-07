@@ -80,7 +80,7 @@ setMethod("show", "deconParam", function(object) {
               markers.y = markers.y, marker.z = markers.z)
   # post console messages
   cat(paste0("class: ", class(object)[1], "\n\n"))
-  cat("key deconvolution run info:\n")
+  cat("key deconvolution run info:\n\n")
   cat("marker info:\n")
   cat("\tsignature markers (Gz): ", g, "\n")
   cat("\tunique marker labels (Gy | Gz): ", length(unique.markers), "\n")

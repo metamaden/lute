@@ -1,7 +1,7 @@
-source("lute_generics.R")
-source("lute_utilities.R")
-source("deconParam-class.R")
-source("epicParam-class.R")
+source("./R/lute_generics.R")
+source("./R/lute_utilities.R")
+source("./R/deconParam-class.R")
+source("./R/epicParam-class.R")
 
 # example
 lexample <- .get_decon_example_data()
