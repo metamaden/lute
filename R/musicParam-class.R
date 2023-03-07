@@ -24,9 +24,7 @@ setClass("musicParam", contains="deconParam",
          slots=c(sigma = "matrix", nu = "numeric", eps = "numeric", 
                  iter.max = "numeric", return.info = "logical"))
 
-#' Function to get nnlsParam
 #' @export
-#' @rdname AffinityParam-class
 musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL, 
                        iter.max = NULL, eps = NULL, return.info = FALSE) {
   if(is(s, "NULL")){s <- rep(1, ncol(z))}
@@ -38,7 +36,6 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
       iter.max = iter.max, eps = eps, return.info = return.info)
 }
 
-#' Method for deconParam
 #' @export
 setMethod("deconvolution", signature(object = "musicParam"), function(object){
   require(MuSiC)

@@ -49,6 +49,8 @@ setMethod("deconvolution", "deconParam", function(object) {
   # parse s
   s <- object[["s"]]
   if(!is(s, "NULL")){
+    message("Transforming Z signature matrix using provided ",
+            "cell size factors S...")
     if(length(s) == ncol(z)){z <- .zstransform(z, s)}
   }
   # cell types

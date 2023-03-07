@@ -21,7 +21,6 @@
 setClass("epicParam", contains="deconParam", 
          slots=c(z.var = "matrix", return.info = "logical"))
 
-#' Function to get nnlsParam
 #' @export
 epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {
   if(is(z.var, "NULL")){
@@ -31,7 +30,6 @@ epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {
   new("epicParam", y = y, z = z, s = s, z.var = z.var, return.info = return.info)
 }
 
-#' Method for deconParam
 #' @export
 setMethod("deconvolution", signature(object = "epicParam"), function(object){
   require(EPIC)

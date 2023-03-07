@@ -1,8 +1,12 @@
-#' Run DeconRNASeq
+#' Mappings for DeconRNASeq
 #'
-#' Runs the DeconRNASeq::DeconRNASeq() deconvolution algorithm.
+#' Main constructor for class to manage mappings to the deconvolution
+#' method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
 #' 
 #' @include lute_generics.R
+#' 
+#' @details Main constructor for class \linkS4class{deconrnaseqParam}.
+#' @rdname deconrnaseqParam-class
 #' 
 #' @examples
 #' # example
@@ -19,20 +23,20 @@
 #' param@return.info <- T
 #' names(deconvolution(param))
 #' # [1] "predictions" "result.info" "metadata"
+#' 
+#' @seealso 
+#' \linkS4class(deconParam)
 #'
 setClass("deconrnaseqParam", contains="deconParam", 
          slots=c(use.scale = "logical", return.info = "logical"))
 
-#' Function to get nnlsParam
 #' @export
-#' @rdname AffinityParam-class
 deconrnaseqParam <- function(y, z, s = NULL, use.scale = FALSE, return.info = FALSE) {
   if(is(use.scale, "NULL")){use.scale <- FALSE}
   new("deconrnaseqParam", y = y, z = z, s = s, 
       use.scale = use.scale, return.info = return.info)
 }
 
-#' Method for deconParam
 #' @export
 setMethod("deconvolution", signature(object = "deconrnaseqParam"), function(object){
   require(DeconRNASeq)

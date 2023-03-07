@@ -3,9 +3,13 @@
 \docType{class}
 \name{deconrnaseqParam-class}
 \alias{deconrnaseqParam-class}
-\title{Run DeconRNASeq}
+\title{Mappings for DeconRNASeq}
 \description{
-Runs the DeconRNASeq::DeconRNASeq() deconvolution algorithm.
+Main constructor for class to manage mappings to the deconvolution
+method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
+}
+\details{
+Main constructor for class \linkS4class{deconrnaseqParam}.
 }
 \examples{
 # example
@@ -23,4 +27,7 @@ param@return.info <- T
 names(deconvolution(param))
 # [1] "predictions" "result.info" "metadata"
 
+}
+\seealso{
+\linkS4class(deconParam)
 }

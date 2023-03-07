@@ -21,15 +21,12 @@
 #' 
 setClass("nnlsParam", contains="deconParam", slots=c(return.info = "logical"))
 
-#' Function to get nnlsParam
 #' @export
-#' @rdname AffinityParam-class
 nnlsParam <- function(y, z, s = NULL, return.info = FALSE) {
   if(is(s, "NULL")){s <- matrix(rep(1, ncol(z)), nrow = 1)}
   new("nnlsParam", s = s, y = y, z = z, return.info = return.info)
 }
 
-#' Method for deconParam
 #' @export
 setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
   require(nnls)
