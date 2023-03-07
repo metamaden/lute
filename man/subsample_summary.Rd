@@ -6,6 +6,9 @@
 \usage{
 subsample_summary(results.table)
 }
+\arguments{
+\item{results.table}{Table of subsample experiment results.}
+}
 \value{
 dfs, data.frame containing summary statistics.
 }

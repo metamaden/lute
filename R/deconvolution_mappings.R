@@ -38,7 +38,7 @@
 #' bulk samples are provided (e.g. \code{ncol(Y) > 1}), then results for each
 #' sample are returned in a named list of \code{deconvolution.results} objects.
 #' 
-#' @section Issues addressed by this function 
+#' @section Issues addressed by this function:
 #' This function addresses several issues found across bulk deconvolution 
 #' methods. First, it provides a standard way of calling the deconvolution 
 #' functions, including a single way of specifying the signature matrix (i.e. 
@@ -54,8 +54,7 @@
 #' \code{deconvolution.results} object class, which provides several convenient 
 #' methods for handling the outputs (see ?\code{\link{deconvolution.results}} for details)
 #' 
-#' @section Currently supported deconvolution methods
-#' 
+#' @section Currently supported deconvolution methods:
 #' Details about the deconvolution algorithms currently supported by 
 #' \code{run_deconvolution} are as follows:
 #' 

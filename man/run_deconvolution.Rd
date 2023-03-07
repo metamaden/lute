@@ -42,6 +42,43 @@ Currently, one bulk/mixed signals sample is processed at a time. If multiple
 bulk samples are provided (e.g. \code{ncol(Y) > 1}), then results for each
 sample are returned in a named list of \code{deconvolution.results} objects.
 }
+\section{Issues addressed by this function}{
+
+This function addresses several issues found across bulk deconvolution 
+methods. First, it provides a standard way of calling the deconvolution 
+functions, including a single way of specifying the signature matrix (i.e. 
+argument \code{Z}) and bulk signals matrix (i.e. argument \code{Y}). This is needed 
+because most function arguments use non-standard references to these objects,
+such as "a", "B", "X", "signatures", etc. 
+
+Second, predictions are returned in standard format including metadata and 
+the character string of the final function evaluation. Third, basic 
+benchmarking support is available by default, including a timing of the run 
+with \code{Sys.time()} and an assessment of memory using \code{gc()}. These are also 
+provided in the default returned data. Lastly, results are provided using the 
+\code{deconvolution.results} object class, which provides several convenient 
+methods for handling the outputs (see ?\code{\link{deconvolution.results}} for details)
+}
+
+\section{Currently supported deconvolution methods}{
+
+Details about the deconvolution algorithms currently supported by 
+\code{run_deconvolution} are as follows:
+
+* nnls : Non-negative least squares (NNLS) function from the \code{nnls} R package
+(available on CRAN: https://cran.r-project.org/web/packages/nnls/index.html).
+
+* music : The function \code{music.basic} from the \code{MuSiC} R package (available on 
+GitHub: https://github.com/xuranw/MuSiC).
+
+* DeconRNASeq : The function \code{DeconRNASeq} from the \code{DeconRNASeq} 
+R package (available on Bioconductor: 
+https://doi.org/doi:10.18129/B9.bioc.DeconRNASeq).
+
+* EPIC : The function \code{EPIC} from the \code{EPIC} R package (available on GitHub: 
+https://github.com/GfellerLab/EPIC)
+}
+
 \examples{
 sce <- random_sce()
 typev <- unique(sce[["celltype"]])

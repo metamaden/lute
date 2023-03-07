@@ -251,7 +251,7 @@ analyze_subsample_results <- function(){
 #'
 #' Get summary statistics for a results table from a subsampling experiment.
 #' 
-#' @param results.table
+#' @param results.table Table of subsample experiment results.
 #' @returns dfs, data.frame containing summary statistics.
 #' @examples 
 #' path <- file.path("inst","examples","results-table.csv")
