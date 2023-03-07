@@ -2,7 +2,6 @@
 #'
 #' Runs the EPIC::EPIC() deconvolution algorithm.
 #' 
-#' @inheritParams deconParam
 #' @include lute_generics.R
 #' 
 #' @examples

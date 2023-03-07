@@ -3,7 +3,6 @@
 #' Applies the MuSiC::music.basic() implementation of the MuSiC deconvolution 
 #' algorithm.
 #' 
-#' @inheritParams deconParam
 #' @include lute_generics.R
 #' 
 #' @examples

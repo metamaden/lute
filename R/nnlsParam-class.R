@@ -2,7 +2,6 @@
 #'
 #' Uses nnls::nnls().
 #' 
-#' @inheritParams deconParam
 #' @include lute_generics.R
 #' 
 #' @examples 

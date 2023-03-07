@@ -2,7 +2,6 @@
 #' 
 #' Defines the parent class for deconvolution method parameters.
 #' 
-#' @inheritParams deconvolution
 #' @include lute_generics.R
 #' 
 #' @details
