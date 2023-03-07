@@ -5,6 +5,10 @@
 #' 
 #' @include lute_generics.R
 #' 
+#' @details Main constructor for class \linkS4class{musicParam}.
+#' @rdname musicParam-class
+#' @seealso \linkS4class{deconParam}
+#' 
 #' @examples
 #' # example
 #' lexample <- .get_decon_example_data()

@@ -4,6 +4,10 @@
 #' 
 #' @include lute_generics.R
 #' 
+#' @details Main constructor for class \linkS4class{epicParam}.
+#' @rdname epicParam-class
+#' @seealso \linkS4class{epicParam}
+#' 
 #' @examples
 #' # example
 #' lexample <- .get_decon_example_data()
@@ -37,13 +41,13 @@ setMethod("deconvolution", signature(object = "epicParam"), function(object){
   # instantiate and format objects
   y <- lparam[["y"]]
   z <- lparam[["z"]]
+  z.var <- object[["z.var"]]
   s <- lparam[["s"]]
   s <- as.numeric(s)
   if(!"otherCells" %in% names(s)){
     message("Setting size/mRNA for missing label 'otherCells' to 0...")
     s["otherCells"] <- 0
   }
-  z.var <- object[["z.var"]]
   z <- as.matrix(z)
   y <- as.data.frame(y)
   z.var <- as.matrix(z.var)
@@ -62,6 +66,7 @@ setMethod("deconvolution", signature(object = "epicParam"), function(object){
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, 
                result.info = result, 
-               metadata = lparam[["metadata"]])}
+               metadata = list(lmd = lparam[["metadata"]],
+                               z.final = lparam[["z"]]))}
   return(lr)
 })

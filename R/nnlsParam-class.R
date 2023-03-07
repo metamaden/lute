@@ -4,6 +4,10 @@
 #' 
 #' @include lute_generics.R
 #' 
+#' @details Main constructor for class \linkS4class{nnlsParam}.
+#' @rdname nnlsParam-class
+#' @seealso \linkS4class{deconParam}
+#' 
 #' @examples 
 #' lexample <- .get_decon_example_data()
 #' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 

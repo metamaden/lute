@@ -10,6 +10,9 @@
 #' operations for a standard deconvolution run, including inspecting and 
 #' summarizing properties of the objects z, y, and s.
 #'
+#' @rdname deconParam-class
+#' @seealso \code{\link{deconvolution}}
+#'
 #' @examples 
 #' deconparam <- new("deconParam")
 #' deconvolution(deconparam)
@@ -66,7 +69,7 @@ setMethod("deconvolution", "deconParam", function(object) {
   lmd <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
               markers.y = markers.y, marker.z = markers.z)
   # return list
-  return(list(y = y, z = z, s = s, metadata = lmd))
+  return(list(y = y, z = z, s = s, metadata = lmd, object = object))
 })
 
 #' @export

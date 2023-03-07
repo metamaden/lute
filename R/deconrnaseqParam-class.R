@@ -7,6 +7,7 @@
 #' 
 #' @details Main constructor for class \linkS4class{deconrnaseqParam}.
 #' @rdname deconrnaseqParam-class
+#' @seealso \linkS4class(deconParam)
 #' 
 #' @examples
 #' # example
@@ -23,9 +24,6 @@
 #' param@return.info <- T
 #' names(deconvolution(param))
 #' # [1] "predictions" "result.info" "metadata"
-#' 
-#' @seealso 
-#' \linkS4class(deconParam)
 #'
 setClass("deconrnaseqParam", contains="deconParam", 
          slots=c(use.scale = "logical", return.info = "logical"))
