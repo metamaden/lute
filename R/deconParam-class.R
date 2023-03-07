@@ -82,7 +82,7 @@ setMethod("show", "deconParam", function(object) {
   # post console messages
   cat(paste0("class: ", class(object)[1], "\n\n"))
   cat("key deconvolution run info:\n")
-  cat("\tmarker info:\n")
+  cat("marker info:\n")
   cat("\tsignature markers (Gz): ", g, "\n")
   cat("\tunique marker labels (Gy | Gz): ", length(unique.markers), "\n")
   cat("\toverlapping marker labels (Gy & Gz): ", length(overlapping.markers), "\n\n")
