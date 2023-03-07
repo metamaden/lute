@@ -41,3 +41,9 @@ devtools::install_github("xuranw/MuSiC")
 
 conda env export > music.yml
 
+#--------------------
+# Get EPIC conda env
+#--------------------
+conda create --name epic --clone r_4
+conda activate epic
+
