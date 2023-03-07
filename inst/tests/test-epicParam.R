@@ -2,6 +2,7 @@ source("lute_generics.R")
 source("lute_utilities.R")
 source("deconParam-class.R")
 source("epicParam-class.R")
+
 # example
 lexample <- .get_decon_example_data()
 param <- epicParam(s = lexample[["s"]], 
