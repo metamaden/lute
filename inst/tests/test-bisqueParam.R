@@ -7,19 +7,23 @@ source("./R/lute_utilities.R")
 #----------------------------------
 lexample <- .get_decon_example_data()
 
-lparam <- new("deconParam", s = lexample[["s"]], 
-             y = lexample[["y"]], z = lexample[["z"]])
+lexample <- .get_decon_example_data_bisque()
 
-# instantiate objects
-y <- lparam[["y"]]
-z <- lparam[["z"]]
-s <- lparam[["s"]]
-# format objects
-y <- as.matrix(y)
-z <- as.matrix(z)
-s <- as.numeric(s)
+results <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset, 
+                                                  sc.eset = z.eset)
 
-y.eset <- ExpressionSet(assayData = y)
-z.eset <- ExpressionSet()
+proportions <- results$bulk.props
+proportions.sample1 <- proportions$bulk.props[,1]
 
-BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y, sc.eset = z)
+#-------------------------------------
+# example from BisqueRNA documentation
+#-------------------------------------
+set.seed(0)
+cell.types <- c("Neurons", "Astrocytes", "Oligodendrocytes", "Microglia", "Endothelial Cells")
+avg.props <- c(.5, .2, .2, .07, .03)
+sim.data <- SimulateData(n.ind=10, n.genes=100, n.cells=500, cell.types=cell.types, avg.props=avg.props)
+sc.eset <- sim.data$sc.eset[,sim.data$sc.eset$SubjectName %in% as.character(6:10)]
+bulk.eset <- sim.data$bulk.eset
+true.props <- sim.data$props
+markers <- sim.data$markers
+res <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset, sc.eset, markers=NULL, use.overlap=TRUE)
