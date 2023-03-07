@@ -50,3 +50,14 @@ R
 devtools::install_github("GfellerLab/EPIC")
 
 conda env export > epic.yml
+
+#--------------------
+# Get DeconRNASeq conda env
+#--------------------
+conda create --name deconrnaseq --clone r_4
+conda activate deconrnaseq
+R
+install.packages("BiocManager")
+BiocManager::install("DeconRNASeq")
+
+conda env export > deconrnaseq.yml
