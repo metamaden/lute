@@ -24,7 +24,6 @@ setClass("epicParam", contains="deconParam",
 
 #' Function to get nnlsParam
 #' @export
-#' @rdname AffinityParam-class
 epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {
   if(is(z.var, "NULL")){
     message("Making default `z.var` variance matrix...")
