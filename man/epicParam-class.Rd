@@ -7,6 +7,9 @@
 \description{
 Runs the EPIC::EPIC() deconvolution algorithm.
 }
+\details{
+Main constructor for class \linkS4class{epicParam}.
+}
 \examples{
 # example
 lexample <- .get_decon_example_data()
@@ -21,4 +24,7 @@ param@return.info <- T
 names(deconvolution(param))
 # [1] "predictions" "result.info" "metadata"
 
+}
+\seealso{
+\linkS4class{epicParam}
 }

@@ -1,4 +1,4 @@
-#' DeconParam-class
+#' deconParam-class
 #' 
 #' Defines the parent class for deconvolution method parameters.
 #' 
@@ -6,12 +6,13 @@
 #' 
 #' @details
 #' Defines the parent class for deconvolution method parameters. For this class,
-#' the \link{\code{deconvolution}} generic performs several useful housekeeping
+#' the \code{\link{deconvolution}} generic performs several useful housekeeping
 #' operations for a standard deconvolution run, including inspecting and 
 #' summarizing properties of the objects z, y, and s.
 #'
 #' @rdname deconParam-class
-#' @seealso \code{\link{deconvolution}}
+#' @seealso 
+#' \code{\link{deconvolution}}
 #'
 #' @examples 
 #' deconparam <- new("deconParam")

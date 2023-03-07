@@ -1,4 +1,4 @@
-#' Run EPIC
+#' epicParam-class
 #'
 #' Runs the EPIC::EPIC() deconvolution algorithm.
 #' 
@@ -21,6 +21,9 @@
 #' param@return.info <- T
 #' names(deconvolution(param))
 #' # [1] "predictions" "result.info" "metadata"
+#' 
+#' @aliases 
+#' EPICParam-class
 #'
 setClass("epicParam", contains="deconParam", 
          slots=c(z.var = "matrix", return.info = "logical"))

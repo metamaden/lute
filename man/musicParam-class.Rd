@@ -8,6 +8,9 @@
 Applies the MuSiC::music.basic() implementation of the MuSiC deconvolution 
 algorithm.
 }
+\details{
+Main constructor for class \linkS4class{musicParam}.
+}
 \examples{
 # example
 lexample <- .get_decon_example_data()
@@ -23,4 +26,7 @@ param@return.info <- T
 names(deconvolution(param))
 # [1] "predictions" "result.info" "metadata"
 
+}
+\seealso{
+\linkS4class{deconParam}
 }

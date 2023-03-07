@@ -1,4 +1,4 @@
-#' Mappings for DeconRNASeq
+#' deconrnaseqParam-class
 #'
 #' Main constructor for class to manage mappings to the deconvolution
 #' method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
@@ -24,6 +24,9 @@
 #' param@return.info <- T
 #' names(deconvolution(param))
 #' # [1] "predictions" "result.info" "metadata"
+#' 
+#' @aliases 
+#' DeconRNASeqParam-class
 #'
 setClass("deconrnaseqParam", contains="deconParam", 
          slots=c(use.scale = "logical", return.info = "logical"))

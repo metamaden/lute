@@ -1,4 +1,4 @@
-#' Run MuSiC
+#' musicParam-class
 #'
 #' Applies the MuSiC::music.basic() implementation of the MuSiC deconvolution 
 #' algorithm.
@@ -23,6 +23,9 @@
 #' param@return.info <- T
 #' names(deconvolution(param))
 #' # [1] "predictions" "result.info" "metadata"
+#' 
+#' @aliases 
+#' MuSiCParam-class
 #'
 setClass("musicParam", contains="deconParam", 
          slots=c(sigma = "matrix", nu = "numeric", eps = "numeric", 

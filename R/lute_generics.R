@@ -20,6 +20,9 @@
 #' \linkS4class{epicParam}
 #' 
 #' @author Sean Maden
+#' 
+#' @aliases 
+#' deconvolute
 #'
 #' @export
 setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))

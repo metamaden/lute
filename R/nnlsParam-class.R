@@ -1,4 +1,4 @@
-#' Non-negative least squares
+#' nnlsParam-class
 #'
 #' Uses nnls::nnls().
 #' 
@@ -22,6 +22,9 @@
 #' param@return.info <- T
 #' names(deconvolution(param))
 #' # [1] "predictions" "result.info" "metadata"
+#' 
+#' @aliases 
+#' NNLSParam-class
 #' 
 setClass("nnlsParam", contains="deconParam", slots=c(return.info = "logical"))
 

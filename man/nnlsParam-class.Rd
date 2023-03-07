@@ -7,6 +7,9 @@
 \description{
 Uses nnls::nnls().
 }
+\details{
+Main constructor for class \linkS4class{nnlsParam}.
+}
 \examples{
 lexample <- .get_decon_example_data()
 param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
@@ -22,4 +25,7 @@ param@return.info <- T
 names(deconvolution(param))
 # [1] "predictions" "result.info" "metadata"
 
+}
+\seealso{
+\linkS4class{deconParam}
 }
