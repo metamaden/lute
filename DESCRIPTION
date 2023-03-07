@@ -60,7 +60,6 @@ Collate:
     'markerdf_methods.R'
     'mexpr_methods.R'
     'musicParam-class.R'
-    'musicParam.R'
     'nnlsParam-class.R'
     'randomized_data.R'
     'sce_methods.R'
