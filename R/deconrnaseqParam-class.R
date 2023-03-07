@@ -3,6 +3,7 @@
 #' Runs the DeconRNASeq::DeconRNASeq() deconvolution algorithm.
 #' 
 #' @inheritParams deconParam
+#' @include lute_generics.R
 #' 
 #' @examples
 #' # example

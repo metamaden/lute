@@ -4,6 +4,7 @@
 #' algorithm.
 #' 
 #' @inheritParams deconParam
+#' @include lute_generics.R
 #' 
 #' @examples
 #' # example

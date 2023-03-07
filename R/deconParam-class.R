@@ -2,6 +2,9 @@
 #' 
 #' Defines the parent class for deconvolution method parameters.
 #' 
+#' @inheritParams deconvolution
+#' @include lute_generics.R
+#' 
 #' @details
 #' Defines the parent class for deconvolution method parameters. For this class,
 #' the \link{\code{deconvolution}} generic performs several useful housekeeping

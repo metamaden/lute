@@ -3,6 +3,7 @@
 #' Uses nnls::nnls().
 #' 
 #' @inheritParams deconParam
+#' @include lute_generics.R
 #' 
 #' @examples 
 #' lexample <- .get_decon_example_data()
