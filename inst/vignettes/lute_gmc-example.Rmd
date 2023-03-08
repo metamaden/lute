@@ -52,6 +52,8 @@ To get more extensive results, we can set the attribute `return.info==T` in `par
 param@return.info <- T
 results <- deconvolution(param)
 names(results)
+```
+```{r}
 results
 ```
 
