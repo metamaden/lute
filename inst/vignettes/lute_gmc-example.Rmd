@@ -40,20 +40,20 @@ data inputs.
 param
 ```
 
-Executing the `deconvolution` generic on `param` will run `nnls::nnls`. By default,
-only the predicted cell type proportions are returned.
+Executing the `deconvolution` generic on `param` will run `nnls::nnls`. By default, only the predicted cell type proportions are returned.
 
 ```{r}
 deconvolution(param)
 ```
 
-To get more extensive results, we can set the attribute `return.info==T` in `param`.
-Running the `deconvolution` generic now returns a list containing the items
-`proportions` (cell type proportion estimates), `results` (original results 
-returned by the deconvolution function, `nnls::nnls` in this case), and 
-`metadata` (listed metadata containing the input data summaries).
+To get more extensive results, we can set the attribute `return.info==T` in `param`. Running the `deconvolution` generic now returns a list containing the items `proportions` (cell type proportion estimates), `results` (original results returned by the deconvolution function, `nnls::nnls` in this case), and `metadata` (listed metadata containing the input data summaries).
 
 ```{r}
 param@return.info <- T
-deconvolution(param)
+results <- deconvolution(param)
+names(results)
+results
 ```
+
+
+
