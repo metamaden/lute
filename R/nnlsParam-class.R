@@ -3,7 +3,7 @@
 #' Uses nnls::nnls().
 #' 
 #' @include lute_generics.R
-#' @include deconParam-class.R
+#' @include referencebasedParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{nnlsParam}.
 #' @rdname nnlsParam-class
@@ -27,7 +27,7 @@
 #' @aliases 
 #' NNLSParam-class
 #' 
-setClass("nnlsParam", contains="deconParam", slots=c(return.info = "logical"))
+setClass("nnlsParam", contains="referencebasedParam", slots=c(return.info = "logical"))
 
 #' @export
 nnlsParam <- function(y, z, s = NULL, return.info = FALSE) {
