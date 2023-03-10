@@ -3,7 +3,7 @@
 #' Runs the EPIC::EPIC() deconvolution algorithm.
 #' 
 #' @include lute_generics.R
-#' @include deconParam-class.R
+#' @include referencebasedParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{epicParam}.
 #' @rdname epicParam-class
@@ -26,8 +26,7 @@
 #' @aliases 
 #' EPICParam-class
 #'
-setClass("epicParam", contains="deconParam", 
-         slots=c(z.var = "matrix", return.info = "logical"))
+setClass("epicParam", contains="referencebasedParam", slots=c(z.var = "matrix"))
 
 #' @export
 epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {

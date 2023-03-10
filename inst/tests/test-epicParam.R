@@ -1,6 +1,14 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+#
+# Test class for EPIC deconvolution method parameters, epicParam.
+#
+
 source("./R/lute_generics.R")
 source("./R/lute_utilities.R")
 source("./R/deconParam-class.R")
+source("./R/referencebasedParam-class.R")
 source("./R/epicParam-class.R")
 
 # example
