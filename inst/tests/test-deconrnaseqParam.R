@@ -1,7 +1,18 @@
-source("lute_generics.R")
-source("lute_utilities.R")
-source("deconParam-class.R")
-source("deconrnaseqParam-class.R")
+#!/usr/bin/env R
+
+# Author: Sean Maden
+#
+# Tests for the DeconRNASeq deconvolution method parameters class, 
+# deconrnaseqParam.
+#
+
+
+source("./R/lute_generics.R")
+source("./R/lute_utilities.R")
+source("./R/deconParam-class.R")
+source("./R/referencebasedParam-class.R")
+source("./R/deconrnaseqParam-class.R")
+
 # example
 lexample <- .get_decon_example_data()
 param <- deconrnaseqParam(s = lexample[["s"]], 
