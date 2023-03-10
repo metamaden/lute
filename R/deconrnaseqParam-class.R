@@ -4,7 +4,7 @@
 #' method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
 #' 
 #' @include lute_generics.R
-#' @include deconParam-class.R
+#' @include referencebasedParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{deconrnaseqParam}.
 #' @rdname deconrnaseqParam-class
@@ -29,8 +29,8 @@
 #' @aliases 
 #' DeconRNASeqParam-class
 #'
-setClass("deconrnaseqParam", contains="deconParam", 
-         slots=c(use.scale = "logical", return.info = "logical"))
+setClass("deconrnaseqParam", contains="referencebasedParam", 
+         slots=c(use.scale = "logical"))
 
 #' @export
 deconrnaseqParam <- function(y, z, s = NULL, use.scale = FALSE, return.info = FALSE) {
