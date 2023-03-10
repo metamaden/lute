@@ -4,7 +4,7 @@
 #' algorithm.
 #' 
 #' @include lute_generics.R
-#' @include deconParam-class.R
+#' @include referencebasedParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{musicParam}.
 #' @rdname musicParam-class
@@ -28,9 +28,9 @@
 #' @aliases 
 #' MuSiCParam-class
 #'
-setClass("musicParam", contains="deconParam", 
-         slots=c(sigma = "matrix", nu = "numeric", eps = "numeric", 
-                 iter.max = "numeric", return.info = "logical"))
+setClass("musicParam", contains="referencebasedParam", 
+         slots=c(sigma = "matrix", nu = "numeric", 
+                 eps = "numeric", iter.max = "numeric"))
 
 #' @export
 musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL, 
