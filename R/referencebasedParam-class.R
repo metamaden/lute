@@ -2,7 +2,6 @@
 #'
 #' Class and methods for managing reference-based deconvolution methods.
 #' 
-#' @inheritParams deconParam
 #' @include deconParam-class.R
 #' 
 #' @examples 
