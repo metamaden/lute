@@ -27,7 +27,7 @@
 #' @aliases 
 #' NNLSParam-class
 #' 
-setClass("nnlsParam", contains="referencebasedParam", slots=c(return.info = "logical"))
+setClass("nnlsParam", contains="referencebasedParam")
 
 #' @export
 nnlsParam <- function(y, z, s = NULL, return.info = FALSE) {
