@@ -5,6 +5,8 @@
 #' 
 #' @include lute_generics.R
 #' @include deconParam-class.R
+#' @include referencebasedParam-class.R
+#' @include independentbulkParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{bisqueParam}.
 #' @rdname bisqueParam-class
@@ -27,9 +29,8 @@
 #' BisqueParam-class
 #'
 setClass("bisqueParam", contains="independentbulkParam", 
-         slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet",
-                 batch.variable = "character", celltype.variable = "character",
-                 return.info = "logical"))
+         slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", batch.variable = "character", 
+                celltype.variable = "character", return.info = "logical"))
 
 #' @export
 bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
