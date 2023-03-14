@@ -1,3 +1,10 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+#
+# Utilities and miscellaneous functions supporting the lute package for deconvolution experiments.
+#
+
 .get_celltypes_from_sce <- function(sce, celltype.variable = "celltype"){
   require(SingleCellExperiment); require(SummarizedExperiment)
   celltype.vector <- sce[[celltype.variable]]
