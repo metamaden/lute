@@ -30,5 +30,5 @@ names(deconvolution(param))
 
 }
 \seealso{
-\linkS4class(deconParam)
+\linkS4class{deconParam}
 }

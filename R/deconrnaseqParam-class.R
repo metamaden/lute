@@ -8,7 +8,7 @@
 #' 
 #' @details Main constructor for class \linkS4class{deconrnaseqParam}.
 #' @rdname deconrnaseqParam-class
-#' @seealso \linkS4class(deconParam)
+#' @seealso \linkS4class{deconParam}
 #' 
 #' @examples
 #' # example

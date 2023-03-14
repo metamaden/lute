@@ -19,3 +19,6 @@ and it should have overlapping marker IDs (rownames) compared to the reference b
 lexample <- .get_decon_example_data()
 
 }
+\seealso{
+\linkS4class{deconParam}, \linkS4class{referencebasedParam}
+}
