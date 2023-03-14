@@ -11,6 +11,7 @@ scdcParam(
   s = NULL,
   y.eset = NULL,
   sc.eset = NULL,
+  celltype.subset = NULL,
   assay.name = "counts",
   batch.variable = "batch.id",
   celltype.variable = "celltype",
@@ -30,6 +31,8 @@ provided ExpressionSet containing single-cell data.}
 \item{y.eset}{ExpressionSet of bulk mixed expression signals.}
 
 \item{sc.eset}{ExpressionSet of single-cell transcriptomics data.}
+
+\item{celltype.subset}{Vector of cell types to use for basis matrix.}
 
 \item{assay.name}{Expression data type (e.g. counts, logcounts, tpm, etc.).}
 

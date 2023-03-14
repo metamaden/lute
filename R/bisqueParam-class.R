@@ -63,6 +63,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
                         y.eset = NULL, sc.eset = NULL, assay.name = "counts", 
                         batch.variable = "batch.id", 
                         celltype.variable = "celltype", return.info = FALSE) {
+  require(Biobase)
   # check y.eset/y
   if(is(y, "NULL")){
     if(is(y.eset, "NULL")){

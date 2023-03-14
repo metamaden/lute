@@ -17,10 +17,10 @@
 #' @aliases 
 #' SCDCParam-class, ScdcParam-class, ScdcParam-class
 #'
-setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", 
-			assay.name = "character", batch.variable = "character", celltype.variable = "character",
-			iter.max = "numeric", nu = "numeric", epsilon = "numeric", truep = "numeric",
-			ct.cell.size = "numeric"))
+setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "ExpressionSet", 
+	sc.eset = "ExpressionSet", assay.name = "character", batch.variable = "character", 
+	celltype.variable = "character", iter.max = "numeric", nu = "numeric", epsilon = "numeric", 
+	truep = "numeric", ct.cell.size = "numeric", celltype.subset = "character"))
 
 #' Make new object of class scdcParam
 #'
@@ -46,6 +46,7 @@ setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "Express
 scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc.eset = NULL,
 					  celltype.subset = NULL, assay.name = "counts", batch.variable = "batch.id", 
 					  celltype.variable = "celltype", return.info = FALSE) {
+  require(Biobase)
   # check y.eset/y
   if(is(y, "NULL")){
     if(is(y.eset, "NULL")){
@@ -137,8 +138,8 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
     }
   }
 
-  new("scdcParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, 
-      sc.eset = sc.eset, assay.name = assay.name, batch.variable = batch.variable, 
+  new("scdcParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset, 
+  	  celltype.subset = celltype.subset, assay.name = assay.name, batch.variable = batch.variable, 
       celltype.variable = celltype.variable, return.info = return.info)
 }
 
@@ -155,15 +156,28 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
 #' @export
 setMethod("deconvolution", signature(object = "scdcParam"), function(object){
   require(SCDC); require(Biobase)
+  # load data
   lparam <- callNextMethod()
-  # instantiate objects
-  y.eset <- object[["y.eset"]]
-  sc.eset <- lparam[["object"]]@sc.eset
+  object <- lparam[["object"]]
+
+  # instantiate function objects
+  y.eset <- lparam[["y.eset"]]
+  sc.eset <- object@sc.eset
+  celltype.subset <- object@celltype.subset
+  batch.variable <- object@batch.variable
+  iter.max <- object@iter.max
+  nu <- object@nu
+  epsilon <- object@epsilon
+  truep <- object@truep
+  s <- object@s
+
   # get predictions
   result <- SCDC::SCDC_prop(bulk.eset = y.eset, sc.eset = sc.eset,
   	ct.varname = celltype.variable, sample = batch.variable,
   	iter.max = iter.max, nu = nu, epsilon = epsilon, truep = truep,
-  	ct.cell.size = s, ct.sub = ct.sub)
+  	ct.cell.size = s, ct.sub = celltype.subset)
+
+  # return results
   lr <- predictions <- result$bulk.props
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
