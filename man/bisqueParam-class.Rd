@@ -27,5 +27,5 @@ names(deconvolution(param))
 
 }
 \seealso{
-\linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4{independentbulkParam}
+\linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
 }

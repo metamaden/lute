@@ -10,7 +10,7 @@
 #' 
 #' @details Main constructor for class \linkS4class{bisqueParam}.
 #' @rdname bisqueParam-class
-#' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4{independentbulkParam}
+#' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
 #' 
 #' @examples
 #' # example
@@ -68,11 +68,12 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
       if(is(y.eset, "NULL")){
       message("Making ExpressionSet from provided y...")
       y.eset <- .make_eset_from_matrix(mat = y, batch.id = "SubjectName")
-      
-      if(ncol(y) == 1){
-      y.assay <- cbind(y, y)
-      colnames(y.assay) <- c(y.colname, paste0(y.colname, "_rep1"))
-  }
+      # need at least 2 columns/samples to pass to bisque
+      if(ncol(y.eset) == 1){
+        sample.name <- colnames(y.eset)
+        y.eset <- cbind(y.eset, y.eset)
+        colnames(y.eset) <- c(sample.name, paste0(sample.name, "_rep1"))
+      }
     }
   }
 
@@ -115,19 +116,11 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   message("Found ", length(id.unique), " unique batch ids...")
   message("Found ", length(id.overlap), " overlapping batch ids...")
   message("Found ", length(id.onlybulk), " bulk-only batch ids...")
-  message("Found ", length(id.onlybulk), " sc-only batch ids...")
-  if(length(id.overlap) == 0){
-    stop("Error, no overlapping markers in y.eset and sc.eset.")
-  }
+  message("Found ", length(id.onlysc), " sc-only batch ids...")
+  if(length(id.overlap) == 0){stop("Error, no overlapping markers in y.eset and sc.eset.")}
   
   # parse independent bulk samples
-  if(is(yi, "NULL")){
-    message("Checking for independent bulk samples in y/y.eset")
-
-  }
-  cond <- length(id.unique) >= length(id.bulk)
-  cond <- cond & is(yi, "NULL")
-  if(cond){
+  if(is(yi, "NULL") & length(id.onlybulk)==0){
     stop("Error, no independent bulk samples found. ",
       "Provide either yi, or additional y samples.")
   }
