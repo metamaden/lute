@@ -18,19 +18,28 @@
 #' 
 setClass("independentbulkParam", contains="referencebasedParam", slots = c(yi = "matrix"))
 
-#' Function to get nnlsParam
+#' Make a new independentbulkParam object
+#' 
+#' Function to make a new object of class independentbulkParam
+#'
 #' @export
 independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, return.info = FALSE) {
     if(is(y, "NULL")){y <- matrix(0)}
     if(is(z, "NULL")){z <- matrix(0)}
     if(is(yi, "NULL")){yi <- matrix(0)}
     if(is(s, "NULL")){s <- rep(1, ncol(z))}
-  param <- new("independentbulkParam", y = y, yi = yi, z = z, s = s, return.info = return.info)
-  # check inputs with parse
-  param <- deconvolution(param)
-  return(param)
+    param <- new("independentbulkParam", y = y, yi = yi, z = z, s = s, return.info = return.info)
+    return(param)
 }
 
+#' deconvolution for independentbulkParam-class
+#'
+#' Function to perform standard operations prior to deconvolution (a.k.a. "deconvolution prep") for an
+#' object of class independentbulkParam.
+#'
+#' @details Takes an object of independentbulkParam class as input, and returns a list with the filtered/checked/parsed 
+#' experiment objects.
+#'
 #' @export
 setMethod("deconvolution", "independentbulkParam", function(object) {
   # get bulk data
@@ -80,7 +89,9 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
                 overlapping.markers = overlapping.markers,
                 overlapping.samples = overlapping.samples)
   # return list
-  return(list(y = y, yi = yi, metadata = lmd))
+  return(list(y = y, yi = yi, z = object[["z"]], 
+              return.info = object[["return.info"]], 
+              metadata = lmd))
 })
 
 #' @export

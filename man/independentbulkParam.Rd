@@ -2,7 +2,7 @@
 % Please edit documentation in R/independentbulkParam-class.R
 \name{independentbulkParam}
 \alias{independentbulkParam}
-\title{Function to get nnlsParam}
+\title{Make a new independentbulkParam object}
 \usage{
 independentbulkParam(
   y = NULL,
@@ -13,5 +13,5 @@ independentbulkParam(
 )
 }
 \description{
-Function to get nnlsParam
+Function to make a new object of class independentbulkParam
 }
