@@ -120,9 +120,20 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   if(length(id.overlap) == 0){stop("Error, no overlapping markers in y.eset and sc.eset.")}
   
   # parse independent bulk samples
-  if(is(yi, "NULL") & length(id.onlybulk)==0){
-    stop("Error, no independent bulk samples found. ",
-      "Provide either yi, or additional y samples.")
+  if(length(id.onlybulk)==0){
+    if(is(yi, "NULL")){
+      stop("Error, no independent bulk samples found. ",
+        "Provide either yi, or additional y samples.")
+    } else{
+      message("Using provided yi for independent bulk samples...")
+    }
+  } else{
+    if(is(yi, "NULL")){
+      message("Making yi from provided y bulk...")
+      yi <- exprs(y.eset)[,colnames(y.eset) %in% id.onlybulk]
+    } else{
+      message("Using provided yi for independent bulk samples...")
+    }
   }
 
   new("bisqueParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, 
