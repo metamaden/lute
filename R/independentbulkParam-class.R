@@ -42,15 +42,16 @@ independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, return
 #'
 #' @export
 setMethod("deconvolution", "independentbulkParam", function(object) {
-  # get bulk data
-  y <- object[["y"]]; yi <- object[["yi"]]
+    lparam <- callNextMethod()
+    # get bulk data
+    y <- lparam[["y"]]; yi <- lparam[["yi"]]
 
-  # parse bulk marker IDs
-  markers.y <- rownames(y)
-  markers.yi <- rownames(yi)
-  # compare markers
-  if(is(markers.y, "NULL")){
-    message("Warning, no marker labels found in y.")
+    # parse bulk marker IDs
+    markers.y <- rownames(y)
+    markers.yi <- rownames(yi)
+    # compare markers
+    if(is(markers.y, "NULL")){
+        message("Warning, no marker labels found in y.")
     } else if(is(markers.yi, "NULL")){
         message("Warning, no marker labels found in yi.")
     } else{

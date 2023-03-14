@@ -133,3 +133,27 @@
   lr <- list(y.eset = y.eset, sc.eset = z.eset)
   return(lr)
 }
+
+.get_decon_example_data_music2 <- function(seed.num = 0){
+  require(Biobase)
+  set.seed(seed.num)
+  
+  # get y.eset
+  y <- .get_decon_example_data()[["y"]]
+  y <- cbind(y, y, y, y, y, y)
+  colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
+  df.y.pheno <- data.frame(SubjectName = colnames(y))
+  rownames(df.y.pheno) <- colnames(y)
+  y.eset <- ExpressionSet(assayData = y, phenoData = AnnotatedDataFrame(df.y.pheno))
+
+  # get z.eset
+  sce <- random_sce(num.genes = 10, num.cells = 300, num.types = 2)
+  df.z.pheno <- data.frame(cellType = sce[["celltype"]], SubjectName = paste0("sample", seq(ncol(sce))))
+  rownames(df.z.pheno) <- colnames(sce)
+  z.eset <- ExpressionSet(assayData = counts(sce), phenoData = AnnotatedDataFrame(df.z.pheno))
+  rownames(z.eset) <- rownames(y.eset)
+  
+  # return
+  lr <- list(y.eset = y.eset, sc.eset = z.eset)
+  return(lr)
+}
