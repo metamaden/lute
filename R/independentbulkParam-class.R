@@ -18,10 +18,10 @@ setClass("independentbulkParam", contains="referencebasedParam", slots = c(yi = 
 #' Function to get nnlsParam
 #' @export
 independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, return.info = FALSE) {
-    if(is(y, "NULL"))}{y <- matrix(0)}
-    if(is(z, "NULL"){z <- matrix(0)})
-    if(is(yi, "NULL"){yi <- matrix(0)})
-    if(is(s, "NULL"){s <- 0})
+    if(is(y, "NULL")){y <- matrix(0)}
+    if(is(z, "NULL")){z <- matrix(0)}
+    if(is(yi, "NULL")){yi <- matrix(0)}
+    if(is(s, "NULL")){s <- 0}
   new("independentbulkParam", y = y, z = z, s = s, return.info = return.info)
 }
 
@@ -30,60 +30,58 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
   # get bulk data
   y <- object[["y"]]; yi <- object[["yi"]]
 
-  # compare bulk markers
+  # parse bulk marker IDs
   markers.y <- rownames(y)
   markers.yi <- rownames(yi)
-  # compare bulk samples
+  # compare markers
+  if(is(markers.y, "NULL")){
+    cat("Warning, no marker labels found in y.")
+    } else if(is(markers.yi, "NULL")){
+        cat("Warning, no marker labels found in yi.")
+    } else{
+        cat("Found marker labels in y, yi. Comparing...")
+        unique.markers <- unique(markers.y, markers.yi)
+        overlapping.markers <- intersect(markers.y, markers.yi)
+        cat("Found ", length(overlapping.markers), " overlapping markers.")
+        if(length(overlapping.markers) > 0){
+            cat("Subsetting yi on markers overlapping in y.")
+            yi <- yi[overlapping.markers,]
+        }
+    }
+
+  # parse bulk sample IDs
   samples.y <- colnames(y)
   samples.yi <- colnames(yi)
+  # compare sample IDs
+  if(is(samples.y, "NULL")){
+    cat("Warning, no sample labels found in y.")
+    } else if(is(samples.yi, "NULL")){
+        cat("Warning, no sample labels found in yi.")
+    } else{
+        cat("Found sample labels in y, yi. Comparing...")
+        unique.samples <- unique(samples.y, samples.yi)
+        overlapping.samples <- intersect(samples.y, samples.yi)
+        cat("Found ", length(overlapping.markers), " overlapping samples.")
+        if(length(overlapping.samples) > 0){
+            cat("Removing overlapping samples from yi.")
+            yi <- yi[,!overlapping.samples,drop=F]
+        }
+    }
 
-  #  
-
+    # get return data
+    lmd <- list(unique.markers = unique.markers,
+                unique.samples = unique.samples,
+                overlapping.markers = overlapping.markers,
+                overlapping.samples = overlapping.samples)
   # return list
-  return(list(y = y, z = z, s = s, metadata = lmd))
+  return(list(y = y, yi = yi, metadata = lmd))
 })
 
 #' @export
-setMethod("show", "referencebasedParam", function(object) {
-  # get metadata
-  s <- object[["s"]]; y <- object[["y"]]; z <- object[["z"]]
-  unique.types <- try(colnames(object[["z"]]))
-  markers.y <- rownames(y); markers.z <- rownames(z)
-  unique.markers <- unique(c(markers.y, markers.z))
-  overlapping.markers <- intersect(markers.y, markers.z)
-  g <- nrow(z); j <- ncol(y); k <- ncol(z)
-  lmd <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
-              markers.y = markers.y, marker.z = markers.z)
-  # post console messages
-  cat(paste0("class: ", class(object)[1], "\n\n"))
-  cat("key deconvolution run info:\n")
-  cat("\tmarker info:\n")
-  cat("\tsignature markers (Gz): ", g, "\n")
-  cat("\tunique marker labels (Gy | Gz): ", length(unique.markers), "\n")
-  cat("\toverlapping marker labels (Gy & Gz): ", length(overlapping.markers), "\n\n")
-  # bulk samples
-  cat("\tsamples info:\n")
-  cat("\tnumber of bulk samples (J): ", ncol(object[["y"]]), "\n")
-  cat("\tsample labels: ", paste0(colnames(y), collapse = "; "), "\n")
-  cat("\n")
-  # cell size factors
-  cat("\tcell size factor properties:\n")
-  s <- object[["s"]]
-  if(!is(s, "NULL")){
-    for(type in names(object[["s"]])){
-      cat("\tscale factor for type ", type, ": ", s[type], "\n")}
-    if(length(s) == ncol(z)){z <- .zstransform(z, s)}
-  }; cat("\n")
-  # cell types
-  cat("\ttypes info:\n")
-  cat("\tnumber of types (K): ", ncol(object[["z"]]), "\n")
-  if(!(is(unique.types, "NULL")|is(unique.types, "try-error"))){
-    unique.types <- unique.types[order(unique.types)]
-    cat("\tunique type labels: ", paste0(unique.types, collapse = ";"), "\n")
-  } else{
-    cat("\nWarning, object 'z' has no type labels (colnames)\n")
-  }; cat("\n")
-  # parse additional warnings
-  if(is(markers.y, "NULL")){cat("Warning, object 'y' has no marker labels (rownames)\n\n")}
-  if(is(markers.z, "NULL")){cat("Warning, object 'z' has no marker labels (rownames)\n\n")}
+setMethod("show", "independentbulkParam", function(object) {
+  lmd <- object[["metadata"]]
+  cat("Data summaries for class `independentbulkParam`:")
+  cat("\tUnique sample IDs : ", lmd[["unique.samples"]])
+  cat("\tUnique marker IDs : ", lmd[["unique.markers"]])
+  cat("\tTotal independent samples : ", ncol(object[["yi"]]))
 })
