@@ -31,9 +31,15 @@ res <- deconvolution(param)
 param@return.info <- TRUE
 res <- deconvolution(param)
 
-#------------------
+#-------------------
 # test scdc function
-#------------------
+#-------------------
+
+unique.types <- unique(sc.eset[[celltype.variable]])
+celltype.subset <- unique.types[1]
+s <- rep(1, length(unique.types))
+names(s) <- unique.types
+
 result <- SCDC::SCDC_prop(bulk.eset = y.eset, 
                           sc.eset = sc.eset,
                           ct.varname = celltype.variable, 
@@ -42,4 +48,6 @@ result <- SCDC::SCDC_prop(bulk.eset = y.eset,
                           nu = nu, epsilon = epsilon, 
                           truep = truep,
                           ct.cell.size = s, 
-                          ct.sub = celltype.subset)
+                          ct.sub = NULL)
+
+
