@@ -161,7 +161,7 @@ setMethod("deconvolution", signature(object = "scdcParam"), function(object){
   object <- lparam[["object"]]
 
   # instantiate function objects
-  y.eset <- lparam[["y.eset"]]
+  y.eset <- lparam[["y"]]
   sc.eset <- object@sc.eset
   celltype.subset <- object@celltype.subset
   batch.variable <- object@batch.variable
