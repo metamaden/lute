@@ -13,7 +13,6 @@ setClass("referencebasedParam", contains="deconParam",
 #' Function to get nnlsParam
 #' @export
 referencebasedParam <- function(y, z, s = NULL, return.info = FALSE) {
-  if(is(use.scale, "NULL")){use.scale <- FALSE}
   new("referencebasedParam", y = y, z = z, s = s, return.info = return.info)
 }
 

@@ -10,3 +10,9 @@
 #' lexample <- .get_decon_example_data()
 #' 
 setClass("independentbulkParam", contains="referencebasedParam", slots = c(yi = "matrix"))
+
+#' Function to get nnlsParam
+#' @export
+independentbulkParam <- function(y, yi, z, s = NULL, return.info = FALSE) {
+  new("independentbulkParam", y = y, z = z, s = s, return.info = return.info)
+}
