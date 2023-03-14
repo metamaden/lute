@@ -1,7 +1,7 @@
-#' scdcParam-class
+#' music2Param-class
 #' 
 #' Main constructor for class to manage mappings to the deconvolution
-#' method function \code{SCDC::SCDC_prop()}.
+#' method function \code{MuSiC::music2()}.
 #' 
 #' @include lute_generics.R
 #' @include deconParam-class.R
@@ -12,6 +12,6 @@
 #' lexample <- .get_decon_example_data()
 #' 
 #' @aliases 
-#' SCDCParam-class, ScdcParam-class
+#' MuSiC2Param-class, Music2Param-class
 #'
-setClass("scdcParam", contains="independentbulkParam", slots=c(return.info = "logical"))
+setClass("music2Param", contains="independentbulkParam", slots=c(return.info = "logical"))

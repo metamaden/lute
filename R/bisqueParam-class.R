@@ -26,17 +26,15 @@
 #' @aliases 
 #' BisqueParam-class
 #'
-setClass("bisqueParam", contains="deconParam", 
+setClass("bisqueParam", contains="independentbulkParam", 
          slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet",
                  batch.variable = "character", celltype.variable = "character",
                  return.info = "logical"))
 
 #' @export
-bisqueParam <- function(y = NULL, z = NULL, s = NULL, 
-                        y.eset = NULL, sc.eset = NULL, 
-                        batch.variable = "batch.id", 
-                        celltype.variable = "celltype",
-                        return.info = FALSE) {
+bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
+                        y.eset = NULL, sc.eset = NULL, batch.variable = "batch.id", 
+                        celltype.variable = "celltype", return.info = FALSE) {
   if(is(s, "NULL")){s <- rep(1, ncol(z))}
   
   # check y.eset/y
