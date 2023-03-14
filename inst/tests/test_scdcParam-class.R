@@ -9,7 +9,7 @@ batch.variable <- "SubjectName"
 celltype.variable <- "cellType"
 
 # get data
-lexample <- lute:::.get_decon_example_data_bisque()
+lexample <- lute:::.get_decon_example_data_scdc()
 sc.eset <- lexample[["sc.eset"]]
 y.eset <- lexample[["y.eset"]]
 
@@ -34,9 +34,19 @@ res <- deconvolution(param)
 #-------------------
 # test scdc function
 #-------------------
+batch.variable <- "SubjectName"
+celltype.variable <- "cellType"
 
+lexample <- lute:::.get_decon_example_data_scdc()
+sc.eset <- lexample[["sc.eset"]]
+y.eset <- lexample[["y.eset"]]
+nu <- 1e-4
+epsilon <- 0.01
+iter.max <- 1000
+truep <- NULL
+weight.basis <- T
 unique.types <- unique(sc.eset[[celltype.variable]])
-celltype.subset <- unique.types[1]
+celltype.subset <- unique.types[1:2]
 s <- rep(1, length(unique.types))
 names(s) <- unique.types
 
@@ -48,6 +58,7 @@ result <- SCDC::SCDC_prop(bulk.eset = y.eset,
                           nu = nu, epsilon = epsilon, 
                           truep = truep,
                           ct.cell.size = s, 
-                          ct.sub = NULL)
+                          ct.sub = celltype.subset,
+                          Transform_bisque = F)
 
 

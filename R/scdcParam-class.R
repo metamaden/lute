@@ -144,11 +144,33 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
     }
   }
 
+  # check rowSums for basis matrix
+  eset.basis <- scdc_basis_eset(sc.eset = sc.eset, ct.sub = ct.sub, 
+  	ct.varname = ct.varname, min.sum = 0)
+  if(nrow(eset.basis)==0){
+  	stop("Error, no genes pass a minimum sum expression of 0 for the basis cell types")}
+
+  # check number of cell types
+  if(length(unique.types) < 4){
+  	stop("Error, need at least 2 cell types for predictions")}
+  if(length(intersect(unique.types, celltype.subset)) < 4){
+  	stop("Error, need at least 2 cell types in celltype.subset, for basis matrix")}
+  	
   new("scdcParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset, 
   	  celltype.subset = celltype.subset, assay.name = assay.name, batch.variable = batch.variable, 
       celltype.variable = celltype.variable, return.info = return.info,
       iter.max = iter.max, nu = nu, epsilon = epsilon, truep = truep,
       weight.basis = weight.basis, transform.bisque = transform.bisque)
+}
+
+#' @export
+scdc_basis_eset <- function(sc.eset, ct.sub, ct.varname, min.sum = 0){
+	ct.sub <- ct.sub[!is.na(ct.sub)] # filter missing/NA types
+	filter <- pData(sc.eset)[,ct.varname] %in% ct.sub
+	eset.sub <- sc.eset[,filter]
+	sums.vector <- rowSums(exprs(eset.sub))
+	sums.filter <- sums.vector > min.sum
+	return(eset.sub[sums.filter,])
 }
 
 #' Deconvolution method for scdcParam

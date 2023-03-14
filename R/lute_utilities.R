@@ -123,7 +123,7 @@
   y.eset <- ExpressionSet(assayData = y, phenoData = AnnotatedDataFrame(df.y.pheno))
 
   # get z.eset
-  sce <- random_sce(num.genes = 10, num.cells = 100, num.types = 2)
+  sce <- random_sce(num.genes = 10, num.cells = 300, num.types = 4)
   df.z.pheno <- data.frame(cellType = sce[["celltype"]], SubjectName = paste0("sample", seq(ncol(sce))))
   rownames(df.z.pheno) <- colnames(sce)
   z.eset <- ExpressionSet(assayData = counts(sce), phenoData = AnnotatedDataFrame(df.z.pheno))
