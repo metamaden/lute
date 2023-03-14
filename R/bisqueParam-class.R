@@ -13,18 +13,25 @@
 #' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
 #' 
 #' @examples
-#' # example
-#' lexample <- .get_decon_example_data_bisque()
-#' param <- bisqueParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' # get data
+#' lexample <- lute:::.get_decon_example_data_bisque()
+#' sc.eset <- lexample[["sc.eset"]]
+#' y.eset <- lexample[["y.eset"]]
+#' # example params
+#' batch.variable <- "SubjectName"
+#' celltype.variable <- "cellType"
 #' 
-#' # return only predicted proportions
-#' deconvolution(param)
+#' # get param object
+#' param <- bisqueParam(y.eset = y.eset, sc.eset = sc.eset,
+#'                      batch.variable = "SubjectName",
+#'                      celltype.variable = "cellType")
 #' 
-#' # return full results
-#' param@return.info <- T
-#' names(deconvolution(param))
-#' # [1] "predictions" "result.info" "metadata"
+#' # get just predictions
+#' res <- deconvolution(param)
 #' 
+#' # get full results
+#' param@return.info <- TRUE
+#' res <- deconvolution(param)
 #' @aliases 
 #' BisqueParam-class
 #'
