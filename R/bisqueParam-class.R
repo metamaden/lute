@@ -43,8 +43,8 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
 #' @param y.eset ExpressionSet of bulk mixed signals.
 #' @param sc.eset ExpressionSet of single-cell transcriptomics data.
-#' @param batch.variable Name of variable identifying the batches in sc.eset colData.
-#' @param celltype.variable Name of cell type labels variable in sc.eset colData.
+#' @param batch.variable Name of variable identifying the batches in sc.eset pData/coldata.
+#' @param celltype.variable Name of cell type labels variable in sc.eset pData/coldata.
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #'
 #' @details Takes standard inputs for the Bisque method. If user provides matrices, will convert these
@@ -83,13 +83,13 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
     stop("Error, no single-cell ExpressionSet provided.")  
     # add condition to call splatter simulations by default?
   }
-  if(!batch.variable %in% colnames(colData(sc.eset))){
+  if(!batch.variable %in% colnames(pData(sc.eset))){
     stop("Error, didn't find batch id variable ",batch.variable,
-         " in sc.eset coldata.")
+         " in sc.eset pData/coldata.")
   }
-  if(!celltype.variable %in% colnames(colData(sc.eset))){
+  if(!celltype.variable %in% colnames(pData(sc.eset))){
     stop("Error, didn't find celltype id variable ", celltype.variable, 
-         " in sc.eset coldata.")
+         " in sc.eset pData/coldata.")
   }
   if(is(z, "NULL")){
     message("Getting z from sc.eset...")

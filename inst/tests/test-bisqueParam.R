@@ -9,7 +9,8 @@ lexample <- lute:::.get_decon_example_data_bisque()
 #-----------------------------------
 # test bisqueParam with example data
 #-----------------------------------
-param <- bisqueParam()
+param <- bisqueParam(y.eset = lexample[["y.eset"]],
+                     sc.eset = lexample[["sc.eset"]])
 res <- deconvolution(param)
 
 #-------------------------------------
