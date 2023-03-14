@@ -37,6 +37,11 @@ setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "Express
 #' @param assay.name Expression data type (e.g. counts, logcounts, tpm, etc.).
 #' @param batch.variable Name of variable identifying the batches in sc.eset pData/coldata.
 #' @param celltype.variable Name of cell type labels variable in sc.eset pData/coldata.
+#' @param weight.basis Argument weight.basis for SCDC_prop().
+#' @param iter.max Argument iter.max for SCDC_prop().
+#' @param epsilon Argument epsilon for SCDC_prop().
+#' @param nu Argument nu for SCDC_prop().
+#' @param truep Argument truep for SCDC_prop().
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #'
 #' @details Takes standard inputs for the Bisque method. If user provides matrices, will convert these
@@ -46,7 +51,7 @@ setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "Express
 scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc.eset = NULL,
 					  celltype.subset = NULL, assay.name = "counts", batch.variable = "batch.id", 
 					  celltype.variable = "celltype", iter.max = 1000, nu = 1e-4, epsilon = 0.01,
-					  truep = NULL, return.info = FALSE) {
+					  weight.basis = TRUE, transform.bisque = FALSE, truep = NULL, return.info = FALSE) {
   require(Biobase)
   # check y.eset/y
   if(is(y, "NULL")){
@@ -138,15 +143,6 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
       message("Using provided yi for independent bulk samples...")
     }
   }
-
-  # parse remaining arguments
-  if(is(iter.max, "NULL")){iter.max <- 1000}
-  if(is(nu, "NULL")){nu <- 1e-4}
-  if(is(epsilon, "NULL")){epsilon <- 0.01}
-  if(is(truep, "NULL")){truep <- NULL}
-  if(is(weight.basis, "NULL")){weight.basis <- TRUE}
-  if(is(transform.bisque, "NULL")){transform.bisque <- FALSE}
-
 
   new("scdcParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset, 
   	  celltype.subset = celltype.subset, assay.name = assay.name, batch.variable = batch.variable, 

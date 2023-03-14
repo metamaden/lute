@@ -15,6 +15,12 @@ scdcParam(
   assay.name = "counts",
   batch.variable = "batch.id",
   celltype.variable = "celltype",
+  iter.max = 1000,
+  nu = 1e-04,
+  epsilon = 0.01,
+  weight.basis = TRUE,
+  transform.bisque = FALSE,
+  truep = NULL,
   return.info = FALSE
 )
 }
@@ -39,6 +45,16 @@ provided ExpressionSet containing single-cell data.}
 \item{batch.variable}{Name of variable identifying the batches in sc.eset pData/coldata.}
 
 \item{celltype.variable}{Name of cell type labels variable in sc.eset pData/coldata.}
+
+\item{iter.max}{Argument iter.max for SCDC_prop().}
+
+\item{nu}{Argument nu for SCDC_prop().}
+
+\item{epsilon}{Argument epsilon for SCDC_prop().}
+
+\item{weight.basis}{Argument weight.basis for SCDC_prop().}
+
+\item{truep}{Argument truep for SCDC_prop().}
 
 \item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
 }
