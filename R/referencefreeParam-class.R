@@ -7,5 +7,4 @@
 #' @examples 
 #' lexample <- .get_decon_example_data()
 #' 
-setClass("referencefreeParam", contains="deconParam", 
-         slots = c(model.metadata = "list"))
+setClass("referencefreeParam", contains="deconParam", slots = c(model.metadata = "list"))
