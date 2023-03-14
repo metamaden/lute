@@ -66,6 +66,7 @@
 }
 
 .get_decon_example_data_bisque <- function(seed.num = 0){
+  require(Biobase)
   set.seed(seed.num)
   # get sc eset
   sce <- random_sce(num.genes = 10, num.cells = 100, num.types = 2)
