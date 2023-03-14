@@ -30,10 +30,19 @@
 }
 
 .get_sce_from_eset <- function(eset){
-  require(SingleCellExperiment); require(SummarizedExperiment); require(ExpressionSet)
+  require(SingleCellExperiment); require(SummarizedExperiment); require(Biobase)
   sce <- SingleCellExperiment(assays = list(counts = exprs(eset)))
   colData(sce) <- DataFrame(pData(eset))
   return(sce)
+}
+
+.get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
+  require(Biobase)
+  pdata <- data.frame(new.variable = colnames(mat))
+  colnames(pdata) <- batch.variable
+  rownames(pdata) <- colnames(y)
+  eset <- ExpressionSet(assayData = mat, phenoData = AnnotatedDataFrame(pdata))
+  return(est)
 }
 
 .ypb_from_sce <- function(sce, assay.name, celltype.variable, S = NULL){

@@ -62,22 +62,20 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
       stop("Error, need to provide either y or bulk.eset.")
     } else{
       message("Getting y from provided bulk.eset...")
-      y <- exprs(y.eset)
+      y <- as.matrix(exprs(y.eset))
     }
-  }
-  if(is(y.eset, "NULL")){
-    message("Making ExpressionSet from provided y...")
-    y.assay <- y; y.colname <- colnames(y.assay)
-    if(ncol(y) == 1){
+  } else{
+      if(is(y.eset, "NULL")){
+      message("Making ExpressionSet from provided y...")
+      y.eset <- .make_eset_from_matrix(mat = y, batch.id = "SubjectName")
+      
+      if(ncol(y) == 1){
       y.assay <- cbind(y, y)
       colnames(y.assay) <- c(y.colname, paste0(y.colname, "_rep1"))
-    }
-    df.y.pheno <- data.frame(SubjectName = colnames(y.assay))
-    rownames(df.y.pheno) <- colnames(y)
-    y.eset <- ExpressionSet(assayData = y.assay,
-                            phenoData = AnnotatedDataFrame(df.y.pheno))
   }
-  
+    }
+  }
+
   # check sc.eset
   if(is(sc.eset, "NULL")){
     stop("Error, no single-cell ExpressionSet provided.")  
@@ -103,9 +101,9 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   # parse s
   if(is(s, "NULL")){s <- rep(1, ncol(z))}
   
+  # parse batch ids in bulk and sc
   message("Checking batch ids in bulk and sc eset...")
-  cond <- !batch.variable %in% colnames(pData(y.eset))
-  if(cond){
+  if(cond <- !batch.variable %in% colnames(pData(y.eset))){
     stop("Error, didn't find batch variable in y.eset pData: ", batch.variable)
   } else{
     id.bulk <- unique(y.eset[[batch.variable]])
@@ -120,9 +118,13 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   message("Found ", length(id.onlybulk), " sc-only batch ids...")
   if(length(id.overlap) == 0){
     stop("Error, no overlapping markers in y.eset and sc.eset.")
-  } 
+  }
+  
+  # parse independent bulk samples
+  if(is(yi, "NULL")){
+    message("Checking for independent bulk samples in y/y.eset")
 
-  # check for independent bulk samples
+  }
   cond <- length(id.unique) >= length(id.bulk)
   cond <- cond & is(yi, "NULL")
   if(cond){
