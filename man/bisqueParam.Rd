@@ -30,9 +30,9 @@ provided ExpressionSet containing single-cell data.}
 
 \item{sc.eset}{ExpressionSet of single-cell transcriptomics data.}
 
-\item{batch.variable}{Name of variable identifying the batches in sc.eset colData.}
+\item{batch.variable}{Name of variable identifying the batches in sc.eset pData/coldata.}
 
-\item{celltype.variable}{Name of cell type labels variable in sc.eset colData.}
+\item{celltype.variable}{Name of cell type labels variable in sc.eset pData/coldata.}
 
 \item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
 }

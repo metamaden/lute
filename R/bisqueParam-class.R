@@ -97,6 +97,9 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   }
   if(is(s, "NULL")){s <- rep(1, ncol(z))}
   message("Checking batch ids in bulk and sc eset...")
+  cond <- !batch.variable %in% colnames(pData(sc.eset))|
+    !batch.variable %in% colnames(pData(y.eset))
+  if(cond){stop("Error, didn't find batch variable in sc.eset or y.eset pData: ", batch.variable)}
   id.sc <- unique(sc.eset[[batch.variable]])
   id.bulk <- unique(y.eset[[batch.variable]])
   id.overlap <- intersect(id.sc, id.bulk)
