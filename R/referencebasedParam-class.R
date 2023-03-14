@@ -7,8 +7,7 @@
 #' @examples 
 #' lexample <- .get_decon_example_data()
 #' 
-setClass("referencebasedParam", contains="deconParam", 
-         slots=c(z = "matrix", s = "numeric"))
+setClass("referencebasedParam", contains="deconParam", slots=c(z = "matrix", s = "numeric"))
 
 #' Function to get nnlsParam
 #' @export
