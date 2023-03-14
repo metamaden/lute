@@ -22,18 +22,50 @@ setClass("music2Param", contains="independentbulkParam", slots=c(
 	celltype.variable = "character", iter.max = "numeric", nu = "numeric", epsilon = "numeric", 
 	truep = "numeric", ct.cell.size = "numeric", celltype.subset = "character"))
 
-#' Deconvolution method for scdcParam
+#' Make an object of class music2Param
 #'
-#' Main method to access the SCDC deconvolution method from the main lute deconvolution genetic.
+#' Main function to make a new music2Param-class object.
 #'
-#' @details Takes an object of class scdcParam as input, returning a list or vector of predicted 
+#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
+#' @param yi Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
+#' provided ExpressionSet containing single-cell data.
+#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param y.eset ExpressionSet of bulk mixed expression signals.
+#' @param sc.eset ExpressionSet of single-cell transcriptomics data.
+#' @param assay.name Expression data type (e.g. counts, logcounts, tpm, etc.).
+#' @param batch.variable Name of variable identifying the batches in sc.eset pData/coldata.
+#' @param celltype.variable Name of cell type labels variable in sc.eset pData/coldata.
+#' @param condition.variable Name of variable in y.eset and sc.eset containing condition labels.
+#' @param control.label Label of control condition samples in condition variable.
+#' @param case.label Label of case condition samples in condition variable.
+#' @param method.type Name of method source library to call for music2_prop; either "MuSiC" or "MuSiC2".
+#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#'
+#' @export
+music2Param <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc.eset = NULL, 
+	assay.name = "counts", batch.variable = "SubjectName", celltype.variable = "cellType", 
+	condition.variable = "experiment.condition", control.label = "control", case.label = "case",
+	method.type = "MuSiC2", return.info = FALSE) {
+
+  new("music2Param", y = y, yi = yi, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset, 
+	assay.name = assay.name, batch.variable = batch.variable, celltype.variable = celltype.variable,
+	condition.variable = condition.variable, control.label = control.label, case.label = case.label,
+	method.type = method.type, return.info = return.info)
+}
+
+#' Deconvolution method for music2Param
+#'
+#' Main method to access the MuSiC2 deconvolution method from the main lute deconvolution genetic.
+#'
+#' @details Takes an object of class music2Param as input, returning a list or vector of predicted 
 #' cell type proportions.
 #'
 #' @returns Either a vector of predicted proportions, or a list containing predictions, metadata, 
 #' and original outputs.
 #'
 #' @export
-setMethod("deconvolution", signature(object = "scdcParam"), function(object){
+setMethod("deconvolution", signature(object = "music2Param"), function(object){
   require(Biobase)
   # load data
   lparam <- callNextMethod()
