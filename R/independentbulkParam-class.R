@@ -17,7 +17,11 @@ setClass("independentbulkParam", contains="referencebasedParam", slots = c(yi = 
 
 #' Function to get nnlsParam
 #' @export
-independentbulkParam <- function(y, yi, z, s = NULL, return.info = FALSE) {
+independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, return.info = FALSE) {
+    if(is(y, "NULL"))}{y <- matrix(0)}
+    if(is(z, "NULL"){z <- matrix(0)})
+    if(is(yi, "NULL"){yi <- matrix(0)})
+    if(is(s, "NULL"){s <- 0})
   new("independentbulkParam", y = y, z = z, s = s, return.info = return.info)
 }
 
