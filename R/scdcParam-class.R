@@ -45,7 +45,8 @@ setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "Express
 #' @export
 scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc.eset = NULL,
 					  celltype.subset = NULL, assay.name = "counts", batch.variable = "batch.id", 
-					  celltype.variable = "celltype", return.info = FALSE) {
+					  celltype.variable = "celltype", iter.max = 1000, nu = 1e-4, epsilon = 0.01,
+					  truep = NULL, return.info = FALSE) {
   require(Biobase)
   # check y.eset/y
   if(is(y, "NULL")){
@@ -138,9 +139,20 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
     }
   }
 
+  # parse remaining arguments
+  if(is(iter.max, "NULL")){iter.max <- 1000}
+  if(is(nu, "NULL")){nu <- 1e-4}
+  if(is(epsilon, "NULL")){epsilon <- 0.01}
+  if(is(truep, "NULL")){truep <- NULL}
+  if(is(weight.basis, "NULL")){weight.basis <- TRUE}
+  if(is(transform.bisque, "NULL")){transform.bisque <- FALSE}
+
+
   new("scdcParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset, 
   	  celltype.subset = celltype.subset, assay.name = assay.name, batch.variable = batch.variable, 
-      celltype.variable = celltype.variable, return.info = return.info)
+      celltype.variable = celltype.variable, return.info = return.info,
+      iter.max = iter.max, nu = nu, epsilon = epsilon, truep = truep,
+      weight.basis = weight.basis, transform.bisque = transform.bisque)
 }
 
 #' Deconvolution method for scdcParam
@@ -161,7 +173,7 @@ setMethod("deconvolution", signature(object = "scdcParam"), function(object){
   object <- lparam[["object"]]
 
   # instantiate function objects
-  y.eset <- lparam[["y"]]
+  y.eset <- lparam[["y.eset"]]
   sc.eset <- object@sc.eset
   celltype.subset <- object@celltype.subset
   batch.variable <- object@batch.variable
@@ -170,12 +182,15 @@ setMethod("deconvolution", signature(object = "scdcParam"), function(object){
   epsilon <- object@epsilon
   truep <- object@truep
   s <- object@s
+  weight.basis <- object@weight.basis
+  transform.bisque <- object@transform.bisque
 
   # get predictions
   result <- SCDC::SCDC_prop(bulk.eset = y.eset, sc.eset = sc.eset,
   	ct.varname = celltype.variable, sample = batch.variable,
   	iter.max = iter.max, nu = nu, epsilon = epsilon, truep = truep,
-  	ct.cell.size = s, ct.sub = celltype.subset)
+  	ct.cell.size = s, ct.sub = celltype.subset, weight.basis = weight.basis,
+  	Transform_bisque = transform_bisque)
 
   # return results
   lr <- predictions <- result$bulk.props

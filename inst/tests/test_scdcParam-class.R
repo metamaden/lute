@@ -32,21 +32,14 @@ param@return.info <- TRUE
 res <- deconvolution(param)
 
 #------------------
-# load example data
+# test scdc function
 #------------------
-# example params
-batch.variable <- "SubjectName"
-celltype.variable <- "cellType"
-
-# get data
-lexample <- lute:::.get_decon_example_data_bisque()
-sc.eset <- lexample[["sc.eset"]]
-y.eset <- lexample[["y.eset"]]
-
-#-----------------------------------
-# test bisqueParam with example data
-#-----------------------------------
-param <- scdcParam(y.eset = y.eset, sc.eset = sc.eset,
-                     batch.variable = "SubjectName",
-                     celltype.variable = "cellType")
-res <- deconvolution(param)
+result <- SCDC::SCDC_prop(bulk.eset = y.eset, 
+                          sc.eset = sc.eset,
+                          ct.varname = celltype.variable, 
+                          sample = batch.variable,
+                          iter.max = iter.max, 
+                          nu = nu, epsilon = epsilon, 
+                          truep = truep,
+                          ct.cell.size = s, 
+                          ct.sub = celltype.subset)

@@ -93,33 +93,14 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
     # parse return list
     lr <- list(y = y, yi = yi, object = object, metadata = lmd)
     if("y.eset" %in% names(object)){
+        message("Parsing y.eset...")
         y.eset <- object[["y.eset"]]
-        filter <- colnames(y.eset) %in% colnames(y)
-        lr[["y.eset"]] <- y[,filter]
+        lr[["y.eset"]] <- y[,colnames(y)]
     }
-    # return list
     return(lr)
 })
 
 #' @export
 setMethod("show", "independentbulkParam", function(object) {
-    if("metadata" %in% names(object)){
-      lmd <- object[["metadata"]]
-      cat("Data summaries for class `independentbulkParam`:\n")
-      if("unique.samples" %in% names(lmd)){
-        cat("\tUnique sample IDs : ", lmd[["unique.samples"]], "\n")  
-      } else{
-        cat("Warning, didn't find object 'unique.samples'.\n")
-      }
-      if("unique.markers" %in% names(lmd)){
-        cat("\tUnique marker IDs : ", lmd[["unique.markers"]], "\n")  
-      } else{
-        cat("Warning, didn't find object 'unique.markers'.\n")
-      }
-      if("yi" %in% names(lmd)){
-        cat("\tTotal independent samples : ", ncol(object[["yi"]]), "\n")
-        } else{
-            cat("Warning, didn't find object `yi`.\n")
-        } 
-    }
+    result <- deconvolution(object)
 })
