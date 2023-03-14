@@ -54,8 +54,6 @@ setClass("bisqueParam", contains="independentbulkParam",
 bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
                         y.eset = NULL, sc.eset = NULL, batch.variable = "batch.id", 
                         celltype.variable = "celltype", return.info = FALSE) {
-  
-  
   # check y.eset/y
   if(is(y, "NULL")){
     if(is(y.eset, "NULL")){
@@ -82,23 +80,24 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   if(is(sc.eset, "NULL")){
     stop("Error, no single-cell ExpressionSet provided.")  
     # add condition to call splatter simulations by default?
-  }
-  if(!batch.variable %in% colnames(pData(sc.eset))){
+  } else{
+    if(is(z, "NULL")){
+      message("Getting z from sc.eset...")
+      z <- .get_z_from_sce(SingleCellExperiment(sc.eset))
+    }
+    if(!batch.variable %in% colnames(pData(sc.eset))){
     stop("Error, didn't find batch id variable ",batch.variable,
          " in sc.eset pData/coldata.")
+    }
+    if(!celltype.variable %in% colnames(pData(sc.eset))){
+      stop("Error, didn't find celltype id variable ", celltype.variable, 
+           " in sc.eset pData/coldata.")
+    }
   }
-  if(!celltype.variable %in% colnames(pData(sc.eset))){
-    stop("Error, didn't find celltype id variable ", celltype.variable, 
-         " in sc.eset pData/coldata.")
-  }
-  if(is(z, "NULL")){
-    message("Getting z from sc.eset...")
-    z <- .get_z_from_sce(SingleCellExperiment(sc.eset))
-  }
+  # parse s
   if(is(s, "NULL")){s <- rep(1, ncol(z))}
   message("Checking batch ids in bulk and sc eset...")
-  cond <- !batch.variable %in% colnames(pData(sc.eset))|
-    !batch.variable %in% colnames(pData(y.eset))
+  cond <- !batch.variable %in% colnames(pData(sc.eset))|!batch.variable %in% colnames(pData(y.eset))
   if(cond){stop("Error, didn't find batch variable in sc.eset or y.eset pData: ", batch.variable)}
   id.sc <- unique(sc.eset[[batch.variable]])
   id.bulk <- unique(y.eset[[batch.variable]])

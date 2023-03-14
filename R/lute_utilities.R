@@ -21,7 +21,7 @@
 .get_z_from_sce <- function(sce, assay.name = "counts", 
                             celltype.variable = "celltype"){
   require(SingleCellExperiment); require(SummarizedExperiment)
-  ltype <- .get_celltypes_from_sce()
+  ltype <- .get_celltypes_from_sce(sce = sce, celltype.variable = celltype.variable)
   mexpr <- as.matrix(assays(sce)[[assay.name]])
   Znew <- do.call(cbind, lapply(ltype[["unique.types"]], function(typei){
     datav <- mexpr[,ltype[["character"]]==typei]; .z_operator(datav)

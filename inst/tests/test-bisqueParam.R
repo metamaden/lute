@@ -10,7 +10,9 @@ lexample <- lute:::.get_decon_example_data_bisque()
 # test bisqueParam with example data
 #-----------------------------------
 param <- bisqueParam(y.eset = lexample[["y.eset"]],
-                     sc.eset = lexample[["sc.eset"]])
+                     sc.eset = lexample[["sc.eset"]],
+                     batch.variable = "SubjectName",
+                     celltype.variable = "cellType")
 res <- deconvolution(param)
 
 #-------------------------------------
