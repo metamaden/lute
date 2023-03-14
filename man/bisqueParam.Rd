@@ -11,6 +11,7 @@ bisqueParam(
   s = NULL,
   y.eset = NULL,
   sc.eset = NULL,
+  assay.name = "counts",
   batch.variable = "batch.id",
   celltype.variable = "celltype",
   return.info = FALSE
@@ -29,6 +30,8 @@ provided ExpressionSet containing single-cell data.}
 \item{y.eset}{ExpressionSet of bulk mixed signals.}
 
 \item{sc.eset}{ExpressionSet of single-cell transcriptomics data.}
+
+\item{assay.name}{Expression data type (e.g. counts, logcounts, tpm, etc.).}
 
 \item{batch.variable}{Name of variable identifying the batches in sc.eset pData/coldata.}
 

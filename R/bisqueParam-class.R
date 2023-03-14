@@ -29,8 +29,8 @@
 #' BisqueParam-class
 #'
 setClass("bisqueParam", contains="independentbulkParam", 
-         slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", batch.variable = "character", 
-                celltype.variable = "character", return.info = "logical"))
+         slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", assay.name = "character", 
+          batch.variable = "character", celltype.variable = "character", return.info = "logical"))
 
 #' Make new object of class bisqueParam
 #'
@@ -43,6 +43,7 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
 #' @param y.eset ExpressionSet of bulk mixed signals.
 #' @param sc.eset ExpressionSet of single-cell transcriptomics data.
+#' @param assay.name Expression data type (e.g. counts, logcounts, tpm, etc.).
 #' @param batch.variable Name of variable identifying the batches in sc.eset pData/coldata.
 #' @param celltype.variable Name of cell type labels variable in sc.eset pData/coldata.
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
@@ -52,7 +53,8 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' 
 #' @export
 bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
-                        y.eset = NULL, sc.eset = NULL, batch.variable = "batch.id", 
+                        y.eset = NULL, sc.eset = NULL, assay.name = "counts", 
+                        batch.variable = "batch.id", 
                         celltype.variable = "celltype", return.info = FALSE) {
   # check y.eset/y
   if(is(y, "NULL")){
@@ -81,26 +83,33 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
     stop("Error, no single-cell ExpressionSet provided.")  
     # add condition to call splatter simulations by default?
   } else{
-    if(is(z, "NULL")){
-      message("Getting z from sc.eset...")
-      z <- .get_z_from_sce(SingleCellExperiment(sc.eset))
-    }
     if(!batch.variable %in% colnames(pData(sc.eset))){
     stop("Error, didn't find batch id variable ",batch.variable,
          " in sc.eset pData/coldata.")
+    } else{
+      id.sc <- unique(sc.eset[[batch.variable]])
     }
     if(!celltype.variable %in% colnames(pData(sc.eset))){
       stop("Error, didn't find celltype id variable ", celltype.variable, 
            " in sc.eset pData/coldata.")
     }
+    if(is(z, "NULL")){
+      message("Getting z from sc.eset...")
+      sce <- .get_sce_from_eset(sc.eset)
+      z <- .get_z_from_sce(sce = sce, celltype.variable = celltype.variable)
+    }
   }
+
   # parse s
   if(is(s, "NULL")){s <- rep(1, ncol(z))}
+  
   message("Checking batch ids in bulk and sc eset...")
-  cond <- !batch.variable %in% colnames(pData(sc.eset))|!batch.variable %in% colnames(pData(y.eset))
-  if(cond){stop("Error, didn't find batch variable in sc.eset or y.eset pData: ", batch.variable)}
-  id.sc <- unique(sc.eset[[batch.variable]])
-  id.bulk <- unique(y.eset[[batch.variable]])
+  cond <- !batch.variable %in% colnames(pData(y.eset))
+  if(cond){
+    stop("Error, didn't find batch variable in y.eset pData: ", batch.variable)
+  } else{
+    id.bulk <- unique(y.eset[[batch.variable]])
+  }
   id.overlap <- intersect(id.sc, id.bulk)
   id.unique <- unique(c(id.sc, id.bulk))
   id.onlybulk <- id.bulk[!id.bulk %in% id.overlap]
@@ -111,14 +120,19 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   message("Found ", length(id.onlybulk), " sc-only batch ids...")
   if(length(id.overlap) == 0){
     stop("Error, no overlapping markers in y.eset and sc.eset.")
-  } else if(length(id.unique) >= length(id.bulk)){
-    stop("Error, no unique bulk samples provided which aren't also in sc.eset.")
-  } else{
-    message("Finished validating batch ids.")
+  } 
+
+  # check for independent bulk samples
+  cond <- length(id.unique) >= length(id.bulk)
+  cond <- cond & is(yi, "NULL")
+  if(cond){
+    stop("Error, no independent bulk samples found. ",
+      "Provide either yi, or additional y samples.")
   }
-  new("bisqueParam", y = y, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset,
-      batch.variable = batch.variable, celltype.variable = celltype.variable,
-      return.info = return.info)
+
+  new("bisqueParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, 
+      sc.eset = sc.eset, assay.name = assay.name, batch.variable = batch.variable, 
+      celltype.variable = celltype.variable, return.info = return.info)
 }
 
 #' Deconvolution method for bisqueParam
