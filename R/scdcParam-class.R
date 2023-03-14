@@ -1,17 +1,132 @@
 #' scdcParam-class
 #' 
-#' Main constructor for class to manage mappings to the deconvolution
-#' method function \code{SCDC::SCDC_prop()}.
+#' Main constructor for class to manage mappings to the deconvolution method function \code{SCDC::SCDC_prop()}.
 #' 
 #' @include lute_generics.R
 #' @include deconParam-class.R
 #' @include referencebasedParam-class.R
 #' @include independentbulkParam-class.R
+#' 
+#' @details Main constructor for class \linkS4class{scdcParam}.
+#' @rdname scdcParam-class
+#' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
 #'
 #' @examples 
 #' lexample <- .get_decon_example_data()
 #' 
 #' @aliases 
-#' SCDCParam-class, ScdcParam-class
+#' SCDCParam-class, ScdcParam-class, ScdcParam-class
 #'
-setClass("scdcParam", contains="independentbulkParam", slots=c(return.info = "logical"))
+setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", 
+			assay.name = "character", batch.variable = "character", celltype.variable = "character",
+			iter.max = "numeric", nu = "numeric", epsilon = "numeric", truep = "numeric",
+			ct.cell.size = "numeric"))
+
+#' Make new object of class scdcParam
+#'
+#' Main constructor for class \linkS4class{scdcParam}.
+#'
+#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
+#' @param yi Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
+#' provided ExpressionSet containing single-cell data.
+#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param y.eset ExpressionSet of bulk mixed expression signals.
+#' @param sc.eset ExpressionSet of single-cell transcriptomics data.
+#' @param assay.name Expression data type (e.g. counts, logcounts, tpm, etc.).
+#' @param batch.variable Name of variable identifying the batches in sc.eset pData/coldata.
+#' @param celltype.variable Name of cell type labels variable in sc.eset pData/coldata.
+#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#'
+#' @details Takes standard inputs for the Bisque method. If user provides matrices, will convert these
+#' into ExpressionSet objects compatible with the main bisque method.
+#' 
+#' @export
+bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
+                        y.eset = NULL, sc.eset = NULL, assay.name = "counts", 
+                        batch.variable = "batch.id", 
+                        celltype.variable = "celltype", return.info = FALSE) {
+  # check y.eset/y
+  if(is(y, "NULL")){
+    if(is(y.eset, "NULL")){
+      stop("Error, need to provide either y or bulk.eset.")
+    } else{
+      message("Getting y from provided bulk.eset...")
+      y <- as.matrix(exprs(y.eset))
+    }
+  } else{
+      if(is(y.eset, "NULL")){
+      message("Making ExpressionSet from provided y...")
+      y.eset <- .make_eset_from_matrix(mat = y, batch.id = "SubjectName")
+      # need at least 2 columns/samples to pass to bisque
+      if(ncol(y.eset) == 1){
+        sample.name <- colnames(y.eset)
+        y.eset <- cbind(y.eset, y.eset)
+        colnames(y.eset) <- c(sample.name, paste0(sample.name, "_rep1"))
+      }
+    }
+  }
+
+  # check sc.eset
+  if(is(sc.eset, "NULL")){
+    stop("Error, no single-cell ExpressionSet provided.")  
+    # add condition to call splatter simulations by default?
+  } else{
+    if(!batch.variable %in% colnames(pData(sc.eset))){
+    stop("Error, didn't find batch id variable ",batch.variable,
+         " in sc.eset pData/coldata.")
+    } else{
+      id.sc <- unique(sc.eset[[batch.variable]])
+    }
+    if(!celltype.variable %in% colnames(pData(sc.eset))){
+      stop("Error, didn't find celltype id variable ", celltype.variable, 
+           " in sc.eset pData/coldata.")
+    }
+    if(is(z, "NULL")){
+      message("Getting z from sc.eset...")
+      sce <- .get_sce_from_eset(sc.eset)
+      z <- .get_z_from_sce(sce = sce, celltype.variable = celltype.variable)
+    }
+  }
+
+  # parse s
+  if(is(s, "NULL")){s <- rep(1, ncol(z))}
+  
+  # parse batch ids in bulk and sc
+  message("Checking batch ids in bulk and sc eset...")
+  if(cond <- !batch.variable %in% colnames(pData(y.eset))){
+    stop("Error, didn't find batch variable in y.eset pData: ", batch.variable)
+  } else{
+    id.bulk <- unique(y.eset[[batch.variable]])
+  }
+  id.overlap <- intersect(id.sc, id.bulk)
+  id.unique <- unique(c(id.sc, id.bulk))
+  id.onlybulk <- id.bulk[!id.bulk %in% id.overlap]
+  id.onlysc <- id.sc[!id.sc %in% id.overlap]
+  message("Found ", length(id.unique), " unique batch ids...")
+  message("Found ", length(id.overlap), " overlapping batch ids...")
+  message("Found ", length(id.onlybulk), " bulk-only batch ids...")
+  message("Found ", length(id.onlysc), " sc-only batch ids...")
+  if(length(id.overlap) == 0){stop("Error, no overlapping markers in y.eset and sc.eset.")}
+  
+  # parse independent bulk samples
+  if(length(id.onlybulk)==0){
+    if(is(yi, "NULL")){
+      stop("Error, no independent bulk samples found. ",
+        "Provide either yi, or additional y samples.")
+    } else{
+      message("Using provided yi for independent bulk samples...")
+    }
+  } else{
+    if(is(yi, "NULL")){
+      message("Making yi from provided y bulk...")
+      yi <- exprs(y.eset)[,colnames(y.eset) %in% id.onlybulk]
+    } else{
+      message("Using provided yi for independent bulk samples...")
+    }
+  }
+
+  new("bisqueParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, 
+      sc.eset = sc.eset, assay.name = assay.name, batch.variable = batch.variable, 
+      celltype.variable = celltype.variable, return.info = return.info)
+}

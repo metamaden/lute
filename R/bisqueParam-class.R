@@ -36,8 +36,8 @@
 #' BisqueParam-class
 #'
 setClass("bisqueParam", contains="independentbulkParam", 
-         slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", assay.name = "character", 
-          batch.variable = "character", celltype.variable = "character", return.info = "logical"))
+         slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", assay.name = "character",
+                  batch.variable = "character", celltype.variable = "character"))
 
 #' Make new object of class bisqueParam
 #'
