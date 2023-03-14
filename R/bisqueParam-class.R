@@ -10,7 +10,7 @@
 #' 
 #' @details Main constructor for class \linkS4class{bisqueParam}.
 #' @rdname bisqueParam-class
-#' @seealso \linkS4class{deconParam}
+#' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4{independentbulkParam}
 #' 
 #' @examples
 #' # example
@@ -32,11 +32,29 @@ setClass("bisqueParam", contains="independentbulkParam",
          slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", batch.variable = "character", 
                 celltype.variable = "character", return.info = "logical"))
 
+#' Make new object of class bisqueParam
+#'
+#' Main constructor for class \linkS4class{bisqueParam}.
+#'
+#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
+#' @param yi Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
+#' provided ExpressionSet containing single-cell data.
+#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param y.eset ExpressionSet of bulk mixed signals.
+#' @param sc.eset ExpressionSet of single-cell transcriptomics data.
+#' @param batch.variable Name of variable identifying the batches in sc.eset colData.
+#' @param celltype.variable Name of cell type labels variable in sc.eset colData.
+#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#'
+#' @details Takes standard inputs for the Bisque method. If user provides matrices, will convert these
+#' into ExpressionSet objects compatible with the main bisque method.
+#' 
 #' @export
 bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
                         y.eset = NULL, sc.eset = NULL, batch.variable = "batch.id", 
                         celltype.variable = "celltype", return.info = FALSE) {
-  if(is(s, "NULL")){s <- rep(1, ncol(z))}
+  
   
   # check y.eset/y
   if(is(y, "NULL")){
@@ -77,6 +95,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
     message("Getting z from sc.eset...")
     z <- .get_z_from_sce(SingleCellExperiment(sc.eset))
   }
+  if(is(s, "NULL")){s <- rep(1, ncol(z))}
   message("Checking batch ids in bulk and sc eset...")
   id.sc <- unique(sc.eset[[batch.variable]])
   id.bulk <- unique(y.eset[[batch.variable]])
@@ -100,26 +119,25 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
       return.info = return.info)
 }
 
+#' Deconvolution method for bisqueParam
+#'
+#' Main method to access the Bisque deconvolution method from the main lute deconvolution genetic.
+#'
+#' @details Takes an object of class bisqueParam as input, returning a list.
+#' @returns Either a vector of predicted proportions, or a list containing predictions, metadata, 
+#' and original outputs.
+#'
 #' @export
 setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
-  require(BisqueRNA)
-  require(Biobase)
+  require(BisqueRNA); require(Biobase)
   lparam <- callNextMethod()
   # instantiate objects
-  y.eset <- object[["y.eset"]]
-  sc.eset <- object[["sc.eset"]]
+  y.eset <- object[["y.eset"]]; sc.eset <- object[["sc.eset"]]
   # get predictions
-  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset,
-                                                   sc.eset = z.eset)
+  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset, sc.eset = z.eset)
   lr <- predictions <- results$bulk.props
-  # lr <- proportions$bulk.props[,1]
   if(object[["return.info"]]){
-    lr <- list(predictions = predictions, 
-               result.info = result, 
-               metadata = list(lmd = lparam[["metadata"]],
-                               y.eset = y.eset,
-                               sc.eset = sc.eset))}
+    lr <- list(predictions = predictions, result.info = result, 
+               metadata = list(lmd = lparam[["metadata"]], y.eset = y.eset, sc.eset = sc.eset))}
   return(lr)
 })
-
-
