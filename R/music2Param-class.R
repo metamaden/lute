@@ -34,7 +34,7 @@ setClass("music2Param", contains="independentbulkParam", slots=c(
 #'
 #' @export
 setMethod("deconvolution", signature(object = "scdcParam"), function(object){
-  require(SCDC); require(Biobase)
+  require(Biobase)
   # load data
   lparam <- callNextMethod()
   object <- lparam[["object"]]
@@ -54,22 +54,16 @@ setMethod("deconvolution", signature(object = "scdcParam"), function(object){
 
   # get result according to method type
   source.libarary <- object@method.type
-  if(source.library == "MuSiC"){
+  if(source.library %in% c("music", "MuSiC", "Music", "MUSIC")){
+  	message("Using the MuSiC implementation of music2_prop()..."); require(MuSiC)
   	result <- MuSiC::music2_prop(bulk.control.mtx = y, bulk.case.mtx = yi, sc.sce = sc.sce, 
   		clusters = celltype.variable, samples = batch.variable, cell_size = cell_size, select.ct = NULL)
   } else{
+  	message("Using the MuSiC2 implementation of music2_prop()..."); require(MuSiC2)
 	result <- MuSiC2::music2_prop(bulk.eset = y.eset, sc.eset = sc.sce, condition = condition.variable,
 	                      control = control.label, case = case.label, clusters = celltype.variable,
 	                      samples = batch.variable, cell_size = cell_size, select.ct = unique.types)
   }
-
-  # get predictions
-  result <- SCDC::SCDC_prop(bulk.eset = y.eset, sc.eset = sc.eset,
-  	ct.varname = celltype.variable, sample = batch.variable,
-  	iter.max = iter.max, nu = nu, epsilon = epsilon, truep = truep,
-  	ct.cell.size = s, ct.sub = celltype.subset, weight.basis = weight.basis,
-  	Transform_bisque = transform_bisque)
-
   # return results
   lr <- predictions <- result$bulk.props
   if(object[["return.info"]]){
