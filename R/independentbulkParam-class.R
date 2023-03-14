@@ -79,7 +79,8 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         cat("Found ", length(overlapping.markers), " overlapping samples.\n")
         if(length(overlapping.samples) > 0){
             cat("Removing overlapping samples from yi.\n")
-            yi <- yi[,!overlapping.samples,drop=F]
+            filter <- !colnames(yi) %in% overlapping.samples
+            yi <- yi[, filter, drop=F]
         }
     }
 
@@ -89,8 +90,7 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
                 overlapping.markers = overlapping.markers,
                 overlapping.samples = overlapping.samples)
   # return list
-  return(list(y = y, yi = yi, z = object[["z"]], 
-              return.info = object[["return.info"]], 
+  return(list(y = y, yi = yi, object = object, 
               metadata = lmd))
 })
 
