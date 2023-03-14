@@ -107,7 +107,13 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   }
 
   # parse s
-  if(is(s, "NULL")){s <- rep(1, ncol(z))}
+  unique.types <- colnames(z)
+  unique.types <- unique.types[order(unique.types)]
+  if(is(s, "NULL")){
+    message("Setting equal cell size factors...")
+    s <- rep(1, ncol(z))
+    names(s) <- unique.types
+  }
   
   # parse batch ids in bulk and sc
   message("Checking batch ids in bulk and sc eset...")

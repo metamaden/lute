@@ -33,6 +33,7 @@ setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "Express
 #' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
 #' @param y.eset ExpressionSet of bulk mixed expression signals.
 #' @param sc.eset ExpressionSet of single-cell transcriptomics data.
+#' @param celltype.subset Vector of cell types to use for basis matrix.
 #' @param assay.name Expression data type (e.g. counts, logcounts, tpm, etc.).
 #' @param batch.variable Name of variable identifying the batches in sc.eset pData/coldata.
 #' @param celltype.variable Name of cell type labels variable in sc.eset pData/coldata.
@@ -42,10 +43,9 @@ setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "Express
 #' into ExpressionSet objects compatible with the main bisque method.
 #' 
 #' @export
-scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
-						y.eset = NULL, sc.eset = NULL, assay.name = "counts", 
-                        batch.variable = "batch.id", celltype.variable = "celltype", 
-                        return.info = FALSE) {
+scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc.eset = NULL,
+					  celltype.subset = NULL, assay.name = "counts", batch.variable = "batch.id", 
+					  celltype.variable = "celltype", return.info = FALSE) {
   # check y.eset/y
   if(is(y, "NULL")){
     if(is(y.eset, "NULL")){
@@ -90,7 +90,18 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   }
 
   # parse s
-  if(is(s, "NULL")){s <- rep(1, ncol(z))}
+  unique.types <- colnames(z)
+  unique.types <- unique.types[order(unique.types)]
+  if(is(s, "NULL")){
+  	message("Setting equal cell size factors...")
+  	s <- rep(1, ncol(z))
+  	names(s) <- unique.types
+ }
+  # parse ct.sub
+  if(is(celltype.subset, "NULL")){
+  	message("Using cell type labels for basis matrix.")
+  	celltype.subset <- unique.types
+  }
   
   # parse batch ids in bulk and sc
   message("Checking batch ids in bulk and sc eset...")
@@ -135,19 +146,24 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #'
 #' Main method to access the SCDC deconvolution method from the main lute deconvolution genetic.
 #'
-#' @details Takes an object of class scdcParam as input, returning a list.
+#' @details Takes an object of class scdcParam as input, returning a list or vector of predicted 
+#' cell type proportions.
+#'
 #' @returns Either a vector of predicted proportions, or a list containing predictions, metadata, 
 #' and original outputs.
 #'
 #' @export
-setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
+setMethod("deconvolution", signature(object = "scdcParam"), function(object){
   require(SCDC); require(Biobase)
   lparam <- callNextMethod()
   # instantiate objects
   y.eset <- object[["y.eset"]]
   sc.eset <- lparam[["object"]]@sc.eset
   # get predictions
-  result <- SCDC::SCDC_prop(bulk.eset = y.eset, sc.eset = sc.eset)
+  result <- SCDC::SCDC_prop(bulk.eset = y.eset, sc.eset = sc.eset,
+  	ct.varname = celltype.variable, sample = batch.variable,
+  	iter.max = iter.max, nu = nu, epsilon = epsilon, truep = truep,
+  	ct.cell.size = s, ct.sub = ct.sub)
   lr <- predictions <- result$bulk.props
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 

@@ -4,13 +4,19 @@
 \name{scdcParam-class}
 \alias{scdcParam-class}
 \alias{SCDCParam-class,}
+\alias{ScdcParam-class,}
 \alias{ScdcParam-class}
 \title{scdcParam-class}
 \description{
-Main constructor for class to manage mappings to the deconvolution
-method function \code{SCDC::SCDC_prop()}.
+Main constructor for class to manage mappings to the deconvolution method function \code{SCDC::SCDC_prop()}.
+}
+\details{
+Main constructor for class \linkS4class{scdcParam}.
 }
 \examples{
 lexample <- .get_decon_example_data()
 
+}
+\seealso{
+\linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
 }

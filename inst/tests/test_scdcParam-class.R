@@ -13,7 +13,7 @@ batch.variable <- "SubjectName"
 celltype.variable <- "cellType"
 
 # get param object
-param <- bisqueParam(y.eset = y.eset, sc.eset = sc.eset,
+param <- scdcParam(y.eset = y.eset, sc.eset = sc.eset,
                      batch.variable = "SubjectName",
                      celltype.variable = "cellType")
 
