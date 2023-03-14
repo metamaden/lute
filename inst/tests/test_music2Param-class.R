@@ -26,7 +26,7 @@ id.bulk <- colnames(y.eset)
 filter <- id.bulk[!id.bulk %in% id.sc]
 yi <- exprs(y.eset)[,filter]
 
-result <- MuSiC::music2_prop(bulk.control.mtx = y, bulk.case.mtx = yi,
+result <- MuSiC2::music2_prop(bulk.control.mtx = y, bulk.case.mtx = yi,
                              sc.sce = sc.sce, clusters = celltype.variable,
                              samples = batch.variable, cell_size = cell_size,
                              select.ct = NULL)

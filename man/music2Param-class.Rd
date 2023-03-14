@@ -3,14 +3,20 @@
 \docType{class}
 \name{music2Param-class}
 \alias{music2Param-class}
+\alias{music2Param-class,}
 \alias{MuSiC2Param-class,}
 \alias{Music2Param-class}
 \title{music2Param-class}
 \description{
-Main constructor for class to manage mappings to the deconvolution
-method function \code{MuSiC::music2()}.
+Main constructor for class to manage mappings to the deconvolution method function \code{MuSiC::music2_prop()}.
+}
+\details{
+Main constructor for class \linkS4class{music2Param}.
 }
 \examples{
 lexample <- .get_decon_example_data()
 
+}
+\seealso{
+\linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
 }
