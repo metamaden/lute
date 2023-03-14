@@ -1,8 +1,8 @@
-method_shortname,method_fullname,strict_method_used,package,function,lute_y,lute_z,lute_s,lute_celltype-variable,lute_batch-variable,additional_arguments,info,related_methods,,parent_classes
-nnls,non-negative least squares,nnls,nnls,nnls,b,A,NA,NA,NA,NA,Widely used strict function for bulk deconvolution from single-cell RNAseq or similar reference data type.,MuSiC;MuSiC2,,deconParam;referencebasedParam
-music,MUlti-Subject SIngle Cell deconvolution,nnls,MuSiC,music.basic,Y,X,S,NA,NA,Sigma;iter.max;nu;eps,Method that weights markers according to type- and sample-specific confounding variances,NNLS;MuSiC2;SCDC,,deconParam;referencebasedParam
-music2,,,,,,,,,,,,NNLS;MuSiC;SCDC,,deconParam;independentbulkParam;referencebasedParam
-EPIC,EPIC,,EPIC,EPIC,bulk,refProfiles,mRNA_cell,NA,NA,refProfiles.var;scaleExprs,"Method that weights markers according to variances, and uses cell size/mRNA factor transform",ABIS;DeconRNASeq;MuSiC;MuSiC2;SCDC,,deconParam;referencebasedParam
-DeconRNASeq,DeconRNASeq,,DeconRNASeq,DeconRNASeq,datasets,signatures,NA,NA,NA,proportions;use.scale,,ABSI;EPIC,,deconParam;referencebasedParam
-Bisque,Bisque,nnls,BisqueRNA,BisqueRNA,bulk.eset,sc.eset,NA,cell.types,subject.names,markers;use.overlap;old.cpm,Method using assay bias adjustments,SCDC,,deconParam;independentbulkParam;referencebasedParam
-SCDC,,nnls,SCDC,SCDC_prop,bulk.eset,sc.eset,ct.cell.size,ct.varname,sample,iter.max;nu;epsilon;truep;ct.cell.size;Transform_bisque,Method using variance-based marker weighting with thresholds (similar to MuSiC) and assay bias adjustments (similar to Bisque),MuSiC;MuSiC2;Bisque,,deconParam;independentbulkParam;referencebasedParam
+method_shortname,method_fullname,strict_method_used,package,function,lute_y,lute_z,lute_sc-eset,lute_s,lute_celltype-variable,lute_batch-variable,additional_arguments,info,related_methods,,parent_classes
+nnls,non-negative least squares,nnls,nnls,nnls,b,A,,NA,NA,NA,NA,Widely used strict function for bulk deconvolution from single-cell RNAseq or similar reference data type.,MuSiC;MuSiC2,,deconParam;referencebasedParam
+music,MUlti-Subject SIngle Cell deconvolution,nnls,MuSiC,music.basic,Y,X,,S,NA,NA,Sigma;iter.max;nu;eps,Method that weights markers according to type- and sample-specific confounding variances,NNLS;MuSiC2;SCDC,,deconParam;referencebasedParam
+music2,,,,,,NA,,S,,,,,NNLS;MuSiC;SCDC,,deconParam;independentbulkParam;referencebasedParam
+EPIC,EPIC,,EPIC,EPIC,bulk,refProfiles,,mRNA_cell,NA,NA,refProfiles.var;scaleExprs,"Method that weights markers according to variances, and uses cell size/mRNA factor transform",ABIS;DeconRNASeq;MuSiC;MuSiC2;SCDC,,deconParam;referencebasedParam
+DeconRNASeq,DeconRNASeq,,DeconRNASeq,DeconRNASeq,datasets,signatures,,NA,NA,NA,proportions;use.scale,,ABSI;EPIC,,deconParam;referencebasedParam
+Bisque,Bisque,nnls,BisqueRNA,BisqueRNA,bulk.eset,NA,sc.eset,NA,cell.types,subject.names,markers;use.overlap;old.cpm,Method using assay bias adjustments,SCDC,,deconParam;independentbulkParam;referencebasedParam
+SCDC,,nnls,SCDC,SCDC_prop,bulk.eset,NA,sc.eset,ct.cell.size,ct.varname,sample,iter.max;nu;epsilon;truep;ct.cell.size;Transform_bisque,Method using variance-based marker weighting with thresholds (similar to MuSiC) and assay bias adjustments (similar to Bisque),MuSiC;MuSiC2;Bisque,,deconParam;independentbulkParam;referencebasedParam
