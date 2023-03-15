@@ -17,4 +17,23 @@ new method development.
 The inheritance for the new class hierarchy for deconvolution methods in `lute` is shown in the following 
 flowchart:
 
-[<img style="float: right;" src = "inst/png/deconvolution_classes_flowchart.jpg" height="500"/>](https://github.com/metamaden/lute)
+[<img style="float: right;" src = "inst/png/deconvolution_classes_flowchart.jpeg" height="500"/>](https://github.com/metamaden/lute)
+
+## Deconvolution methods supported
+
+The following methods are currently supported in `lute`:
+
+* MuSiC : The `musicParam` class supports the `MuSiC::music.basic()` implementation of the MuSiC deconvolution algorithm (see also: ).
+
+* MuSiC2 : The `music2Param` class supports both the `MuSiC::music2_prop()` and `MuSiC2::music2_prop()` implementations of the MuSiC2 deconvolution algorithm (see also: ).
+
+* EPIC : The `epicParam` class supports the `EPIC::EPIC()` implementation of the EPIC deconvolution algorithm (see also: ).
+
+* DeconRNASeq : The `deconrnaseqParam` class supports the `DeconRNASeq::DeconRNASeq()` implementation of the DeconRNASeq deconvolution algorithm (see also: ).
+
+* SCDC : The `scdcParam` class supports the `SCDC::SCDC_prop()` implementation of the SCDC deconvolution algorithm (see also: ).
+
+* NNLS : The `nnlsParam` class supports the `nnls::nnls` implementation of the NNLS deconvolution algorithm (see also: ).
+
+* Bisque : The `bisqueParam` class supports the `BisqueRNA::ReferenceBasedDecomposition` implementation of the Bisque deconvolution algorithm (see also: ).
+
