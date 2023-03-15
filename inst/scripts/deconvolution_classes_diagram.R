@@ -26,18 +26,18 @@ parent.class.colname <- "parent_classes"
 #-----------------
 add_method_edges <- function(filter.string, csv, input, output,
                              filter.type = "in", end.append.name = "Param",
-                             node.string = "referencebasedParam",
+                             input.node.string = "referencebasedParam",
                              filter.column = "parent_classes",
-                             method.column = "method_shortname"){
+                             method.column = "method_class"){
   # adds edges for methods, where originating node is called node.string
   method.vector <- csv[,method.column]
-  filter <- grepl(filter.string, method.vector)
-  if(!filter.type == "in"){
-    filter <- !grepl(filter.string, csv[,filter.column])}
+  filter <- grepl(filter.string, csv[,filter.column])
+  if(!filter.type == "in"){filter <- !filter}
+  new.edge.out <- unique(method.vector[filter])
   # get formatted end node names/edges
-  new.edge.out <- tolower(unique(method.vector[filter]))
-  new.edge.out <- paste0(new.edge.out, end.append.name) # append string
-  new.edge.in <- rep(node.string, length(new.edge.out))
+  # new.edge.out <- tolower(unique(method.vector[filter]))
+  # new.edge.out <- paste0(new.edge.out, end.append.name) # append string
+  new.edge.in <- rep(input.node.string, length(new.edge.out))
   return(list(input = c(input, new.edge.in), 
               output = c(output, new.edge.out)))
 }
@@ -55,12 +55,12 @@ output <- c("referencebasedParam", "referencefreeParam", "independentbulkParam")
 lchart <- add_method_edges(filter.string = "independentbulkParam",
                            filter.type = "in", csv = csv,
                            input = input, output = output, 
-                           node.string = "independentbulkParam")
+                           input.node.string = "independentbulkParam")
 # append remaining methods
 lchart <- add_method_edges(filter.string = "independentbulkParam", 
                            filter.type = "out", csv = csv,
                            lchart[["input"]], lchart[["output"]], 
-                           node.string = "referencebasedParam")
+                           input.node.string = "referencebasedParam")
 
 # get edge strings
 edge.string <- paste0(lchart[["input"]], "->", 
