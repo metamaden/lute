@@ -2,9 +2,25 @@
 
 [<img style="float: right;" src = "inst/png/lute_hexsticker_basic1.png" height="200"/>](https://github.com/metamaden/lute)
 
-R package for deconvolution simulation and optimization.
+The `lute` R package for deconvolution experiments.
 
 ## Installation
+
+### From GitHub
+
+Install `lute` from GitHub by running the following in an R session:
+
+```
+devtools::install("metamaden/lute")
+```
+
+### From Bioconductor (pending)
+
+Install `lute` from Bioconductor with the following:
+
+```
+BiocManager::install("lute")
+```
 
 ## Generics, methods, and classes for deconvolution
 
@@ -37,3 +53,15 @@ The following deconvolution algorithms are currently supported with novel method
 * Bisque : The `bisqueParam` class supports the `BisqueRNA::ReferenceBasedDecomposition` implementation of the Bisque deconvolution algorithm ([url](https://github.com/cozygene/bisque); [yml](https://github.com/metamaden/lute/blob/main/inst/yml/bisque.yml)).
 
 ## Conda environment support
+
+Set up a new conda environment for a deconvolution method by passing the following code your Terminal:
+
+```
+conda env create -f ./lute/inst/yml/music.yml
+```
+
+## Further reading
+
+Additional resources to learn more about deconvolution algorithms and their applications.
+
+* [`awesome-deconvolution`](https://github.com/metamaden/awesome-deconvolution) : List of deconvolution algorithms, frameworks, and resources across various disciplines.
