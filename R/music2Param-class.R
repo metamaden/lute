@@ -45,6 +45,10 @@ setClass("music2Param", contains="independentbulkParam", slots=c(
 #' @param method.type Name of method source library to call for music2_prop; either "MuSiC" or "MuSiC2".
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #'
+#' @seealso \linkS4class{musicParam}
+#'
+#' @returns Object of class \linkS4class{music2Param}.
+#' 
 #' @export
 music2Param <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc.eset = NULL, 
 	assay.name = "counts", batch.variable = "SubjectName", celltype.variable = "cellType", 
@@ -59,13 +63,32 @@ music2Param <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, 
 
 #' Deconvolution method for music2Param
 #'
-#' Main method to access the MuSiC2 deconvolution method from the main lute deconvolution genetic.
+#' Main method to access the MuSiC2 deconvolution method from the main lute 
+#' deconvolution genetic.
 #'
-#' @details Takes an object of class music2Param as input, returning a list or vector of predicted 
-#' cell type proportions.
+#' @details Takes an object of class music2Param as input, returning a list or 
+#' vector of predicted cell type proportions.
 #'
-#' @returns Either a vector of predicted proportions, or a list containing predictions, metadata, 
-#' and original outputs.
+#' @returns Either a vector of predicted proportions, or a list containing 
+#' predictions, metadata, and original outputs.
+#' 
+#' @references 
+#' 
+#' Fan, Jiaxin. MuSiC2: MuSiC2: cell type deconvolution for multi-condition bulk 
+#' RNA-seq data. (2023) GitHub, R package version 0.1.0. URL: 
+#' https://github.com/Jiaxin-Fan/MuSiC2
+#' 
+#' Wang, Xuran and Jiaxin Fan. MuSiC: Multi-subject single cell deconvolution. 
+#' (2022) GitHub, R package version 1.0.0. URL: https://github.com/xuranw/MuSiC.
+#' 
+#' Wang, X., Park, J., Susztak, K. et al. Bulk tissue cell type deconvolution 
+#' with multi-subject single-cell expression reference. Nat Commun 10, 380 
+#' (2019). https://doi.org/10.1038/s41467-018-08023-x
+#' 
+#' Jiaxin Fan, Yafei Lyu, Qihuang Zhang, Xuran Wang, Mingyao Li, Rui Xiao, 
+#' MuSiC2: cell-type deconvolution for multi-condition bulk RNA-seq data, 
+#' Briefings in Bioinformatics, Volume 23, Issue 6, November 2022, bbac430, 
+#' https://doi-org.proxy1.library.jhu.edu/10.1093/bib/bbac430
 #'
 #' @export
 setMethod("deconvolution", signature(object = "music2Param"), function(object){
