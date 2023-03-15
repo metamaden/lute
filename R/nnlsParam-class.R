@@ -58,7 +58,7 @@ nnlsParam <- function(y, z, s = NULL, return.info = FALSE) {
 #'
 #' Defines the deconvolution method for \linkS4class{nnlsParam}.
 #'
-#' @details Takes an object of class \lnkS4class{nnlsParam} as input, returning 
+#' @details Takes an object of class \linkS4class{nnlsParam} as input, returning 
 #' either a list containing proportions, return info, and metadata, or a vector 
 #' of predicted cell type proportions. 
 #' 
