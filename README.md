@@ -14,8 +14,7 @@ standard inputs to synonymous function-specific arguments. Since there are numer
 for understanding and comparing current methods, and can serve as a starting point for new experiments and
 new method development.
 
-The inheritance for the new class hierarchy for deconvolution methods in `lute` is shown in the following 
-flowchart:
+The inheritance hierarchy for the numerous novel classes in `lute` for various deconvolution algorithms is depicted in the following flowchart:
 
 [<img style="float: right;" src = "inst/png/deconvolution_classes_flowchart.jpeg" height="500"/>](https://github.com/metamaden/lute)
 
