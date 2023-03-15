@@ -2,10 +2,13 @@
 % Please edit documentation in R/referencebasedParam-class.R
 \name{referencebasedParam}
 \alias{referencebasedParam}
-\title{Function to get nnlsParam}
+\title{Make a new object of class \linkS4class{referencebasedClass}}
 \usage{
 referencebasedParam(y, z, s = NULL, return.info = FALSE)
 }
+\value{
+New object of class \linkS4class{referencebasedClass}
+}
 \description{
-Function to get nnlsParam
+Make a new object of class \linkS4class{referencebasedClass}
 }
