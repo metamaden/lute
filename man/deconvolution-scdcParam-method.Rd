@@ -7,8 +7,8 @@
 \S4method{deconvolution}{scdcParam}(object)
 }
 \value{
-Either a vector of predicted proportions, or a list containing predictions, metadata, 
-and original outputs.
+Either a vector of predicted proportions, or a list containing 
+the predictions, metadata, and original outputs.
 }
 \description{
 Main method to access the SCDC deconvolution method from the main lute deconvolution genetic.
@@ -16,4 +16,14 @@ Main method to access the SCDC deconvolution method from the main lute deconvolu
 \details{
 Takes an object of class scdcParam as input, returning a list or vector of predicted 
 cell type proportions.
+}
+\references{
+Meichen Dong. SCDC: Bulk RNA-seq deconvolution by scRNA-seq with multi-reference 
+datasets. (2023) GitHub, R package version 0.0.0.9000. URL: https://github.com/meichendong/SCDC
+
+Meichen Dong, Aatish Thennavan, Eugene Urrutia, Yun Li, Charles M Perou, Fei 
+Zou, Yuchao Jiang, SCDC: bulk gene expression deconvolution by multiple 
+single-cell RNA sequencing references, Briefings in Bioinformatics, Volume 
+22, Issue 1, January 2021, Pages 416–427, 
+https://doi-org.proxy1.library.jhu.edu/10.1093/bib/bbz166
 }

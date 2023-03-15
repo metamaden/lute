@@ -23,11 +23,25 @@
 #' names(deconvolution(param))
 #' # [1] "predictions" "result.info" "metadata"
 #' 
+#' @references 
+#' 
+#' Racle, J., Gfeller, D. (2020). EPIC: A Tool to Estimate the Proportions of 
+#' Different Cell Types from Bulk Gene Expression Data. In: Boegel, S. (eds) 
+#' Bioinformatics for Cancer Immunotherapy. Methods in Molecular Biology, vol 
+#' 2120. Humana, New York, NY. https://doi-org.proxy1.library.jhu.edu/10.1007/978-1-0716-0327-7_17
+#' 
+#' Julien Racle and David Gfeller. EPIC: Estimate the Proportion of Immune and 
+#' Cancer cells. (2022), GitHub, R package version 1.1.5. URL: https://github.com/GfellerLab/EPIC
+#' 
 #' @aliases 
 #' EPICParam-class
 #'
 setClass("epicParam", contains="referencebasedParam", slots=c(z.var = "matrix"))
 
+#' 
+#'
+#'
+#'
 #' @export
 epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {
   if(is(z.var, "NULL")){
@@ -37,6 +51,24 @@ epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {
   new("epicParam", y = y, z = z, s = s, z.var = z.var, return.info = return.info)
 }
 
+#' Deconvolution method for class \linkS4class{epicParam}
+#' 
+#' Main deconvolution method for the \linkS4class{epicParam} to run the 
+#' \code{EPIC::EPIC()} implementation of the EPIC algorithm.
+#' 
+#' @returns Either a vector of predicted proportions, or a list containing 
+#' predictions, metadata, and original outputs.
+#'
+#' @references 
+#' 
+#' Racle, J., Gfeller, D. (2020). EPIC: A Tool to Estimate the Proportions of 
+#' Different Cell Types from Bulk Gene Expression Data. In: Boegel, S. (eds) 
+#' Bioinformatics for Cancer Immunotherapy. Methods in Molecular Biology, vol 
+#' 2120. Humana, New York, NY. https://doi-org.proxy1.library.jhu.edu/10.1007/978-1-0716-0327-7_17
+#' 
+#' Julien Racle and David Gfeller. EPIC: Estimate the Proportion of Immune and 
+#' Cancer cells. (2022), GitHub, R package version 1.1.5. URL: https://github.com/GfellerLab/EPIC
+#'
 #' @export
 setMethod("deconvolution", signature(object = "epicParam"), function(object){
   require(EPIC)

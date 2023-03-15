@@ -7,12 +7,23 @@
 \S4method{deconvolution}{bisqueParam}(object)
 }
 \value{
-Either a vector of predicted proportions, or a list containing predictions, metadata, 
-and original outputs.
+Either a vector of predicted proportions, or a list containing 
+predictions, metadata, and original outputs.
 }
 \description{
-Main method to access the Bisque deconvolution method from the main lute deconvolution genetic.
+Main method to access the Bisque deconvolution method from the main lute 
+\link{\code{deconvolution}} generic.
 }
 \details{
-Takes an object of class bisqueParam as input, returning a list.
+Takes an object of class \linkS4class{bisqueParam} as input, 
+returning a list.
+}
+\references{
+Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
+Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.
+URL: https://CRAN.R-project.org/package=BisqueRNA
+
+Brandon Jew et al. Accurate estimation of cell composition in bulk 
+expression through robust integration of single-cell information. 
+Nat Commun 11, 1971 (2020). https://doi.org/10.1038/s41467-020-15816-6
 }

@@ -17,6 +17,16 @@ Main constructor for class \linkS4class{scdcParam}.
 lexample <- .get_decon_example_data()
 
 }
+\references{
+Meichen Dong. SCDC: Bulk RNA-seq deconvolution by scRNA-seq with multi-reference 
+datasets. (2023) GitHub, R package version 0.0.0.9000. URL: https://github.com/meichendong/SCDC
+
+Meichen Dong, Aatish Thennavan, Eugene Urrutia, Yun Li, Charles M Perou, Fei 
+Zou, Yuchao Jiang, SCDC: bulk gene expression deconvolution by multiple 
+single-cell RNA sequencing references, Briefings in Bioinformatics, Volume 
+22, Issue 1, January 2021, Pages 416–427, 
+https://doi-org.proxy1.library.jhu.edu/10.1093/bib/bbz166
+}
 \seealso{
 \linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
 }

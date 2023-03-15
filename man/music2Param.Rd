@@ -51,6 +51,13 @@ provided ExpressionSet containing single-cell data.}
 
 \item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
 }
+\value{
+Object of class \linkS4class{music2Param}.
+}
 \description{
-Main function to make a new music2Param-class object.
+Main function to make a new object of class \linkS4class{music2Param}, with
+defaults for required arguments.
+}
+\seealso{
+\linkS4class{musicParam}
 }

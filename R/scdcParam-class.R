@@ -12,6 +12,17 @@
 #' @examples 
 #' lexample <- .get_decon_example_data()
 #' 
+#' @references 
+#' 
+#' Meichen Dong. SCDC: Bulk RNA-seq deconvolution by scRNA-seq with multi-reference 
+#' datasets. (2023) GitHub, R package version 0.0.0.9000. URL: https://github.com/meichendong/SCDC
+#' 
+#' Meichen Dong, Aatish Thennavan, Eugene Urrutia, Yun Li, Charles M Perou, Fei 
+#' Zou, Yuchao Jiang, SCDC: bulk gene expression deconvolution by multiple 
+#' single-cell RNA sequencing references, Briefings in Bioinformatics, Volume 
+#' 22, Issue 1, January 2021, Pages 416–427, 
+#' https://doi-org.proxy1.library.jhu.edu/10.1093/bib/bbz166
+#' 
 #' @aliases 
 #' SCDCParam-class, ScdcParam-class, ScdcParam-class
 #'
@@ -182,6 +193,17 @@ scdc_basis_eset <- function(sc.eset, ct.sub, ct.varname, min.sum = 0){
 #'
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' the predictions, metadata, and original outputs.
+#' 
+#' @references 
+#' 
+#' Meichen Dong. SCDC: Bulk RNA-seq deconvolution by scRNA-seq with multi-reference 
+#' datasets. (2023) GitHub, R package version 0.0.0.9000. URL: https://github.com/meichendong/SCDC
+#' 
+#' Meichen Dong, Aatish Thennavan, Eugene Urrutia, Yun Li, Charles M Perou, Fei 
+#' Zou, Yuchao Jiang, SCDC: bulk gene expression deconvolution by multiple 
+#' single-cell RNA sequencing references, Briefings in Bioinformatics, Volume 
+#' 22, Issue 1, January 2021, Pages 416–427, 
+#' https://doi-org.proxy1.library.jhu.edu/10.1093/bib/bbz166
 #'
 #' @export
 setMethod("deconvolution", signature(object = "scdcParam"), function(object){

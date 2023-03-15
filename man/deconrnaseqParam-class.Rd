@@ -13,20 +13,12 @@ method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
 Main constructor for class \linkS4class{deconrnaseqParam}.
 }
 \examples{
-# example
-lexample <- .get_decon_example_data()
-param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], 
+lexample <- .get_decon_example_data() # get example data 
+param <- deconrnaseqParam(s = lexample[["s"]], y = lexample[["y"]], 
 z = lexample[["z"]])
 
 # return only predicted proportions
 deconvolution(param)
-# type1     type2 
-# 0.9819837 0.0180163
-
-# return full results
-param@return.info <- T
-names(deconvolution(param))
-# [1] "predictions" "result.info" "metadata"
 
 }
 \seealso{

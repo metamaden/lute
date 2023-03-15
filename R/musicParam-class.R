@@ -42,6 +42,9 @@ setClass("musicParam", contains="referencebasedParam",
          slots=c(sigma = "matrix", nu = "numeric", 
                  eps = "numeric", iter.max = "numeric"))
 
+#' 
+#'
+#'
 #' @export
 musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL, 
                        iter.max = NULL, eps = NULL, return.info = FALSE) {
@@ -54,6 +57,23 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
       iter.max = iter.max, eps = eps, return.info = return.info)
 }
 
+#' Deconvolution method for class \linkS4class{musicParam}
+#' 
+#' Main deconvolution method for the \linkS4class{musicParam} to run the 
+#' \code{music.basic()} implementation of the MuSiC algorithm.
+#' 
+#' @returns Either a vector of predicted proportions, or a list containing 
+#' predictions, metadata, and original outputs.
+#'
+#' @references 
+#' 
+#' Wang, Xuran and Jiaxin Fan. MuSiC: Multi-subject single cell deconvolution. 
+#' (2022) GitHub, R package version 1.0.0. URL: https://github.com/xuranw/MuSiC.
+#' 
+#' Wang, X., Park, J., Susztak, K. et al. Bulk tissue cell type deconvolution 
+#' with multi-subject single-cell expression reference. Nat Commun 10, 380 
+#' (2019). https://doi.org/10.1038/s41467-018-08023-x
+#'
 #' @export
 setMethod("deconvolution", signature(object = "musicParam"), function(object){
   require(MuSiC)

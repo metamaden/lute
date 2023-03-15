@@ -39,6 +39,9 @@ provided ExpressionSet containing single-cell data.}
 
 \item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
 }
+\value{
+New object of class \linkS4class{bisqueParam}.
+}
 \description{
 Main constructor for class \linkS4class{bisqueParam}.
 }

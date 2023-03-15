@@ -5,15 +5,18 @@
 \alias{independentbulkParam-class}
 \title{independentbulkParam-class}
 \arguments{
-\item{yi}{Mixed signals matrix from bulk samples, independent from primary mixed signals matrix y.}
+\item{yi}{Mixed signals matrix from bulk samples, independent from primary 
+mixed signals matrix y.}
 }
 \description{
 Class and methods for managing methods requiring independent bulk samples.
 }
 \details{
-The main purpose of this class is to compare bulk sample data between the passed objects y and yi.
-Since we assume yi contains the independent bulk samples, it should not have overlapping sample IDs (colnames),
-and it should have overlapping marker IDs (rownames) compared to the reference bulk samples y.
+The main purpose of this class is to compare bulk sample data 
+between the passed objects y and yi. Since we assume yi contains the 
+independent bulk samples, it should not have overlapping sample IDs 
+(colnames), and it should have overlapping marker IDs (rownames) compared to 
+the reference bulk samples y.
 }
 \examples{
 lexample <- .get_decon_example_data()

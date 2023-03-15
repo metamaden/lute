@@ -5,11 +5,14 @@
 #' @include lute_generics.R
 #' @include referencebasedParam-class.R
 #'
-#' @param yi Mixed signals matrix from bulk samples, independent from primary mixed signals matrix y.
+#' @param yi Mixed signals matrix from bulk samples, independent from primary 
+#' mixed signals matrix y.
 #'
-#' @details The main purpose of this class is to compare bulk sample data between the passed objects y and yi.
-#' Since we assume yi contains the independent bulk samples, it should not have overlapping sample IDs (colnames),
-#' and it should have overlapping marker IDs (rownames) compared to the reference bulk samples y.
+#' @details The main purpose of this class is to compare bulk sample data 
+#' between the passed objects y and yi. Since we assume yi contains the 
+#' independent bulk samples, it should not have overlapping sample IDs 
+#' (colnames), and it should have overlapping marker IDs (rownames) compared to 
+#' the reference bulk samples y.
 #'
 #' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}
 #' 
@@ -18,9 +21,9 @@
 #' 
 setClass("independentbulkParam", contains="referencebasedParam", slots = c(yi = "matrix"))
 
-#' Make a new independentbulkParam object
+#' Make a new \linkS4class{independentbulkParam} object
 #' 
-#' Function to make a new object of class independentbulkParam
+#' Function to make a new object of class \linkS4class{independentbulkParam}
 #'
 #' @export
 independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, return.info = FALSE) {
@@ -32,23 +35,20 @@ independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, return
     return(param)
 }
 
-#' deconvolution for independentbulkParam-class
+#' Deconvolution method for class \linkS4class{independentbulkParam}
 #'
-#' Function to perform standard operations prior to deconvolution (a.k.a. "deconvolution prep") for an
-#' object of class independentbulkParam.
+#' Function to perform standard operations prior to deconvolution (a.k.a. 
+#' "deconvolution prep") for an object of class 
+#' \linkS4class{independentbulkParam}.
 #'
-#' @details Takes an object of independentbulkParam class as input, and returns a list with the filtered/checked/parsed 
-#' experiment objects.
+#' @details Takes an object of \linkS4class{independentbulkParam} class as 
+#' input, and returns a list with the filtered/checked/parsed experiment objects.
 #'
 #' @export
 setMethod("deconvolution", "independentbulkParam", function(object) {
     lparam <- callNextMethod()
-    # get bulk data
-    y <- lparam[["y"]]; yi <- lparam[["yi"]]
-
-    # parse bulk marker IDs
-    markers.y <- rownames(y)
-    markers.yi <- rownames(yi)
+    y <- lparam[["y"]]; yi <- lparam[["yi"]] # get bulk data
+    markers.y <- rownames(y); markers.yi <- rownames(yi) # parse bulk marker IDs
     # compare markers
     if(is(markers.y, "NULL")){
         message("Warning, no marker labels found in y.")
@@ -65,9 +65,7 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         }
     }
 
-    # parse bulk sample IDs
-    samples.y <- colnames(y)
-    samples.yi <- colnames(yi)
+    samples.y <- colnames(y); samples.yi <- colnames(yi) # parse bulk sample IDs
     # compare sample IDs
     if(is(samples.y, "NULL")){
         message("Warning, no sample labels found in y.")
@@ -84,34 +82,37 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
             yi <- yi[, filter, drop=F]
         }
     }
-
-    # get return data
+  
+    # parse return list
+    # get metadata to return
     lmd <- list(unique.markers = unique.markers,
                 unique.samples = unique.samples,
                 overlapping.markers = overlapping.markers,
                 overlapping.samples = overlapping.samples)
-
-    # parse return list
     lr <- list(y = y, yi = yi, object = object, metadata = lmd)
     if("y.eset" %in% names(object)){
-        message("Parsing y.eset..."); y.eset <- object[["y.eset"]]; lr[["y.eset"]] <- y[,colnames(y)]
+        message("Parsing y.eset..."); y.eset <- object[["y.eset"]]; 
+        lr[["y.eset"]] <- y[,colnames(y)]
     }
     return(lr)
 })
 
+#' Method for \linkS4class{independentbulkParam}
+#'
+#' Display data summaries for an object of class 
+#' \linkS4class{independentbulkParam}.
+#'
 #' @export
 setMethod("show", "independentbulkParam", function(object) {
-  # get bulk data
-  y <- object[["y"]]; yi <- object[["yi"]]
-  # get samples
-  samples.y <- colnames(y)
-  samples.yi <- colnames(yi)
-  # get markers
-  markers.y <- rownames(y)
-  markers.yi <- rownames(yi)
+  y <- object[["y"]]; yi <- object[["yi"]] # get bulk data
+  samples.y <- colnames(y); samples.yi <- colnames(yi) # get samples
+  markers.y <- rownames(y); markers.yi <- rownames(yi) # get markers
   # print info summaries
   message("Summary of independentbulkParam data:")
-  message("\tNumber of unique sample IDs : ", length(unique(markers.y, markers.yi)), "\n")
-  message("\tNumber of unique marker IDs : ", length(unqiue(samples.y, samples.yi)), "\n")
-  message("\tNumber of independent samples : ", length(samples.yi[!samples.yi %in% samples.y]), "\n")
+  message("\tNumber of unique sample IDs : ", 
+          length(unique(markers.y, markers.yi)), "\n")
+  message("\tNumber of unique marker IDs : ", 
+          length(unqiue(samples.y, samples.yi)), "\n")
+  message("\tNumber of independent samples : ", 
+          length(samples.yi[!samples.yi %in% samples.y]), "\n")
 })

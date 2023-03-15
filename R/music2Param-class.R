@@ -19,6 +19,24 @@
 #' 
 #' @aliases 
 #' music2Param-class, MuSiC2Param-class, Music2Param-class
+#' 
+#' @references 
+#' 
+#' Fan, Jiaxin. MuSiC2: MuSiC2: cell type deconvolution for multi-condition bulk 
+#' RNA-seq data. (2023) GitHub, R package version 0.1.0. URL: 
+#' https://github.com/Jiaxin-Fan/MuSiC2
+#' 
+#' Wang, Xuran and Jiaxin Fan. MuSiC: Multi-subject single cell deconvolution. 
+#' (2022) GitHub, R package version 1.0.0. URL: https://github.com/xuranw/MuSiC.
+#' 
+#' Wang, X., Park, J., Susztak, K. et al. Bulk tissue cell type deconvolution 
+#' with multi-subject single-cell expression reference. Nat Commun 10, 380 
+#' (2019). https://doi.org/10.1038/s41467-018-08023-x
+#' 
+#' Jiaxin Fan, Yafei Lyu, Qihuang Zhang, Xuran Wang, Mingyao Li, Rui Xiao, 
+#' MuSiC2: cell-type deconvolution for multi-condition bulk RNA-seq data, 
+#' Briefings in Bioinformatics, Volume 23, Issue 6, November 2022, bbac430, 
+#' https://doi-org.proxy1.library.jhu.edu/10.1093/bib/bbac430
 #'
 setClass("music2Param", contains="independentbulkParam", slots=c(
 	sc.eset = "ExpressionSet", assay.name = "character", batch.variable = "character", 
@@ -27,7 +45,8 @@ setClass("music2Param", contains="independentbulkParam", slots=c(
 
 #' Make an object of class music2Param
 #'
-#' Main function to make a new music2Param-class object.
+#' Main function to make a new object of class \linkS4class{music2Param}, with
+#' defaults for required arguments.
 #'
 #' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
 #' @param yi Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
@@ -61,13 +80,13 @@ music2Param <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, 
 	method.type = method.type, return.info = return.info)
 }
 
-#' Deconvolution method for music2Param
+#' Deconvolution method for \linkS4class{music2Param}
 #'
 #' Main method to access the MuSiC2 deconvolution method from the main lute 
 #' deconvolution genetic.
 #'
-#' @details Takes an object of class music2Param as input, returning a list or 
-#' vector of predicted cell type proportions.
+#' @details Takes an object of class \linkS4class{music2Param} as input, 
+#' returning a list or vector of predicted cell type proportions.
 #'
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.

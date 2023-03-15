@@ -15,24 +15,26 @@ Main constructor for class \linkS4class{bisqueParam}.
 \examples{
 # get data
 lexample <- lute:::.get_decon_example_data_bisque()
-sc.eset <- lexample[["sc.eset"]]
-y.eset <- lexample[["y.eset"]]
-# example params
-batch.variable <- "SubjectName"
-celltype.variable <- "cellType"
 
 # get param object
-param <- bisqueParam(y.eset = y.eset, sc.eset = sc.eset,
-                     batch.variable = "SubjectName",
-                     celltype.variable = "cellType")
+param <- bisqueParam(y.eset = lexample[["y.eset"]], 
+sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName",
+celltype.variable = "cellType")
 
-# get just predictions
+# get predicted proportions
 res <- deconvolution(param)
 
-# get full results
-param@return.info <- TRUE
-res <- deconvolution(param)
+}
+\references{
+Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
+Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.
+URL: https://CRAN.R-project.org/package=BisqueRNA
+
+Brandon Jew et al. Accurate estimation of cell composition in bulk 
+expression through robust integration of single-cell information. 
+Nat Commun 11, 1971 (2020). https://doi.org/10.1038/s41467-020-15816-6
 }
 \seealso{
-\linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
+\linkS4class{deconvolutionParam}, \linkS4class{referencebasedParam}, 
+\linkS4class{independentbulkParam}
 }

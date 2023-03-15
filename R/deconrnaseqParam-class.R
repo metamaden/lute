@@ -11,20 +11,12 @@
 #' @seealso \linkS4class{deconParam}
 #' 
 #' @examples
-#' # example
-#' lexample <- .get_decon_example_data()
-#' param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], 
+#' lexample <- .get_decon_example_data() # get example data 
+#' param <- deconrnaseqParam(s = lexample[["s"]], y = lexample[["y"]], 
 #' z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
-#' # type1     type2 
-#' # 0.9819837 0.0180163
-#' 
-#' # return full results
-#' param@return.info <- T
-#' names(deconvolution(param))
-#' # [1] "predictions" "result.info" "metadata"
 #' 
 #' @aliases 
 #' DeconRNASeqParam-class
@@ -39,6 +31,20 @@ deconrnaseqParam <- function(y, z, s = NULL, use.scale = FALSE, return.info = FA
       use.scale = use.scale, return.info = return.info)
 }
 
+#' Deconvolution method for class \linkS4class{deconrnaseqParam}
+#' 
+#' Main deconvolution method for the \linkS4class{deconrnaseqParam} to run the 
+#' \code{DeconRNASeq::DeconRNASeq()} implementation of the DeconRNASeq algorithm.
+#' 
+#' @returns Either a vector of predicted proportions, or a list containing 
+#' predictions, metadata, and original outputs.
+#'
+#' @references 
+#' 
+#' Ting Gong and Joseph D. Szustakowski. DeconRNASeq: Deconvolution of 
+#' Heterogeneous Tissue Samples for mRNA-Seq data. (2022), Bioconductor, 
+#' R package version 1.38.0. DOI: 10.18129/B9.bioc.DeconRNASeq  
+#' 
 #' @export
 setMethod("deconvolution", signature(object = "deconrnaseqParam"), function(object){
   require(DeconRNASeq)
@@ -51,15 +57,16 @@ setMethod("deconvolution", signature(object = "deconrnaseqParam"), function(obje
   z = as.data.frame(z)
   y = as.data.frame(cbind(y,y))
   use.scale = object[["use.scale"]]
-  result <- DeconRNASeq::DeconRNASeq(datasets = y,
-                                     signatures = z,
-                                     use.scale = use.scale,
-                                     proportions = NULL)
+  
+  # get predictions and results info
+  result <- DeconRNASeq::DeconRNASeq(datasets = y, signatures = z,
+                                     use.scale = use.scale, proportions = NULL)
   predictions <- result$out.all[1,]; names(predictions) <- colnames(z)
+  
+  # parse return options
   lr <- predictions
   if(object[["return.info"]]){
-    lr <- list(predictions = predictions, 
-               result.info = result, 
+    lr <- list(predictions = predictions, result.info = result, 
                metadata = lparam[["metadata"]])}
   return(lr)
 })
