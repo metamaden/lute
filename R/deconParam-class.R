@@ -1,4 +1,4 @@
-#' deconParam-class
+#' deconvolutionParam-class
 #' 
 #' Defines the parent class for deconvolution method parameters.
 #' 
@@ -15,20 +15,31 @@
 #' \link{\code{deconvolution}}
 #'
 #' @examples 
-#' deconparam <- new("deconParam")
-#' deconvolution(deconparam)
+#' param <- new("deconvolutionParam")
+#' deconvolution(param)
 #'
 #' @aliases 
-#' DeconParam-class
+#' DeconvolutionParam-class, DeconParam-class, deconParam-class
 
 #' @export
-setClass("deconParam",  slots=c(y="matrix", return.info = "logical"))
+setClass("deconvolutionParam",  slots=c(y="matrix", return.info = "logical"))
 
 #' @export
-setMethod("[[", "deconParam", function(x, i) {slot(x, i)})
+setMethod("[[", "deconvolutionParam", function(x, i) {slot(x, i)})
 
 #' @export
-setMethod("deconvolution", "deconParam", function(object) {})
+setMethod("deconvolution", "deconvolutionParam", function(object) {})
 
 #' @export
-setMethod("show", "deconParam", function(object) {})
+setMethod("show", "deconvolutionParam", function(object) {
+  message("Object of class deconvolutionParam")
+  message("\nData summaries:")
+  message("\tNumber of bulk markers: ", nrow(y))
+  message("\tNumber of bulk samples: ", ncol(y))
+  markers <- rownames(y)
+  if(length(markers) > 10){markers <- markers[1:10]; markers[11] <- "..."}
+  message("\tFirst bulk marker labels:\n", paste0(rownames(y)), collapse = "; "))
+  samples <- colnames(y)
+  if(length(samples) > 10){samples <- samples[1:10]; markers[11] <- "..."}
+  message("\tFirst sample labels:\n", paste0(samples, collapse = "; "), "\n\n")
+})
