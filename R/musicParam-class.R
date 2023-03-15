@@ -8,7 +8,8 @@
 #' 
 #' @details Main constructor for class \linkS4class{musicParam}.
 #' @rdname musicParam-class
-#' @seealso \linkS4class{deconParam}
+#' @seealso 
+#' \linkS4class{deconParam}
 #' 
 #' @examples
 #' # example

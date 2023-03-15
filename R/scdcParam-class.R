@@ -3,8 +3,6 @@
 #' Main constructor for class to manage mappings to the deconvolution method function \code{SCDC::SCDC_prop()}.
 #' 
 #' @include lute_generics.R
-#' @include deconParam-class.R
-#' @include referencebasedParam-class.R
 #' @include independentbulkParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{scdcParam}.

@@ -7,7 +7,12 @@
 \description{
 Class and methods for managing reference-free deconvolution methods.
 }
+\details{
+Reference-free deconvolution methods requently lack a signature 
+matrix or use alternative means of prediction such as machine learning 
+models. This parent class is meant to manage methods of this type.
+}
 \examples{
-lexample <- .get_decon_example_data()
+param <- new("referencefreeParam")
 
 }

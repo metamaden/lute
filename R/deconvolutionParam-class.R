@@ -6,11 +6,11 @@
 #' 
 #' @details
 #' Defines the parent class for deconvolution method parameters. For this class,
-#' the \link{deconvolution} generic performs several useful housekeeping
+#' the \link{\code{deconvolution()}} generic performs several useful housekeeping
 #' operations for a standard deconvolution run, including inspecting and 
 #' summarizing properties of the objects z, y, and s.
 #'
-#' @rdname deconParam-class
+#' @rdname deconvolutionParam-class
 #' @seealso 
 #' \link{\code{deconvolution}}
 #'
@@ -38,8 +38,8 @@ setMethod("show", "deconvolutionParam", function(object) {
   message("\tNumber of bulk samples: ", ncol(y))
   markers <- rownames(y)
   if(length(markers) > 10){markers <- markers[1:10]; markers[11] <- "..."}
-  message("\tFirst bulk marker labels:\n", paste0(rownames(y)), collapse = "; "))
+  message("\tFirst bulk marker labels:\n", paste0(rownames(y), collapse = "; "))
   samples <- colnames(y)
-  if(length(samples) > 10){samples <- samples[1:10]; markers[11] <- "..."}
+  if(length(samples) > 10){samples <- samples[1:10]; samples[11] <- "..."}
   message("\tFirst sample labels:\n", paste0(samples, collapse = "; "), "\n\n")
 })

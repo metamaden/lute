@@ -1,15 +1,18 @@
 #' music2Param-class
 #' 
-#' Main constructor for class to manage mappings to the deconvolution method function \code{MuSiC::music2_prop()}.
+#' Main constructor for class to manage mappings to the deconvolution method 
+#' function \code{MuSiC::music2_prop()}.
 #' 
 #' @include lute_generics.R
-#' @include deconParam-class.R
-#' @include referencebasedParam-class.R
 #' @include independentbulkParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{music2Param}.
+#' 
 #' @rdname music2Param-class
-#' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
+#' 
+#' @seealso 
+#' \linkS4class{deconParam}, \linkS4class{referencebasedParam}, 
+#' \linkS4class{independentbulkParam}
 #'
 #' @examples 
 #' lexample <- .get_decon_example_data()

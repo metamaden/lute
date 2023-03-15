@@ -4,8 +4,6 @@
 #' Bisque deconvolution algorithm.
 #' 
 #' @include lute_generics.R
-#' @include deconParam-class.R
-#' @include referencebasedParam-class.R
 #' @include independentbulkParam-class.R
 #' 
 #' @details Main constructor for class \linkS4class{bisqueParam}.
