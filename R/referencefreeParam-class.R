@@ -2,9 +2,15 @@
 #'
 #' Class and methods for managing reference-free deconvolution methods.
 #' 
-#' @include deconParam-class.R
+#' @details Reference-free deconvolution methods requently lack a signature 
+#' matrix or use alternative means of prediction such as machine learning 
+#' models. This parent class is meant to manage methods of this type.
+#' 
+#' @include deconvolutionParam-class.R
 #' 
 #' @examples 
-#' lexample <- .get_decon_example_data()
+#' param <- new("referencefreeParam)
+#' deconvolution(param)
 #' 
-setClass("referencefreeParam", contains="deconParam", slots = c(model.metadata = "list"))
+setClass("referencefreeParam", contains="deconvolutionParam", 
+         slots = c(model.metadata = "list"))

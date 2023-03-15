@@ -2,12 +2,13 @@
 #'
 #' Class and methods for managing reference-based deconvolution methods.
 #' 
-#' @include deconParam-class.R
+#' @include deconvolutionParam-class.R
 #' 
 #' @examples 
 #' lexample <- .get_decon_example_data()
 #' 
-setClass("referencebasedParam", contains="deconParam", slots=c(z = "matrix", s = "numeric"))
+setClass("referencebasedParam", contains="deconvolutionParam", 
+         slots=c(z = "matrix", s = "numeric"))
 
 #' Function to get nnlsParam
 #' @export
