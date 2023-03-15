@@ -1,14 +1,16 @@
 #' deconvolutionParam-class
 #' 
-#' Defines the parent class for deconvolution method parameters.
+#' Defines the principal parent class for all deconvolution method parameters.
 #' 
 #' @include lute_generics.R
 #' 
 #' @details
-#' Defines the parent class for deconvolution method parameters. For this class,
-#' the \link{\code{deconvolution()}} generic performs several useful housekeeping
-#' operations for a standard deconvolution run, including inspecting and 
-#' summarizing properties of the objects z, y, and s.
+#' Defines the parent class for deconvolution method parameters. Since all
+#' deconvolution runs require a \code{y}  signals matrix, whether from 
+#' experiment data or simulations such as pseudobulking, this parent class 
+#' manages the bulk signals matrix. For this class, the 
+#' \link{\code{deconvolution()}} generic performs basic summaries of the bulk 
+#' signals matrix.
 #'
 #' @rdname deconvolutionParam-class
 #' @seealso 

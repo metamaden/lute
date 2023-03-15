@@ -4,13 +4,25 @@
 #' 
 #' @include deconvolutionParam-class.R
 #' 
+#' @details This is a parent class to manage reference-based deconvolution 
+#' algorithms. Child/sub-classes of this are distinguished by their use of
+#' either an explicit or implied \code{z} signature matrix (i.e. Z[G,K] of
+#' dimensions G markers by K cell types). These also have an implied cell size
+#' transformation term, which is used for biases arising from systematic 
+#' cell size differences. If no cell size transformation is intended, this is
+#' the equivalent of passing equal size scales, (e.g. a K-length vector of equal 
+#' values).
+#' 
 #' @examples 
 #' lexample <- .get_decon_example_data()
 #' 
 setClass("referencebasedParam", contains="deconvolutionParam", 
          slots=c(z = "matrix", s = "numeric"))
 
-#' Function to get nnlsParam
+#' Make a new object of class \linkS4class{referencebasedClass}
+#' 
+#' @returns New object of class \linkS4class{referencebasedClass}
+#' 
 #' @export
 referencebasedParam <- function(y, z, s = NULL, return.info = FALSE) {
   new("referencebasedParam", y = y, z = z, s = s, return.info = return.info)
