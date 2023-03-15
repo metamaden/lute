@@ -29,12 +29,52 @@
 #' 
 setClass("nnlsParam", contains="referencebasedParam")
 
+#' Make new object of class nnlsParam
+#'
+#' Main constructor for class \linkS4class{nnlsParam}.
+#'
+#' @param y Bulk mixed signals matrix of samples, which can be matched to 
+#' single-cell samples.
+#' @param z Signature matrix of cell type-specific signals. If not provided, 
+#' can be computed from a provided \linkS4class{ExpressionSet} containing 
+#' single-cell data.
+#' @param return.info Whether to return metadata and original method outputs 
+#' with predicted proportions.
+#' 
+#' @returns Object of class \linkS4class{nnlsParam}
+#' 
+#' @seealso \linkS4class{referencebasedParam}, \linkS4class{deconvolutionParam}
+#'
+#' @details Main parameter class for mapping inputs to the non-negative least 
+#' squares (NNLS) deconvolution algorithm, implemented as \code{nnls::nnls()}.
+#' 
 #' @export
 nnlsParam <- function(y, z, s = NULL, return.info = FALSE) {
   if(is(s, "NULL")){s <- matrix(rep(1, ncol(z)), nrow = 1)}
   new("nnlsParam", s = s, y = y, z = z, return.info = return.info)
 }
 
+#' Deconvolution method for nnlsParam
+#'
+#' Defines the deconvolution method for \linkS4class{nnlsParam}.
+#'
+#' @details Takes an object of class \lnkS4class{nnlsParam} as input, returning 
+#' either a list containing proportions, return info, and metadata, or a vector 
+#' of predicted cell type proportions. 
+#' 
+#' The key term mappings for this method include:
+#' * \code{A} : \code{y}, bulk signals matrix.
+#' * \code{b} : \code{z}, signature matrix.
+#'
+#' @returns Either a vector of predicted proportions, or a list containing 
+#' predictions, metadata, and original outputs.
+#' 
+#' @references 
+#' 
+#' Katharine M. Mullen and Ivo H. M. van Stokkum (2012). "nnls: The Lawson-Hanson 
+#' algorithm for non-negative least squares (NNLS)." CRAN, R package version 1.4. 
+#' URL: https://cran.r-project.org/web/packages/nnls/index.html
+#'
 #' @export
 setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
   require(nnls)
