@@ -8,28 +8,21 @@
 #' 
 #' @details Main constructor for class \linkS4class{bisqueParam}.
 #' @rdname bisqueParam-class
-#' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}, \linkS4class{independentbulkParam}
+#' @seealso \linkS4class{deconvolutionParam}, \linkS4class{referencebasedParam}, 
+#' \linkS4class{independentbulkParam}
 #' 
 #' @examples
 #' # get data
 #' lexample <- lute:::.get_decon_example_data_bisque()
-#' sc.eset <- lexample[["sc.eset"]]
-#' y.eset <- lexample[["y.eset"]]
-#' # example params
-#' batch.variable <- "SubjectName"
-#' celltype.variable <- "cellType"
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = y.eset, sc.eset = sc.eset,
-#'                      batch.variable = "SubjectName",
-#'                      celltype.variable = "cellType")
+#' param <- bisqueParam(y.eset = lexample[["y.eset"]], 
+#' sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName",
+#' celltype.variable = "cellType")
 #' 
-#' # get just predictions
+#' # get predicted proportions
 #' res <- deconvolution(param)
 #' 
-#' # get full results
-#' param@return.info <- TRUE
-#' res <- deconvolution(param)
 #' @aliases 
 #' BisqueParam-class
 #'
@@ -52,6 +45,8 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @param batch.variable Name of variable identifying the batches in sc.eset pData/coldata.
 #' @param celltype.variable Name of cell type labels variable in sc.eset pData/coldata.
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#'
+#' @returns New object of class \linkS4class{bisqueParam}.
 #'
 #' @details Takes standard inputs for the Bisque method. If user provides matrices, will convert these
 #' into ExpressionSet objects compatible with the main bisque method.
@@ -155,11 +150,24 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 
 #' Deconvolution method for bisqueParam
 #'
-#' Main method to access the Bisque deconvolution method from the main lute deconvolution genetic.
+#' Main method to access the Bisque deconvolution method from the main lute 
+#' \link{\code{deconvolution}} generic.
 #'
-#' @details Takes an object of class bisqueParam as input, returning a list.
-#' @returns Either a vector of predicted proportions, or a list containing predictions, metadata, 
-#' and original outputs.
+#' @details Takes an object of class \linkS4class{bisqueParam} as input, 
+#' returning a list.
+#'
+#' @returns Either a vector of predicted proportions, or a list containing 
+#' predictions, metadata, and original outputs.
+#' 
+#' @references 
+#' 
+#' Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
+#' Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.
+#' URL: https://CRAN.R-project.org/package=BisqueRNA
+#' 
+#' Brandon Jew et al. Accurate estimation of cell composition in bulk 
+#' expression through robust integration of single-cell information. 
+#' Nat Commun 11, 1971 (2020). https://doi.org/10.1038/s41467-020-15816-6
 #'
 #' @export
 setMethod("deconvolution", signature(object = "bisqueParam"), function(object){

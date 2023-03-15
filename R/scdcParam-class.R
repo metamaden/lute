@@ -45,6 +45,8 @@ setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "Express
 #' @details Takes standard inputs for the Bisque method. If user provides matrices, will convert these
 #' into ExpressionSet objects compatible with the main bisque method.
 #' 
+#' @returns Object of class \linkS4class{scdcParam}.
+#' 
 #' @export
 scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc.eset = NULL,
 					  celltype.subset = NULL, assay.name = "counts", batch.variable = "batch.id", 
@@ -178,8 +180,8 @@ scdc_basis_eset <- function(sc.eset, ct.sub, ct.varname, min.sum = 0){
 #' @details Takes an object of class scdcParam as input, returning a list or vector of predicted 
 #' cell type proportions.
 #'
-#' @returns Either a vector of predicted proportions, or a list containing predictions, metadata, 
-#' and original outputs.
+#' @returns Either a vector of predicted proportions, or a list containing 
+#' the predictions, metadata, and original outputs.
 #'
 #' @export
 setMethod("deconvolution", signature(object = "scdcParam"), function(object){
