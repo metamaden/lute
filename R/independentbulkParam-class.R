@@ -19,19 +19,22 @@
 #' @examples 
 #' lexample <- .get_decon_example_data()
 #' 
-setClass("independentbulkParam", contains="referencebasedParam", slots = c(yi = "matrix"))
+setClass("independentbulkParam", contains="referencebasedParam", 
+         slots = c(yi = "matrix"))
 
 #' Make a new \linkS4class{independentbulkParam} object
 #' 
 #' Function to make a new object of class \linkS4class{independentbulkParam}
 #'
 #' @export
-independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, return.info = FALSE) {
+independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
+                                 return.info = FALSE) {
     if(is(y, "NULL")){y <- matrix(0)}
     if(is(z, "NULL")){z <- matrix(0)}
     if(is(yi, "NULL")){yi <- matrix(0)}
     if(is(s, "NULL")){s <- rep(1, ncol(z))}
-    param <- new("independentbulkParam", y = y, yi = yi, z = z, s = s, return.info = return.info)
+    param <- new("independentbulkParam", y = y, yi = yi, z = z, s = s, 
+                 return.info = return.info)
     return(param)
 }
 
@@ -47,6 +50,7 @@ independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, return
 #' @export
 setMethod("deconvolution", "independentbulkParam", function(object) {
     lparam <- callNextMethod()
+    unique.marker.labels <- unique.sample.labels <- NULL
     y <- lparam[["y"]]; yi <- lparam[["yi"]] # get bulk data
     markers.y <- rownames(y); markers.yi <- rownames(yi) # parse bulk marker IDs
     # compare markers
@@ -56,7 +60,7 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         message("Warning, no marker labels found in yi.")
     } else{
         message("Found marker labels in y, yi. Comparing...")
-        unique.markers <- unique(markers.y, markers.yi)
+        unique.marker.labels <- unique(markers.y, markers.yi)
         overlapping.markers <- intersect(markers.y, markers.yi)
         message("Found ", length(overlapping.markers), " overlapping markers.")
         if(length(overlapping.markers) > 0){
@@ -73,7 +77,7 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         message("Warning, no sample labels found in yi.")
     } else{
         message("Found sample labels in y, yi. Comparing...")
-        unique.samples <- unique(samples.y, samples.yi)
+        unique.sample.labels <- unique(samples.y, samples.yi)
         overlapping.samples <- intersect(samples.y, samples.yi)
         message("Found ", length(overlapping.markers), " overlapping samples.")
         if(length(overlapping.samples) > 0){
@@ -85,8 +89,8 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
   
     # parse return list
     # get metadata to return
-    lmd <- list(unique.markers = unique.markers,
-                unique.samples = unique.samples,
+    lmd <- list(unique.marker.labels = unique.marker.labels,
+                unique.sample.labels = unique.sample.labels,
                 overlapping.markers = overlapping.markers,
                 overlapping.samples = overlapping.samples)
     lr <- list(y = y, yi = yi, object = object, metadata = lmd)

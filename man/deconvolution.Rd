@@ -2,13 +2,15 @@
 % Please edit documentation in R/lute_generics.R
 \name{deconvolution}
 \alias{deconvolution}
-\alias{deconvolute}
+\alias{deconvolute,}
+\alias{Deconvolution,}
+\alias{Deconvolute}
 \title{deconvolution}
 \usage{
 deconvolution(object)
 }
 \arguments{
-\item{object}{A \linkS4class{deconParam}-type object.}
+\item{object}{A \linkS4class{deconvolutionParam}-type object.}
 }
 \value{
 By default, return named numeric vector of predicted proportions for each
@@ -23,11 +25,19 @@ Get predicted cell type proportions using a deconvolution method.
 \details{
 This generic maps standard deconvolution inputs to the parameters of the
 specified deconvolution method for which a subclass of type 
-\code{\link{deconParam}} exists.
+\code{\link{deconParam}} exists. This generic uses a similar approach to
+the \code{bluster} R/Bioconductor package.
+}
+\references{
+Aaron Lun. bluster: Clustering Algorithms for Bioconductor. (2022) 
+Bioconductor, R package version 1.6.0.
 }
 \seealso{
-\linkS4class{deconParam}, \linkS4class{nnlsParam}, \linkS4class{musicParam}, 
-\linkS4class{epicParam}
+\linkS4class{deconvolutionParam}, \linkS4class{referencebasedParam}, 
+\linkS4class{independentbulkParam}, \linkS4class{nnlsParam}, 
+\linkS4class{musicParam}, \linkS4class{epicParam}, 
+\linkS4class{deconrnaseqParam}, \linkS4class{scdcParam},
+\linkS4class{bisqueParam}, \linkS4class{music2Param}
 }
 \author{
 Sean Maden
