@@ -29,7 +29,8 @@
 setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "ExpressionSet", 
 	sc.eset = "ExpressionSet", assay.name = "character", batch.variable = "character", 
 	celltype.variable = "character", iter.max = "numeric", nu = "numeric", epsilon = "numeric", 
-	truep = "numeric", ct.cell.size = "numeric", celltype.subset = "character"))
+	truep = "numeric", ct.cell.size = "numeric", celltype.subset = "character",
+	weight.basis = "logical", transform.bisque = "logical"))
 
 #' Make new object of class scdcParam
 #'
