@@ -4,7 +4,7 @@ lexample <- lute:::.get_decon_example_data_scdc()
 sc.eset <- lexample[["sc.eset"]]
 y.eset <- lexample[["y.eset"]]
 # get yi
-id.sc <- unique(sc.eset[[batch.variable]])
+id.sc <- unique(sc.eset[["SubjectName"]])
 id.bulk <- colnames(y.eset)
 filter <- id.bulk[!id.bulk %in% id.sc]
 yi <- exprs(y.eset)[,filter]
