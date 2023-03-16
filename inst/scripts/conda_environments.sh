@@ -41,13 +41,14 @@ devtools::install_github("xuranw/MuSiC")
 
 conda env export > music.yml
 
-#--------------------
+#---------------------
 # Get MuSiC2 conda env
-#--------------------
+#---------------------
 conda create --name music2 --clone music
 conda activate music
 conda install -c bioconda xbioc
 R
+devtools::install_github("renozao/xbioc")
 devtools::install_github("Jiaxin-Fan/MuSiC2")
 
 conda env export > music2.yml
