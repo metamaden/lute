@@ -167,6 +167,9 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
   	stop("Error, need at least 2 cell types for predictions")}
   if(length(intersect(unique.types, celltype.subset)) < 4){
   	stop("Error, need at least 2 cell types in celltype.subset, for basis matrix")}
+  
+  # parse truep
+  if(is(truep, "NULL")){truep <- as.numeric(NA)}
   	
   new("scdcParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset, 
   	  celltype.subset = celltype.subset, assay.name = assay.name, batch.variable = batch.variable, 
@@ -221,7 +224,7 @@ setMethod("deconvolution", signature(object = "scdcParam"), function(object){
   iter.max <- object@iter.max
   nu <- object@nu
   epsilon <- object@epsilon
-  truep <- object@truep
+  truep <- object@truep; if(is.na(truep)){truep <- NULL}
   s <- object@s
   weight.basis <- object@weight.basis
   transform.bisque <- object@transform.bisque
