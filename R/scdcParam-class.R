@@ -156,7 +156,7 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
   }
 
   # check rowSums for basis matrix
-  eset.basis <- scdc_basis_eset(sc.eset = sc.eset, ct.sub = ct.sub, 
+  eset.basis <- scdc_basis_eset(sc.eset = sc.eset, ct.sub = celltype.subset, 
   	ct.varname = ct.varname, min.sum = 0)
   if(nrow(eset.basis)==0){
   	stop("Error, no genes pass a minimum sum expression of 0 for the basis cell types")}
