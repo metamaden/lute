@@ -1,11 +1,7 @@
-source("./R/lute_generics.R")
-source("./R/lute_utilities.R")
-source("./R/referencebasedParam-class.R")
-source("./R/deconParam-class.R")
-source("./R/nnlsParam-class.R")
+require(lute)
 
 # example
-lexample <- .get_decon_example_data()
+lexample <- lute:::.get_decon_example_data()
 param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 
 # return only predicted proportions
