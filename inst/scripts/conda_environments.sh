@@ -13,6 +13,16 @@ activate r_4
 conda install -c conda-forge r-devtools
 
 #-------------------
+# Get NNLS conda env
+#-------------------
+conda create --name nnls --clone r_422
+conda activate nnls
+R
+install.packages("nnls", repos = "https://cloud.r-project.org")
+
+conda env export > nnls.yml
+
+#-------------------
 # Get SCDC conda env
 #-------------------
 conda create --name scdc --clone r_411
@@ -45,15 +55,23 @@ conda env export > music.yml
 # Get MuSiC2 conda env
 #---------------------
 conda create --name music2 --clone music
-conda activate music
-conda install -c bioconda xbioc
+conda activate music2
 R
 devtools::install_github("renozao/xbioc")
 devtools::install_github("Jiaxin-Fan/MuSiC2")
 
 conda env export > music2.yml
 
+#-------------------
+# Get SCDC conda env
+#-------------------
+conda create --name scdc --clone r_411
+conda activate scdc
+R
+remotes::install_github("renozao/xbioc")
+devtools::install_github("meichendong/SCDC")
 
+conda env export > scdc.yml
 
 #--------------------
 # Get EPIC conda env
