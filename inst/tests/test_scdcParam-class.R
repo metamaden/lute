@@ -11,9 +11,11 @@ yi <- exprs(y.eset)[,filter]
 # get param object
 param <- scdcParam(yi = yi, y.eset = y.eset, sc.eset = sc.eset,
                    batch.variable = "SubjectName", 
-                   celltype.variable = "cellType")
+                   celltype.variable = "cellType",
+                   celltype.subset = c("type1", "type2"))
 # get just predictions
 result <- deconvolution(param)
+
 # get full results
 param@return.info <- TRUE
 result <- deconvolution(param)

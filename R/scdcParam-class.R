@@ -107,19 +107,26 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
       z <- .get_z_from_sce(sce = sce, celltype.variable = celltype.variable)
     }
   }
-
-  # parse s
+  
+  # manage cell type-level data inputs
   unique.types <- colnames(z)
   unique.types <- unique.types[order(unique.types)]
-  if(is(s, "NULL")){
-  	message("Setting equal cell size factors...")
-  	s <- rep(1, ncol(z))
-  	names(s) <- unique.types
- }
-  # parse ct.sub
+  # parse celltype.subset
   if(is(celltype.subset, "NULL")){
   	message("Using cell type labels for basis matrix.")
   	celltype.subset <- unique.types
+  } else{
+    celltype.subset <- celltype.subset[celltype.subset %in% unique.types]
+  }
+  # check number of cell types
+  if(length(unique.types) < 4){
+    stop("Error, need at least 4 cell types for this method.")}
+  if(length(celltype.subset) < 2){
+    stop("Error, need at least 2 cell types in celltype.subset for basis matrix.")}
+  # parse s
+  if(is(s, "NULL")){
+    message("Setting equal cell size factors...")
+    s <- rep(1, ncol(z)); names(s) <- unique.types
   }
   
   # parse batch ids in bulk and sc
@@ -161,12 +168,6 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
   	ct.varname = celltype.variable, min.sum = 0)
   if(nrow(eset.basis)==0){
   	stop("Error, no genes pass a minimum sum expression of 0 for the basis cell types")}
-
-  # check number of cell types
-  if(length(unique.types) < 4){
-  	stop("Error, need at least 2 cell types for predictions")}
-  if(length(intersect(unique.types, celltype.subset)) < 4){
-  	stop("Error, need at least 2 cell types in celltype.subset, for basis matrix")}
   
   # parse truep
   if(is(truep, "NULL")){truep <- as.numeric(NA)}
@@ -217,24 +218,25 @@ setMethod("deconvolution", signature(object = "scdcParam"), function(object){
   object <- lparam[["object"]]
 
   # instantiate function objects
-  y.eset <- lparam[["y.eset"]]
-  sc.eset <- object@sc.eset
-  celltype.subset <- object@celltype.subset
-  batch.variable <- object@batch.variable
-  iter.max <- object@iter.max
-  nu <- object@nu
-  epsilon <- object@epsilon
-  truep <- object@truep; if(is.na(truep)){truep <- NULL}
-  s <- object@s
-  weight.basis <- object@weight.basis
-  transform.bisque <- object@transform.bisque
+  y.eset <- object[["y.eset"]]
+  sc.eset <- object[["sc.eset"]]
+  celltype.subset <- object[["celltype.subset"]]
+  batch.variable <- object[["batch.variable"]]
+  iter.max <- object[["iter.max"]]
+  nu <- object[["nu"]]
+  epsilon <- object[["epsilon"]]
+  truep <- object[["truep"]]; if(is.na(truep)){truep <- NULL}
+  s <- object[["s"]]
+  weight.basis <- object[["weight.basis"]]
+  transform.bisque <- object[["transform.bisque"]]
+  celltype.variable <- object[["celltype.variable"]]
 
   # get predictions
   result <- SCDC::SCDC_prop(bulk.eset = y.eset, sc.eset = sc.eset,
   	ct.varname = celltype.variable, sample = batch.variable,
   	iter.max = iter.max, nu = nu, epsilon = epsilon, truep = truep,
   	ct.cell.size = s, ct.sub = celltype.subset, weight.basis = weight.basis,
-  	Transform_bisque = transform_bisque)
+  	Transform_bisque = transform.bisque)
 
   # return results
   lr <- predictions <- result$bulk.props

@@ -99,10 +99,6 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
                 overlapping.marker.labels = overlapping.marker.labels,
                 overlapping.sample.labels = overlapping.sample.labels)
     lr <- list(y = y, yi = yi, object = object, metadata = lmd)
-    if("y.eset" %in% names(object)){
-        message("Parsing y.eset..."); y.eset <- object[["y.eset"]]; 
-        lr[["y.eset"]] <- y[,colnames(y)]
-    }
     return(lr)
 })
 
