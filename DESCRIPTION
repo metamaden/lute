@@ -14,7 +14,6 @@ LazyData: FALSE
 Depends:
     R (>= 3.5.0),
     SummarizedExperiment,
-    SingleCellExperiment,
     S4Vectors,
 Imports:
     utils,
@@ -22,9 +21,12 @@ Imports:
     RCurl,
     R.utils,
     BiocFileCache,
-    ggplot2
-Suggests:
+    ggplot2,
     nnls,
+    stats,
+    Biobase,
+    SingleCellExperiment
+Suggests:
     glmnet,
     knitr,
     testthat,
@@ -43,37 +45,16 @@ VignetteBuilder:
 biocViews: Deconvolution, Transcriptomics, RNAseq, Simulation, Biostatistics
 RoxygenNote: 7.2.0
 Collate: 
-    'SingleCellExperiment-methods.R'
-    'SingleCellExperiment_simulation-utilities.R'
-    'SingleCellExperiment_utilities.R'
-    'SummarizedExperimentType-methods.R'
-    'SummarizedExperimentTypes-class.R'
-    'batcheffects_simulation-utilities.R'
     'lute_generics.R'
     'deconvolutionParam-class.R'
     'referencebasedParam-class.R'
     'independentbulkParam-class.R'
     'bisqueParam-class.R'
-    'celltype_simulation-utilities.R'
     'deconrnaseqParam-class.R'
-    'deconvolutionResults-class.R'
-    'deconvolution_mappings.R'
-    'deconvolution_workflow.R'
-    'donor-data-frame-class.R'
-    'donor-data-frame-methods.R'
-    'download-and-prepare_experiments.R'
     'epicParam-class.R'
-    'expression-matrix-methods.R'
     'lute_utilities.R'
-    'marker-table_class.R'
-    'marker-table_utilities.R'
-    'matchedbulkParam-class.R'
     'music2Param-class.R'
     'musicParam-class.R'
     'nnlsParam-class.R'
-    'random-data_simulation-utilities.R'
     'referencefreeParam-class.R'
     'scdcParam-class.R'
-    'signature-matrix_utilities.R'
-    'subsample_simulation-utilities.R'
-    'supported_methods.R'

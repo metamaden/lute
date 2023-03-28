@@ -1,3 +1,0 @@
-﻿sce_filepath,bulk_filepath,li_filepath,iterations_index,num_cells,num_genes,deconvolution_method,method_arguments,assay_name,type_labels,celltype_variable,prop.pred.type1,prop.pred.type2,time.run.sec,timestamp,prop.true.type1,prop.true.type2,rmse.types,bias.type1,bias.type2,rmse.type1,rmse.type2,rmse.nnls
-sce.rda,ypb.rda,lindex.rda,1,291,40,nnls,NA,counts,type1;type2,celltype,0.117251917,0.882748083,0.111960173,1677170919,0.351892749,0.648107251,0,0.234640832,-0.234640832,0.234640832,0.234640832,0.182472266
-sce.rda,ypb.rda,lindex.rda,2,291,40,nnls,NA,counts,type1;type2,celltype,0.385608421,0.614391579,0.142237425,1677170920,0.351892749,0.648107251,2.78E-17,-0.033715673,0.033715673,0.234640832,0.234640832,0.182472266

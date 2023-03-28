@@ -179,6 +179,14 @@ scdcParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc
       weight.basis = weight.basis, transform.bisque = transform.bisque)
 }
 
+#' Make SCDC basis matrix as an ExpressionSet object
+#'
+#' @param sc.eset ExpressionSet of single cell data.
+#' @param ct.sub Cell types vector.
+#' @param ct.varname Variable name for cell type labels in sc.eset.
+#' @param min.sum Minimum total/sums expression threshold for marker inclusion.
+#' @returns ExperimentSet containing SCDC basis matrix.
+#' @details This is an intermediate data object used by the SCDC algorithm.
 #' @export
 scdc_basis_eset <- function(sc.eset, ct.sub, ct.varname, min.sum = 0){
 	ct.sub <- ct.sub[!is.na(ct.sub)] # filter missing/NA types

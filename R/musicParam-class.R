@@ -42,9 +42,21 @@ setClass("musicParam", contains="referencebasedParam",
          slots=c(sigma = "matrix", nu = "numeric", 
                  eps = "numeric", iter.max = "numeric"))
 
+#' Make new object of class musicParam
+#'
+#' Main constructor for class \linkS4class{musicParam}.
+#'
+#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
+#' provided ExpressionSet containing single-cell data.
+#' @param z.var Signature variances matrix of same dimensions as z.
+#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#'
+#' @returns New object of class \linkS4class{musicParam}.
+#'
+#' @details Takes standard inputs for the MuSiC algorithm
 #' 
-#'
-#'
 #' @export
 musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL, 
                        iter.max = NULL, eps = NULL, return.info = FALSE) {

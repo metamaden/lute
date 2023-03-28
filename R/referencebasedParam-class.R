@@ -19,15 +19,30 @@
 setClass("referencebasedParam", contains="deconvolutionParam", 
          slots=c(z = "matrix", s = "numeric"))
 
-#' Make a new object of class \linkS4class{referencebasedClass}
-#' 
-#' @returns New object of class \linkS4class{referencebasedClass}
+#' Make new object of class referencebasedParam
+#'
+#' Main constructor for class \linkS4class{referencebasedParam}.
+#'
+#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
+#' provided ExpressionSet containing single-cell data.
+#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#'
+#' @returns New object of class \linkS4class{referencebasedParam}.
+#'
+#' @details Takes standard inputs for reference-based deconvolution algorithms.
 #' 
 #' @export
 referencebasedParam <- function(y, z, s = NULL, return.info = FALSE) {
   new("referencebasedParam", y = y, z = z, s = s, return.info = return.info)
 }
 
+#' Deconvolution generic behavior for object of class \linkS4class{referencebasedParam]}
+#' @param object An object of class \linkS4class{referencebasedParam]}.
+#' @details Method for behavior of deconvolution generic when called for object of class 
+#' \linkS4class{referencebasedParam}
+#' @export
 #' @export
 setMethod("deconvolution", "referencebasedParam", function(object) {
   # get metadata

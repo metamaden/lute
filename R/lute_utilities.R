@@ -7,7 +7,7 @@
 
 .get_celltypes_from_sce <- function(sce, celltype.variable = "celltype"){
   require(SingleCellExperiment); require(SummarizedExperiment)
-  celltype.vector <- as.data.frame(colData(sce))[,celltype.variable]
+  celltype.vector <- as.data.frame(SummarizedExperiment::colData(sce))[,celltype.variable]
   celltype.char <- as.character(celltype.vector)
   unique.types <- unique(celltype.char)
   unique.types <- unique.types[order(unique.types)]
@@ -31,8 +31,8 @@
 
 .get_sce_from_eset <- function(eset){
   require(SingleCellExperiment); require(SummarizedExperiment); require(Biobase)
-  sce <- SingleCellExperiment(assays = list(counts = exprs(eset)))
-  colData(sce) <- DataFrame(pData(eset))
+  sce <- SingleCellExperiment::SingleCellExperiment(assays = list(counts = exprs(eset)))
+  SummarizedExperiment::colData(sce) <- DataFrame(SummarizedExperiment::pData(eset))
   return(sce)
 }
 
@@ -41,7 +41,7 @@
   pdata <- data.frame(new.variable = colnames(mat))
   colnames(pdata) <- batch.variable
   rownames(pdata) <- colnames(y)
-  eset <- ExpressionSet(assayData = mat, phenoData = AnnotatedDataFrame(pdata))
+  eset <- Biobase::ExpressionSet(assayData = mat, phenoData = Biobase::AnnotatedDataFrame(pdata))
   return(est)
 }
 

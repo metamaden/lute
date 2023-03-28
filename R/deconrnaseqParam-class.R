@@ -24,6 +24,21 @@
 setClass("deconrnaseqParam", contains="referencebasedParam", 
          slots=c(use.scale = "logical"))
 
+#' Make new object of class deconrnaseqParam
+#'
+#' Main constructor for class \linkS4class{deconrnaseqParam}.
+#'
+#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
+#' provided ExpressionSet containing single-cell data.
+#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param use.scale Whether to rescale signature matrix data (loigical).
+#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#'
+#' @returns New object of class \linkS4class{deconrnaseqParam}.
+#'
+#' @details Takes standard inputs for the DeconRNASeq algorithm
+#' 
 #' @export
 deconrnaseqParam <- function(y, z, s = NULL, use.scale = FALSE, return.info = FALSE) {
   if(is(use.scale, "NULL")){use.scale <- FALSE}

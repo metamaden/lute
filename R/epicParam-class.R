@@ -38,10 +38,21 @@
 #'
 setClass("epicParam", contains="referencebasedParam", slots=c(z.var = "matrix"))
 
+#' Make new object of class epicParam
+#'
+#' Main constructor for class \linkS4class{epicParam}.
+#'
+#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
+#' provided ExpressionSet containing single-cell data.
+#' @param z.var Signature variances matrix of same dimensions as z.
+#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#'
+#' @returns New object of class \linkS4class{epicParam}.
+#'
+#' @details Takes standard inputs for the EPIC algorithm
 #' 
-#'
-#'
-#'
 #' @export
 epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {
   if(is(z.var, "NULL")){

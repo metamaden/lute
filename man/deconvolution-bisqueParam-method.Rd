@@ -6,6 +6,9 @@
 \usage{
 \S4method{deconvolution}{bisqueParam}(object)
 }
+\arguments{
+\item{object}{Object of type \linkS4class{bisqueParam}.}
+}
 \value{
 Either a vector of predicted proportions, or a list containing 
 predictions, metadata, and original outputs.
