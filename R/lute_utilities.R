@@ -5,8 +5,11 @@
 # Utilities and miscellaneous functions supporting the lute package for deconvolution experiments.
 #
 
+#' @importFrom Biobase ExpressionSet AnnotatedDataFrame SummarizedExperiment pData exprs
+#' @importFrom SingleCellExperiment counts SingleCellExperiment
+#' @importFrom S4Vectors DataFrame
+#'
 .get_celltypes_from_sce <- function(sce, celltype.variable = "celltype"){
-  require(SingleCellExperiment); require(SummarizedExperiment)
   celltype.vector <- as.data.frame(SummarizedExperiment::colData(sce))[,celltype.variable]
   celltype.char <- as.character(celltype.vector)
   unique.types <- unique(celltype.char)
@@ -18,7 +21,6 @@
 
 .get_z_from_sce <- function(sce, assay.name = "counts", 
                             celltype.variable = "celltype"){
-  require(SingleCellExperiment); require(SummarizedExperiment)
   ltype <- .get_celltypes_from_sce(sce = sce, celltype.variable = celltype.variable)
   mexpr <- as.matrix(assays(sce)[[assay.name]])
   Znew <- do.call(cbind, lapply(ltype[["unique.types"]], function(typei){
@@ -30,14 +32,12 @@
 }
 
 .get_sce_from_eset <- function(eset){
-  require(SingleCellExperiment); require(SummarizedExperiment); require(Biobase)
   sce <- SingleCellExperiment::SingleCellExperiment(assays = list(counts = exprs(eset)))
   SummarizedExperiment::colData(sce) <- DataFrame(Biobase::pData(eset))
   return(sce)
 }
 
 .get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
-  require(Biobase)
   pdata <- data.frame(new.variable = colnames(mat))
   colnames(pdata) <- batch.variable
   rownames(pdata) <- colnames(y)
@@ -87,9 +87,7 @@
 }
 
 .get_decon_example_data_bisque <- function(seed.num = 0){
-  require(Biobase); require(lute)
   set.seed(seed.num)
-  
   # get y.eset
   y <- lute:::.get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
@@ -111,9 +109,7 @@
 }
 
 .get_decon_example_data_scdc <- function(seed.num = 0){
-  require(Biobase); require(lute)
   set.seed(seed.num)
-  
   # get y.eset
   y <- lute:::.get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
@@ -135,9 +131,7 @@
 }
 
 .get_decon_example_data_music2 <- function(seed.num = 0){
-  require(Biobase); require(lute)
   set.seed(seed.num)
-  
   # get y.eset
   y <- lute:::.get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)

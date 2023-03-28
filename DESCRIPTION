@@ -14,7 +14,9 @@ LazyData: FALSE
 Depends:
     R (>= 3.5.0),
     SummarizedExperiment,
-    S4Vectors,
+    SingleCellExperiment,
+    Biobase,
+    S4Vectors
 Imports:
     utils,
     methods,
@@ -23,9 +25,7 @@ Imports:
     BiocFileCache,
     ggplot2,
     nnls,
-    stats,
-    Biobase,
-    SingleCellExperiment
+    stats
 Suggests:
     glmnet,
     knitr,

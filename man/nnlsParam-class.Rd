@@ -22,7 +22,7 @@ deconvolution(param)
 # 0.48908543 0.05896868
 
 # return full results
-param@return.info <- T
+param@return.info <- TRUE
 names(deconvolution(param))
 # [1] "predictions" "result.info" "metadata"
 
