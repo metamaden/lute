@@ -18,6 +18,6 @@ the equivalent of passing equal size scales, (e.g. a K-length vector of equal
 values).
 }
 \examples{
-lexample <- .get_decon_example_data()
+lexample <- lute:::.get_decon_example_data()
 
 }

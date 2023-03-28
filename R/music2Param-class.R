@@ -15,7 +15,7 @@
 #' \linkS4class{independentbulkParam}
 #'
 #' @examples 
-#' lexample <- .get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' 
 #' @aliases 
 #' music2Param-class, MuSiC2Param-class, Music2Param-class

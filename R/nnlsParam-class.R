@@ -10,7 +10,7 @@
 #' @seealso \linkS4class{deconParam}
 #' 
 #' @examples 
-#' lexample <- .get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
 #' z = lexample[["z"]])
 #' 

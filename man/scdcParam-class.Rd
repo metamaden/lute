@@ -14,7 +14,7 @@ Main constructor for class to manage mappings to the deconvolution method functi
 Main constructor for class \linkS4class{scdcParam}.
 }
 \examples{
-lexample <- .get_decon_example_data()
+lexample <- lute:::.get_decon_example_data()
 
 }
 \references{

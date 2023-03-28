@@ -6,14 +6,14 @@
 \alias{EPICParam-class}
 \title{epicParam-class}
 \description{
-Runs the EPIC::EPIC() deconvolution algorithm.
+Runs the EPIC deconvolution algorithm.
 }
 \details{
 Main constructor for class \linkS4class{epicParam}.
 }
 \examples{
 # example
-lexample <- .get_decon_example_data()
+lexample <- lute:::.get_decon_example_data()
 param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], 
 z = lexample[["z"]])
 
@@ -21,7 +21,7 @@ z = lexample[["z"]])
 deconvolution(param)
 
 # return full results
-param@return.info <- T
+param@return.info <- TRUE
 names(deconvolution(param))
 # [1] "predictions" "result.info" "metadata"
 

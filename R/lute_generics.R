@@ -33,6 +33,9 @@
 #' @aliases 
 #' deconvolute, Deconvolution, Deconvolute
 #'
+#' @importFrom methods callNextMethod is new slot
+#' @importFrom stats rnbinom rpois
+#'
 #' @export
 setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))
 

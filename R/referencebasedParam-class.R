@@ -14,7 +14,7 @@
 #' values).
 #' 
 #' @examples 
-#' lexample <- .get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' 
 setClass("referencebasedParam", contains="deconvolutionParam", 
          slots=c(z = "matrix", s = "numeric"))

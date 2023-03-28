@@ -17,7 +17,7 @@
 #' @seealso \linkS4class{deconParam}, \linkS4class{referencebasedParam}
 #' 
 #' @examples 
-#' lexample <- .get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' 
 setClass("independentbulkParam", contains="referencebasedParam", 
          slots = c(yi = "matrix"))

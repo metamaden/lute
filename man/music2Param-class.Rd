@@ -15,7 +15,7 @@ function \code{MuSiC::music2_prop()}.
 Main constructor for class \linkS4class{music2Param}.
 }
 \examples{
-lexample <- .get_decon_example_data()
+lexample <- lute:::.get_decon_example_data()
 
 }
 \references{

@@ -13,7 +13,7 @@
 #' 
 #' @examples
 #' # example
-#' lexample <- .get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
@@ -22,7 +22,7 @@
 #' # 0.6770833 0.3229167
 #' 
 #' # return full results
-#' param@return.info <- T
+#' param@return.info <- TRUE
 #' names(deconvolution(param))
 #' # [1] "predictions" "result.info" "metadata"
 #' 
