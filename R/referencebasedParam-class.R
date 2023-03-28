@@ -38,8 +38,8 @@ referencebasedParam <- function(y, z, s = NULL, return.info = FALSE) {
   new("referencebasedParam", y = y, z = z, s = s, return.info = return.info)
 }
 
-#' Deconvolution generic behavior for object of class \linkS4class{referencebasedParam]}
-#' @param object An object of class \linkS4class{referencebasedParam]}.
+#' Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}
+#' @param object An object of class \linkS4class{referencebasedParam}.
 #' @details Method for behavior of deconvolution generic when called for object of class 
 #' \linkS4class{referencebasedParam}
 #' @export
@@ -83,6 +83,9 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
   return(list(y = y, z = z, s = s, metadata = lmd))
 })
 
+#' Show generic behavior for object of class referencebasedParam
+#' @param object Object of class \linkS4class{referencebasedParam}.
+#' @returns Prints data summary messages to console.
 #' @export
 setMethod("show", "referencebasedParam", function(object) {
   # get metadata

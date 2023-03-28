@@ -6,7 +6,12 @@
 \usage{
 \S4method{show}{independentbulkParam}(object)
 }
+\arguments{
+\item{object}{An object of class \linkS4class{independentbulkParam}.}
+}
 \description{
-Display data summaries for an object of class 
-\linkS4class{independentbulkParam}.
+Method for \linkS4class{independentbulkParam}
+}
+\details{
+Display data summaries for an object of class \linkS4class{independentbulkParam}.
 }

@@ -67,6 +67,8 @@ epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {
 #' Main deconvolution method for the \linkS4class{epicParam} to run the 
 #' \code{EPIC::EPIC()} implementation of the EPIC algorithm.
 #' 
+#' @param object An object of class \linkS4class{epicParam}.
+#'
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.
 #'

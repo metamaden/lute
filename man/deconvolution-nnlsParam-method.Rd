@@ -6,6 +6,9 @@
 \usage{
 \S4method{deconvolution}{nnlsParam}(object)
 }
+\arguments{
+\item{object}{An object of class \linkS4class{nnlsParam}.}
+}
 \value{
 Either a vector of predicted proportions, or a list containing 
 predictions, metadata, and original outputs.

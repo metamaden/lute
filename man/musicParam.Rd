@@ -23,9 +23,15 @@ provided ExpressionSet containing single-cell data.}
 
 \item{s}{Cell size factor transformations of length equal to the K cell types to deconvolve.}
 
-\item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
+\item{sigma}{Additional argument for algorithm.}
 
-\item{z.var}{Signature variances matrix of same dimensions as z.}
+\item{nu}{Additional argument for algorithm.}
+
+\item{iter.max}{Additional argument for algorithm.}
+
+\item{eps}{Additional argument for algorithm.}
+
+\item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
 }
 \value{
 New object of class \linkS4class{musicParam}.

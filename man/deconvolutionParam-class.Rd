@@ -15,7 +15,7 @@ Defines the parent class for deconvolution method parameters. Since all
 deconvolution runs require a \code{y}  signals matrix, whether from 
 experiment data or simulations such as pseudobulking, this parent class 
 manages the bulk signals matrix. For this class, the 
-\link{\code{deconvolution()}} generic performs basic summaries of the bulk 
+\code{deconvolution} generic performs basic summaries of the bulk 
 signals matrix.
 }
 \examples{
@@ -24,5 +24,5 @@ deconvolution(param)
 
 }
 \seealso{
-\link{\code{deconvolution}}
+\code{deconvolution}
 }

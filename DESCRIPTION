@@ -56,5 +56,6 @@ Collate:
     'music2Param-class.R'
     'musicParam-class.R'
     'nnlsParam-class.R'
+    'random-data_simulation-utilities.R'
     'referencefreeParam-class.R'
     'scdcParam-class.R'

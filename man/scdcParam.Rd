@@ -54,6 +54,8 @@ provided ExpressionSet containing single-cell data.}
 
 \item{weight.basis}{Argument weight.basis for SCDC_prop().}
 
+\item{transform.bisque}{Whether to perform transformation from the Bisque algorithm.}
+
 \item{truep}{Argument truep for SCDC_prop().}
 
 \item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}

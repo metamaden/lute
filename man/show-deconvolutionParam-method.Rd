@@ -2,15 +2,15 @@
 % Please edit documentation in R/deconvolutionParam-class.R
 \name{show,deconvolutionParam-method}
 \alias{show,deconvolutionParam-method}
-\title{Show generic behavior for object of class \linkS4class{deconvolutionParam]}}
+\title{Show generic behavior for object of class \linkS4class{deconvolutionParam}}
 \usage{
 \S4method{show}{deconvolutionParam}(object)
 }
 \arguments{
-\item{object}{An object of class \linkS4class{deconvolutionParam]}.}
+\item{object}{An object of class \linkS4class{deconvolutionParam}.}
 }
 \description{
-Show generic behavior for object of class \linkS4class{deconvolutionParam]}
+Show generic behavior for object of class \linkS4class{deconvolutionParam}
 }
 \details{
 Method for behavior of show generic when called for object of class 

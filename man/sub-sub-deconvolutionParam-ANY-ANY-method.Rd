@@ -6,6 +6,11 @@
 \usage{
 \S4method{[[}{deconvolutionParam,ANY,ANY}(x, i)
 }
+\arguments{
+\item{x}{Object to access.}
+
+\item{i}{Slot to access.}
+}
 \value{
 Contents of specified slot.
 }

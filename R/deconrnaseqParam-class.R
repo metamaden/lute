@@ -1,7 +1,7 @@
 #' deconrnaseqParam-class
 #'
 #' Main constructor for class to manage mappings to the deconvolution
-#' method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
+#' method function \code{DeconRNASeq::DeconRNASeq()}.
 #' 
 #' @include lute_generics.R
 #' @include referencebasedParam-class.R
@@ -50,6 +50,8 @@ deconrnaseqParam <- function(y, z, s = NULL, use.scale = FALSE, return.info = FA
 #' 
 #' Main deconvolution method for the \linkS4class{deconrnaseqParam} to run the 
 #' \code{DeconRNASeq::DeconRNASeq()} implementation of the DeconRNASeq algorithm.
+#' 
+#' @param object An object of class \linkS4class{deconrnaseqParam}.
 #' 
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.

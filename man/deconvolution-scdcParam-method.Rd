@@ -6,6 +6,9 @@
 \usage{
 \S4method{deconvolution}{scdcParam}(object)
 }
+\arguments{
+\item{object}{An object of class \linkS4class{scdcParam}.}
+}
 \value{
 Either a vector of predicted proportions, or a list containing 
 the predictions, metadata, and original outputs.

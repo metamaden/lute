@@ -7,7 +7,7 @@
 \title{deconrnaseqParam-class}
 \description{
 Main constructor for class to manage mappings to the deconvolution
-method function \code{\link{DeconRNASeq::DeconRNASeq()}}.
+method function \code{DeconRNASeq::DeconRNASeq()}.
 }
 \details{
 Main constructor for class \linkS4class{deconrnaseqParam}.

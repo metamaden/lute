@@ -14,6 +14,8 @@ single-cell samples.}
 can be computed from a provided \linkS4class{ExpressionSet} containing 
 single-cell data.}
 
+\item{s}{Cell size factor transformations of length equal to the K cell types to deconvolve.}
+
 \item{return.info}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 }

@@ -13,7 +13,7 @@
 #' @details 
 #' This generic maps standard deconvolution inputs to the parameters of the
 #' specified deconvolution method for which a subclass of type 
-#' \code{\link{deconParam}} exists. This generic uses a similar approach to
+#' \linkS4class{deconvolutionParam} exists. This generic uses a similar approach to
 #' the \code{bluster} R/Bioconductor package.
 #' 
 #' @seealso

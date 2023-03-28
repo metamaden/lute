@@ -52,6 +52,7 @@ setClass("scdcParam", contains="independentbulkParam", slots=c(y.eset = "Express
 #' @param epsilon Argument epsilon for SCDC_prop().
 #' @param nu Argument nu for SCDC_prop().
 #' @param truep Argument truep for SCDC_prop().
+#' @param transform.bisque Whether to perform transformation from the Bisque algorithm.
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #'
 #' @details Takes standard inputs for the Bisque method. If user provides matrices, will convert these
@@ -200,6 +201,8 @@ scdc_basis_eset <- function(sc.eset, ct.sub, ct.varname, min.sum = 0){
 #' Deconvolution method for scdcParam
 #'
 #' Main method to access the SCDC deconvolution method from the main lute deconvolution genetic.
+#'
+#' @param object An object of class \linkS4class{scdcParam}.
 #'
 #' @details Takes an object of class scdcParam as input, returning a list or vector of predicted 
 #' cell type proportions.

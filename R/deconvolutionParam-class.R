@@ -9,12 +9,12 @@
 #' deconvolution runs require a \code{y}  signals matrix, whether from 
 #' experiment data or simulations such as pseudobulking, this parent class 
 #' manages the bulk signals matrix. For this class, the 
-#' \link{\code{deconvolution()}} generic performs basic summaries of the bulk 
+#' \code{deconvolution} generic performs basic summaries of the bulk 
 #' signals matrix.
 #'
 #' @rdname deconvolutionParam-class
 #' @seealso 
-#' \link{\code{deconvolution}}
+#' \code{deconvolution}
 #'
 #' @examples 
 #' param <- new("deconvolutionParam")
@@ -27,20 +27,22 @@
 setClass("deconvolutionParam",  slots=c(y="matrix", return.info = "logical"))
 
 #' Inspect slot in \linkS4class{deconvolutionParam} object
+#' @param x Object to access.
+#' @param i Slot to access.
 #' @returns Contents of specified slot.
 #' @details Inspect slot in \linkS4class{deconvolutionParam} object
 #' @export
 setMethod("[[", "deconvolutionParam", function(x, i) {slot(x, i)})
 
-#' Deconvolution generic behavior for object of class \linkS4class{deconvolutionParam]}
-#' @param object An object of class \linkS4class{deconvolutionParam]}.
+#' Deconvolution generic behavior for object of class \linkS4class{deconvolutionParam}
+#' @param object An object of class \linkS4class{deconvolutionParam}.
 #' @details Method for behavior of deconvolution generic when called for object of class 
 #' \linkS4class{deconvolutionParam}
 #' @export
 setMethod("deconvolution", "deconvolutionParam", function(object) {})
 
-#' Show generic behavior for object of class \linkS4class{deconvolutionParam]}
-#' @param object An object of class \linkS4class{deconvolutionParam]}.
+#' Show generic behavior for object of class \linkS4class{deconvolutionParam}
+#' @param object An object of class \linkS4class{deconvolutionParam}.
 #' @details Method for behavior of show generic when called for object of class 
 #' \linkS4class{deconvolutionParam}
 #' @export

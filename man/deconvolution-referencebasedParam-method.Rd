@@ -2,15 +2,15 @@
 % Please edit documentation in R/referencebasedParam-class.R
 \name{deconvolution,referencebasedParam-method}
 \alias{deconvolution,referencebasedParam-method}
-\title{Deconvolution generic behavior for object of class \linkS4class{referencebasedParam]}}
+\title{Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}}
 \usage{
 \S4method{deconvolution}{referencebasedParam}(object)
 }
 \arguments{
-\item{object}{An object of class \linkS4class{referencebasedParam]}.}
+\item{object}{An object of class \linkS4class{referencebasedParam}.}
 }
 \description{
-Deconvolution generic behavior for object of class \linkS4class{referencebasedParam]}
+Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}
 }
 \details{
 Method for behavior of deconvolution generic when called for object of class 

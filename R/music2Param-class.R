@@ -85,6 +85,8 @@ music2Param <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, 
 #' Main method to access the MuSiC2 deconvolution method from the main lute 
 #' deconvolution genetic.
 #'
+#' @param object An object of class \linkS4class{music2Param}.
+#'
 #' @details Takes an object of class \linkS4class{music2Param} as input, 
 #' returning a list or vector of predicted cell type proportions.
 #'

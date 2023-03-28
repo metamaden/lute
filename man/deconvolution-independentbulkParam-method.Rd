@@ -6,6 +6,9 @@
 \usage{
 \S4method{deconvolution}{independentbulkParam}(object)
 }
+\arguments{
+\item{object}{An object of class \linkS4class{independentbulkParam}.}
+}
 \description{
 Function to perform standard operations prior to deconvolution (a.k.a. 
 "deconvolution prep") for an object of class 

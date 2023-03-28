@@ -49,8 +49,11 @@ setClass("musicParam", contains="referencebasedParam",
 #' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
 #' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
 #' provided ExpressionSet containing single-cell data.
-#' @param z.var Signature variances matrix of same dimensions as z.
 #' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param sigma Additional argument for algorithm.
+#' @param nu Additional argument for algorithm.
+#' @param iter.max Additional argument for algorithm.
+#' @param eps Additional argument for algorithm.
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #'
 #' @returns New object of class \linkS4class{musicParam}.
@@ -73,6 +76,8 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
 #' 
 #' Main deconvolution method for the \linkS4class{musicParam} to run the 
 #' \code{music.basic()} implementation of the MuSiC algorithm.
+#' 
+#' @param object An object of class \linkS4class{music2Param}.
 #' 
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.
