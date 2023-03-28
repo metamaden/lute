@@ -5,8 +5,9 @@
 # Utilities and miscellaneous functions supporting the lute package for deconvolution experiments.
 #
 
-#' @importFrom Biobase ExpressionSet AnnotatedDataFrame SummarizedExperiment pData exprs
+#' @importFrom Biobase ExpressionSet AnnotatedDataFrame pData exprs
 #' @importFrom SingleCellExperiment counts SingleCellExperiment
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors DataFrame
 #'
 .get_celltypes_from_sce <- function(sce, celltype.variable = "celltype"){
