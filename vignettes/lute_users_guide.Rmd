@@ -1,0 +1,216 @@
+---
+title: "The lute user's guide"
+author:
+- Sean K. Maden
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+bibliography: bibliography.bib
+package: lute
+output:
+  BiocStyle::html_document:
+    code_folding: show
+    toc: no
+    tocfloat: no
+  BiocStyle::pdf_document: 
+    toc: no
+    toc_depth: 0
+vignette: > 
+  %\VignetteIndexEntry{The lute user's guide}
+  %\VignetteDepends{RCurl}
+  %\usepackage[UTF-8]{inputenc} 
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r setup, include=FALSE}
+libv <- c("lute")
+sapply(libv, library, character.only = TRUE)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# How to use this guide
+
+This User's Guide describes how to use `lute`, a framework for bulk 
+transcriptomics deconvolution. An introduction to deconvolution experiments is 
+provided, followed by a description of the framework and a small experiment 
+using example data.
+
+# Deconvolution overview
+
+## Definition
+
+Deconvolution is the task of quantifying signal from a signal mixture, which
+is sometimes called a signal convolution. Deconvolution experiments try to 
+predict signals from their mixtures as accurately and reliably as possible. 
+
+## Transcriptomics deconvolution
+
+In the field of transcriptomics, deconvolution is often applied to gene 
+expression datasets in order to predict cell type quantities from cell mixtures.
+This technique is applied to bulk tissue specimens of multiple cell types, where
+accurate cell type quantifications can improve bias adjustments or allow testing
+of new hypotheses.
+
+## Experiment elements
+
+There are several essential elements to conducting deconvolution, namely a 
+deconvolution algorithm and key inputs for the algorithm. Most such algorithms 
+attempt to solve something like the following for $P$, where we define the terms 
+for the field of transcriptomics in particular:
+
+$$P \leftarrow [Y, Z]$$
+Where we have the following terms:
+
+* $P$ : K-length vector of cell type proportions.
+
+* $Z$ : Signature matrix of dimensions G signature genes by K cell types.
+
+* $Y$ : The convoluted signals matrix of dimensions G signature genes by J bulk samples.
+
+While we can pass the above variables to a reference-based deconvolution algorithm,
+we should also think about whether certain types of data transformations, such as
+the scale of signals in $Z$, and preprocessing steps, such as the selection 
+criteria for the $G$ marker genes, can ultimately lead us to improved outcomes.
+
+## Pseudobulking
+
+It's important to note that many experiments conduct a type of simulation called
+pseudobulking, which is to derive an artificial bulk sample as a mixture of 
+type-specific signals. This looks like the following:
+
+$$Y = Z * P$$
+
+While this is perhaps the simplest representation of the pseudobulk equation, it
+is important to note the importance of a cell size scaling factor $S$ for 
+improving deconvolution outcomes. $S$ is a vector of $K$ length which reflects 
+the relative sizes of each cell type, and it can be applied either to $Z$ prior
+to deconvolution, or applied when generating the pseudobulk sample as follows:
+
+$$Y = Z * P * S$$
+
+## Deconvolution algorithms
+
+There are dozens of different deconvolution algorithms used in the field of 
+trascriptomics alone. These may be organized in several ways, such as whether 
+they incorporate a variance weighting strategy or cell size scale factors. 
+Another useful way to organize algorithms is by whether they incorporate the
+non-negative least squares (NNLS) algorithm in some way. This is a statistical
+approach with the added constraint of assumed non-negativity for inputs, which
+holds when we consider typical gene expression datasets in the form of counts
+or log-normalized counts.
+
+The next section shows a hierarchical class structure for accessing multiple
+deconvolution algorithms, and we can think of this hierarchy as yet another
+way of organizing and relating different deconvolution algorithms in a useful
+and actionable manner.
+
+# Deconvolution framework
+
+The `lute` framework features a series of new methods and classes to manage 
+calls to several state-of-the-science algorithms for bulk transcriptomics
+deconvolution, namely NNLS, MuSiC, MuSiC2, EPIC, DeconRNASeq, Bisque, and SCDC.
+This approach was modeled after the 
+`bluster` R/Bioconductor package for clustering algorithms.
+
+## The `deconvolutionParam` hierarchy
+
+The new `deconvolutionParam` parent class was defined with several sub-classes,
+including `referencebasedParam` and `independentbulkParam`. Each supported 
+algorithm inherits from these parent classes. 
+
+This hierarchical class structure has several benefits. First, standard inputs
+such as $Y$, $Z$, and $S$ are mapped to their algorithm-specific synonyms, 
+making it easier to design experiments around multiple algorithms. 
+
+Second, 
+certain tasks are conducted as a standard approach for certain algorithms. For 
+example, preparation for running a reference-based algorithm should always 
+include a check on the $G$ gene label identities in the $Y$ bulk sample(s) and 
+the $Z$ signature matrix reference.
+
+Finally, this class hierarchy can be used as a starting point for designing new
+deconvolution algorithms without having to recode standard operations from 
+scratch.
+
+The `deconvolutionParam` class hierarchy for supported algorithms is visualized 
+in the following diagram:
+
+<img style="float: center; width = 200" src = "deconvolutionParam_hierarchy_diagram.jpeg"/>
+
+## The `deconvolution()` generic
+
+Class methods for `deconvolutionParam` and its inheriting sub-classes are accessed
+using the new `deconvolution()` generic. Since the specific methods are tied
+to the class structure, the user can pass standard inputs to this generic 
+and conveniently access standard operations. This generic will return cell type
+proportion estimates by default, or more details results including the original
+algorithm outputs may be accessed by specifying `return.info=TRUE`.
+
+# Deconvolution example
+
+## Getting example experiment inputs
+
+We may generate some example values for $Y$ and $Z$ as follows:
+
+```{r}
+set.seed(0)
+Y <- matrix(rpois(n = 10, lambda = 5), ncol = 1)
+Z <- matrix(rpois(n = 20, lambda = 5), ncol = 2)
+S <- c(1, 10)
+```
+
+We can add labels to each object to ensure the information is mapped correctly.
+
+```{r}
+rownames(Z) <- rownames(Y) <- paste0("gene", seq(nrow(Y)))
+colnames(Z) <- names(S) <- paste0("type", seq(ncol(Z)))
+```
+
+## Making a new `nnlsParam` object
+
+To use the NNLS algorithm, we first make a new object of type `nnlsParam`.
+
+```{r}
+new.parameters <- nnlsParam(y = Y, z = Z, s = S)
+```
+
+When we inspect this object, we find summaries of important experiment variables
+such as $G$ and $K$.
+
+```{r}
+new.parameters
+```
+
+## Running `deconvolution` and evaluating the output
+
+The simplest way to run our experiment is to call `deconvolution` on our 
+parameters object:
+
+```{r}
+deconvolution(new.parameters)
+```
+
+We can see the package `nnls` was loaded, and the predicted cell type proportions
+were returned.
+
+To obtain more detailed outputs, we may redifine the parameters object by setting 
+the `return.info` logical to `TRUE`.
+
+```{r}
+new.parameters <- nnlsParam(y = Y, z = Z, s = S, return.info = TRUE)
+```
+
+Now, calling `deconvolution` returns the predicted proportions, as well as some
+key summary metadata and the original output from `nnls` function.
+
+```{r}
+deconvolution(new.parameters)
+```
+
+# Conclusions and further reading
+
+This User's Guide introduced the `lute` framework for deconvolution, including 
+an outline of deconvolution experiment variables, an introduction to the 
+different deconvolution methods for bulk transcriptomics, and a small runnable
+example showing how to access the NNLS algorithm by calling the `deconvolution`
+generic on an object of class `nnlsParam`. If you found this guide useful, you 
+may also find the other vignettes included in `lute` to be helpful.

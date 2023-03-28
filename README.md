@@ -36,7 +36,7 @@ new method development.
 
 The inheritance hierarchy for the numerous novel classes in `lute` for various deconvolution algorithms is depicted in the following flowchart:
 
-[<img style="float: center;" src = "inst/jpg/deconvolution_classes_flowchart.jpeg"/>](https://github.com/metamaden/lute)
+[<img style="float: center;" src = "inst/jpg/deconvolutionParam_hierarchy_diagram.jpeg"/>](https://github.com/metamaden/lute)
 
 ## Deconvolution methods supported
 
