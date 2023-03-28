@@ -32,7 +32,7 @@
 .get_sce_from_eset <- function(eset){
   require(SingleCellExperiment); require(SummarizedExperiment); require(Biobase)
   sce <- SingleCellExperiment::SingleCellExperiment(assays = list(counts = exprs(eset)))
-  SummarizedExperiment::colData(sce) <- DataFrame(SummarizedExperiment::pData(eset))
+  SummarizedExperiment::colData(sce) <- DataFrame(Biobase::pData(eset))
   return(sce)
 }
 
@@ -87,11 +87,11 @@
 }
 
 .get_decon_example_data_bisque <- function(seed.num = 0){
-  require(Biobase)
+  require(Biobase); require(lute)
   set.seed(seed.num)
   
   # get y.eset
-  y <- .get_decon_example_data()[["y"]]
+  y <- lute:::.get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
   df.y.pheno <- data.frame(SubjectName = colnames(y))
@@ -111,11 +111,11 @@
 }
 
 .get_decon_example_data_scdc <- function(seed.num = 0){
-  require(Biobase)
+  require(Biobase); require(lute)
   set.seed(seed.num)
   
   # get y.eset
-  y <- .get_decon_example_data()[["y"]]
+  y <- lute:::.get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
   df.y.pheno <- data.frame(SubjectName = colnames(y))
@@ -135,11 +135,11 @@
 }
 
 .get_decon_example_data_music2 <- function(seed.num = 0){
-  require(Biobase)
+  require(Biobase); require(lute)
   set.seed(seed.num)
   
   # get y.eset
-  y <- .get_decon_example_data()[["y"]]
+  y <- lute:::.get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
   df.y.pheno <- data.frame(SubjectName = colnames(y))

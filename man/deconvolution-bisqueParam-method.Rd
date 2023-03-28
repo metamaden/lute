@@ -15,7 +15,7 @@ predictions, metadata, and original outputs.
 }
 \description{
 Main method to access the Bisque deconvolution method from the main lute 
-\link{\code{deconvolution}} generic.
+\code{deconvolution} generic.
 }
 \details{
 Takes an object of class \linkS4class{bisqueParam} as input, 

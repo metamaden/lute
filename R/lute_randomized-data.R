@@ -122,6 +122,7 @@ random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2,
                        na.fract = 0.2, zero.include = FALSE, 
                        zero.fract = 0.2, verbose = FALSE, 
                        seed.num = 0){
+  require(SingleCellExperiment)
   if(verbose){message("Getting random expression data...")}
   if(is(dispersion, "NULL")){dispersion <- expr.mean}
   mdat <- rnbinom(n = (num.cells*num.genes), 
@@ -157,8 +158,8 @@ random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2,
   rd <- data.frame(gene.id = genev)
   rownames(expr.ct) <- genev
   if(verbose){message("Making new sce object...")}
-  sce <- SingleCellExperiment(assays = list(counts=expr.ct), 
-                              colData = cd, rowData = rd)
+  sce <- SingleCellExperiment::SingleCellExperiment(
+    assays = list(counts=expr.ct), colData = cd, rowData = rd)
   # manage new metadata
   description.str <- "random SingleCellExperiment made using random_sce()"
   lmd <- list(description = description.str)

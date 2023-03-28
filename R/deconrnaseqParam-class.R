@@ -11,7 +11,7 @@
 #' @seealso \linkS4class{deconParam}
 #' 
 #' @examples
-#' lexample <- .get_decon_example_data() # get example data 
+#' lexample <- lute:::.get_decon_example_data() # get example data 
 #' param <- deconrnaseqParam(s = lexample[["s"]], y = lexample[["y"]], 
 #' z = lexample[["z"]])
 #' 
