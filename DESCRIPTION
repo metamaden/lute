@@ -18,6 +18,7 @@ Depends:
     Biobase,
     S4Vectors
 Imports:
+    dplyr,
     utils,
     methods,
     RCurl,
@@ -54,6 +55,8 @@ Collate:
     'epicParam-class.R'
     'lute_randomized-data.R'
     'lute_utilities.R'
+    'typemarkersParam-class.R'
+    'meanratiosParam-class.R'
     'music2Param-class.R'
     'musicParam-class.R'
     'nnlsParam-class.R'

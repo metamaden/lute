@@ -39,3 +39,28 @@
 #' @export
 setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))
 
+#' typemarkers
+#'
+#' Get cell type gene markers using standard accessors to supported functions.
+#'
+#' @param object A \linkS4class{tyepmarkersParam}-type object.
+#' @return 
+#' By default, return a vector of marker genes.
+#' 
+#' If \code{return.info==T}, provides detailed results, including original 
+#' outputs.
+#' 
+#' @details 
+#' This generic manages tasks for marker gene identification. In particular, it
+#' takes a specified amount of marker genes to return per type.
+#' 
+#' @seealso
+#' \linkS4class{tyepmarkersParam}
+#' 
+#' @author Sean Maden
+#' 
+#' @aliases 
+#' Typemarkers, TypeMarkers
+#'
+#' @export
+setGeneric("typemarkers", function(object) standardGeneric("typemarkers"))
