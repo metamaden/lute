@@ -87,9 +87,9 @@ setMethod("typemarkers", signature(object = "meanratiosParam"), function(object)
   
   top.markers.list <- lapply(unique.cell.types, function(unique.type.id){
     marker.table %>% 
-      filter(cellType.target == unique.type.id) %>% 
-      arrange(rank_ratio) %>% 
-      top_n(n = markers.per.type)
+      dplyr::filter(cellType.target == unique.type.id) %>% 
+      dplyr::arrange(rank_ratio) %>% 
+      dplyr::top_n(n = markers.per.type)
   })
   top.markers.table <- do.call(rbind, top.markers.list)
   top.markers.vector <- top.markers.table$gene
@@ -99,5 +99,5 @@ setMethod("typemarkers", signature(object = "meanratiosParam"), function(object)
     return.list <- list(markers = top.markers.vector,
                         result.info = marker.table,
                         metadata = object)}
-  return(lr)
+  return(return.list)
 })

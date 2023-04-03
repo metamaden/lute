@@ -46,8 +46,19 @@
   return(est)
 }
 
-.ypb_from_sce <- function(sce, assay.name, celltype.variable, S = NULL){
-  ltype <- .get_celltypes_from_sce()
+#' ypb_from_sce
+#'
+#' Get pseudobulk from a SingleCellExperiment object.
+#'
+#' @param sce SingleCellExperiment
+#' @param assay.name Valid assay name.
+#' @param celltype.variable Valid cell type label in coldata.
+#' @param S Vector of cell type size scale factors. Optional.
+#' @returns Matrix of simulated bulk convoluted signals.
+#'
+#' @export
+ypb_from_sce <- function(sce, assay.name, celltype.variable, S = NULL){
+  ltype <- .get_celltypes_from_sce(sce, celltype.variable)
   if(is(S, "NULL")){
     S <- rep(1, length(ltype[["unique.types"]]))
     names(S) <- ltype[["unique.types"]]
@@ -55,7 +66,7 @@
   Znew <- .get_z_from_sce(sce, assay.name, celltype.variable)
   P <- prop.table(table(ltype[["character"]]))
   P <- P[order(match(names(P), ltype[["unique.types"]]))]
-  ZSnew <- .zstransform(z, s)
+  ZSnew <- .zstransform(Znew, S)
   ypb <- t(t(P) %*% t(ZSnew))
   return(ypb)
 }
