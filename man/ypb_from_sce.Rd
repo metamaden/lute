@@ -7,11 +7,12 @@
 ypb_from_sce(sce, assay.name, celltype.variable, S = NULL)
 }
 \arguments{
-\item{sce}{SingleCellExperiment}
+\item{sce}{An object of type \linkS4class{SingleCellExperiment}.}
 
-\item{assay.name}{Valid assay name.}
+\item{assay.name}{Name of expression matrix in \code{sce} assays.}
 
-\item{celltype.variable}{Valid cell type label in coldata.}
+\item{celltype.variable}{Variable name for cell type labels in \code{sce} 
+coldata.}
 
 \item{S}{Vector of cell type size scale factors. Optional.}
 }

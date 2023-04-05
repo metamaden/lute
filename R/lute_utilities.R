@@ -20,6 +20,75 @@
        character = celltype.char, factor = celltype.fact)
 }
 
+#' ypb_from_sce
+#'
+#' Get pseudobulk from a SingleCellExperiment object.
+#'
+#' @param sce An object of type \linkS4class{SingleCellExperiment}.
+#' @param assay.name Name of expression matrix in \code{sce} assays.
+#' @param celltype.variable Variable name for cell type labels in \code{sce} 
+#' coldata.
+#' @param S Vector of cell type size scale factors. Optional.
+#' @returns Matrix of simulated bulk convoluted signals.
+#' 
+#'
+#' @export
+ypb_from_sce <- function(sce, assay.name, celltype.variable, S = NULL){
+  ltype <- .get_celltypes_from_sce(sce, celltype.variable)
+  if(is(S, "NULL")){
+    S <- rep(1, length(ltype[["unique.types"]]))
+    names(S) <- ltype[["unique.types"]]
+  }
+  Znew <- .get_z_from_sce(sce, assay.name, celltype.variable)
+  P <- prop.table(table(ltype[["character"]]))
+  P <- P[order(match(names(P), ltype[["unique.types"]]))]
+  ZSnew <- .zstransform(Znew, S)
+  ypb <- t(t(P) %*% t(ZSnew))
+  return(ypb)
+}
+
+#' signature_matrix_from_sce
+#' 
+#' Calculate a Z signature matrix from object of type 
+#' \linkS4class{SingleCellExperiment}.
+#' 
+#' @param sce An object of type \linkS4class{SingleCellExperiment}.
+#' @param assay.name Name of expression matrix in \code{sce} assays.
+#' @param celltype.variable Variable name for cell type labels in \code{sce} 
+#' coldata. 
+#' @param summary.method Summary statistic function to use.
+#' 
+#' @details Calculate a Z signature matrix from object of type 
+#' \linkS4class{SingleCellExperiment}.
+#' 
+#' @returns New Z signature matrix.
+#'
+#' @examples
+#' sce.example <- random_sce()
+#' signature_matrix_from_sce(sce.example)
+#'
+#' @export
+signature_matrix_from_sce <- function(sce, 
+                                      celltype.variable = "celltype", 
+                                      summary.method = "mean", 
+                                      assay.name = "counts"){
+  require(dplyr)
+  # gets the z signature matrix from an sce object
+  expression.matrix <- assays(sce)[[assay.name]] %>% as.matrix()
+  cd <- colData(sce)
+  unique.cell.types <- cd[,celltype.variable] %>% unique()
+  unique.cell.types <- unique.cell.types[order(unique.cell.types)]
+  z <- do.call(cbind, lapply(unique.cell.types, function(cell.type.index){
+    filter.index <- cd[,celltype.variable]==cell.type.index
+    if(summary.method == "mean"){
+      DelayedArray::rowMeans(expression.matrix[,filter.index])
+    } else{
+      stop('Error, unrecognized summary.method.')}
+  }))
+  colnames(z) <- unique.cell.types
+  return(z)
+}
+
 .get_z_from_sce <- function(sce, assay.name = "counts", 
                             celltype.variable = "celltype"){
   ltype <- .get_celltypes_from_sce(sce = sce, celltype.variable = celltype.variable)
@@ -44,31 +113,6 @@
   rownames(pdata) <- colnames(y)
   eset <- Biobase::ExpressionSet(assayData = mat, phenoData = Biobase::AnnotatedDataFrame(pdata))
   return(est)
-}
-
-#' ypb_from_sce
-#'
-#' Get pseudobulk from a SingleCellExperiment object.
-#'
-#' @param sce SingleCellExperiment
-#' @param assay.name Valid assay name.
-#' @param celltype.variable Valid cell type label in coldata.
-#' @param S Vector of cell type size scale factors. Optional.
-#' @returns Matrix of simulated bulk convoluted signals.
-#'
-#' @export
-ypb_from_sce <- function(sce, assay.name, celltype.variable, S = NULL){
-  ltype <- .get_celltypes_from_sce(sce, celltype.variable)
-  if(is(S, "NULL")){
-    S <- rep(1, length(ltype[["unique.types"]]))
-    names(S) <- ltype[["unique.types"]]
-  }
-  Znew <- .get_z_from_sce(sce, assay.name, celltype.variable)
-  P <- prop.table(table(ltype[["character"]]))
-  P <- P[order(match(names(P), ltype[["unique.types"]]))]
-  ZSnew <- .zstransform(Znew, S)
-  ypb <- t(t(P) %*% t(ZSnew))
-  return(ypb)
 }
 
 .zstransform <- function(z, s){

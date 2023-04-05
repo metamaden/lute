@@ -83,13 +83,17 @@ lute <- function(sce = NULL, z = NULL, y = NULL, y.se = NULL, s = NULL,
   if(y.cond){y <- assays(y.se)[[assay.name]]}
   if(!is(deconvolution.algorithm, "NULL")){
     if(is(z, "NULL")){
-      stop("Error, provide either sce or z to perform deconvolution.")}
+      if(is(sce, "NULL")){
+        stop("Error, provide either sce or z to perform deconvolution.")
+      } else{
+        z <- .get_z_from_sce(sce, assay.name, celltype.variable)
+      }
+    }
     if(is(y, "NULL")){
       stop("Error, provide y to perform deconvolution.")
     }
     if(is(s, "NULL")){s <- rep(1, ncol(z))}
     if(verbose){message("Parsing deconvolution arguments...")}
-    z <- .get_z_from_sce(sce, assay.name, celltype.variable)
     deconvolution.results <- map_deconvolution_algorithm(
       algorithm = deconvolution.algorithm,
       z = z, y = y, s = s, return.info = return.info)
