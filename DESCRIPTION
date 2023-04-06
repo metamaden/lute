@@ -1,5 +1,5 @@
 Package: lute
-Version: 0.0.5
+Version: 0.0.6
 Title: Deconvo-"lute" simulated and experimental data
 Authors@R: c(person(c("Sean", "K"), "Maden", role = c("cre", "aut"), 
     email = "maden.sean@gmail.com", comment = c(ORCID = "0000-0002-2212-4894")),
