@@ -30,8 +30,6 @@
 #' coldata.
 #' @param S Vector of cell type size scale factors. Optional.
 #' @returns Matrix of simulated bulk convoluted signals.
-#' 
-#'
 #' @export
 ypb_from_sce <- function(sce, assay.name, celltype.variable, S = NULL){
   ltype <- .get_celltypes_from_sce(sce, celltype.variable)
@@ -57,16 +55,12 @@ ypb_from_sce <- function(sce, assay.name, celltype.variable, S = NULL){
 #' @param celltype.variable Variable name for cell type labels in \code{sce} 
 #' coldata. 
 #' @param summary.method Summary statistic function to use.
-#' 
 #' @details Calculate a Z signature matrix from object of type 
 #' \linkS4class{SingleCellExperiment}.
-#' 
 #' @returns New Z signature matrix.
-#'
 #' @examples
 #' sce.example <- random_sce()
 #' signature_matrix_from_sce(sce.example)
-#'
 #' @export
 signature_matrix_from_sce <- function(sce, 
                                       celltype.variable = "celltype", 

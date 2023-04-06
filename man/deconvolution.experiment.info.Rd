@@ -7,6 +7,8 @@
 deconvolution.experiment.info(
   sce,
   s = NULL,
+  z = NULL,
+  p.true.proportions = NULL,
   assay.name = "counts",
   sample.id.variable = "sample.id",
   celltype.variable = "celltype",
@@ -21,6 +23,12 @@ deconvolution.experiment.info(
 
 \item{s}{Named numeric vector of cell factors. Used to make the pseudobulk, 
 or used by deconvolution.results.table to transform the Z signature matrix.}
+
+\item{z}{Signature matrix. If included, uses this for experiments instead of
+group-wise signature matrix.}
+
+\item{p.true.proportions}{Named numeric vector of true cell type proportions. 
+If NULL, uses the proportions from the sample-wise sce data.}
 
 \item{assay.name}{Name of expression matrix in \code{sce} assays.}
 
