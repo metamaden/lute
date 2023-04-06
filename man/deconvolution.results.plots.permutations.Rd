@@ -7,6 +7,8 @@
 deconvolution.results.plots.permutations(results.table, verbose = FALSE)
 }
 \arguments{
+\item{results.table}{Table of permutation experiment results.}
+
 \item{verbose}{Whether to show verbose status messages.}
 }
 \value{
@@ -14,6 +16,11 @@ List containing experiment results plots.
 }
 \description{
 Permutation experiment plots.
+}
+\details{
+Plot functions for permutation experiments. The \code{results.table}
+should contain columns for "group.id.signature", for the signature matrix id, 
+and "sample.id", for the pseudobulk sample id.
 }
 \examples{
 sce.example <- random_sce(num.genes = 100, num.cells = 100)

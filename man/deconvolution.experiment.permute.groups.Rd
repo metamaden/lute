@@ -53,13 +53,17 @@ Run a series of permutation experiments.
 Run a series of deconvolution experiments, permuting the Z signature 
 matrix and Y pseudobulk signals according to the specified experiment group 
 id.
+
+The returned experiment results table is identical to the results table from
+\code{deconvolution.experiment}, except it adds a new column 
+"group.id.signature" for the group id corresponding to the signature matrix.
+The column "sample.id" correspond to the group id of the pseudobulk data.
 }
 \examples{
 sce.example <- random_sce(num.genes = 100, num.cells = 100)
 s <- c("type1" = 3, "type2" = 10)
 sce.example[["sample.id"]] <- c(rep("sample1", 10), rep("sample2", 50), rep("sample1", 40))
 experiment <- deconvolution.experiment.permute.groups(sce = sce.example, s = s)
-sce.example[["sample.id"]] <- "sample1"
 
 }
 \seealso{

@@ -30,19 +30,50 @@
 #' coldata.
 #' @param S Vector of cell type size scale factors. Optional.
 #' @returns Matrix of simulated bulk convoluted signals.
+#' @examples
+#' sce.example <- random_sce()
+#' ypb_from_sce(sce.example)
 #' @export
-ypb_from_sce <- function(sce, assay.name, celltype.variable, S = NULL){
-  ltype <- .get_celltypes_from_sce(sce, celltype.variable)
-  if(is(S, "NULL")){
-    S <- rep(1, length(ltype[["unique.types"]]))
-    names(S) <- ltype[["unique.types"]]
+ypb_from_sce <- function(sce, assay.name = "counts", 
+                         celltype.variable = "celltype", 
+                         sample.id.variable = NULL, S = NULL){
+  require(dplyr)
+  num.groups <- 1; unique.group.id.vector <- ""
+  if(!is(sample.id.variable, "NULL")){
+    group.id.vector <- sce[[sample.id.variable]]
+    unique.group.id.vector <- group.id.vector %>% unique() %>% as.character()
+    num.groups <- unique.group.id.vector %>% length()
   }
-  Znew <- .get_z_from_sce(sce, assay.name, celltype.variable)
-  P <- prop.table(table(ltype[["character"]]))
-  P <- P[order(match(names(P), ltype[["unique.types"]]))]
-  ZSnew <- .zstransform(Znew, S)
-  ypb <- t(t(P) %*% t(ZSnew))
-  return(ypb)
+  list.cell.types <- .get_celltypes_from_sce(
+    sce = sce, celltype.variable = celltype.variable)
+  num.types <- list.cell.types[["unique.types"]] %>% length()
+  ypb.list <- lapply(unique.group.id.vector, function(group.id){
+    sce.filter <- sce
+    if(num.groups > 1){
+      filter.group <- sce[[sample.id.variable]]==group.id
+      sce.filter <- sce[,filter.group]
+    }
+    
+    if(is(S, "NULL")){
+      S <- rep(1, num.types)
+      names(S) <- list.cell.types[["unique.types"]]
+    }
+    
+    Znew <- .get_z_from_sce(sce.filter, assay.name, celltype.variable)
+    P <- list.cell.types[["character"]] %>% table() %>% prop.table()
+    order.p <- match(names(P), list.cell.types[["unique.types"]]) %>% order()
+    P <- P[order.p]
+    ZSnew <- .zstransform(Znew, S)
+    ypb <- t(t(P) %*% t(ZSnew))
+    return(ypb)
+  })
+  ypb.table <- do.call(cbind, ypb.list) %>% as.data.frame()
+  if(num.groups > 1){
+    colnames(ypb.table) <- unique.group.id.vector
+  } else{
+    colnames(ypb.table) <- "sce.pseudobulk"
+  }
+  return(ypb.table)
 }
 
 #' signature_matrix_from_sce

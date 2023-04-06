@@ -70,7 +70,7 @@ deconvolution.experiment.info <- function(sce, s = NULL, z = NULL,
                                celltype.variable = celltype.variable, S = s)
       experiment.labels <- paste0(experiment.labels, ";pseudobulk;")
     } else{
-      y.sample <- y[,sample.id]
+      y.sample <- y[,sample.id,drop = FALSE]
     }
     if(verbose){message("parsing p.true.proportions...")}
     if(is(p.true.proportions, "NULL")){
@@ -229,7 +229,8 @@ deconvolution.experiment <- function(sce, y = NULL, s = NULL, z = NULL,
                                      experiment.labels = "",
                                      verbose = FALSE){
   if(verbose){message("beginning deconvolution experiment...")}
-  experiment.list <- deconvolution.experiment.info(y = NULL, sce = sce, s = s, 
+  experiment.list <- deconvolution.experiment.info(
+                      y = y, sce = sce, s = s, 
                       assay.name = assay.name, z = z,
                       sample.id.variable = sample.id.variable,
                       celltype.variable = celltype.variable,
@@ -361,7 +362,6 @@ deconvolution.results.plots <- function(results.table, verbose = FALSE){
 #' s <- c("type1" = 3, "type2" = 10)
 #' sce.example[["sample.id"]] <- c(rep("sample1", 10), rep("sample2", 50), rep("sample1", 40))
 #' experiment <- deconvolution.experiment.permute.groups(sce = sce.example, s = s)
-#' sce.example[["sample.id"]] <- "sample1"
 #' 
 #' @seealso \code{deconvolution.experiment}, 
 #' \code{deconvolution.results.plots.permutations}
@@ -377,6 +377,18 @@ deconvolution.experiment.permute.groups <- function(sce, s,
   if(verbose){message("running permutation experiments...")}
   group.id.vector <- sce[[sample.id.variable]]
   unique.group.id.vector <- group.id.vector %>% unique() %>% as.character()
+  
+  if(verbose){message("making pseudobulk table from unique group ids...")}
+  ypb.list <- lapply(unique.group.id.vector, function(group.id){
+    filter.group <- sce[[sample.id.variable]]==group.id
+    ypb_from_sce(sce = sce[,filter.group], 
+                 assay.name = assay.name, 
+                 celltype.variable = celltype.variable, 
+                 S = s)
+  })
+  ypb.table <- do.call(cbind, ypb.list) %>% as.data.frame()
+  colnames(ypb.table) <- unique.group.id.vector
+  
   results.table.list <- lapply(unique.group.id.vector, 
                                function(group.id.z){
     if(verbose){message("working on group id ", group.id.z, "...")}
@@ -391,19 +403,12 @@ deconvolution.experiment.permute.groups <- function(sce, s,
     if(verbose){message("getting pseudobulks...")}
     pb.filter <- !unique.group.id.vector==group.id.z
     unique.group.id.pb <- unique.group.id.vector[pb.filter] %>% unique()
-    ypb.list <- lapply(unique.group.id.pb, function(group.id){
-      if(verbose){
-        message("working on pseudobulk for sample id ", group.id, "...")}
-      filter.group <- sce[[sample.id.variable]]==group.id
-      ypb_from_sce(sce = sce[,filter.group], assay.name = assay.name, 
-                   celltype.variable = celltype.variable, S = s)
-    })
-    ypb.table <- do.call(cbind, ypb.list) %>% as.data.frame()
-    colnames(ypb.table) <- unique.group.id.pb
+    ypb.table.iteration <- ypb.table[,unique.group.id.pb]
     
     if(verbose){message("getting experiment series...")}
     experiment <- deconvolution.experiment(sce = sce, 
-                                           y = ypb.table, s = s, z = z, 
+                                           y = ypb.table.iteration, 
+                                           s = s, z = z, 
                                            assay.name = assay.name, 
                                            sample.id.variable = 
                                              sample.id.variable, 
