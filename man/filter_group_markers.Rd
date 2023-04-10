@@ -37,9 +37,10 @@ groups.
 \code{min.group.overlap.rate} argument.
 }
 \examples{
-sce.example <- random_sce(num.cells = 100)
-sce.example[["sample_id"]] <- c(rep("sample1", 10), rep("sample2", 80), rep("sample1", 10))
-group.markers <- markers_by_group(sce.example)
+set.seed(0)
+sce.example <- random_sce(num.cells = 100, num.genes = 1000)
+sce.example[["sample_id"]] <- c(rep("sample1", 50), rep("sample2", 50))
+group.markers <- markers_by_group(sce.example, markers.per.type = 5)
 filtered.group.markers <- filter_group_markers(group.markers)
 }
 \seealso{

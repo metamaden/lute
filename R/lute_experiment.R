@@ -71,7 +71,7 @@ deconvolution.experiment.info <- function(sce, s = NULL, z = NULL,
         as.matrix()
       experiment.labels <- paste0(experiment.labels, ";pseudobulk;")
     } else{
-      y.sample <- y[,sample.id,drop = FALSE] %>% as.matrix()
+      y.sample <- y %>% as.matrix() # y[,sample.id,drop = FALSE] %>% as.matrix()
     }
     if(verbose){message("parsing p.true.proportions...")}
     if(is(p.true.proportions, "NULL")){
@@ -387,7 +387,7 @@ deconvolution.experiment.permute.groups <- function(sce, s,
                  celltype.variable = celltype.variable, 
                  S = s)
   })
-  ypb.table <- do.call(cbind, ypb.list) %>% as.data.frame()
+  ypb.table <- do.call(cbind, ypb.list) %>% as.matrix()
   colnames(ypb.table) <- unique.group.id.vector
   
   results.table.list <- lapply(unique.group.id.vector, 
@@ -404,7 +404,7 @@ deconvolution.experiment.permute.groups <- function(sce, s,
     if(verbose){message("getting pseudobulks...")}
     pb.filter <- !unique.group.id.vector==group.id.z
     unique.group.id.pb <- unique.group.id.vector[pb.filter] %>% unique()
-    ypb.table.iteration <- ypb.table[,unique.group.id.pb]
+    ypb.table.iteration <- ypb.table[, unique.group.id.pb, drop = F]
     
     if(verbose){message("getting experiment series...")}
     experiment <- deconvolution.experiment(sce = sce, 
@@ -420,7 +420,6 @@ deconvolution.experiment.permute.groups <- function(sce, s,
                                            celltype.variable = 
                                              celltype.variable,
                                            ...)
-    
     if(verbose){message("finished with group id, returning results table...")}
     results.table.iteration <- experiment$results.table
     results.table.iteration$group.id.signature <- group.id.z

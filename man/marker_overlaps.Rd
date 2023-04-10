@@ -4,7 +4,7 @@
 \alias{marker_overlaps}
 \title{marker_overlaps}
 \usage{
-marker_overlaps(group.markers, marker.filter.vector)
+marker_overlaps(group.markers, marker.filter.vector = NULL)
 }
 \arguments{
 \item{group.markers}{Group-specific markers list returned from 

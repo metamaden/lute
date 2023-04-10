@@ -26,9 +26,10 @@
 #' \code{min.group.overlap.rate} argument.
 #' @seealso \code{markers_by_group}, \code{marker_overlaps}
 #' @examples
-#' sce.example <- random_sce(num.cells = 100)
-#' sce.example[["sample_id"]] <- c(rep("sample1", 10), rep("sample2", 80), rep("sample1", 10))
-#' group.markers <- markers_by_group(sce.example)
+#' set.seed(0)
+#' sce.example <- random_sce(num.cells = 100, num.genes = 1000)
+#' sce.example[["sample_id"]] <- c(rep("sample1", 50), rep("sample2", 50))
+#' group.markers <- markers_by_group(sce.example, markers.per.type = 5)
 #' filtered.group.markers <- filter_group_markers(group.markers)
 #' @export
 filter_group_markers <- function(group.markers,
@@ -38,33 +39,32 @@ filter_group_markers <- function(group.markers,
   if(is(group.markers, "list")){
     markers.table <- do.call(rbind, group.markers) %>% as.data.frame()
   }
-  num.markers.input <- markers.table$gene %>% unique()
+  num.markers.input <- markers.table$gene %>% unique() %>% length()
   if(verbose){message("Found ", num.markers.input, " total markers.")}
   
-  if(is(marker.overlaps, "NULL")){
-    if(verbose){message("Getting marker overlap info...")}
-    overlap.info <- marker_overlaps(group.markers)
-  }
+  if(verbose){message("Getting marker overlap info...")}
+  overlap.info <- marker_overlaps(group.markers)
   
   markers.start.vector <- markers.table$gene
-  filter.non.concordant <- grepl(";", overlap.info$types)
-  markers.concordant <- overlap.info[filter.non.concordant,]
+  which.non.concordant <- grepl(";", overlap.info$types)
+  markers.concordant <- overlap.info[!which.non.concordant,]
   num.concordant <- nrow(markers.concordant)
-  if(verbose){message("Found ", num.concordant, " duplicated markers by type.")}
+  if(verbose){message("Found ", num.concordant, " concordant markers by type.")}
   
   filter.min.overlap <- markers.concordant$overlap.group.rate >= 
     minimum.group.overlap.rate
   markers.overlap <- markers.concordant[filter.min.overlap,]
   num.overlap <- nrow(markers.overlap)
   if(verbose){
-    message("Found ", num.overlap, " markers with overlap rate at least ",
-            min.overlap.rate,".")}
+    message("Found ", num.overlap, 
+            " concordant markers with overlap rate at least ",
+            minimum.group.overlap.rate,".")}
   
   # return.list
   metadata.list <- list(num.markers.input = num.markers.input,
                         num.concordant = num.concordant,
                         num.overlap = num.overlap,
-                        min.overlap.rate = min.overlap.rate)
+                        minimum.group.overlap.rate = minimum.group.overlap.rate)
   return.list <- list(marker.list.final = markers.overlap$marker,
                       marker.overlap.info = markers.overlap,
                       filter.metadata = metadata.list)
@@ -86,9 +86,8 @@ filter_group_markers <- function(group.markers,
 #' group.markers <- markers_by_group(sce.example)
 #' group.overlaps <- marker_overlaps(group.markers, c("gene1", "gene20"))
 #' @export
-marker_overlaps <- function(group.markers, marker.filter.vector){
+marker_overlaps <- function(group.markers, marker.filter.vector = NULL){
   require(dplyr)
-  marker.filter.vector <- c("gene1", "gene20")
   if(is(group.markers, "list")){
     group.table <- do.call(rbind, group.markers) %>% as.data.frame()
   }
@@ -101,9 +100,10 @@ marker_overlaps <- function(group.markers, marker.filter.vector){
   }
   # get labels overlapping
   total.groups <- group.table$group.id %>% unique() %>% length()
-  unique.markers <- overlap.table$marker %>% unique()
+  unique.markers <- group.table$gene %>% unique()
   overlap.table <- data.frame(marker = unique.markers)
-  overlap.table$groups.overlapping <- overlap.table$types.overlapping <- 
+  overlap.table$groups.overlapping <- 
+    overlap.table$types.overlapping <- 
     overlap.table$number.overlapping.groups <- 
     overlap.table$number.overlapping.types <- 
     overlap.table$overlap.group.rate <- ""
@@ -112,6 +112,7 @@ marker_overlaps <- function(group.markers, marker.filter.vector){
     group.table.filter <- group.table[filter.marker,]
     groups.present <- unique(group.table.filter$group.id)
     types.present <- unique(group.table.filter$cellType.target)
+    
     overlap.table.filter <- overlap.table$marker==marker
     overlap.table[overlap.table.filter,]$groups.overlapping <- 
       paste0(groups.present, collapse = ";")
@@ -153,6 +154,7 @@ marker_overlaps <- function(group.markers, marker.filter.vector){
 #' sce.example[["sample_id"]] <- c(rep("sample1", 10), rep("sample2", 80), rep("sample1", 10))
 #' group.markers <- markers_by_group(sce.example)
 #' @seealso \code{filter_group_markers}
+#' @export
 markers_by_group <- function(sce, 
                              group.variable = "sample_id", 
                              celltype.variable = "celltype", 
@@ -163,17 +165,19 @@ markers_by_group <- function(sce,
                              verbose = FALSE){
   require(dplyr)
   unique.group.vector <- sce[[group.variable]] %>% unique() %>% as.character()
-  if(verbose){message("get gene markers for each specified batch")}
+  if(verbose){message("Getting gene markers for each specified batch")}
   group.markers.list <- lapply(unique.group.vector, function(group.id){
-    if(verbose){message("getting markers for batch id: ", group.id, "...")}
+    if(verbose){message("Getting markers for batch id: ", group.id, "...")}
     filter <- sce[[group.variable]] == group.id
-    result.table <- lute(sce = sce[,filter], 
-         celltype.variable = celltype.variable, 
-         assay.name = assay.name, 
-         markers.per.type = markers.per.type,
-         typemarker.algorithm = typemarker.algorithm,
-         deconvolution.algorithm = NULL,
-         return.info = TRUE)$typemarker.results$result.info
+    results <- meanratiosParam(sce = sce, return.info = TRUE,
+                               celltype.variable = celltype.variable, 
+                               markers.per.type = markers.per.type) %>% 
+      typemarkers()
+    result.table <- results$result.info
+    result.table <- result.table[result.table$rank_ratio >= markers.per.type,]
+    topmarkers.vector <- results$markers
+    filter.topmarkers <- result.table$gene %in% topmarkers.vector
+    result.table <- result.table[filter.topmarkers,]
     result.table$group.id <- group.id
     return(result.table)
   })
