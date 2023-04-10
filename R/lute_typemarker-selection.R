@@ -82,9 +82,9 @@ filter_group_markers <- function(group.markers,
 #' @returns Table containing marker overlap info.
 #' @examples 
 #' sce.example <- random_sce(num.cells = 100, num.genes = 100)
-#' sce.example[["sample_id"]] <- c(rep("sample1", 10), rep("sample2", 80), rep("sample1", 10))
+#' sce.example[["sample_id"]] <- c(rep("sample1", 20), rep("sample2", 80))
 #' group.markers <- markers_by_group(sce.example)
-#' group.overlaps <- marker_overlaps(group.markers, c("gene1", "gene20"))
+#' group.overlaps <- marker_overlaps(group.markers)
 #' @export
 marker_overlaps <- function(group.markers, marker.filter.vector = NULL){
   require(dplyr)
