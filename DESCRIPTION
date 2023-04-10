@@ -57,6 +57,7 @@ Collate:
     'lute_framework.R'
     'lute_metadata.R'
     'lute_randomized-data.R'
+    'lute_typemarker-selection.R'
     'lute_utilities.R'
     'typemarkersParam-class.R'
     'meanratiosParam-class.R'

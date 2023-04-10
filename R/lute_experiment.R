@@ -67,10 +67,11 @@ deconvolution.experiment.info <- function(sce, s = NULL, z = NULL,
     if(verbose){message("parsing y bulk convoluted signals matrix...")}
     if(is(y, "NULL")){
       y.sample <- ypb_from_sce(sce = sce.sample, assay.name = assay.name,
-                               celltype.variable = celltype.variable, S = s)
+                               celltype.variable = celltype.variable, S = s) %>% 
+        as.matrix()
       experiment.labels <- paste0(experiment.labels, ";pseudobulk;")
     } else{
-      y.sample <- y[,sample.id,drop = FALSE]
+      y.sample <- y[,sample.id,drop = FALSE] %>% as.matrix()
     }
     if(verbose){message("parsing p.true.proportions...")}
     if(is(p.true.proportions, "NULL")){

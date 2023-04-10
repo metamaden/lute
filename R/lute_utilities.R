@@ -28,6 +28,8 @@
 #' @param assay.name Name of expression matrix in \code{sce} assays.
 #' @param celltype.variable Variable name for cell type labels in \code{sce} 
 #' coldata.
+#' @param sample.id.variable Variable name for sample/group ID labels in 
+#' \code{sce} coldata.
 #' @param S Vector of cell type size scale factors. Optional.
 #' @returns Matrix of simulated bulk convoluted signals.
 #' @examples

@@ -4,7 +4,13 @@
 \alias{ypb_from_sce}
 \title{ypb_from_sce}
 \usage{
-ypb_from_sce(sce, assay.name, celltype.variable, S = NULL)
+ypb_from_sce(
+  sce,
+  assay.name = "counts",
+  celltype.variable = "celltype",
+  sample.id.variable = NULL,
+  S = NULL
+)
 }
 \arguments{
 \item{sce}{An object of type \linkS4class{SingleCellExperiment}.}
@@ -14,6 +20,9 @@ ypb_from_sce(sce, assay.name, celltype.variable, S = NULL)
 \item{celltype.variable}{Variable name for cell type labels in \code{sce} 
 coldata.}
 
+\item{sample.id.variable}{Variable name for sample/group ID labels in 
+\code{sce} coldata.}
+
 \item{S}{Vector of cell type size scale factors. Optional.}
 }
 \value{
@@ -21,4 +30,8 @@ Matrix of simulated bulk convoluted signals.
 }
 \description{
 Get pseudobulk from a SingleCellExperiment object.
+}
+\examples{
+sce.example <- random_sce()
+ypb_from_sce(sce.example)
 }
