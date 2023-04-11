@@ -169,7 +169,9 @@ markers_by_group <- function(sce,
   group.markers.list <- lapply(unique.group.vector, function(group.id){
     if(verbose){message("Getting markers for batch id: ", group.id, "...")}
     filter <- sce[[group.variable]] == group.id
-    results <- meanratiosParam(sce = sce, return.info = TRUE,
+    sce.filter <- sce[,filter]
+    results <- meanratiosParam(sce = sce.filter, return.info = TRUE, 
+                               assay.name = assay.name,
                                celltype.variable = celltype.variable, 
                                markers.per.type = markers.per.type) %>% 
       typemarkers()
