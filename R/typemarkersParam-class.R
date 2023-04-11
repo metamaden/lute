@@ -59,28 +59,10 @@ typemarkersParam <- function(markers.per.type = 20, return.info = FALSE) {
 #'
 #' @export
 setMethod("typemarkers", signature(object = "typemarkersParam"), function(object){
-  require(DeconRNASeq)
   lparam <- callNextMethod()
   # instantiate and format objects
-  y <- lparam[["y"]]
-  z <- lparam[["z"]]
-  s <- lparam[["s"]]
-  proportions <- matrix(s, nrow = 1)
-  z = as.data.frame(z)
-  y = as.data.frame(cbind(y,y))
-  use.scale = object[["use.scale"]]
-  
-  # get predictions and results info
-  result <- DeconRNASeq::DeconRNASeq(datasets = y, signatures = z,
-                                     use.scale = use.scale, proportions = NULL)
-  predictions <- result$out.all[1,]; names(predictions) <- colnames(z)
-  
-  # parse return options
-  lr <- predictions
-  if(object[["return.info"]]){
-    lr <- list(predictions = predictions, result.info = result, 
-               metadata = lparam[["metadata"]])}
-  return(lr)
+  markers.per.type <- lparam[["markers.per.type"]]
+  return.info <- lparam[["return.info"]]
 })
 
 #' Inspect slot in \linkS4class{typemarkersParam} object
