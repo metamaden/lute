@@ -176,11 +176,13 @@ markers_by_group <- function(sce,
                                markers.per.type = markers.per.type) %>% 
       typemarkers()
     result.table <- results$result.info
-    result.table <- result.table[result.table$rank_ratio >= markers.per.type,]
-    topmarkers.vector <- results$markers
-    filter.topmarkers <- result.table$gene %in% topmarkers.vector
-    result.table <- result.table[filter.topmarkers,]
-    result.table$group.id <- group.id
+    if(nrow(result.table) > 0){
+      result.table <- result.table[result.table$rank_ratio >= markers.per.type,]
+      topmarkers.vector <- results$markers
+      filter.topmarkers <- result.table$gene %in% topmarkers.vector
+      result.table <- result.table[filter.topmarkers,]
+      result.table$group.id <- group.id
+    }
     return(result.table)
   })
   names(group.markers.list) <- unique.group.vector
