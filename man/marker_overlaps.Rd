@@ -24,4 +24,5 @@ sce.example <- random_sce(num.cells = 100, num.genes = 100)
 sce.example[["sample_id"]] <- c(rep("sample1", 20), rep("sample2", 80))
 group.markers <- markers_by_group(sce.example)
 group.overlaps <- marker_overlaps(group.markers)
+
 }

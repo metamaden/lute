@@ -103,19 +103,23 @@ setMethod("deconvolution", signature(object = "musicParam"), function(object){
   y <- lparam[["y"]]
   z <- lparam[["z"]]
   s <- lparam[["s"]]
-  # format objects
   y <- as.matrix(y)
   z <- as.matrix(z)
   s <- as.numeric(s)
   sigma <- as.matrix(sigma)
-  result <- MuSiC::music.basic(X = z, 
-                               Y = y, 
-                               S = s, 
-                               Sigma = sigma, 
-                               nu = nu, 
-                               iter.max = iter.max, 
-                               eps = eps)
-  predictions <- matrix(result$p.weight, ncol = ncol(z))
+  bulk.samples.index.vector <- seq(ncol(y))
+  result <- lapply(bulk.samples.index.vector, function(index){
+    MuSiC::music.basic(X = z, 
+                       Y = y[,index,drop=F], 
+                       S = s, 
+                       Sigma = sigma, 
+                       nu = nu, 
+                       iter.max = iter.max, 
+                       eps = eps)
+  })
+  names(result) <- colnames(y)
+  predictions <- lapply(result, function(iter){iter$p.weight})
+  predictions <- do.call(rbind, predictions)
   colnames(predictions) <- colnames(z)
   rownames(predictions) <- colnames(y)
   lr <- predictions

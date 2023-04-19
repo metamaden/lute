@@ -12,8 +12,7 @@
 #' @examples
 #' # example
 #' lexample <- lute:::.get_decon_example_data()
-#' param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], 
-#' z = lexample[["z"]])
+#' param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
@@ -105,10 +104,7 @@ setMethod("deconvolution", signature(object = "epicParam"), function(object){
   result <- EPIC::EPIC(bulk = y, 
                        reference = reference,
                        mRNA_cell = s)
-  predictions <- matrix(result$mRNAProportions, ncol = ncol(z))
-  colnames(predictions) <- colnames(z)
-  rownames(predictions) <- colnames(y)
-  lr <- predictions
+  lr <- predictions <- result$mRNAProportions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, 
                result.info = result, 

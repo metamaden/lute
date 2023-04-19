@@ -150,15 +150,18 @@ signature_matrix_from_sce <- function(sce,
   rowMeans(datav)
 }
 
-.get_decon_example_data <- function(seed.num=0){
+.get_decon_example_data <- function(num.bulk.samples = 2, num.markers = 10,
+                                    num.types = 2, seed.num=0){
   set.seed(seed.num)
-  set.seed(0)
-  y <- matrix(rnbinom(n=10, size=10, mu=10), ncol = 1)
-  z <- matrix(rnbinom(n=20, size=10, mu=10), ncol = 2)
-  rownames(y) <- rownames(z) <- paste0("marker", seq(nrow(y)))
-  colnames(z) <- paste0("type", seq(ncol(z)))
-  colnames(y) <- paste0("sample", seq(ncol(y)))
+  y <- matrix(
+    rnbinom(n=num.markers*num.bulk.samples, size=10, mu=10), ncol = 2)
+  z <- matrix(
+    rnbinom(n=num.types*num.markers, size=10, mu=10), ncol = 2)
+  rownames(y) <- rownames(z) <- paste0("marker", seq(num.markers))
+  colnames(z) <- paste0("type", seq(num.types))
+  colnames(y) <- paste0("sample", seq(num.bulk.samples))
   s <- c(1, 10)
+  names(s) <- colnames(z)
   return(list(z = z, y = y, s = s))
 }
 

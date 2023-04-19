@@ -66,7 +66,6 @@ deconrnaseqParam <- function(y, z, s = NULL, use.scale = FALSE, return.info = FA
 setMethod("deconvolution", signature(object = "deconrnaseqParam"), function(object){
   require(DeconRNASeq)
   lparam <- callNextMethod()
-  # instantiate and format objects
   y <- lparam[["y"]]
   z <- lparam[["z"]]
   s <- lparam[["s"]]
@@ -76,9 +75,11 @@ setMethod("deconvolution", signature(object = "deconrnaseqParam"), function(obje
   use.scale = object[["use.scale"]]
   result <- DeconRNASeq::DeconRNASeq(datasets = y, signatures = z,
                                      use.scale = use.scale, proportions = NULL)
-  predictions <- matrix(result$out.all[1,], ncol = ncol(z))
+  predictions <- matrix(result$out.all, ncol = ncol(z))
   colnames(predictions) <- colnames(z)
   rownames(predictions) <- colnames(y)
+  filter.rows <- !duplicated(rownames(predictions))
+  predictions <- predictions[filter.rows,]
   lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
