@@ -17,8 +17,7 @@
 #' 
 #' # get param object
 #' param <- bisqueParam(y.eset = lexample[["y.eset"]], 
-#' sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName",
-#' celltype.variable = "cellType")
+#' sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
 #' 
 #' # get predicted proportions
 #' res <- deconvolution(param)
@@ -38,7 +37,8 @@
 #'
 setClass("bisqueParam", contains="independentbulkParam", 
          slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", assay.name = "character",
-                  batch.variable = "character", celltype.variable = "character"))
+                  batch.variable = "character", celltype.variable = "character",
+                 use.overlap = "logical"))
 
 #' Make new object of class bisqueParam
 #'
@@ -54,6 +54,8 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @param assay.name Expression data type (e.g. counts, logcounts, tpm, etc.).
 #' @param batch.variable Name of variable identifying the batches in sc.eset pData/coldata.
 #' @param celltype.variable Name of cell type labels variable in sc.eset pData/coldata.
+#' @param use.overlap Whether to deconvolve samples overlapping bulk and sc 
+#' esets (logical, FALSE).
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #'
 #' @returns New object of class \linkS4class{bisqueParam}.
@@ -65,7 +67,8 @@ setClass("bisqueParam", contains="independentbulkParam",
 bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
                         y.eset = NULL, sc.eset = NULL, assay.name = "counts", 
                         batch.variable = "batch.id", 
-                        celltype.variable = "celltype", return.info = FALSE) {
+                        celltype.variable = "celltype", 
+                        use.overlap = FALSE, return.info = FALSE) {
   require(Biobase)
   # check y.eset/y
   if(is(y, "NULL")){
@@ -147,15 +150,20 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   } else{
     if(is(yi, "NULL")){
       message("Making yi from provided y bulk...")
-      yi <- exprs(y.eset)[,colnames(y.eset) %in% id.onlybulk]
+      filter.yi <- colnames(y.eset) %in% id.onlybulk
+      yi <- exprs(y.eset)[,filter.yi]
+      colnames(yi) <- colnames(y.eset)[filter.yi]
+      rownames(yi) <- rownames(y.eset)
     } else{
       message("Using provided yi for independent bulk samples...")
     }
   }
-
+  filter.bulk.samples.y <- colnames(y) %in% colnames(yi)
+  y <- y[,!filter.bulk.samples.y]
   new("bisqueParam", y = y, yi = yi, z = z, s = s, y.eset = y.eset, 
       sc.eset = sc.eset, assay.name = assay.name, batch.variable = batch.variable, 
-      celltype.variable = celltype.variable, return.info = return.info)
+      celltype.variable = celltype.variable, use.overlap = use.overlap, 
+      return.info = return.info)
 }
 
 #' Deconvolution method for bisqueParam
@@ -185,8 +193,12 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
   require(BisqueRNA); require(Biobase)
   lparam <- callNextMethod()
   y.eset <- object[["y.eset"]]
-  sc.eset <- lparam[["object"]]@sc.eset
-  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset, sc.eset = sc.eset)
+  sc.eset <- object[["sc.eset"]]
+  use.overlap <- object[["use.overlap"]]
+  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset, 
+                                                   sc.eset = sc.eset, 
+                                                   use.overlap = use.overlap)
+  
   lr <- predictions <- t(result$bulk.props)
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 

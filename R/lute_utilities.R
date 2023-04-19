@@ -154,9 +154,11 @@ signature_matrix_from_sce <- function(sce,
                                     num.types = 2, seed.num=0){
   set.seed(seed.num)
   y <- matrix(
-    rnbinom(n=num.markers*num.bulk.samples, size=10, mu=10), ncol = 2)
+    rpois(n=num.markers*num.bulk.samples, lambda = seq(0, 50, 5)), 
+    ncol = num.bulk.samples)
   z <- matrix(
-    rnbinom(n=num.types*num.markers, size=10, mu=10), ncol = 2)
+    rpois(n=num.types*num.markers, lambda = seq(0, 50, 5)), 
+    ncol = num.types)
   rownames(y) <- rownames(z) <- paste0("marker", seq(num.markers))
   colnames(z) <- paste0("type", seq(num.types))
   colnames(y) <- paste0("sample", seq(num.bulk.samples))
@@ -172,24 +174,30 @@ signature_matrix_from_sce <- function(sce,
   z.var
 }
 
-.get_decon_example_data_bisque <- function(seed.num = 0){
+.get_decon_example_data_bisque <- function(num.bulk.samples = 100,
+                                           num.markers = 1000, 
+                                           num.cells = 1000, 
+                                           num.types = 2, seed.num = 0){
   set.seed(seed.num)
-  # get y.eset
-  y <- lute:::.get_decon_example_data()[["y"]]
-  y <- cbind(y, y, y)
-  colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
+  lexample <- .get_decon_example_data(num.bulk.samples = num.bulk.samples,
+                               num.markers = num.markers,
+                               num.types = num.types)
+  y <- lexample[["y"]]
+  colnames(y) <- c(paste0("sample", seq(num.bulk.samples/2)), 
+                   paste0("bulk", seq(num.bulk.samples/2)))
   df.y.pheno <- data.frame(SubjectName = colnames(y))
   rownames(df.y.pheno) <- colnames(y)
   y.eset <- ExpressionSet(assayData = y, phenoData = AnnotatedDataFrame(df.y.pheno))
-
-  # get z.eset
-  sce <- random_sce(num.genes = 10, num.cells = 100, num.types = 2)
-  df.z.pheno <- data.frame(cellType = sce[["celltype"]], SubjectName = paste0("sample", seq(ncol(sce))))
+  sce <- random_sce(num.genes = num.markers, 
+                    num.cells = num.cells, 
+                    num.types = num.types)
+  df.z.pheno <- data.frame(cellType = sce[["celltype"]], 
+                           SubjectName = 
+                             paste0("sample", seq(num.cells)))
   rownames(df.z.pheno) <- colnames(sce)
-  z.eset <- ExpressionSet(assayData = counts(sce), phenoData = AnnotatedDataFrame(df.z.pheno))
+  z.eset <- ExpressionSet(assayData = counts(sce), 
+                          phenoData = AnnotatedDataFrame(df.z.pheno))
   rownames(z.eset) <- rownames(y.eset)
-  
-  # return
   lr <- list(y.eset = y.eset, sc.eset = z.eset)
   return(lr)
 }
