@@ -74,13 +74,11 @@ setMethod("deconvolution", signature(object = "deconrnaseqParam"), function(obje
   z = as.data.frame(z)
   y = as.data.frame(cbind(y,y))
   use.scale = object[["use.scale"]]
-  
-  # get predictions and results info
   result <- DeconRNASeq::DeconRNASeq(datasets = y, signatures = z,
                                      use.scale = use.scale, proportions = NULL)
-  predictions <- result$out.all[1,]; names(predictions) <- colnames(z)
-  
-  # parse return options
+  predictions <- matrix(result$out.all[1,], ncol = ncol(z))
+  colnames(predictions) <- colnames(z)
+  rownames(predictions) <- colnames(y)
   lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 

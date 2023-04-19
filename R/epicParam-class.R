@@ -99,17 +99,15 @@ setMethod("deconvolution", signature(object = "epicParam"), function(object){
   z <- as.matrix(z)
   y <- as.data.frame(y)
   z.var <- as.matrix(z.var)
-  # get reference object
   reference <- list(refProfiles = z,
                     sigGenes = rownames(z),
                     refProfiles.var = z.var)
-  
-  # get predictions
   result <- EPIC::EPIC(bulk = y, 
                        reference = reference,
                        mRNA_cell = s)
-  predictions <- result$mRNAProportions
-  names(predictions) <- colnames(z)
+  predictions <- matrix(result$mRNAProportions, ncol = ncol(z))
+  colnames(predictions) <- colnames(z)
+  rownames(predictions) <- colnames(y)
   lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, 

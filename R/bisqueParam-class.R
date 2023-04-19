@@ -184,12 +184,10 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
   require(BisqueRNA); require(Biobase)
   lparam <- callNextMethod()
-  # instantiate objects
   y.eset <- object[["y.eset"]]
   sc.eset <- lparam[["object"]]@sc.eset
-  # get predictions
   result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset, sc.eset = sc.eset)
-  lr <- predictions <- result$bulk.props
+  lr <- predictions <- t(result$bulk.props)
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = list(lmd = lparam[["metadata"]], 

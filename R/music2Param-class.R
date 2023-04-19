@@ -144,7 +144,10 @@ setMethod("deconvolution", signature(object = "music2Param"), function(object){
 	                      samples = batch.variable, cell_size = cell_size, select.ct = unique.types)
   }
   # return results
-  lr <- predictions <- result$bulk.props
+  predictions <- matrix(result$bulk.props, ncol = ncol(z))
+  colnames(predictions) <- colnames(z)
+  rownames(predictions) <- colnames(y)
+  lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = list(lmd = lparam[["metadata"]], 

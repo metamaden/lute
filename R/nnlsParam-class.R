@@ -87,7 +87,9 @@ setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
   z <- as.matrix(z)
   s <- as.numeric(s)
   result <- nnls::nnls(A = z, b = y)
-  predictions <- result$x; names(predictions) <- colnames(z)
+  predictions <- matrix(result$x, ncol = ncol(z))
+  colnames(predictions) <- colnames(z)
+  rownames(predictions) <- colnames(y)
   lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, 

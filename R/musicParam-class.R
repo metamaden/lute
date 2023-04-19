@@ -115,7 +115,9 @@ setMethod("deconvolution", signature(object = "musicParam"), function(object){
                                nu = nu, 
                                iter.max = iter.max, 
                                eps = eps)
-  predictions <- result$p.weight; names(predictions) <- colnames(z)
+  predictions <- matrix(result$p.weight, ncol = ncol(z))
+  colnames(predictions) <- colnames(z)
+  rownames(predictions) <- colnames(y)
   lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, 
