@@ -126,7 +126,7 @@ setMethod("show", "independentbulkParam", function(object) {
   message("\tNumber of unique sample IDs : ", 
           length(unique(markers.y, markers.yi)), "\n")
   message("\tNumber of unique marker IDs : ", 
-          length(unqiue(samples.y, samples.yi)), "\n")
+          length(unique(samples.y, samples.yi)), "\n")
   message("\tNumber of independent samples : ", 
           length(samples.yi[!samples.yi %in% samples.y]), "\n")
 })
