@@ -35,7 +35,6 @@
 #' names(list.preprocess$metadata)
 #' names(assays(sce))
 #' 
-#' @export
 sce_preprocess_groups <- function(sce, group.variable = "sample.id", 
                              celltype.variable = "celltype",
                              assay.name = "counts", new.assay.stem = "adjusted",
@@ -92,7 +91,7 @@ sce_preprocess_groups <- function(sce, group.variable = "sample.id",
 #'
 .downsample_sce <- function(sce, zscale.threshold, assay.name, 
                             celltype.variable, group.variable){
-  require(dplyr)
+  require(dplyr); require(scuttle)
   group.vector <- sce[[group.variable]]
   unique.groups <- group.vector %>% unique()
   cell.types.vector <- sce[[celltype.variable]]
@@ -104,7 +103,7 @@ sce_preprocess_groups <- function(sce, group.variable = "sample.id",
     group.vector <- sce.type[[group.variable]]
     expression.matrix <- assays(sce.type)[[assay.name]]
     expression.matrix.downsampled <- 
-      scuttle::downsampleBatches(expression.matrix, batch = group.vector)
+      downsampleBatches(expression.matrix, batch = group.vector)
     assays(sce.type)[[assay.name]] <- expression.matrix.downsampled 
     sce.type
   }))
@@ -135,14 +134,15 @@ sce_preprocess_groups <- function(sce, group.variable = "sample.id",
 .sce_group_adjustment <- function(sce, assay.name, new.assay.stem, 
                                     group.variable, celltype.variable,
                                     negative.to.zero.expression){
+  require(sva)
   new.assay.name <- paste0(assay.name, "_", new.assay.stem)
   expression.matrix <- assays(sce)[[assay.name]]
   cell.id.vector <- colnames(sce)
   pheno <- data.frame(group = sce[[group.variable]], 
                       celltype = sce[[celltype.variable]])
   mod <- model.matrix(~celltype, data = pheno)
-  expression.matrix.adjusted <- sva::ComBat(dat = expression.matrix, 
-                                            batch = pheno$group, mod = mod)
+  expression.matrix.adjusted <- ComBat(dat = expression.matrix,
+                                       batch = pheno$group, mod = mod)
   if(negative.to.zero.expression){
     filter.negative.expression <- expression.matrix.adjusted < 0
     message("Converting negative values to zero...")
@@ -161,7 +161,7 @@ sce_preprocess_groups <- function(sce, group.variable = "sample.id",
                                                        "prop.detected", 
                                                        "median", "var")
                                  ){
-  require(dplyr)
+  require(dplyr); require(scuttle)
   expression.matrix <- assays(sce)[[assay.name]]
   unique.groups <- sce[[group.variable]] %>% unique() %>% as.character()
   unique.groups <- c(unique.groups, "all")
@@ -219,7 +219,7 @@ sce_preprocess_groups <- function(sce, group.variable = "sample.id",
 #'
 #'
 .plot_dispersion <- function(data.dispersion){
-  require(dplyr)
+  require(dplyr); require(ggplot2)
   lgg <- list()
   data.dispersion$step <- factor(data.dispersion$step, levels = 
                                    c("zero;input", "first;downsample", 

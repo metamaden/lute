@@ -14,6 +14,7 @@ bisqueParam(
   assay.name = "counts",
   batch.variable = "batch.id",
   celltype.variable = "celltype",
+  use.overlap = FALSE,
   return.info = FALSE
 )
 }
@@ -36,6 +37,9 @@ provided ExpressionSet containing single-cell data.}
 \item{batch.variable}{Name of variable identifying the batches in sc.eset pData/coldata.}
 
 \item{celltype.variable}{Name of cell type labels variable in sc.eset pData/coldata.}
+
+\item{use.overlap}{Whether to deconvolve samples overlapping bulk and sc 
+esets (logical, FALSE).}
 
 \item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
 }

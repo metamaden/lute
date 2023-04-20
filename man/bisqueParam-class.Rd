@@ -18,8 +18,7 @@ lexample <- lute:::.get_decon_example_data_bisque()
 
 # get param object
 param <- bisqueParam(y.eset = lexample[["y.eset"]], 
-sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName",
-celltype.variable = "cellType")
+sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
 
 # get predicted proportions
 res <- deconvolution(param)

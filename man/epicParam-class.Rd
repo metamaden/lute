@@ -14,8 +14,7 @@ Main constructor for class \linkS4class{epicParam}.
 \examples{
 # example
 lexample <- lute:::.get_decon_example_data()
-param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], 
-z = lexample[["z"]])
+param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 
 # return only predicted proportions
 deconvolution(param)

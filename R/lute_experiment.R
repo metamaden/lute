@@ -143,8 +143,8 @@ deconvolution.results.table <- function(experiment.list,
                       celltype.variable = celltype.variable,
                       s = size.data, return.info = FALSE, 
                       typemarker.algorithm = typemarker.algorithm,
-                      deconvolution.algorithm = deconvolution.algorithm) %>% 
-        unlist()
+                      deconvolution.algorithm = deconvolution.algorithm)
+      results <- results[["deconvolution.results"]]
       if(sum(results) > 1){results <- results/sum(results)}
       return(results)
     })
