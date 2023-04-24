@@ -199,7 +199,9 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
                                                    sc.eset = sc.eset, 
                                                    use.overlap = use.overlap)
   
-  lr <- predictions <- t(result$bulk.props)
+  predictions <- t(result$bulk.props)
+  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
+  lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = list(lmd = lparam[["metadata"]], 

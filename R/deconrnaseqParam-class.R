@@ -80,6 +80,7 @@ setMethod("deconvolution", signature(object = "deconrnaseqParam"), function(obje
   rownames(predictions) <- colnames(y)
   filter.rows <- !duplicated(rownames(predictions))
   predictions <- predictions[filter.rows,]
+  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
   lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 

@@ -120,6 +120,7 @@ setMethod("deconvolution", signature(object = "musicParam"), function(object){
   names(result) <- colnames(y)
   predictions <- lapply(result, function(iter){iter$p.weight})
   predictions <- do.call(rbind, predictions)
+  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
   colnames(predictions) <- colnames(z)
   rownames(predictions) <- colnames(y)
   lr <- predictions

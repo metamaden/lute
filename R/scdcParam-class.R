@@ -250,7 +250,9 @@ setMethod("deconvolution", signature(object = "scdcParam"), function(object){
   	Transform_bisque = transform.bisque)
 
   # return results
-  lr <- predictions <- result$bulk.props
+  predictions <- result$bulk.props
+  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
+  lr <- predictions
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = list(lmd = lparam[["metadata"]], 

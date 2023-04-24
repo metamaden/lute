@@ -47,7 +47,22 @@ referencebasedParam <- function(y, z, s = NULL, return.info = FALSE) {
 setMethod("deconvolution", "referencebasedParam", function(object) {
   # get metadata
   s <- object[["s"]]; y <- object[["y"]]; z <- object[["z"]]
+  
+  # cell types in z, s
+  if(is(s, "NULL")){s <- rep(1, ncol(z))}
   unique.types <- try(colnames(object[["z"]]))
+  condition.z.types <- is(unique.types, "NULL")|is(unique.types, "try-error")
+  if(!condition.z.types){
+    unique.types <- unique.types[order(unique.types)]
+    z <- z[,order(colnames(z), unique.types)]
+    condition.s.types <- is(names(s), "NULL")
+    if(!condition.s.types){
+      filter.s.types <- names(s) %in% unique.types
+      s <- s[filter.s.types]
+      s <- s[order(names(s), unique.types)]
+    }
+  }
+  z <- .zstransform(z, s)
   
   # matching markers in y and z
   if(!is(rownames(y), "NULL") & !is(rownames(z), "NULL")){
@@ -64,13 +79,6 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
             "Can't match marker labels.")
   }
   
-  # parse s
-  s <- object[["s"]]
-  if(!is(s, "NULL")){if(length(s) == ncol(z)){z <- .zstransform(z, s)}}
-  # cell types
-  if(!(is(unique.types, "NULL")|is(unique.types, "try-error"))){
-    unique.types <- unique.types[order(unique.types)]
-  }
   # parse additional warnings
   if(is(markers.y, "NULL")){cat("Warning, object 'y' has no marker labels (rownames)\n")}
   if(is(markers.z, "NULL")){cat("Warning, object 'z' has no marker labels (rownames)\n")}

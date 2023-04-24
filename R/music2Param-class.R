@@ -145,6 +145,7 @@ setMethod("deconvolution", signature(object = "music2Param"), function(object){
   }
   # return results
   predictions <- matrix(result$bulk.props, ncol = ncol(z))
+  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
   colnames(predictions) <- colnames(z)
   rownames(predictions) <- colnames(y)
   lr <- predictions
