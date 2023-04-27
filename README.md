@@ -69,3 +69,7 @@ conda env create -f ./lute/inst/yml/music.yml
 Additional resources to learn more about deconvolution algorithms and their applications.
 
 * [`awesome-deconvolution`](https://github.com/metamaden/awesome-deconvolution) : List of deconvolution algorithms, frameworks, and resources across various disciplines.
+
+## Acknowledgements
+
+We acknowledge the following individuals for their helpful feedback and suggestions on improving this project: Louise Huuki-Myers
