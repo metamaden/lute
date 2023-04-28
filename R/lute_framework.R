@@ -59,8 +59,7 @@ lute <- function(sce = NULL, z = NULL, y = NULL, y.se = NULL, s = NULL,
                  deconvolution.algorithm = "nnls",
                  verbose = TRUE){
   results.list <- list()
-  if(!is(sce, "NULL")){marker.argument.valid <- TRUE}
-  if(marker.argument.valid & !is(typemarker.algorithm, "NULL")){
+  if(!is(typemarker.algorithm, "NULL")){
     if(is(sce, "NULL")){
       stop("Error, provide sce to perform typemarkers analyses.")}
     if(verbose){message("Parsing marker gene arguments...")}

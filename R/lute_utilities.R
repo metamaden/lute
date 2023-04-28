@@ -245,3 +245,20 @@ signature_matrix_from_sce <- function(sce,
   lr <- list(y.eset = y.eset, sc.eset = z.eset)
   return(lr)
 }
+
+
+#'
+#'
+#' @param list.pred Predictions list.
+#'
+#'
+.parse_deconvolution_predictions_results <- function(list.pred, 
+                                                     column.labels, 
+                                                     row.labels){
+  require(dplyr)
+  table.pred <- do.call(rbind, list.pred)
+  table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) %>% t()
+  colnames(table.pred) <- column.labels
+  rownames(table.pred) <- row.labels
+  return(table.pred)
+}

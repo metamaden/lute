@@ -93,7 +93,7 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
 #'
 #' @export
 setMethod("deconvolution", signature(object = "musicParam"), function(object){
-  require(MuSiC)
+  require(MuSiC); require(dplyr)
   lparam <- callNextMethod()
   # instantiate objects
   nu <- object[["nu"]]
@@ -120,7 +120,7 @@ setMethod("deconvolution", signature(object = "musicParam"), function(object){
   names(result) <- colnames(y)
   predictions <- lapply(result, function(iter){iter$p.weight})
   predictions <- do.call(rbind, predictions)
-  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
+  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)}) %>% t()
   colnames(predictions) <- colnames(z)
   rownames(predictions) <- colnames(y)
   lr <- predictions

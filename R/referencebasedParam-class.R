@@ -65,8 +65,10 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
   z <- .zstransform(z, s)
   
   # matching markers in y and z
-  if(!is(rownames(y), "NULL") & !is(rownames(z), "NULL")){
-    markers.y <- rownames(y); markers.z <- rownames(z)
+  markers.y <- rownames(y)
+  markers.z <- rownames(z)
+  if(!is(markers.y, "NULL") & !is(markers.z, "NULL")){
+    # markers.y <- rownames(y); markers.z <- rownames(z)
     unique.markers <- unique(c(markers.y, markers.z))
     overlapping.markers <- intersect(markers.y, markers.z)
     y.filter <- rownames(y) %in% overlapping.markers

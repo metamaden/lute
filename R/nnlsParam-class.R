@@ -51,7 +51,7 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' 
 #' @export
 nnlsParam <- function(y, z, s = NULL, return.info = FALSE) {
-  if(is(s, "NULL")){s <- matrix(rep(1, ncol(z)), nrow = 1)}
+  if(is(s, "NULL")){s <- rep(1, ncol(z))}
   new("nnlsParam", s = s, y = y, z = z, return.info = return.info)
 }
 
@@ -92,11 +92,9 @@ setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
   })
   names(result) <- colnames(y)
   predictions <- lapply(result, function(iter){iter$x})
-  predictions <- do.call(rbind, predictions)
-  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
-  colnames(predictions) <- colnames(z)
-  rownames(predictions) <- colnames(y)
-  lr <- predictions
+  lr <- .parse_deconvolution_predictions_results(predictions, 
+                                                 colnames(z), 
+                                                 colnames(y))
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, 
                result.info = result, 
