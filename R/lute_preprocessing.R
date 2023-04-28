@@ -28,12 +28,12 @@
 #' amounts.
 #' 
 #' @examples 
-#' sce.example <- random_sce(num.genes = 1000, num.cells = 1000)
-#' sce.example[["sample.id"]] <- c(rep("sample1", 800), rep("sample2", 200))
-#' list.preprocess <- sce_preprocess_groups(sce.example)
-#' names(list.preprocess)
-#' names(list.preprocess$metadata)
-#' names(assays(sce))
+#' #sce.example <- random_sce(num.genes = 1000, num.cells = 1000)
+#' #sce.example[["sample.id"]] <- c(rep("sample1", 800), rep("sample2", 200))
+#' #list.preprocess <- sce_preprocess_groups(sce.example)
+#' #names(list.preprocess)
+#' #names(list.preprocess$metadata)
+#' #names(assays(sce))
 #' 
 sce_preprocess_groups <- function(sce, group.variable = "sample.id", 
                              celltype.variable = "celltype",
