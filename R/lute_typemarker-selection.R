@@ -5,6 +5,115 @@
 # Methods to select markers using typemarkers() and supported methods.
 #
 
+# this is the main task for parallel selection of group markers
+get.group.markers.iter <- function(task.iter, sce, assay.name, 
+                                   celltype.variable, markers.per.type,
+                                   downsample.within.group){
+  
+  if(verbose){message("Getting markers for group id: ", task.iter, "...")}
+  filter <- sce[[group.variable]] == task.iter; sce.filter <- sce[,filter]
+  expression.matrix <- assays(sce.filter)[[assay.name]]
+  
+  # downsampling
+  if(downsample.within.group){
+    batch.variable <- sce.filter[[celltype.variable]]
+    expression.matrix <- downsampleBatches(expression.matrix,
+                                           batch = batch.variable) %>% 
+      as.matrix()
+  }
+  assays(sce.filter)[[assay.name]] <- expression.matrix
+  
+  
+  # results
+  group.marker.results <- meanratiosParam(sce = sce.filter, return.info = TRUE, 
+                                          assay.name = assay.name,
+                                          celltype.variable = celltype.variable, 
+                                          markers.per.type = markers.per.type) %>% 
+    typemarkers()
+  group.marker.table <- group.marker.results$result.info
+  if(nrow(group.marker.table) > 0){
+    group.marker.table <- group.marker.table[
+      group.marker.table$rank_ratio >= markers.per.type,]
+    topmarkers.vector <- group.marker.table$markers
+    filter.topmarkers <- group.marker.table$gene %in% topmarkers.vector
+    group.marker.table <- group.marker.table[filter.topmarkers,]
+    group.marker.table$group.id <- task.iter
+  }
+  return(group.marker.table)
+}
+
+# this gets the markers by group, returning a list of markers by group
+markers_by_group <- function(sce, 
+                             group.variable = "sample_id", 
+                             celltype.variable = "celltype", 
+                             assay.name = "counts", 
+                             markers.per.type = 100, 
+                             typemarker.algorithm = "meanratios",
+                             return.type = "list",
+                             downsample.within.group = T,
+                             parallelize = T,
+                             verbose = FALSE){
+  require(dplyr)
+  require(parallel)
+  require(scuttle)
+  
+  # the goal is ONLY to annotate concordance and overlap
+  sce = sce.example
+  group.variable = "sample_id"
+  celltype.variable = "celltype"
+  assay.name = "counts"
+  markers.per.type = 20
+  typemarker.algorithm = "meanratios"
+  return.type = "list"
+  verbose = FALSE
+  downsample.within.group = T
+  parallelize = T
+  
+  if(verbose){
+    message("Getting gene markers for each specified group")}
+  unique.group.vector <- sce[[group.variable]] %>% unique() %>% as.character()
+  
+  
+  # parse task with parallel option
+  if(parallelize){
+    group.markers.list <- mclapply(unique.group.vector, 
+                                   get.group.markers.iter, 
+                                   sce.example,
+                                   assay.name, 
+                                   celltype.variable, 
+                                   markers.per.type)
+  } else{
+    group.markers.list <- lapply(unique.group.vector, 
+                                 get.group.markers.iter, 
+                                 sce.example, 
+                                 assay.name, 
+                                 celltype.variable, 
+                                 markers.per.type)
+  }
+  names(group.markers.list) <- unique.group.vector
+  if(return.type == "list"){
+    return.data <- group.markers.list
+    names(return.data)
+  } else{
+    return.data <- do.call(rbind, group.markers.list) %>% as.data.frame()
+  }
+  if(verbose){message("finished marker lists. Returning...")}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #'
 #'
 #'
@@ -100,7 +209,6 @@ get_filter_group_markers <- function(group.markers,
   markers.low.overlap <- overlap.info[!filter.min.overlap,]
   markers.filter.vector <- unique(c(markers.non.concordant$marker, 
                                   markers.low.overlap$marker))
-  
   # return.list
   metadata.list <- list(markers.low.overlap = markers.low.overlap,
                         markers.non.concordant = markers.non.concordant,
