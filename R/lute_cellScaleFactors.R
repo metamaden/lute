@@ -33,19 +33,30 @@ csf_options <- function(user.s, cell.types.vector = NULL){
 #'
 #'
 #'
-csf_filter <- function(csf.ref, cell.types.vector, prefer.orthogonal = TRUE){
-  # filter labels
-  csf.ref.out <- csf.ref
-  if(is(cell.types.vector, NULL)){
-    return(csf.ref)
-  } else{
-    which.cell.types <- csf.ref$cell_type %in% cell.types.vector
-    csf.ref.out <- csf.ref[which.cell.types,]
-  }
+#'
+#' @examples
+#' csf_filter(c("neuron", "glial"))
+#'
+csf_filter <- function(unique.cell.types, csf.ref = NULL, 
+                       prefer.orthogonal = TRUE, summarize = "median"){
+  if(is(csf.ref, "NULL")){csf.ref <- get_csf_reference()}
+  
+  # filter available cell type labels
+  which.cell.types <- csf.ref$cell_type %in% unique.cell.types
+  csf.ref.out <- csf.ref[which.cell.types,]
   # filter available assay types
   if(prefer.orthogonal){
-    assay.types <- unique(csf.ref.out)
+    data.source.vector <- unique(csf.ref.out$scale.factor.data.source)
+    orthogonal.sources <- data.source.vector[!data.source.vector == "expression"]
+    if(length(orthogonal.sources) == 0){
+      message("No orthogonal data sources. Returning expression scale factors.")
+    } else{
+      is.orthogonal <- csf.ref.out$scale.factor.data.source %in% orthogonal.sources
+      csf.ref.out <- csf.ref.out[is.orthogonal,]
+    }
   }
-  
+  return(csf.ref.out)
 }
+
+
 
