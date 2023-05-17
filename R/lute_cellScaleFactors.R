@@ -78,7 +78,45 @@ csf_filter_labels <- function(labels, reference = NULL){
 #'
 #'
 #'
-csf_median_norm_scales <- function(csf.reference){
+csf_median_norm_scales <- function(csf.reference, 
+                                   seed.cell.type = "neuron", 
+                                   unique.cell.types = c("neuron", "glial"),
+                                   prefer.orthogonal = TRUE,
+                                   summary.statistic = "median",
+                                   return.type = c("data.frame", "vector")){
+  require(dplyr)
+  ref.filter <- csf.reference[csf.reference$cell_type %in% unique.cell.types,]
+  if(prefer.orthogonal){ref.filter <- filter_reference_orthogonal(ref.filter)}
+  
+  # get summary set
+  category.vector <- paste0(ref.filter$scale.factor.type, 
+                            ";", ref.filter$scale.factor.data.source)
+  list.norm.factors <- lapply(category.vector, function(category){
+    ref.filter.iter <- ref.filter[ref.filter,]
+  })
   
 }
 
+#'
+#'
+filter_reference_orthogonal <- function(ref, expression.string = "expression"){
+  category.vector <- paste0(ref$scale.factor.type, ";", ref$scale.factor.data.source)
+  unique.categories <- unique(category.vector)
+  which.orthogonal <- !grepl(
+    paste0(".*;",expression.string,"$"), unique.categories)
+  unique.categories.ortho <- unique.categories[which.orthogonal]
+  if(length(unique.categories.ortho) > 0){
+    unique.categories.out <- category.vector[which.orthogonal]
+  } else{
+    unique.categories.out <- unique.categories
+  }
+  filter.ref <- category.vector %in% unique.categories.out
+  return(ref[filter.ref,])
+}
+
+#'
+#'
+get_norm_factors <- function(ref.filter){
+  
+  
+}
