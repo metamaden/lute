@@ -43,7 +43,7 @@ Suggests:
     DelayedMatrixStats
 VignetteBuilder:
     knitr
-biocViews: Deconvolution, Transcriptomics, RNAseq, Simulation, Biostatistics
+biocViews: RNAseq
 RoxygenNote: 7.2.0
 Collate: 
     'lute_generics.R'
@@ -60,7 +60,6 @@ Collate:
     'lute_metadata.R'
     'lute_preprocessing.R'
     'lute_randomized-data.R'
-    'lute_typemarker-selection.R'
     'lute_utilities.R'
     'typemarkersParam-class.R'
     'meanratiosParam-class.R'
