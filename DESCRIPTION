@@ -54,6 +54,7 @@ Collate:
     'deconrnaseqParam-class.R'
     'epicParam-class.R'
     'lute_cell-scale-factors.R'
+    'lute_cellScaleFactors.R'
     'lute_experiment.R'
     'lute_framework.R'
     'lute_metadata.R'

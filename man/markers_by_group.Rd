@@ -9,9 +9,11 @@ markers_by_group(
   group.variable = "sample_id",
   celltype.variable = "celltype",
   assay.name = "counts",
-  markers.per.type = 20,
+  markers.per.type = 100,
   typemarker.algorithm = "meanratios",
   return.type = "list",
+  downsample.within.group = T,
+  parallelize = T,
   verbose = FALSE
 )
 }
@@ -34,6 +36,12 @@ for marker selection.}
 
 \item{return.type}{Format of return data, either "list" or "table".}
 
+\item{downsample.within.group}{Whether to downsample on cell types prior to 
+marker selection (performed *within* groups)}
+
+\item{parallelize}{Whether to use parallelization (mclapply) when getting 
+markers by group. Otherwise uses lapply.}
+
 \item{verbose}{Whether to show verbose status messages.}
 }
 \value{
@@ -44,14 +52,15 @@ organized by group IDs.
 Get gene markers organized by groups.
 }
 \details{
-Gets the group markers for all individual specified groups, where
-"group" here means donor, batch, or some other set of cells over which we
-may be concerned about marker consistency.
+Gets the within-group cell type markers.
 }
 \examples{
 sce.example <- random_sce(num.cells = 100, num.genes = 100)
 sce.example[["sample_id"]] <- c(rep("sample1", 10), rep("sample2", 80), rep("sample1", 10))
 group.markers <- markers_by_group(sce.example)
+
+
+
 }
 \seealso{
 \code{filter_group_markers}

@@ -8,7 +8,7 @@
 # this is the main task for parallel selection of group markers
 .get.group.markers.iter <- function(task.iter, sce, assay.name, 
                                    celltype.variable, markers.per.type,
-                                   downsample.within.group){
+                                   downsample.within.group, verbose = F){
   
   if(verbose){message("Getting markers for group id: ", task.iter, "...")}
   filter <- sce[[group.variable]] == task.iter; sce.filter <- sce[,filter]
