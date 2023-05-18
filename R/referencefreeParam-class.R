@@ -9,7 +9,8 @@
 #' models. This parent class is meant to manage methods of this type.
 #' 
 #' @examples 
-#' new("referencefreeParam")
+#' lexample <- lute:::.get_decon_example_data()
+#' new("referencefreeParam", y = lexample$y)
 #' 
 setClass("referencefreeParam", contains="deconvolutionParam", 
          slots = c(model.metadata = "list"))

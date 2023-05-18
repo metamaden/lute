@@ -25,3 +25,8 @@ Main constructor for class \linkS4class{referencebasedParam}.
 \details{
 Takes standard inputs for reference-based deconvolution algorithms.
 }
+\examples{
+lexample <- lute:::.get_decon_example_data()
+referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+
+}

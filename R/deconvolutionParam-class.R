@@ -47,6 +47,7 @@ setMethod("deconvolution", "deconvolutionParam", function(object) {})
 #' \linkS4class{deconvolutionParam}
 #' @export
 setMethod("show", "deconvolutionParam", function(object) {
+  y <- object[["y"]]
   message("Object of class deconvolutionParam")
   message("\nData summaries:")
   message("\tNumber of bulk markers: ", nrow(y))

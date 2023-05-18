@@ -29,6 +29,18 @@ Main constructor for class \linkS4class{nnlsParam}.
 Main parameter class for mapping inputs to the non-negative least 
 squares (NNLS) deconvolution algorithm, implemented as \code{nnls::nnls()}.
 }
+\examples{
+lexample <- lute:::.get_decon_example_data()
+param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+
+# return only predicted proportions
+deconvolution(param)
+
+# return full results
+param@return.info <- TRUE
+names(deconvolution(param))
+
+}
 \seealso{
 \linkS4class{referencebasedParam}, \linkS4class{deconvolutionParam}
 }

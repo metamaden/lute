@@ -28,7 +28,7 @@
 #' 
 #' Further details about the reference table can be found in the cellScaleFactors package.
 #' 
-#' @example 
+#' @examples
 #' # get the full table
 #' get_csf_reference()
 #' 
@@ -37,8 +37,7 @@
 #' 
 #' @returns Table of type "data.frame" or "tibble".
 #' @export
-get_csf_reference <- function(user.celltypes.vector = NULL, 
-                              prefer.orthogonal = TRUE){
+get_csf_reference <- function(user.celltypes.vector = NULL, prefer.orthogonal = TRUE){
   ref <- lute:::load_csf_rda()
   if(prefer.orthogonal){
     data.source.vector <- unique(ref$scale.factor.data.source)

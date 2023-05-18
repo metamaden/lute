@@ -11,15 +11,45 @@
 #' @rdname music2Param-class
 #' 
 #' @seealso 
-#' \linkS4class{deconParam}, \linkS4class{referencebasedParam}, 
+#' \linkS4class{deconParam}, 
+#' \linkS4class{referencebasedParam}, 
 #' \linkS4class{independentbulkParam}
-#'
-#' @examples 
-#' lexample <- lute:::.get_decon_example_data_music2()
-param <- music2Param(y = lexample$y, yi = lexample$y, z = lexample$z, s = lexample$s)
 #' 
 #' @aliases 
 #' music2Param-class, MuSiC2Param-class, Music2Param-class
+#' 
+#' @examples
+#' data <- lute:::.get_decon_example_data_music2()
+#' 
+#' 
+#' 
+
+data <- lute:::.get_decon_example_data_music2()
+sc.eset <- data$sc.eset
+sce <- SummarizedExperiment(sc.eset)
+colData(sce) <- DataFrame(data.frame(cellType = sc.eset$cellType,
+                                     SubjectName = sc.eset$SubjectName))
+
+z <- lute:::.get_z_from_sce(sce, "counts", "cellType")
+y.eset <- data$y.eset
+exprs.matrix <- exprs(y.eset)
+y <- exprs.matrix
+filter.sc.samples <- !colnames(y) %in% sc.eset$SubjectName
+yi <- y[,filter.sc.samples]
+s <- rep(1, length(unique(sc.eset$cellType)))
+
+
+data <- lute:::.get_decon_example_data_bisque()
+
+
+
+
+
+new("music2Param", y = y, yi = yi, z = NULL, s = s, sc.eset = sc.eset)
+
+
+#' 
+#' music2Param()
 #' 
 #' @references 
 #' 
@@ -39,10 +69,19 @@ param <- music2Param(y = lexample$y, yi = lexample$y, z = lexample$z, s = lexamp
 #' Briefings in Bioinformatics, Volume 23, Issue 6, November 2022, bbac430, 
 #' https://doi-org.proxy1.library.jhu.edu/10.1093/bib/bbac430
 #'
-setClass("music2Param", contains="independentbulkParam", slots=c(
-	sc.eset = "ExpressionSet", assay.name = "character", batch.variable = "character", 
-	celltype.variable = "character", iter.max = "numeric", nu = "numeric", epsilon = "numeric", 
-	truep = "numeric", ct.cell.size = "numeric", celltype.subset = "character"))
+setClass("music2Param", contains="independentbulkParam", 
+         slots=c(
+           sc.eset = "ExpressionSet", 
+           assay.name = "character", 
+           batch.variable = "character",
+           celltype.variable = "character", 
+           iter.max = "numeric", 
+           nu = "numeric", 
+           epsilon = "numeric",
+           truep = "numeric", 
+           ct.cell.size = "numeric", 
+           celltype.subset = "character")
+         )
 
 #' Make an object of class music2Param
 #'
@@ -70,15 +109,21 @@ setClass("music2Param", contains="independentbulkParam", slots=c(
 #' @returns Object of class \linkS4class{music2Param}.
 #' 
 #' @export
-music2Param <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, sc.eset = NULL, 
-	assay.name = "counts", batch.variable = "SubjectName", celltype.variable = "cellType", 
-	condition.variable = "experiment.condition", control.label = "control", case.label = "case",
-	method.type = "MuSiC2", return.info = FALSE) {
+music2Param <- function(y = NULL, yi = NULL, z = NULL, s = NULL, y.eset = NULL, 
+                        sc.eset = NULL, assay.name = "counts", 
+                        batch.variable = "SubjectName", 
+                        celltype.variable = "cellType", 
+                        condition.variable = "experiment.condition", 
+                        control.label = "control", case.label = "case",
+                        method.type = "MuSiC2", return.info = FALSE) {
+  
+  if(is(y, "NULL")|is())
 
-  new("music2Param", y = y, yi = yi, z = z, s = s, y.eset = y.eset, sc.eset = sc.eset, 
-	assay.name = assay.name, batch.variable = batch.variable, celltype.variable = celltype.variable,
-	condition.variable = condition.variable, control.label = control.label, case.label = case.label,
-	method.type = method.type, return.info = return.info)
+  new("music2Param", y = y, yi = yi, z = z, s = s, y.eset = y.eset, 
+      sc.eset = sc.eset, assay.name = assay.name, batch.variable = batch.variable, 
+      celltype.variable = celltype.variable, condition.variable = condition.variable, 
+      control.label = control.label, case.label = case.label, method.type = method.type, 
+      return.info = return.info)
 }
 
 #' Deconvolution method for \linkS4class{music2Param}
@@ -120,7 +165,7 @@ setMethod("deconvolution", signature(object = "music2Param"), function(object){
   object <- lparam[["object"]]
 
   # instantiate function objects
-  y.eset <- lparam[["y.eset"]]
+  y.eset <- object@y.eset
   sc.eset <- object@sc.eset
   celltype.subset <- object@celltype.subset
   batch.variable <- object@batch.variable
@@ -136,20 +181,26 @@ setMethod("deconvolution", signature(object = "music2Param"), function(object){
   source.libarary <- object@method.type
   if(source.library %in% c("music", "MuSiC", "Music", "MUSIC")){
   	message("Using the MuSiC implementation of music2_prop()..."); require(MuSiC)
-  	result <- MuSiC::music2_prop(bulk.control.mtx = y, bulk.case.mtx = yi, sc.sce = sc.sce, 
-  		clusters = celltype.variable, samples = batch.variable, cell_size = cell_size, select.ct = NULL)
+  	result <- MuSiC::music2_prop(bulk.control.mtx = y, bulk.case.mtx = yi, 
+  	                             sc.sce = sc.sce, clusters = celltype.variable, 
+  	                             samples = batch.variable, cell_size = cell_size, 
+  	                             select.ct = NULL)
   } else{
   	message("Using the MuSiC2 implementation of music2_prop()..."); require(MuSiC2)
-	result <- MuSiC2::music2_prop(bulk.eset = y.eset, sc.eset = sc.sce, condition = condition.variable,
-	                      control = control.label, case = case.label, clusters = celltype.variable,
-	                      samples = batch.variable, cell_size = cell_size, select.ct = unique.types)
+	  result <- MuSiC2::music2_prop(bulk.eset = y.eset, sc.eset = sc.sce, 
+	                                condition = condition.variable, 
+	                                control = control.label, case = case.label, 
+	                                clusters = celltype.variable,
+	                                samples = batch.variable, 
+	                                cell_size = cell_size, 
+	                                select.ct = unique.types)
   }
   # return results
   predictions <- matrix(result$bulk.props, ncol = ncol(z))
   predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
   colnames(predictions) <- colnames(z)
   rownames(predictions) <- colnames(y)
-  lr <- predictions
+  lr <- t(predictions)
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = list(lmd = lparam[["metadata"]], 

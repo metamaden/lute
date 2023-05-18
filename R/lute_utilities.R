@@ -229,17 +229,21 @@ signature_matrix_from_sce <- function(sce,
   # get y.eset
   y <- lute:::.get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
-  colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(ncol(y)-2)))
+  colnames(y) <- c(paste0("sample", seq(2)), 
+                   paste0("bulk",seq(ncol(y)-2)))
   
   df.y.pheno <- data.frame(SubjectName = colnames(y))
   rownames(df.y.pheno) <- colnames(y)
-  y.eset <- ExpressionSet(assayData = y, phenoData = AnnotatedDataFrame(df.y.pheno))
+  y.eset <- ExpressionSet(assayData = y, 
+                          phenoData = AnnotatedDataFrame(df.y.pheno))
 
   # get z.eset
   sce <- random_sce(num.genes = 10, num.cells = 300, num.types = 2)
-  df.z.pheno <- data.frame(cellType = sce[["celltype"]], SubjectName = paste0("sample", seq(ncol(sce))))
+  df.z.pheno <- data.frame(cellType = sce[["celltype"]], 
+                           SubjectName = paste0("sample", seq(ncol(sce))))
   rownames(df.z.pheno) <- colnames(sce)
-  z.eset <- ExpressionSet(assayData = counts(sce), phenoData = AnnotatedDataFrame(df.z.pheno))
+  z.eset <- ExpressionSet(assayData = counts(sce), 
+                          phenoData = AnnotatedDataFrame(df.z.pheno))
   rownames(z.eset) <- rownames(y.eset)
   
   # return

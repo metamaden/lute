@@ -17,6 +17,19 @@ predictions, metadata, and original outputs.
 Main deconvolution method for the \linkS4class{musicParam} to run the 
 \code{music.basic()} implementation of the MuSiC algorithm.
 }
+\examples{
+# example
+lexample <- lute:::.get_decon_example_data()
+param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+
+# return only predicted proportions
+deconvolution(param)
+
+# return full results
+param@return.info <- TRUE
+names(deconvolution(param))
+
+}
 \references{
 Wang, Xuran and Jiaxin Fan. MuSiC: Multi-subject single cell deconvolution. 
 (2022) GitHub, R package version 1.0.0. URL: https://github.com/xuranw/MuSiC.

@@ -16,3 +16,7 @@ Deconvolution generic behavior for object of class \linkS4class{referencebasedPa
 Method for behavior of deconvolution generic when called for object of class 
 \linkS4class{referencebasedParam}
 }
+\examples{
+lexample <- lute:::.get_decon_example_data()
+referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+}

@@ -13,6 +13,7 @@ matrix or use alternative means of prediction such as machine learning
 models. This parent class is meant to manage methods of this type.
 }
 \examples{
-param <- new("referencefreeParam")
+lexample <- lute:::.get_decon_example_data()
+new("referencefreeParam", y = lexample$y)
 
 }

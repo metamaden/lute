@@ -25,6 +25,18 @@ The key term mappings for this method include:
 * \code{A} : \code{y}, bulk signals matrix.
 * \code{b} : \code{z}, signature matrix.
 }
+\examples{
+lexample <- lute:::.get_decon_example_data()
+param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+
+# return only predicted proportions
+deconvolution(param)
+
+# return full results
+param@return.info <- TRUE
+names(deconvolution(param))
+
+}
 \references{
 Katharine M. Mullen and Ivo H. M. van Stokkum (2012). "nnls: The Lawson-Hanson 
 algorithm for non-negative least squares (NNLS)." CRAN, R package version 1.4. 
