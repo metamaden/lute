@@ -229,7 +229,8 @@ signature_matrix_from_sce <- function(sce,
   # get y.eset
   y <- lute:::.get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
-  colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
+  colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(ncol(y)-2)))
+  
   df.y.pheno <- data.frame(SubjectName = colnames(y))
   rownames(df.y.pheno) <- colnames(y)
   y.eset <- ExpressionSet(assayData = y, phenoData = AnnotatedDataFrame(df.y.pheno))

@@ -11,18 +11,14 @@
 #' 
 #' @examples 
 #' lexample <- lute:::.get_decon_example_data()
-#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-#' z = lexample[["z"]])
+#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
-#' # type1      type2 
-#' # 0.48908543 0.05896868
 #' 
 #' # return full results
 #' param@return.info <- TRUE
 #' names(deconvolution(param))
-#' # [1] "predictions" "result.info" "metadata"
 #' 
 #' @aliases 
 #' NNLSParam-class
@@ -41,6 +37,17 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
 #' @param return.info Whether to return metadata and original method outputs 
 #' with predicted proportions.
+#' 
+#' @examples 
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' 
+#' # return only predicted proportions
+#' deconvolution(param)
+#' 
+#' # return full results
+#' param@return.info <- TRUE
+#' names(deconvolution(param))
 #' 
 #' @returns Object of class \linkS4class{nnlsParam}
 #' 
@@ -68,6 +75,17 @@ nnlsParam <- function(y, z, s = NULL, return.info = FALSE) {
 #' The key term mappings for this method include:
 #' * \code{A} : \code{y}, bulk signals matrix.
 #' * \code{b} : \code{z}, signature matrix.
+#' 
+#' @examples 
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' 
+#' # return only predicted proportions
+#' deconvolution(param)
+#' 
+#' # return full results
+#' param@return.info <- TRUE
+#' names(deconvolution(param))
 #'
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.

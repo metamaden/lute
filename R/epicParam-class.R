@@ -132,7 +132,7 @@ setMethod("deconvolution", signature(object = "epicParam"), function(object){
                        mRNA_cell = s)
   predictions <- result$mRNAProportions
   predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
-  lr <- predictions
+  lr <- t(predictions)
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, 
                result.info = result, 

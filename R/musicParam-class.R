@@ -18,13 +18,10 @@
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
-#' # type1     type2 
-#' # 0.6770833 0.3229167
 #' 
 #' # return full results
 #' param@return.info <- TRUE
 #' names(deconvolution(param))
-#' # [1] "predictions" "result.info" "metadata"
 #' 
 #' @references 
 #' 
@@ -56,6 +53,18 @@ setClass("musicParam", contains="referencebasedParam",
 #' @param eps Additional argument for algorithm.
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #'
+#' @examples
+#' # example
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' 
+#' # return only predicted proportions
+#' deconvolution(param)
+#' 
+#' # return full results
+#' param@return.info <- TRUE
+#' names(deconvolution(param))
+#'
 #' @returns New object of class \linkS4class{musicParam}.
 #'
 #' @details Takes standard inputs for the MuSiC algorithm
@@ -78,6 +87,18 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
 #' \code{music.basic()} implementation of the MuSiC algorithm.
 #' 
 #' @param object An object of class \linkS4class{music2Param}.
+#' 
+#' @examples
+#' # example
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' 
+#' # return only predicted proportions
+#' deconvolution(param)
+#' 
+#' # return full results
+#' param@return.info <- TRUE
+#' names(deconvolution(param))
 #' 
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.

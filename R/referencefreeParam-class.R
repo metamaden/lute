@@ -9,7 +9,7 @@
 #' models. This parent class is meant to manage methods of this type.
 #' 
 #' @examples 
-#' param <- new("referencefreeParam")
+#' new("referencefreeParam")
 #' 
 setClass("referencefreeParam", contains="deconvolutionParam", 
          slots = c(model.metadata = "list"))
