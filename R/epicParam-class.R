@@ -47,6 +47,19 @@ setClass("epicParam", contains="referencebasedParam", slots=c(z.var = "matrix"))
 #' @param z.var Signature variances matrix of same dimensions as z.
 #' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#' 
+#' @examples
+#' # example
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' 
+#' # return only predicted proportions
+#' deconvolution(param)
+#' 
+#' # return full results
+#' param@return.info <- TRUE
+#' names(deconvolution(param))
+#' # [1] "predictions" "result.info" "metadata"
 #'
 #' @returns New object of class \linkS4class{epicParam}.
 #'
@@ -70,6 +83,19 @@ epicParam <- function(y, z, s = NULL, z.var = NULL, return.info = FALSE) {
 #'
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.
+#' 
+#' @examples
+#' # example
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' 
+#' # return only predicted proportions
+#' deconvolution(param)
+#' 
+#' # return full results
+#' param@return.info <- TRUE
+#' names(deconvolution(param))
+#' # [1] "predictions" "result.info" "metadata"
 #'
 #' @references 
 #' 

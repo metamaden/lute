@@ -17,6 +17,20 @@ predictions, metadata, and original outputs.
 Main deconvolution method for the \linkS4class{epicParam} to run the 
 \code{EPIC::EPIC()} implementation of the EPIC algorithm.
 }
+\examples{
+# example
+lexample <- lute:::.get_decon_example_data()
+param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+
+# return only predicted proportions
+deconvolution(param)
+
+# return full results
+param@return.info <- TRUE
+names(deconvolution(param))
+# [1] "predictions" "result.info" "metadata"
+
+}
 \references{
 Racle, J., Gfeller, D. (2020). EPIC: A Tool to Estimate the Proportions of 
 Different Cell Types from Bulk Gene Expression Data. In: Boegel, S. (eds) 

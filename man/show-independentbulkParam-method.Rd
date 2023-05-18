@@ -15,3 +15,7 @@ Method for \linkS4class{independentbulkParam}
 \details{
 Display data summaries for an object of class \linkS4class{independentbulkParam}.
 }
+\examples{
+new("independentbulkParam")
+
+}

@@ -16,8 +16,7 @@
 #' lexample <- lute:::.get_decon_example_data_bisque()
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = lexample[["y.eset"]], 
-#' sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
+#' param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
 #' 
 #' # get predicted proportions
 #' res <- deconvolution(param)
@@ -57,6 +56,17 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @param use.overlap Whether to deconvolve samples overlapping bulk and sc 
 #' esets (logical, FALSE).
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#' 
+#' 
+#' @examples
+#' # get data
+#' lexample <- lute:::.get_decon_example_data_bisque()
+#' 
+#' # get param object
+#' param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
+#' 
+#' # get predicted proportions
+#' res <- deconvolution(param)
 #'
 #' @returns New object of class \linkS4class{bisqueParam}.
 #'
@@ -178,6 +188,16 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.
 #' 
+#' @examples
+#' # get data
+#' lexample <- lute:::.get_decon_example_data_bisque()
+#' 
+#' # get param object
+#' param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
+#' 
+#' # get predicted proportions
+#' res <- deconvolution(param)
+#' 
 #' @references 
 #' 
 #' Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
@@ -199,9 +219,9 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
                                                    sc.eset = sc.eset, 
                                                    use.overlap = use.overlap)
   
-  predictions <- t(result$bulk.props)
-  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
-  lr <- predictions
+  predictions <- result$bulk.props
+  predictions <- apply(predictions, 2, function(ri){ri/sum(ri)})
+  lr <- t(predictions)
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = list(lmd = lparam[["metadata"]], 

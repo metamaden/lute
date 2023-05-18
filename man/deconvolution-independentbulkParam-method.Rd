@@ -18,3 +18,7 @@ Function to perform standard operations prior to deconvolution (a.k.a.
 Takes an object of \linkS4class{independentbulkParam} class as 
 input, and returns a list with the filtered/checked/parsed experiment objects.
 }
+\examples{
+new("independentbulkParam")
+
+}

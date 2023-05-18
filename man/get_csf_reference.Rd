@@ -10,7 +10,8 @@ get_csf_reference(user.celltypes.vector = NULL, prefer.orthogonal = TRUE)
 \item{user.celltypes.vector}{Vector of user-specified cell types.}
 
 \item{prefer.orthogonal}{Whether to prefer expression-orthogonal values (if 
-TRUE, removes expression-based values).}
+TRUE, removes expression-based values, but only if alternative value types 
+are available).}
 }
 \value{
 Table of type "data.frame" or "tibble".
@@ -28,8 +29,8 @@ cell scale factors reference table has the following columns:
 4. scale.factor.type : Label for scale factor type (e.g. cell or nuclear area, etc.)
 5. scale.factor.data.source : Label for scale factor source (e.g. osmFISH, 
 housekeeping gene expression, etc.)
-6. citation.s : Citations of source studies from which original measures or 
+6. citation.s : Citation(s) of source studies from which original measures or 
 measure summaries were made.
 
-Details about the reference table can be found in the cellScaleFactors package.
+Further details about the reference table can be found in the cellScaleFactors package.
 }

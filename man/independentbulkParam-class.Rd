@@ -19,7 +19,7 @@ independent bulk samples, it should not have overlapping sample IDs
 the reference bulk samples y.
 }
 \examples{
-lexample <- lute:::.get_decon_example_data()
+new("independentbulkParam")
 
 }
 \seealso{

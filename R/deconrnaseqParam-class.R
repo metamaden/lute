@@ -12,8 +12,7 @@
 #' 
 #' @examples
 #' lexample <- lute:::.get_decon_example_data() # get example data 
-#' param <- deconrnaseqParam(s = lexample[["s"]], y = lexample[["y"]], 
-#' z = lexample[["z"]])
+#' param <- deconrnaseqParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
@@ -79,9 +78,9 @@ setMethod("deconvolution", signature(object = "deconrnaseqParam"), function(obje
   colnames(predictions) <- colnames(z)
   rownames(predictions) <- colnames(y)
   filter.rows <- !duplicated(rownames(predictions))
-  predictions <- predictions[filter.rows,]
-  predictions <- apply(predictions, 1, function(ri){ri/sum(ri)})
-  lr <- predictions
+  predictions <- t(predictions[filter.rows,])
+  predictions <- apply(predictions, 2, function(ri){ri/sum(ri)})
+  lr <- t(predictions)
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = lparam[["metadata"]])}

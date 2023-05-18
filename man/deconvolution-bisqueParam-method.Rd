@@ -21,6 +21,17 @@ Main method to access the Bisque deconvolution method from the main lute
 Takes an object of class \linkS4class{bisqueParam} as input, 
 returning a list.
 }
+\examples{
+# get data
+lexample <- lute:::.get_decon_example_data_bisque()
+
+# get param object
+param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
+
+# get predicted proportions
+res <- deconvolution(param)
+
+}
 \references{
 Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
 Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.

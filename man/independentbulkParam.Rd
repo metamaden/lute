@@ -27,3 +27,7 @@ provided ExpressionSet containing single-cell data.}
 \description{
 Function to make a new object of class \linkS4class{independentbulkParam}
 }
+\examples{
+new("independentbulkParam")
+
+}

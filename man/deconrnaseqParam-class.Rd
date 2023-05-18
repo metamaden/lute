@@ -14,8 +14,7 @@ Main constructor for class \linkS4class{deconrnaseqParam}.
 }
 \examples{
 lexample <- lute:::.get_decon_example_data() # get example data 
-param <- deconrnaseqParam(s = lexample[["s"]], y = lexample[["y"]], 
-z = lexample[["z"]])
+param <- deconrnaseqParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 
 # return only predicted proportions
 deconvolution(param)

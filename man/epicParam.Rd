@@ -27,3 +27,17 @@ Main constructor for class \linkS4class{epicParam}.
 \details{
 Takes standard inputs for the EPIC algorithm
 }
+\examples{
+# example
+lexample <- lute:::.get_decon_example_data()
+param <- epicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+
+# return only predicted proportions
+deconvolution(param)
+
+# return full results
+param@return.info <- TRUE
+names(deconvolution(param))
+# [1] "predictions" "result.info" "metadata"
+
+}
