@@ -63,7 +63,6 @@ Collate:
     'lute_utilities.R'
     'typemarkersParam-class.R'
     'meanratiosParam-class.R'
-    'music2Param-class.R'
     'musicParam-class.R'
     'nnlsParam-class.R'
     'referencefreeParam-class.R'
