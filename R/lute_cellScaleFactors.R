@@ -13,22 +13,32 @@
 #' @param prefer.orthogonal Whether to prefer expression-orthogonal values (if 
 #' TRUE, removes expression-based values).
 #' 
-#' @details Returns a table of cell scale factors from various data sources.
+#' @details Returns a table of cell scale factors from various data sources. The 
+#' cell scale factors reference table has the following columns:
 #' 
-#' Table has the following columns:
-#' 
-#' 1. cell_type : Label of the cell type for the scale factor ()
+#' 1. cell_type : Label of the cell type for the scale factor (e.g. neuron, T cell, etc.)
 #' 2. tissue : Label of the tissue of origin (e.g. brain, blood, etc.)
 #' 3. scale.factor.value : Point scale factor value prior to additional normalization
-#' 4. scale.factor.type : Description of the type of scale factor (e.g. cell or nuclear area, etc.)
+#' 4. scale.factor.type : Label for scale factor type (e.g. cell or nuclear area, etc.)
+#' 5. scale.factor.data.source : Label for scale factor source (e.g. osmFISH, 
+#' housekeeping gene expression, etc.)
+#' 6. citation.s : Citations of source studies from which original measures or 
+#' measure summaries were made.
 #' 
+#' Details about the reference table can be found in the cellScaleFactors package.
+#' 
+#' @example 
+#' # get the full table
+#' get_csf_reference()
+#' 
+#' # get a subset on brain cell types
+#' get_csf_reference(c("neuron", "glial"))
 #' 
 #' @returns Table of type "data.frame" or "tibble".
-#'
-#'
+#' @export
 get_csf_reference <- function(user.celltypes.vector = NULL, 
                               prefer.orthogonal = TRUE){
-  ref <- load_csf_rda()
+  ref <- lute:::load_csf_rda()
   if(prefer.orthogonal){
     data.source.vector <- unique(ref$scale.factor.data.source)
     orthogonal.sources.vector <- 
@@ -42,13 +52,11 @@ get_csf_reference <- function(user.celltypes.vector = NULL,
     }
   }
   if(!is(user.celltypes.vector, "NULL")){
-    ref <- csf_filter_labels(user.celltypes.vector, ref)
+    ref <- lute:::csf_filter_labels(user.celltypes.vector, ref)
   }
   return(ref)
 }
 
-#'
-#'
 #'
 load_csf_rda <- function(){
   require(cellScaleFactors)
@@ -58,9 +66,6 @@ load_csf_rda <- function(){
   return(get(load(path)))
 }
 
-#'
-#'
-#'
 #'
 csf_filter_labels <- function(labels, reference = NULL){
   require(dplyr)
