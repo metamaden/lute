@@ -4,7 +4,7 @@ Authors: Sean Maden, Stephanie Hicks
 
 [<img style="float: right;" src = "inst/png/lute_hexsticker_basic1.png" height="200"/>](https://github.com/metamaden/lute)
 
-The `lute` R package, a framework and utilities for deconvolution experiments.
+`lute` is a framework for deconvolution experiments.
 
 ## Installation
 
@@ -16,27 +16,11 @@ Install `lute` from GitHub by running the following in an R session:
 devtools::install("metamaden/lute")
 ```
 
-### From Bioconductor (pending)
+## Framework overview
 
-Install `lute` from Bioconductor with the following:
+The `lute` framework package causes deconvolution with the `lute()` function (see `?lute` for details). Data may be incorporated from the `cellScaleFactor` package and passed to the `s` argument for transformation of cell reference expression data prior to deconvolution.   
 
-```
-BiocManager::install("lute")
-```
-
-## Generics, methods, and classes for deconvolution
-
-The `lute` R package introduces several new generics for deconvolution experiments. It defines the new 
-`deconvolution` generic, whose methods provide access to multiple state-of-the-science algorithms and maps 
-standard inputs to synonymous function-specific arguments. 
-
-Since there are numerous routine tasks shared across many deconvolution experiments, deconvolution algorithms are supported using a new class hierarchy that is useful
-for understanding and comparing current methods, and can serve as a starting point for new experiments and
-new method development.
-
-The inheritance hierarchy for the numerous novel classes in `lute` for various deconvolution algorithms is depicted in the following flowchart:
-
-[<img style="float: center;" src = "inst/jpg/deconvolutionParam_hierarchy_diagram.jpeg"/>](https://github.com/metamaden/lute)
+[<img style="float: center;" src = "inst/jpg/lute_framework_diagram.jpeg"/>](https://github.com/metamaden/lute)
 
 ## Deconvolution methods supported
 
@@ -56,19 +40,13 @@ The following deconvolution algorithms are currently supported with novel method
 
 * Bisque : The `bisqueParam` class supports the `BisqueRNA::ReferenceBasedDecomposition` implementation of the Bisque deconvolution algorithm ([url](https://github.com/cozygene/bisque); [yml](https://github.com/metamaden/lute/blob/main/inst/yml/bisque.yml)).
 
-## Conda environment support
+## Conda environments
 
-Set up a new conda environment for a deconvolution method by passing the following code your Terminal:
+To run specific deconvolution methods and algorithms, `lute` contains conda YML scripts. For example, set up an environement to run the MuSiC method with the following:
 
 ```
 conda env create -f ./lute/inst/yml/music.yml
 ```
-
-## Further reading
-
-Additional resources to learn more about deconvolution algorithms and their applications.
-
-* [`awesome-deconvolution`](https://github.com/metamaden/awesome-deconvolution) : List of deconvolution algorithms, frameworks, and resources across various disciplines.
 
 ## Acknowledgements
 
