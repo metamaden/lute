@@ -43,7 +43,7 @@ setClass("referencebasedParam", contains="deconvolutionParam",
 #' @details Takes standard inputs for reference-based deconvolution algorithms.
 #' 
 #' @export
-referencebasedParam <- function(y, z, s = NULL, return.info = FALSE) {
+referencebasedParam <- function(y, z, s, return.info = FALSE) {
   new("referencebasedParam", y = y, z = z, s = s, return.info = return.info)
 }
 
