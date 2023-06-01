@@ -61,8 +61,7 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' squares (NNLS) deconvolution algorithm, implemented as \code{nnls::nnls()}.
 #' 
 #' @export
-nnlsParam <- function(y, z, s = NULL, return.info = FALSE) {
-  if(is(s, "NULL")){s <- rep(1, ncol(z))}
+nnlsParam <- function(y, z, s, return.info = FALSE) {
   new("nnlsParam", s = s, y = y, z = z, return.info = return.info)
 }
 
@@ -118,8 +117,11 @@ setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
                                                  colnames(z), 
                                                  colnames(y))
   if(object[["return.info"]]){
+    
     lr <- list(predictions = predictions, 
                result.info = result, 
-               metadata = lparam[["metadata"]])}
+               metadata = lparam[["metadata"]])
+    
+    }
   return(lr)
 })
