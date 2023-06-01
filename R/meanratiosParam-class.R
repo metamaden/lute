@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' nnlsParam-class
 #'
 #' Uses DeconvoBuddies::get_mean_ratio2()

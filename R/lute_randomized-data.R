@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+# Author: Sean Maden
+#
 # Functions to get randomized or synthetic datasets.
 #
 #

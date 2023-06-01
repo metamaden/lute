@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' deconvolution
 #'
 #' Get predicted cell type proportions using a deconvolution method.

@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' referencefreeParam-class
 #'
 #' Class and methods for managing reference-free deconvolution methods.

@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' bisqueParam-class
 #'
 #' Applies the BisqueRNA::ReferenceBasedDecomposition() implementation of the 

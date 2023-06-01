@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' epicParam-class
 #'
 #' Runs the EPIC deconvolution algorithm.

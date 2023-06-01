@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' typemarkersParam-class
 #'
 #' Main constructor for class to manage mappings to the \code{typemarkers()} 

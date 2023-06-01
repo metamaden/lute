@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' deconrnaseqParam-class
 #'
 #' Main constructor for class to manage mappings to the deconvolution

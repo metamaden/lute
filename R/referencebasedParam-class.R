@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' referencebasedParam-class
 #'
 #' Class and methods for managing reference-based deconvolution methods.

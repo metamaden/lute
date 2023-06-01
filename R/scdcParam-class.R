@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' scdcParam-class
 #' 
 #' Main constructor for class to manage mappings to the deconvolution method function \code{SCDC::SCDC_prop()}.

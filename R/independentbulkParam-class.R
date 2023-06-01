@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' independentbulkParam-class
 #'
 #' Class and methods for managing methods requiring independent bulk samples.

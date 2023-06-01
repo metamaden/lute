@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' musicParam-class
 #'
 #' Applies the MuSiC::music.basic() implementation of the MuSiC deconvolution 

@@ -1,3 +1,7 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+
 #' deconvolutionParam-class
 #' 
 #' Defines the principal parent class for all deconvolution method parameters.
