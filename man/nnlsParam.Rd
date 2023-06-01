@@ -4,7 +4,7 @@
 \alias{nnlsParam}
 \title{Make new object of class nnlsParam}
 \usage{
-nnlsParam(y, z, s = NULL, return.info = FALSE)
+nnlsParam(y, z, s, return.info = FALSE)
 }
 \arguments{
 \item{y}{Bulk mixed signals matrix of samples, which can be matched to 

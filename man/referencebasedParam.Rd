@@ -4,7 +4,7 @@
 \alias{referencebasedParam}
 \title{Make new object of class referencebasedParam}
 \usage{
-referencebasedParam(y, z, s = NULL, return.info = FALSE)
+referencebasedParam(y, z, s, return.info = FALSE)
 }
 \arguments{
 \item{y}{Bulk mixed signals matrix of samples, which can be matched to single-cell samples.}
