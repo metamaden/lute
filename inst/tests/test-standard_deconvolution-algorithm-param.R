@@ -5,6 +5,9 @@
 # Standard algorithm test. This is for testing a new algorithm param class object.
 #
 
+# require(lute)
+# lexample <- lute:::.get_decon_example_data()
+
 #------------
 # default use
 #------------
