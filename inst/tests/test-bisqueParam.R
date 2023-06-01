@@ -1,6 +1,6 @@
 require(lute)
 # get data
-lexample <- .get_decon_example_data_bisque()
+lexample <- lute:::.get_decon_example_data_bisque()
 sc.eset <- lexample[["sc.eset"]]
 y.eset <- lexample[["y.eset"]]
 # example params
