@@ -120,12 +120,10 @@ setMethod("deconvolution", signature(object = "epicParam"), function(object){
   z <- lparam[["z"]]
   z.var <- object[["z.var"]]
   s <- lparam[["s"]]
-  s <- as.numeric(s)
   if(!"otherCells" %in% names(s)){
     message("Setting size/mRNA for missing label 'otherCells' to 0...")
     s["otherCells"] <- 0
   }
-  z <- as.matrix(z)
   y <- as.data.frame(y)
   z.var <- as.matrix(z.var)
   reference <- list(refProfiles = z,

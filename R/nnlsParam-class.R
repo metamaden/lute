@@ -104,13 +104,15 @@ setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
   require(nnls)
   lparam <- callNextMethod()
   y <- lparam[["y"]]; z <- lparam[["z"]]; s <- lparam[["s"]]
-  y <- as.matrix(y)
-  z <- as.matrix(z)
-  s <- as.numeric(s)
   bulk.samples.index.vector <- seq(ncol(y))
-  result <- lapply(bulk.samples.index.vector, function(index){
-    nnls::nnls(A = z, b = y[,index])
-  })
+  result <- lapply(
+    bulk.samples.index.vector, function(index){
+      
+      nnls::nnls(A = z, b = y[,index])
+  
+      }
+    )
+  
   names(result) <- colnames(y)
   predictions <- lapply(result, function(iter){iter$x})
   lr <- .parse_deconvolution_predictions_results(predictions, 

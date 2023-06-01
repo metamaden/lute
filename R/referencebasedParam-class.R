@@ -100,10 +100,15 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
   
   # get final metadata
   g <- nrow(z); j <- ncol(y); k <- ncol(z)
-  lmd <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
+  metadata.list <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
               markers.y = markers.y, marker.z = markers.z)
   # return list
-  return(list(y = y, z = z, s = s, metadata = lmd))
+  return(
+    list(y = as.matrix(y), 
+         z = as.matrix(z), 
+         s = as.numeric(s), 
+         metadata = metadata.list)
+    )
 })
 
 #' Show generic behavior for object of class referencebasedParam
