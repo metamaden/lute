@@ -45,16 +45,33 @@ y <- lparam[["y"]]
 z <- lparam[["z"]]
 s <- lparam[["s"]]
 bulk.samples.index.vector <- seq(ncol(y))
+
+standard.output.first.index <- nnls::nnls(A = z, b = y[,index])
+class(standard.output.first.index) == "nnls"
+paste0(names(standard.output.first.index), collapse = ";") == "x;deviance;residuals;fitted;mode;passive;bound;nsetp"
+
+
+
 result <- lapply(
-  bulk.samples.index.vector, function(index){
+  
+  
+  bulk.samples.index.vector, 
+  function(index){
     
     nnls::nnls(A = z, b = y[,index])
     
   }
+  
+  
 )
 
 names(result) <- colnames(y)
-predictions <- lapply(result, function(iter){iter$x})
+predictions <- lapply(result, 
+                      function(iter){
+                        iter$x
+                        }
+                      )
+
 lr <- .parse_deconvolution_predictions_results(predictions, 
                                                colnames(z), 
                                                colnames(y))
