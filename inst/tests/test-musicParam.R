@@ -1,3 +1,17 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+#
+# Standard algorithm test. This is for testing a new algorithm param class object.
+#
+
+#------------
+# default use
+#------------
+# run new param class with any applicable generics
+
+
+
 require(lute)
 # example
 lexample <- lute:::.get_decon_example_data()
@@ -9,9 +23,18 @@ deconvolution(param)
 param@return.info <- T
 deconvolution(param)
 
+
+
+
+
+
 #------------------------
 # test embedded algorithm
 #------------------------
+# test algorithm contained by the new param class
+
+
+
 require(MuSiC); require(dplyr)
 lparam <- callNextMethod()
 # instantiate objects
@@ -40,3 +63,5 @@ predictions <- apply(predictions, 1, function(ri){ri/sum(ri)}) %>% t()
 colnames(predictions) <- colnames(z)
 rownames(predictions) <- colnames(y)
 lr <- predictions
+
+

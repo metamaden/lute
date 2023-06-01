@@ -1,3 +1,17 @@
+#!/usr/bin/env R
+
+# Author: Sean Maden
+#
+# Tests using standard formats for the nnlsParam class.
+#
+
+#------------
+# default use
+#------------
+# run new param class with any applicable generics
+
+
+
 require(lute)
 # example
 lexample <- lute:::.get_decon_example_data()
@@ -8,9 +22,15 @@ result <- deconvolution(param)
 param[["return.info"]] <- T
 result <- deconvolution(param)
 
+
+
+
+
 #------------------------
 # test embedded algorithm
 #------------------------
+# test algorithm contained by the new param class
+
 require(nnls)
 # lparam <- callNextMethod()
 lparam <- referencebasedParam(y = lexample[["y"]],
