@@ -8,30 +8,25 @@
 require(lute)
 
 lparam_from_lexample <- function(lexample){
-  lparam <- referencebasedParam(y = lexample[["y"]], 
-                                z = lexample[["z"]],
-                                s = lexample[["s"]])
+  
+  lparam <- referencebasedParam(
+    
+    y = lexample[["y"]], z = lexample[["z"]], s = lexample[["s"]]
+    
+  )
+  
   return(lparam)
 }
 
 lparam <- lparam_from_lexample(lute:::.get_decon_example_data())
 
-
-#------------
-# default use
-#------------
-# run new param class with any applicable generics
-
-
-
-
-param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
-# return only predicted proportions
-result <- deconvolution(param)
-# return detailed results
-param[["return.info"]] <- T
-result <- deconvolution(param)
-
+output.from.one.bulk.sample <- function(algo.index.from.mappings){
+  mappings.data <- lute:::algo.from.index()
+  
+  
+  
+  eval(parse(text = paste0(algorithm.string, "(",z, y,")")))
+}
 
 #-------------------
 # embedded algorithm
@@ -40,8 +35,11 @@ result <- deconvolution(param)
 
 require(nnls)
 bulk.samples.index.vector <- seq(ncol(y))
+standard.output.first.index <- nnls::nnls(A = z, b = lparam[["y"]][,1])
 
-standard.output.first.index <- nnls::nnls(A = z, b = y[,index])
+
+
+
 class(standard.output.first.index) == "nnls"
 paste0(names(standard.output.first.index), collapse = ";") == "x;deviance;residuals;fitted;mode;passive;bound;nsetp"
 
@@ -49,12 +47,10 @@ paste0(names(standard.output.first.index), collapse = ";") == "x;deviance;residu
 
 result <- lapply(
   
-  
   bulk.samples.index.vector, 
   function(index){
     
     nnls::nnls(A = z, b = y[,index])
-    
     
   }
   
@@ -72,5 +68,21 @@ lr <- .parse_deconvolution_predictions_results(predictions,
                                                colnames(z), 
                                                colnames(y))
 
+#------------
+# default use
+#------------
+# run new param class with any applicable generics
 
+
+
+
+param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+
+# return only predicted proportions
+result <- deconvolution(param)
+
+# return detailed results
+param[["return.info"]] <- T
+
+result <- deconvolution(param)
 
