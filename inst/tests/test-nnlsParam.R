@@ -6,10 +6,15 @@
 #
 
 require(lute)
-# example
-lexample <- lute:::.get_decon_example_data()
 
+lparam_from_lexample <- function(lexample){
+  lparam <- referencebasedParam(y = lexample[["y"]], 
+                                z = lexample[["z"]],
+                                s = lexample[["s"]])
+  return(lparam)
+}
 
+lparam <- lparam_from_lexample(lute:::.get_decon_example_data())
 
 
 #------------
@@ -28,22 +33,12 @@ param[["return.info"]] <- T
 result <- deconvolution(param)
 
 
-
-
-
-#------------------------
-# test embedded algorithm
-#------------------------
+#-------------------
+# embedded algorithm
+#-------------------
 # test algorithm contained by the new param class
 
 require(nnls)
-# lparam <- callNextMethod()
-lparam <- referencebasedParam(y = lexample[["y"]],
-                              z = lexample[["z"]],
-                              s = lexample[["s"]])
-y <- lparam[["y"]]
-z <- lparam[["z"]]
-s <- lparam[["s"]]
 bulk.samples.index.vector <- seq(ncol(y))
 
 standard.output.first.index <- nnls::nnls(A = z, b = y[,index])
@@ -59,6 +54,7 @@ result <- lapply(
   function(index){
     
     nnls::nnls(A = z, b = y[,index])
+    
     
   }
   
