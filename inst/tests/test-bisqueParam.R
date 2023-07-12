@@ -15,3 +15,18 @@ results <- deconvolution(param)
 # get full results
 param@return.info <- TRUE
 results <- deconvolution(param)
+
+# these evaluate to false -- lute does not currently run with independent bulk samples 
+z <- lute:::.get_z_from_sce(sc.eset, "counts", "celltype")
+sce <- random_sce()
+lute(y.se = SummarizedExperiment(y.eset), 
+     sce = SummarizedExperiment(sc.eset), 
+     typemarker.algorithm = NULL,
+     celltype.variable = "cellType")
+lute(y.se = SummarizedExperiment(y.eset), 
+     sce = sce, 
+     typemarker.algorithm = NULL,
+     celltype.variable = "cellType")
+
+
+
