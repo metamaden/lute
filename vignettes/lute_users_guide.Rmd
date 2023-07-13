@@ -197,7 +197,8 @@ we define $Y$ as a pseudobulk from the provided `sce.example` data using
 ```{r}
 y <- ypb_from_sce(sce = sce.example, 
                   assay.name = "counts", 
-                  celltype.variable = "celltype") %>% as.matrix()
+                  celltype.variable = "celltype")
+y <- as.matrix(y)
 ```
 
 By default, the pseudobulk used all available cell data in `sce.example`. 

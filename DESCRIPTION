@@ -58,4 +58,5 @@ Collate:
     'typemarkersParam-class.R'
     'meanratiosParam-class.R'
     'referencebasedParam-class.R'
+    'musicParam-class.R'
     'nnlsParam-class.R'
