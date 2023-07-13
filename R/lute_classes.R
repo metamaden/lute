@@ -58,7 +58,7 @@ setMethod("show", "cellProportionsPredictions", function(object) {
   message("Number of cell types (K): ", 
           paste0(length(object@cell.type.vector), collapse = "; "))
   message("Cell type labels:\n", 
-          paste0("\t", object@sample.id.vector, collapse = "; "))
+          paste0("\t", object@cell.type.vector, collapse = "; "))
   # table summary
   print(
     message("predictions.table summary:\n"))
