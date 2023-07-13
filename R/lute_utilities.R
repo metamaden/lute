@@ -255,6 +255,8 @@ signature_matrix_from_sce <- function(sce,
 #'
 #'
 #' @param list.pred Predictions list.
+#' @param column.labels cell type labels.
+#' @param row.labels sample id labels.
 #'
 #'
 .parse_deconvolution_predictions_results <- function(list.pred, 
@@ -263,8 +265,9 @@ signature_matrix_from_sce <- function(sce,
   require(dplyr)
   table.pred <- do.call(rbind, list.pred)
   table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) %>% t()
-  table.pred <- cellProportionsPredictions(table.pred) # convert
-  colnames(table.pred@predictions.table) <- column.labels
-  rownames(table.pred@predictions.table) <- row.labels
+  colnames(table.pred) <- column.labels
+  rownames(table.pred) <- row.labels
+  table.pred <- cellProportionsPredictions(table.pred, 
+                                           column.labels, row.labels) # convert
   return(table.pred)
 }

@@ -17,12 +17,8 @@
 #' ptable <- matrix(sample(100,50),nrow=10)
 #' colnames(ptable) <- paste0("cell_type",seq(ncol(ptable)))
 #' rownames(ptable) <- paste0("sample", seq(nrow(ptable)))
-#' ptable <- as_tibble(ptable)
 #' pred <- cellProportionsPredictions(ptable)
 #' pred
-#' @aliases 
-#' MeanratiosParam-class, MeanRatiosParam-class
-#' 
 setClass("cellProportionsPredictions", slots = c(predictions.table = "tbl",
                                                  cell.type.vector = "character",
                                                  sample.id.vector = "character"))
@@ -32,12 +28,20 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "tbl",
 #' @param predictions.table Table of cell type predictions.
 #' @returns cellProportionsPredictions object.
 #' @export
-cellProportionsPredictions <- function(predictions.table) {
+cellProportionsPredictions <- function(predictions.table, 
+                                       cell.type.vector = NULL, 
+                                       sample.id.vector = NULL) {
+  if(is(cell.type.vector, "NULL")){
+    cell.type.vector <- colnames(predictions.table) 
+  }
+  if(is(sample.id.vector, "NULL")){
+    sample.id.vector <- rownames(predictions.table)
+  }
   predictions.tbl <- predictions.table %>% as_tibble()
   new("cellProportionsPredictions", 
       predictions.table = predictions.tbl,
-      cell.type.vector = colnames(predictions.table),
-      sample.id.vector = rownames(predictions.table))
+      cell.type.vector = cell.type.vector %>% as.character(),
+      sample.id.vector = sample.id.vector %>% as.character())
 }
 
 #' Inspect cellProportionsPredictions object.

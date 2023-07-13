@@ -20,7 +20,7 @@
 #' lexample <- lute:::.get_decon_example_data_bisque()
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.eset = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
+#' param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.data = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
 #' 
 #' # get predicted proportions
 #' res <- deconvolution(param)
@@ -233,16 +233,11 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
   result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset, 
                                                    sc.eset = sc.eset, 
                                                    use.overlap = use.overlap)
-  
   predictions <- result$bulk.props
   lpred <- lapply(seq(ncol(predictions)), function(index){predictions[,index]})
   lr <- lute:::.parse_deconvolution_predictions_results(lpred, 
-                                                 row.names(predictions), colnames(predictions))
-  
-  predictions <- apply(predictions, 2, function(ri){ri/sum(ri)})
-  lr <- t(predictions)
-  
-  
+                                                 row.names(predictions), 
+                                                 colnames(predictions))
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = list(lmd = lparam[["metadata"]], 

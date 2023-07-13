@@ -4,7 +4,11 @@
 \alias{cellProportionsPredictions}
 \title{Make new cellProportionsPredictions object.}
 \usage{
-cellProportionsPredictions(predictions.table)
+cellProportionsPredictions(
+  predictions.table,
+  cell.type.vector = NULL,
+  sample.id.vector = NULL
+)
 }
 \arguments{
 \item{predictions.table}{Table of cell type predictions.}

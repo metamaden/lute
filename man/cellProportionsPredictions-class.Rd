@@ -3,8 +3,6 @@
 \docType{class}
 \name{cellProportionsPredictions-class}
 \alias{cellProportionsPredictions-class}
-\alias{MeanratiosParam-class,}
-\alias{MeanRatiosParam-class}
 \title{cellProportionsPredictions-class}
 \arguments{
 \item{predictions.table}{Table containing cell type predictions.}
@@ -21,7 +19,6 @@ new("cellProportionsPredictions")
 ptable <- matrix(sample(100,50),nrow=10)
 colnames(ptable) <- paste0("cell_type",seq(ncol(ptable)))
 rownames(ptable) <- paste0("sample", seq(nrow(ptable)))
-ptable <- as_tibble(ptable)
 pred <- cellProportionsPredictions(ptable)
 pred
 }
