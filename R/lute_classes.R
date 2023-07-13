@@ -23,8 +23,7 @@
 #' @aliases 
 #' MeanratiosParam-class, MeanRatiosParam-class
 #' 
-setClass("cellProportionsPredictions", contains = "tbl", 
-         slots = c(predictions.table = "tbl"))
+setClass("cellProportionsPredictions", slots = c(predictions.table = "tbl"))
 
 #' Make new cellProportionsPredictions object.
 #' 
