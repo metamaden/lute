@@ -19,7 +19,7 @@
 #' rownames(ptable) <- paste0("sample", seq(nrow(ptable)))
 #' pred <- cellProportionsPredictions(ptable)
 #' pred
-setClass("cellProportionsPredictions", slots = c(predictions.table = "tbl",
+setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame",
                                                  cell.type.vector = "character",
                                                  sample.id.vector = "character"))
 
@@ -37,9 +37,9 @@ cellProportionsPredictions <- function(predictions.table,
   if(is(sample.id.vector, "NULL")){
     sample.id.vector <- rownames(predictions.table)
   }
-  predictions.tbl <- predictions.table %>% as_tibble()
+  predictions.df <- predictions.table %>% as.data.frame()
   new("cellProportionsPredictions", 
-      predictions.table = predictions.tbl,
+      predictions.table = predictions.df,
       cell.type.vector = cell.type.vector %>% as.character(),
       sample.id.vector = sample.id.vector %>% as.character())
 }

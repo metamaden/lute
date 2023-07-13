@@ -267,7 +267,9 @@ signature_matrix_from_sce <- function(sce,
   table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) %>% t()
   colnames(table.pred) <- column.labels
   rownames(table.pred) <- row.labels
+  # convert
   table.pred <- cellProportionsPredictions(table.pred, 
-                                           column.labels, row.labels) # convert
+                                           column.labels, 
+                                           row.labels)
   return(table.pred)
 }
