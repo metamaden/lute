@@ -29,7 +29,9 @@ sce_to_eset <- function(sce, assay.name = "counts"){
 #' eset_to_sce(eset)
 #' @export
 eset_to_sce <- function(eset, assay.name = "counts"){
-	sce.new <- SingleCellExperiment(assays = list(assay.name = exprs(eset)))
+  assays.list <- list(assay.name = exprs(eset))
+  names(assays.list) <- assay.name
+	sce.new <- SingleCellExperiment(assays = assays.list)
 	colData(sce.new) <- DataFrame(as.matrix(pData(eset)))
 	return(sce.new)
 }
@@ -73,7 +75,9 @@ se_to_sce <- function(se){
 #' eset_to_se(eset, "counts")
 #' @export
 eset_to_se <- function(eset, assay.name = "counts"){
-	se.new <- SummarizedExperiment(assays = list(assay.name = exprs(eset)))
+  assays.list <- list(assay.name = exprs(eset))
+  names(assays.list) <- assay.name
+	se.new <- SummarizedExperiment(assays = assays.list)
 	colData(se.new) <- DataFrame(as.matrix(pData(eset)))
 	return(se.new)
 }

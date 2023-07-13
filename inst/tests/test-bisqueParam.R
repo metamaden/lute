@@ -1,7 +1,7 @@
 require(lute)
 # get data
 lexample <- lute:::.get_decon_example_data_bisque()
-sc.eset <- lexample[["sc.eset"]]
+sc.data <- lexample[["sc.eset"]]
 y.eset <- lexample[["y.eset"]]
 # example params
 batch.variable <- "SubjectName"
