@@ -4,35 +4,42 @@
 # Classes supporting generic and framework functions.
 #
 
-#' nnlsParam-class
+#' cellProportionsPredictions-class
 #'
-#' Uses DeconvoBuddies::get_mean_ratio2()
+#' Class for cell type predictions.
 #' 
-#' @include lute_generics.R
-#' @include typemarkersParam-class.R
-#' 
-#' @details Main constructor for class \linkS4class{meanratiosParam}.
-#' @rdname meanratiosParam-class
-#' @seealso \linkS4class{typemarkersParam}
-#' 
-#' @param assay.name Name of expression matrix in sce assays.
-#' @param sce Object of type SingleCellExperiment.
-#' @param celltype.variable Name of cell type variable in sce coldata.
-#' 
+#' @details Main constructor for class \linkS4class{cellProportionsPredictions}.
+#' @rdname cellProportionsPredictions-class
+#' @param predictions.table Table containing cell type predictions.
 #' @examples 
 #' new("cellProportionsPredictions")
-#' 
+#' # 
+#' ptable <- matrix(sample(100,50),nrow=10)
+#' colnames(ptable) <- paste0("cell_type",seq(ncol(ptable)))
+#' rownames(ptable) <- paste0("sample", seq(nrow(ptable)))
+#' ptable <- as_tibble(ptable)
+#' pred <- cellProportionsPredictions(ptable)
+#' pred
 #' @aliases 
 #' MeanratiosParam-class, MeanRatiosParam-class
 #' 
 setClass("cellProportionsPredictions", contains = "tbl", 
          slots = c(predictions.table = "tbl"))
 
-cellProportionsPredictions <- function(predictions.table, return.info = FALSE) {
+#' Make new cellProportionsPredictions object.
+#' 
+#' @param predictions.table Table of cell type predictions.
+#' @returns cellProportionsPredictions object.
+#' @export
+cellProportionsPredictions <- function(predictions.table) {
   predictions.table <- predictions.table %>% as_tibble()
   new("cellProportionsPredictions", predictions.table=predictions.table)
 }
 
+#' Inspect cellProportionsPredictions object.
+#' @param object cellProportionsPredictions object.
+#' @details Method behavior for show.
+#' @export
 setMethod("show", "cellProportionsPredictions", function(object) {
   ptable <- object@predictions.table
   # metadata summaries
@@ -49,10 +56,3 @@ setMethod("show", "cellProportionsPredictions", function(object) {
     message("predictions.table summary:\n"))
   print(head(ptable))
 })
-
-ptable <- matrix(sample(100,50),nrow=10)
-colnames(ptable) <- paste0("cell_type",seq(ncol(ptable)))
-rownames(ptable) <- paste0("sample", seq(nrow(ptable)))
-ptable <- as_tibble(ptable)
-pred <- cellProportionsPredictions(ptable)
-pred

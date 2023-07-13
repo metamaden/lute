@@ -49,6 +49,7 @@ Collate:
     'lute_generics.R'
     'deconvolutionParam-class.R'
     'lute_cellScaleFactors.R'
+    'lute_classes.R'
     'lute_conversions.R'
     'lute_framework.R'
     'lute_metadata.R'
