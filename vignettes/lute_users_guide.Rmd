@@ -23,7 +23,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-libv <- c("lute", "SummarizedExperiment", "SingleCellExperiment")
+libv <- c("lute", "dplyr", "SummarizedExperiment", "SingleCellExperiment")
 sapply(libv, library, character.only = TRUE)
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
