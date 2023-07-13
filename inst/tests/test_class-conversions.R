@@ -22,11 +22,15 @@ names(attributes(sc.eset))
 assay.name <- "counts"
 se.new <- SummarizedExperiment(assays = list(assay.name = exprs(sc.eset)))
 colData(se.new) <- DataFrame(as.matrix(pData(sc.eset)))
+# 
+eset_to_se(eset)
 
 # convert eset to sce
 sce.new <- SingleCellExperiment(assays = list(assay.name = exprs(eset)))
 colData(sce.new) <- DataFrame(as.matrix(pData(eset)))
 metadata(sce.new) <- metadata(eset)
+# 
+eset_to_sce(eset)
 
 #----------------
 # sce conversions
@@ -38,11 +42,15 @@ assay.name <- "counts"
 eset <- ExpressionSet(assayData = assays(sce)[[assay.name]])
 pData(eset) <- as.data.frame(colData(sce))
 metadata(eset) <- metadata(sce)
+# 
+sce_to_eset(sce)
 
 # convert to se
 se <- SummarizedExperiment(assays = assays(sce))
 colData(se) <- colData(sce)
 metadata(se) <- metadata(sce)
+# 
+sce_to_se(sce)
 
 #---------------
 # se conversions
@@ -51,10 +59,12 @@ metadata(se) <- metadata(sce)
 sce <- SingleCellExperiment(assays = assays(se))
 colData(sce) <- colData(se)
 metadata(sce) <- metadata(se)
-
+# 
+se_to_sce(se)
 
 # convert to eset
 assay.name <- "counts"
 eset <- ExpressionSet(assayData = assays(se)[[assay.name]])
 pData(eset) <- as.data.frame(colData(se))
-
+#
+se_to_eset(se)
