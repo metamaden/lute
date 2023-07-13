@@ -23,7 +23,9 @@
 #' @aliases 
 #' MeanratiosParam-class, MeanRatiosParam-class
 #' 
-setClass("cellProportionsPredictions", slots = c(predictions.table = "tbl"))
+setClass("cellProportionsPredictions", slots = c(predictions.table = "tbl",
+                                                 cell.type.vector = "character",
+                                                 sample.id.vector = "character"))
 
 #' Make new cellProportionsPredictions object.
 #' 
@@ -31,8 +33,11 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "tbl"))
 #' @returns cellProportionsPredictions object.
 #' @export
 cellProportionsPredictions <- function(predictions.table) {
-  predictions.table <- predictions.table %>% as_tibble()
-  new("cellProportionsPredictions", predictions.table=predictions.table)
+  predictions.tbl <- predictions.table %>% as_tibble()
+  new("cellProportionsPredictions", 
+      predictions.table = predictions.tbl,
+      cell.type.vector = colnames(predictions.table),
+      sample.id.vector = rownames(predictions.table))
 }
 
 #' Inspect cellProportionsPredictions object.
@@ -45,11 +50,11 @@ setMethod("show", "cellProportionsPredictions", function(object) {
   unique.cell.types.vector <- colnames(ptable)
   unique.sample.id.vector <- rownames(ptable)
   message("Number of bulk samples (J): ", 
-          paste0(length(unique.sample.id.vector), collapse = "; "))
+          paste0(length(object@sample.id.vector), collapse = "; "))
   message("Number of cell types (K): ", 
-          paste0(length(unique.cell.types.vector), collapse = "; "))
+          paste0(length(object@cell.type.vector), collapse = "; "))
   message("Cell type labels:\n", 
-          paste0("\t", unique.cell.types.vector, collapse = "; "))
+          paste0("\t", object@sample.id.vector, collapse = "; "))
   # table summary
   print(
     message("predictions.table summary:\n"))

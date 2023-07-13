@@ -235,8 +235,14 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
                                                    use.overlap = use.overlap)
   
   predictions <- result$bulk.props
+  lpred <- lapply(seq(ncol(predictions)), function(index){predictions[,index]})
+  lr <- lute:::.parse_deconvolution_predictions_results(lpred, 
+                                                 row.names(predictions), colnames(predictions))
+  
   predictions <- apply(predictions, 2, function(ri){ri/sum(ri)})
   lr <- t(predictions)
+  
+  
   if(object[["return.info"]]){
     lr <- list(predictions = predictions, result.info = result, 
                metadata = list(lmd = lparam[["metadata"]], 
