@@ -40,7 +40,8 @@ Suggests:
     ExperimentHub,
     AnnotationHub,
     ComplexHeatmap,
-    DelayedMatrixStats
+    DelayedMatrixStats,
+    BisqueRNA
 VignetteBuilder:
     knitr
 biocViews: RNASeq
