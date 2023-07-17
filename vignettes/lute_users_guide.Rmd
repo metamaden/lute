@@ -181,7 +181,7 @@ sce.example <- random_sce(num.genes = total.genes)
 We could identify marker genes in `sce.example` now by running `lute` without
 setting the deconvolution algorithm argument:
 
-```{r}
+```{r, eval = F}
 markers <- lute(sce = sce.example, 
                 markers.per.type = markers.per.type, 
                 deconvolution.algorithm = NULL)
@@ -207,7 +207,7 @@ Finally, we run marker selection and deconvolution in succession with `lute` as
 follows:
 
 ```{r}
-experiment.results <- lute(sce = sce.example, y = y)
+experiment.results <- lute(sce = sce.example, y = y, typemarker.algorithm = NULL)
 ```
 
 By default, `lute` used the mean ratios algorithm to get markers, then the 

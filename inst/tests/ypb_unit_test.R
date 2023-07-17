@@ -20,10 +20,20 @@ donor1.filter <- sce[["donor"]]=="donor1"
 # section 1 --- THIS SHOULD PASS WITH CONDITION FALSE
 #---------------------------------------------------
 # get ypb objects
-ypb3 <- ypb_from_sce(sce, "logcounts", "k2", "donor")
-ypb1 <- ypb_from_sce(sce[,donor1.filter], "logcounts", "k2", "donor")
+ypb3 <- lute::ypb_from_sce(sce, "logcounts", "k2", "donor")
+ypb1 <- lute::ypb_from_sce(sce[,donor1.filter], "logcounts", "k2", "donor")
 # compare
 identical(ypb1[,1], ypb3[,"donor1"]) 
+
+#---------------------------------------------------
+# section 2 --- try filter on 2 donors --- 
+#---------------------------------------------------
+# get ypb objects
+donor1and2.filter <- sce[["donor"]] %in% c("donor1", "donor2")
+ypb3 <- lute::ypb_from_sce(sce, "logcounts", "k2", "donor")
+ypb2 <- lute::ypb_from_sce(sce[,donor1and2.filter], "logcounts", "k2", "donor")
+# compare
+identical(ypb2[,1], ypb3[,c("donor1")]) 
 
 #---------------------------------------------------
 # section 1b --- THIS SHOULD PASS WITH CONDITION TRUE
@@ -31,8 +41,8 @@ identical(ypb1[,1], ypb3[,"donor1"])
 # convert assays to matrices
 logcounts(sce) <- as.matrix(logcounts(sce))
 # get ypb objects
-ypb3 <- ypb_from_sce(sce, "logcounts", "k2", "donor")
-ypb1 <- ypb_from_sce(sce[,donor1.filter], "logcounts", "k2", "donor")
+ypb3 <- lute::ypb_from_sce(sce, "logcounts", "k2", "donor")
+ypb1 <- lute::ypb_from_sce(sce[,donor1.filter], "logcounts", "k2", "donor")
 # compare
 identical(ypb1[,1], ypb3[,"donor1"]) 
 
