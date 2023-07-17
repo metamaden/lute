@@ -22,6 +22,7 @@
 setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame",
                                                  cell.type.vector = "character",
                                                  sample.id.vector = "character"))
+require(dplyr)
 
 #' Make new cellProportionsPredictions object.
 #' 
