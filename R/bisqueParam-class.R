@@ -223,7 +223,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #'
 #' @export
 setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
-  requireNamespace(BisqueRNA)
+  requireNamespace("BisqueRNA")
   lparam <- callNextMethod()
   y.eset <- object[["y.eset"]]
   sc.eset <- object[["sc.eset"]]

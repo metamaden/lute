@@ -59,7 +59,7 @@ get_csf_reference <- function(user.celltypes.vector = NULL, prefer.orthogonal = 
 
 #'
 load_csf_rda <- function(){
-  requireNamespace(cellScaleFactors)
+  requireNamespace("cellScaleFactors")
   path <- system.file(
     file.path("rda", "cellScaleFactors.rda"), 
     package = "cellScaleFactors")
@@ -68,7 +68,7 @@ load_csf_rda <- function(){
 
 #'
 csf_filter_labels <- function(labels, reference = NULL){
-  requireNamespace(dplyr)
+  requireNamespace("dplyr")
   if(is(reference, "NULL")){reference <- get_csf_reference()}
   reference.labels <- reference$cell_type
   do.call(rbind, lapply(labels, function(label){
