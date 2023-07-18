@@ -60,14 +60,14 @@ setClass("musicParam", contains="referencebasedParam",
 #' @examples
 #' # example
 #' lexample <- lute:::.get_decon_example_data()
-#' param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' # param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
-#' deconvolution(param)
+#' # deconvolution(param)
 #' 
 #' # return full results
-#' param@return.info <- TRUE
-#' names(deconvolution(param))
+#' # param@return.info <- TRUE
+#' # names(deconvolution(param))
 #'
 #' @returns New object of class \linkS4class{musicParam}.
 #'
@@ -95,14 +95,14 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
 #' @examples
 #' # example
 #' lexample <- lute:::.get_decon_example_data()
-#' param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' # param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
-#' deconvolution(param)
+#' # deconvolution(param)
 #' 
 #' # return full results
-#' param@return.info <- TRUE
-#' names(deconvolution(param))
+#' # param@return.info <- TRUE
+#' # names(deconvolution(param))
 #' 
 #' @returns Either a vector of predicted proportions, or a list containing 
 #' predictions, metadata, and original outputs.
