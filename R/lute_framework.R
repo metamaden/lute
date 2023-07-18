@@ -49,7 +49,7 @@
 #' sce <- random_sce()[seq(10),]
 #' 
 #' # get framework results
-#' experiment.results <- lute(sce = sce, y = y)
+#' experiment.results <- lute(sce = sce, y = y, typemarker.algorithm = NULL)
 #' 
 #' @export
 lute <- function(sce = NULL, z = NULL, y = NULL, y.se = NULL, s = NULL, 

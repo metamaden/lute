@@ -77,6 +77,6 @@ y <- lute:::.get_decon_example_data()$y
 sce <- random_sce()[seq(10),]
 
 # get framework results
-experiment.results <- lute(sce = sce, y = y)
+experiment.results <- lute(sce = sce, y = y, typemarker.algorithm = NULL)
 
 }
