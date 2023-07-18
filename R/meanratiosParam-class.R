@@ -75,7 +75,7 @@ meanratiosParam <- function(sce, assay.name = "counts",
 #'
 #' @export
 setMethod("typemarkers", signature(object = "meanratiosParam"), function(object){
-  require(DeconvoBuddies)
+  requireNamespace(DeconvoBuddies)
   sce <- object[["sce"]]
   celltype.variable <- object[["celltype.variable"]]
   assay.name = object[["assay.name"]]

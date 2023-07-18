@@ -11,6 +11,8 @@
 #' @details Main constructor for class \linkS4class{cellProportionsPredictions}.
 #' @rdname cellProportionsPredictions-class
 #' @param predictions.table Table containing cell type predictions.
+#' @param cell.type.vector Character vector of cell type labels.
+#' @param sample.id.vector Character vector of sample id labels.
 #' @examples 
 #' new("cellProportionsPredictions")
 #' # 
@@ -31,7 +33,7 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame
 cellProportionsPredictions <- function(predictions.table, 
                                        cell.type.vector = NULL, 
                                        sample.id.vector = NULL) {
-  require(dplyr)
+  requireNamespace(dplyr)
   if(is(cell.type.vector, "NULL")){
     cell.type.vector <- colnames(predictions.table) 
   }

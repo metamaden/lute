@@ -23,9 +23,7 @@
 #' @seealso
 #' \linkS4class{deconvolutionParam}, \linkS4class{referencebasedParam}, 
 #' \linkS4class{independentbulkParam}, \linkS4class{nnlsParam}, 
-#' \linkS4class{musicParam}, \linkS4class{epicParam}, 
-#' \linkS4class{deconrnaseqParam}, \linkS4class{scdcParam},
-#' \linkS4class{bisqueParam}, \linkS4class{music2Param}
+#' \linkS4class{musicParam},\linkS4class{bisqueParam}
 #' 
 #' @author Sean Maden
 #' 

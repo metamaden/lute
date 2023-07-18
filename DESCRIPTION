@@ -19,12 +19,7 @@ Depends:
     S4Vectors
 Imports:
     dplyr,
-    utils,
     methods,
-    RCurl,
-    R.utils,
-    BiocFileCache,
-    ggplot2,
     nnls,
     stats
 Suggests:

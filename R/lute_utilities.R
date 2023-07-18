@@ -39,7 +39,7 @@
 ypb_from_sce <- function(sce, assay.name = "counts", 
                          celltype.variable = "celltype", 
                          sample.id.variable = NULL, S = NULL){
-  require(dplyr)
+  requireNamespace(dplyr)
   num.groups <- 1; unique.group.id.vector <- ""
   if(!is(sample.id.variable, "NULL")){
     group.id.vector <- sce[[sample.id.variable]]
@@ -99,7 +99,7 @@ signature_matrix_from_sce <- function(sce,
                                       celltype.variable = "celltype", 
                                       summary.method = "mean", 
                                       assay.name = "counts"){
-  require(dplyr)
+  requireNamespace(dplyr)
   # gets the z signature matrix from an sce object
   expression.matrix <- assays(sce)[[assay.name]] %>% as.matrix()
   cd <- colData(sce)
@@ -205,7 +205,7 @@ signature_matrix_from_sce <- function(sce,
 .get_decon_example_data_scdc <- function(seed.num = 0){
   set.seed(seed.num)
   # get y.eset
-  y <- lute:::.get_decon_example_data()[["y"]]
+  y <- .get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
   df.y.pheno <- data.frame(SubjectName = colnames(y))
@@ -227,7 +227,7 @@ signature_matrix_from_sce <- function(sce,
 .get_decon_example_data_music2 <- function(seed.num = 0){
   set.seed(seed.num)
   # get y.eset
-  y <- lute:::.get_decon_example_data()[["y"]]
+  y <- .get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), 
                    paste0("bulk",seq(ncol(y)-2)))
@@ -262,7 +262,7 @@ signature_matrix_from_sce <- function(sce,
 .parse_deconvolution_predictions_results <- function(list.pred, 
                                                      column.labels, 
                                                      row.labels){
-  require(dplyr)
+  requireNamespace(dplyr)
   table.pred <- do.call(rbind, list.pred)
   table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) %>% t()
   colnames(table.pred) <- column.labels

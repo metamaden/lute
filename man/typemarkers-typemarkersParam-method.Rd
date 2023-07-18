@@ -2,18 +2,16 @@
 % Please edit documentation in R/typemarkersParam-class.R
 \name{typemarkers,typemarkersParam-method}
 \alias{typemarkers,typemarkersParam-method}
-\title{Deconvolution method for class \linkS4class{deconrnaseqParam}}
+\title{Method for class \linkS4class{typemarkersParam}}
 \usage{
 \S4method{typemarkers}{typemarkersParam}(object)
 }
 \arguments{
-\item{object}{An object of class \linkS4class{deconrnaseqParam}.}
+\item{object}{An object of class \linkS4class{typemarkersParam}.}
 }
 \value{
-Either a vector of gene markers, or a list of detailed outputs that
-includes such a marker vector.
+Info related to gene markers for cell types.
 }
 \description{
-Main deconvolution method for the \linkS4class{deconrnaseqParam} to run the 
-\code{DeconRNASeq::DeconRNASeq()} implementation of the DeconRNASeq algorithm.
+Method for class \linkS4class{typemarkersParam}
 }

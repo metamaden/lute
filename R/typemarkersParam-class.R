@@ -51,15 +51,11 @@ typemarkersParam <- function(markers.per.type = 20, return.info = FALSE) {
       return.info = return.info)
 }
 
-#' Deconvolution method for class \linkS4class{deconrnaseqParam}
+#' Method for class \linkS4class{typemarkersParam}
 #' 
-#' Main deconvolution method for the \linkS4class{deconrnaseqParam} to run the 
-#' \code{DeconRNASeq::DeconRNASeq()} implementation of the DeconRNASeq algorithm.
+#' @param object An object of class \linkS4class{typemarkersParam}.
 #' 
-#' @param object An object of class \linkS4class{deconrnaseqParam}.
-#' 
-#' @returns Either a vector of gene markers, or a list of detailed outputs that
-#' includes such a marker vector.
+#' @returns Info related to gene markers for cell types.
 #'
 #' @export
 setMethod("typemarkers", signature(object = "typemarkersParam"), function(object){

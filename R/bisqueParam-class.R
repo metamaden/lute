@@ -84,7 +84,6 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
                         batch.variable = "batch.id", 
                         celltype.variable = "celltype", 
                         use.overlap = FALSE, return.info = FALSE) {
-  require(Biobase)
   # check y.eset/y
   if(is(y, "NULL")){
     if(is(y.eset, "NULL")){
@@ -127,8 +126,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   }
   if(is(z, "NULL")){
     sce <- eset_to_sce(sc.eset, "counts")
-    z <- lute:::.get_z_from_sce(sce = sce, 
-                                assay.name = assay.name, 
+    z <- .get_z_from_sce(sce = sce, assay.name = assay.name, 
                                 celltype.variable = celltype.variable)
   }
   if(!batch.variable %in% colnames(pData(sc.eset))){
@@ -225,7 +223,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #'
 #' @export
 setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
-  require(BisqueRNA); require(Biobase)
+  requireNamespace(BisqueRNA)
   lparam <- callNextMethod()
   y.eset <- object[["y.eset"]]
   sc.eset <- object[["sc.eset"]]
@@ -235,7 +233,7 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
                                                    use.overlap = use.overlap)
   predictions <- result$bulk.props
   lpred <- lapply(seq(ncol(predictions)), function(index){predictions[,index]})
-  lr <- lute:::.parse_deconvolution_predictions_results(lpred, 
+  lr <- .parse_deconvolution_predictions_results(lpred, 
                                                  row.names(predictions), 
                                                  colnames(predictions))
   if(object[["return.info"]]){

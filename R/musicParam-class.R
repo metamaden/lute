@@ -90,7 +90,7 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
 #' Main deconvolution method for the \linkS4class{musicParam} to run the 
 #' \code{music.basic()} implementation of the MuSiC algorithm.
 #' 
-#' @param object An object of class \linkS4class{music2Param}.
+#' @param object An object of class \linkS4class{musicParam}.
 #' 
 #' @examples
 #' # example
@@ -118,7 +118,8 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
 #'
 #' @export
 setMethod("deconvolution", signature(object = "musicParam"), function(object){
-  require(MuSiC); require(dplyr)
+  requireNamespace(MuSiC)
+  requireNamespace(dplyr)
   lparam <- callNextMethod()
   # instantiate objects
   nu <- object[["nu"]]
