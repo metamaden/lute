@@ -22,7 +22,6 @@
 setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame",
                                                  cell.type.vector = "character",
                                                  sample.id.vector = "character"))
-require(dplyr)
 
 #' Make new cellProportionsPredictions object.
 #' 
@@ -32,6 +31,7 @@ require(dplyr)
 cellProportionsPredictions <- function(predictions.table, 
                                        cell.type.vector = NULL, 
                                        sample.id.vector = NULL) {
+  require(dplyr)
   if(is(cell.type.vector, "NULL")){
     cell.type.vector <- colnames(predictions.table) 
   }
