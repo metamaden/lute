@@ -22,8 +22,8 @@ Main constructor for class \linkS4class{meanratiosParam}.
 \examples{
 lexample <- lute:::.get_decon_example_data()
 sce.example <- random_sce()
-new.param <- meanratiosParam(sce = sce.example, celltype.variable = "celltype", markers.per.type = 20)
-markers <- typemarkers(new.param)
+#new.param <- meanratiosParam(sce = sce.example, celltype.variable = "celltype", markers.per.type = 20)
+#markers <- typemarkers(new.param)
 
 }
 \seealso{
