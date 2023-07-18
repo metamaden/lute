@@ -36,9 +36,9 @@ Further details about the reference table can be found in the cellScaleFactors p
 }
 \examples{
 # get the full table
-get_csf_reference()
+# get_csf_reference()
 
 # get a subset on brain cell types
-get_csf_reference(c("neuron", "glial"))
+# get_csf_reference(c("neuron", "glial"))
 
 }

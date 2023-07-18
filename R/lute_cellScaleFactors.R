@@ -30,10 +30,10 @@
 #' 
 #' @examples
 #' # get the full table
-#' get_csf_reference()
+#' # get_csf_reference()
 #' 
 #' # get a subset on brain cell types
-#' get_csf_reference(c("neuron", "glial"))
+#' # get_csf_reference(c("neuron", "glial"))
 #' 
 #' @returns Table of type "data.frame" or "tibble".
 #' @export
