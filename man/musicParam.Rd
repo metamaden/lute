@@ -45,13 +45,13 @@ Takes standard inputs for the MuSiC algorithm
 \examples{
 # example
 lexample <- lute:::.get_decon_example_data()
-param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+# param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 
 # return only predicted proportions
-deconvolution(param)
+# deconvolution(param)
 
 # return full results
-param@return.info <- TRUE
-names(deconvolution(param))
+# param@return.info <- TRUE
+# names(deconvolution(param))
 
 }
