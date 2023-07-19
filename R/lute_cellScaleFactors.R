@@ -68,10 +68,9 @@ load_csf_rda <- function(){
 
 #'
 csf_filter_labels <- function(labels, reference = NULL){
-  requireNamespace("dplyr")
   if(is(reference, "NULL")){reference <- get_csf_reference()}
   reference.labels <- reference$cell_type
-  do.call(rbind, lapply(labels, function(label){
+  df <- do.call(rbind, lapply(labels, function(label){
     filter1 <- grepl(label, reference.labels)
     filter2 <- grepl(toupper(label), toupper(reference.labels))
     filter3 <- grepl(label, gsub(" ", "",reference.labels))
@@ -80,5 +79,7 @@ csf_filter_labels <- function(labels, reference = NULL){
                      gsub(" ", "", toupper(reference.labels)))
     label.filter <- filter1|filter2|filter3|filter4|filter5
     reference[label.filter,,drop=F]
-  })) %>% as.data.frame()
+  }))
+  df <- as.data.frame(df)
+  df
 }

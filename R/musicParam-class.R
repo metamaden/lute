@@ -118,8 +118,6 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
 #'
 #' @export
 setMethod("deconvolution", signature(object = "musicParam"), function(object){
-  requireNamespace("MuSiC")
-  requireNamespace("dplyr")
   lparam <- callNextMethod()
   # instantiate objects
   nu <- object[["nu"]]

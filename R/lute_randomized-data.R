@@ -124,7 +124,6 @@ random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2,
                        na.fract = 0.2, zero.include = FALSE, 
                        zero.fract = 0.2, verbose = FALSE, 
                        seed.num = 0){
-  require(SingleCellExperiment)
   if(verbose){message("Getting random expression data...")}
   if(is(dispersion, "NULL")){dispersion <- expr.mean}
   mdat <- rnbinom(n = (num.cells*num.genes), 

@@ -101,7 +101,6 @@ nnlsParam <- function(y, z, s, return.info = FALSE) {
 #'
 #' @export
 setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
-  requireNamespace("nnls")
   lparam <- callNextMethod()
   y <- lparam[["y"]]; z <- lparam[["z"]]; s <- lparam[["s"]]
   bulk.samples.index.vector <- seq(ncol(y))

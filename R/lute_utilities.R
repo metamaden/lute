@@ -43,12 +43,14 @@ ypb_from_sce <- function(sce, assay.name = "counts",
   num.groups <- 1; unique.group.id.vector <- ""
   if(!is(sample.id.variable, "NULL")){
     group.id.vector <- sce[[sample.id.variable]]
-    unique.group.id.vector <- group.id.vector %>% unique() %>% as.character()
-    num.groups <- unique.group.id.vector %>% length()
+    unique.group.id.vector <- group.id.vector 
+    unique.group.id.vector <- unique(unique.group.id.vector)
+    unique.group.id.vector <- as.character(unique.group.id.vector)
+    num.groups <- length(unique.group.id.vector)
   }
   list.cell.types <- .get_celltypes_from_sce(
     sce = sce, celltype.variable = celltype.variable)
-  num.types <- list.cell.types[["unique.types"]] %>% length()
+  num.types <- length(list.cell.types[["unique.types"]])
   ypb.list <- lapply(unique.group.id.vector, function(group.id){
     sce.filter <- sce
     if(num.groups > 1){
@@ -62,14 +64,17 @@ ypb_from_sce <- function(sce, assay.name = "counts",
     }
     
     Znew <- .get_z_from_sce(sce.filter, assay.name, celltype.variable)
-    P <- list.cell.types[["character"]] %>% table() %>% prop.table()
-    order.p <- match(names(P), list.cell.types[["unique.types"]]) %>% order()
+    P <- table(list.cell.types[["character"]])
+    P <- prop.table(P)
+    order.p <- match(names(P), list.cell.types[["unique.types"]])
+    order.p <- order(order.p)
     P <- P[order.p]
     ZSnew <- .zstransform(Znew, S)
     ypb <- t(t(P) %*% t(ZSnew))
     return(ypb)
   })
-  ypb.table <- do.call(cbind, ypb.list) %>% as.data.frame()
+  ypb.table <- do.call(cbind, ypb.list)
+  ypb.table <- as.data.frame(ypb.table)
   if(num.groups > 1){
     colnames(ypb.table) <- unique.group.id.vector
   } else{
@@ -101,9 +106,10 @@ signature_matrix_from_sce <- function(sce,
                                       assay.name = "counts"){
   library(dplyr)
   # gets the z signature matrix from an sce object
-  expression.matrix <- assays(sce)[[assay.name]] %>% as.matrix()
+  expression.matrix <- assays(sce)[[assay.name]]
+  expression.matrix <- as.matrix(expression.matrix)
   cd <- colData(sce)
-  unique.cell.types <- cd[,celltype.variable] %>% unique()
+  unique.cell.types <- unique(cd[,celltype.variable])
   unique.cell.types <- unique.cell.types[order(unique.cell.types)]
   z <- do.call(cbind, lapply(unique.cell.types, function(cell.type.index){
     filter.index <- cd[,celltype.variable]==cell.type.index
@@ -116,6 +122,7 @@ signature_matrix_from_sce <- function(sce,
   return(z)
 }
 
+#' @importFrom SummarizedExperiment assays
 .get_z_from_sce <- function(sce, assay.name = "counts", 
                             celltype.variable = "celltype"){
   ltype <- .get_celltypes_from_sce(sce = sce, celltype.variable = celltype.variable)
@@ -137,9 +144,9 @@ signature_matrix_from_sce <- function(sce,
 .get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
   pdata <- data.frame(new.variable = colnames(mat))
   colnames(pdata) <- batch.variable
-  rownames(pdata) <- colnames(y)
+  rownames(pdata) <- colnames(mat)
   eset <- Biobase::ExpressionSet(assayData = mat, phenoData = Biobase::AnnotatedDataFrame(pdata))
-  return(est)
+  return(eset)
 }
 
 .zstransform <- function(z, s){
@@ -264,7 +271,8 @@ signature_matrix_from_sce <- function(sce,
                                                      row.labels){
   library(dplyr)
   table.pred <- do.call(rbind, list.pred)
-  table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) %>% t()
+  table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) 
+  table.pred <- t(table.pred)
   colnames(table.pred) <- column.labels
   rownames(table.pred) <- row.labels
   # convert

@@ -28,6 +28,8 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame
 #' Make new cellProportionsPredictions object.
 #' 
 #' @param predictions.table Table of cell type predictions.
+#' @param cell.type.vector Character vector of cell type labels.
+#' @param sample.id.vector Character vector of sample id labels.
 #' @returns cellProportionsPredictions object.
 #' @export
 cellProportionsPredictions <- function(predictions.table, 
@@ -40,11 +42,11 @@ cellProportionsPredictions <- function(predictions.table,
   if(is(sample.id.vector, "NULL")){
     sample.id.vector <- rownames(predictions.table)
   }
-  predictions.df <- predictions.table %>% as.data.frame()
+  predictions.df <- as.data.frame(predictions.table)
   new("cellProportionsPredictions", 
       predictions.table = predictions.df,
-      cell.type.vector = cell.type.vector %>% as.character(),
-      sample.id.vector = sample.id.vector %>% as.character())
+      cell.type.vector = as.character(cell.type.vector),
+      sample.id.vector = as.character(sample.id.vector))
 }
 
 #' Inspect cellProportionsPredictions object.

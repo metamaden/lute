@@ -62,6 +62,7 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' esets (logical, FALSE).
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #' 
+#' @importFrom lute .make_eset_from_matrix
 #' 
 #' @examples
 #' # get data
@@ -223,7 +224,6 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #'
 #' @export
 setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
-  requireNamespace("BisqueRNA")
   lparam <- callNextMethod()
   y.eset <- object[["y.eset"]]
   sc.eset <- object[["sc.eset"]]

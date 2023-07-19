@@ -23,7 +23,6 @@ Imports:
 Suggests:
     nnls, 
     dplyr,
-    glmnet,
     knitr,
     testthat,
     sva,

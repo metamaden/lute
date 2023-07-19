@@ -75,7 +75,6 @@ meanratiosParam <- function(sce, assay.name = "counts",
 #'
 #' @export
 setMethod("typemarkers", signature(object = "meanratiosParam"), function(object){
-  requireNamespace("DeconvoBuddies")
   sce <- object[["sce"]]
   celltype.variable <- object[["celltype.variable"]]
   assay.name = object[["assay.name"]]
@@ -84,16 +83,21 @@ setMethod("typemarkers", signature(object = "meanratiosParam"), function(object)
   marker.table <- DeconvoBuddies::get_mean_ratio2(sce = sce,
                                                   cellType_col = celltype.variable,
                                                   assay_name = assay.name,
-                                                  add_symbol = FALSE) %>%
-    as.data.frame()
+                                                  add_symbol = FALSE)
+  marker.table <- as.data.frame(marker.table)
   # filter top markers
-  unique.cell.types <- sce[[celltype.variable]] %>% as.character() %>% unique()
+  unique.cell.types <- sce[[celltype.variable]]
+  unique.cell.types <- as.character(unique.cell.types)
+  unique.cell.types <- unique(unique.cell.types)
   
   top.markers.list <- lapply(unique.cell.types, function(unique.type.id){
-    marker.table %>% 
-      dplyr::filter(cellType.target == unique.type.id) %>% 
-      dplyr::arrange(rank_ratio) %>% 
-      dplyr::top_n(n = markers.per.type)
+    marker.table <- dplyr::filter(marker.table, cellType.target == unique.type.id)
+    marker.table <- dplyr::arrange(marker.table, rank_ratio)
+    marker.table <- dplyr::top_n(marker.table, n = markers.per.type)
+    #marker.table %>% 
+    #  dplyr::filter(cellType.target == unique.type.id) %>% 
+    #  dplyr::arrange(rank_ratio) %>% 
+    #  dplyr::top_n(n = markers.per.type)
   })
   top.markers.table <- do.call(rbind, top.markers.list)
   top.markers.vector <- top.markers.table$gene

@@ -12,6 +12,10 @@ cellProportionsPredictions(
 }
 \arguments{
 \item{predictions.table}{Table of cell type predictions.}
+
+\item{cell.type.vector}{Character vector of cell type labels.}
+
+\item{sample.id.vector}{Character vector of sample id labels.}
 }
 \value{
 cellProportionsPredictions object.
