@@ -9,6 +9,8 @@
 #' @param sce SingleCellExperiment.
 #' @param assay.name Name of assay to store in new eset.
 #' @returns ExpressionSet.
+#' @importFrom SummarizedExperiment colData
+#' @importFrom Biobase pData
 #' @examples
 #' sce <- random_sce()
 #' sce_to_eset(sce, "counts")
@@ -25,6 +27,7 @@ sce_to_eset <- function(sce, assay.name = "counts"){
 #' @param assay.name Name of new assay in SingleCellExperiment.
 #' @returns ExpressionSet.
 #' @importFrom SummarizedExperiment colData
+#' @importFrom Biobase pData
 #' @examples
 #' eset <- lute:::.get_decon_example_data_bisque()$sc.eset
 #' eset_to_sce(eset)
@@ -42,6 +45,7 @@ eset_to_sce <- function(eset, assay.name = "counts"){
 #' @param sce SingleCellExperiment.
 #' @returns SummarizedExperiment.
 #' @importFrom SummarizedExperiment colData
+#' @importFrom S4Vectors metadata
 #' @examples
 #' sce <- random_sce()
 #' sce_to_se(sce)
@@ -58,6 +62,7 @@ sce_to_se <- function(sce){
 #' @param se SummarizedExperiment.
 #' @returns SingleCellExperiment.
 #' @importFrom SummarizedExperiment colData
+#' @importFrom S4Vectors metadata
 #' @examples
 #' se_to_sce(SummarizedExperiment())
 #' @export
@@ -73,6 +78,8 @@ se_to_sce <- function(se){
 #' @param eset ExpressionSet
 #' @param assay.name Name of assay to store in new eset.
 #' @returns SummarizedExperiment
+#' @importFrom SummarizedExperiment colData
+#' @importFrom Biobase pData
 #' @examples
 #' eset <- lute:::.get_decon_example_data_bisque()$sc.eset
 #' eset_to_se(eset, "counts")
@@ -91,6 +98,7 @@ eset_to_se <- function(eset, assay.name = "counts"){
 #' @param assay.name Name of assay to store in new eset.
 #' @returns ExpressionSet.
 #' @importFrom SummarizedExperiment colData
+#' @importFrom Biobase pData
 #' @examples
 #' se <- sce_to_se(random_sce())
 #' se_to_eset(se)

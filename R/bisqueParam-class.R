@@ -62,8 +62,6 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' esets (logical, FALSE).
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #' 
-#' @importFrom lute .make_eset_from_matrix
-#' 
 #' @examples
 #' # get data
 #' lexample <- lute:::.get_decon_example_data_bisque()
@@ -96,7 +94,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   } else{
       if(is(y.eset, "NULL")){
       message("Making ExpressionSet from provided y...")
-      y.eset <- .make_eset_from_matrix(mat = y, batch.id = "SubjectName")
+      y.eset <- lute:::.get_eset_from_matrix(mat = y, batch.id = "SubjectName")
       # need at least 2 columns/samples to pass to bisque
       if(ncol(y.eset) == 1){
         sample.name <- colnames(y.eset)

@@ -115,6 +115,7 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2,
 #' @param zero.fract Fraction of zero-count values to include.
 #' @param verbose Whether to show verbose status messages.
 #' @return New randomized SingleCellExperiment object.
+#' @importFrom S4Vectors metadata
 #' @examples 
 #' sce <- random_sce()
 #' @export
