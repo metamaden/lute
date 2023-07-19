@@ -33,7 +33,7 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame
 cellProportionsPredictions <- function(predictions.table, 
                                        cell.type.vector = NULL, 
                                        sample.id.vector = NULL) {
-  requireNamespace("dplyr")
+  library(dplyr)
   if(is(cell.type.vector, "NULL")){
     cell.type.vector <- colnames(predictions.table) 
   }

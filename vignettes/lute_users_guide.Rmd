@@ -16,7 +16,6 @@ output:
     toc_depth: 0
 vignette: > 
   %\VignetteIndexEntry{The lute user's guide}
-  %\VignetteDepends{RCurl}
   %\usepackage[UTF-8]{inputenc} 
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}

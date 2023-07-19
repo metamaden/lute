@@ -39,7 +39,7 @@
 ypb_from_sce <- function(sce, assay.name = "counts", 
                          celltype.variable = "celltype", 
                          sample.id.variable = NULL, S = NULL){
-  requireNamespace("dplyr")
+  library(dplyr)
   num.groups <- 1; unique.group.id.vector <- ""
   if(!is(sample.id.variable, "NULL")){
     group.id.vector <- sce[[sample.id.variable]]
@@ -99,7 +99,7 @@ signature_matrix_from_sce <- function(sce,
                                       celltype.variable = "celltype", 
                                       summary.method = "mean", 
                                       assay.name = "counts"){
-  requireNamespace("dplyr")
+  library(dplyr)
   # gets the z signature matrix from an sce object
   expression.matrix <- assays(sce)[[assay.name]] %>% as.matrix()
   cd <- colData(sce)
@@ -262,7 +262,7 @@ signature_matrix_from_sce <- function(sce,
 .parse_deconvolution_predictions_results <- function(list.pred, 
                                                      column.labels, 
                                                      row.labels){
-  requireNamespace("dplyr")
+  library(dplyr)
   table.pred <- do.call(rbind, list.pred)
   table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) %>% t()
   colnames(table.pred) <- column.labels
