@@ -24,5 +24,5 @@ lexample <- get_decon_example_data()
 
 }
 \seealso{
-\linkS4class{meanratiosParam}
+meanratiosParam
 }

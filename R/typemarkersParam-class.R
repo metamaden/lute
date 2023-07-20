@@ -13,7 +13,7 @@
 #' 
 #' @rdname typemarkersParam-class
 #' 
-#' @seealso \linkS4class{meanratiosParam}
+#' @seealso meanratiosParam
 #' 
 #' @param markers.per.type Number of top markers to get per cell type.
 #' @param return.info Whether to return metadata and original method outputs 
@@ -43,7 +43,7 @@ setClass("typemarkersParam", slots=c(markers.per.type = "numeric",
 #' identification methods. Currently supported methods and their child classes include:
 #' 
 #' 1. Mean Ratios: The method DeconvoBuddies::get_mean_ratios2(), supported by the
-#' class \linkS4class{meanratiosParam}.
+#' class meanratiosParam.
 #' 
 #' @export
 typemarkersParam <- function(markers.per.type = 20, return.info = FALSE) {

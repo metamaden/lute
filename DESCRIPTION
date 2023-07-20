@@ -1,5 +1,5 @@
 Package: lute
-Version: 0.0.11
+Version: 0.0.12
 Title: Deconvo-"lute" simulated and experimental data
 Authors@R: c(person(c("Sean", "K"), "Maden", role = c("cre", "aut"), 
     email = "maden.sean@gmail.com", comment = c(ORCID = "0000-0002-2212-4894")),
@@ -18,13 +18,10 @@ Depends:
     utils,
     SummarizedExperiment,
     SingleCellExperiment,
-    BiocGenerics,
-    dplyr
+    BiocGenerics
 Imports:
     S4Vectors,
-    Biobase,
-    DeconvoBuddies,
-    MuSiC
+    Biobase
 Suggests:
     nnls, 
     knitr,
@@ -56,7 +53,5 @@ Collate:
     'lute_metadata.R'
     'lute_randomized-data.R'
     'lute_utilities.R'
-    'typemarkersParam-class.R'
-    'meanratiosParam-class.R'
-    'musicParam-class.R'
     'nnlsParam-class.R'
+    'typemarkersParam-class.R'

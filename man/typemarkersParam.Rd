@@ -24,5 +24,5 @@ This is the main parent class for cell type gene marker
 identification methods. Currently supported methods and their child classes include:
 
 1. Mean Ratios: The method DeconvoBuddies::get_mean_ratios2(), supported by the
-class \linkS4class{meanratiosParam}.
+class meanratiosParam.
 }

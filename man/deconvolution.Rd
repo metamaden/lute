@@ -35,7 +35,7 @@ Bioconductor, R package version 1.6.0.
 \seealso{
 \linkS4class{deconvolutionParam}, \linkS4class{referencebasedParam}, 
 \linkS4class{independentbulkParam}, \linkS4class{nnlsParam}, 
-\linkS4class{musicParam},\linkS4class{bisqueParam}
+musicParam,\linkS4class{bisqueParam}
 }
 \author{
 Sean Maden
