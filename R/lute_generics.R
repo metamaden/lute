@@ -37,6 +37,9 @@
 #'
 #' @importFrom methods callNextMethod is new slot
 #' @importFrom stats rnbinom rpois
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
 #'
 #' @export
 setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))
@@ -63,6 +66,10 @@ setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))
 #' 
 #' @aliases 
 #' Typemarkers, TypeMarkers
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
 #'
 #' @export
 setGeneric("typemarkers", function(object) standardGeneric("typemarkers"))

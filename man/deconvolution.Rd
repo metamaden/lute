@@ -28,6 +28,10 @@ specified deconvolution method for which a subclass of type
 \linkS4class{deconvolutionParam} exists. This generic uses a similar approach to
 the \code{bluster} R/Bioconductor package.
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}
 \references{
 Aaron Lun. bluster: Clustering Algorithms for Bioconductor. (2022) 
 Bioconductor, R package version 1.6.0.

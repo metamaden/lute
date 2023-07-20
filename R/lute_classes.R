@@ -32,6 +32,10 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame
 #' @param sample.id.vector Character vector of sample id labels.
 #' @returns cellProportionsPredictions object.
 #' @importFrom methods new
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
 #' @export
 cellProportionsPredictions <- function(predictions.table, 
                                        cell.type.vector = NULL, 
@@ -54,6 +58,10 @@ cellProportionsPredictions <- function(predictions.table,
 #' @importFrom methods show
 #' @importFrom utils head
 #' @details Method behavior for show.
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
 #' @export
 setMethod("show", "cellProportionsPredictions", function(object) {
   ptable <- object@predictions.table

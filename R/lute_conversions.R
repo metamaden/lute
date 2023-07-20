@@ -19,6 +19,7 @@
 #' @examples
 #' sce <- random_sce()
 #' sce_to_eset(sce, "counts")
+#' 
 #' @export
 sce_to_eset <- function(sce, assay.name = "counts"){
 	eset <- ExpressionSet(assayData = assays(sce)[[assay.name]],
@@ -41,6 +42,7 @@ sce_to_eset <- function(sce, assay.name = "counts"){
 #' @examples
 #' eset <- get_decon_example_data_bisque()$sc.eset
 #' eset_to_sce(eset)
+#' 
 #' @export
 eset_to_sce <- function(eset, assay.name = "counts"){
   assays.list <- list(assay.name = exprs(eset))
@@ -81,6 +83,7 @@ sce_to_se <- function(sce){
 #' 
 #' @examples
 #' se_to_sce(SummarizedExperiment())
+#' 
 #' @export
 se_to_sce <- function(se){
 	sce <- SingleCellExperiment(assays = assays(se),
@@ -103,6 +106,7 @@ se_to_sce <- function(se){
 #' @examples
 #' eset <- get_decon_example_data_bisque()$sc.eset
 #' eset_to_se(eset, "counts")
+#' 
 #' @export
 eset_to_se <- function(eset, assay.name = "counts"){
   assays.list <- list(assay.name = exprs(eset))
@@ -126,6 +130,7 @@ eset_to_se <- function(eset, assay.name = "counts"){
 #' @examples
 #' se <- sce_to_se(random_sce())
 #' se_to_eset(se)
+#' 
 #' @export
 se_to_eset <- function(se, assay.name = "counts"){
 	eset <- ExpressionSet(assayData = assays(se)[[assay.name]],

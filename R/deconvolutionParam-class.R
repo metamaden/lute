@@ -35,6 +35,10 @@ setClass("deconvolutionParam",  slots=c(y="matrix", return.info = "logical"))
 #' @param i Slot to access.
 #' @returns Contents of specified slot.
 #' @details Inspect slot in \linkS4class{deconvolutionParam} object
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
 #' @export
 setMethod("[[", "deconvolutionParam", function(x, i) {slot(x, i)})
 
@@ -49,6 +53,10 @@ setMethod("deconvolution", "deconvolutionParam", function(object) {})
 #' @param object An object of class \linkS4class{deconvolutionParam}.
 #' @details Method for behavior of show generic when called for object of class 
 #' \linkS4class{deconvolutionParam}
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
 #' @export
 setMethod("show", "deconvolutionParam", function(object) {
   y <- object[["y"]]

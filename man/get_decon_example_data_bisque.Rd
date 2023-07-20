@@ -29,3 +29,7 @@ Example data as list.
 \description{
 Get example data for Bisque algorithm.
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

@@ -23,3 +23,7 @@ cellProportionsPredictions object.
 \description{
 Make new cellProportionsPredictions object.
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

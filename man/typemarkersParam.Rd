@@ -26,3 +26,7 @@ identification methods. Currently supported methods and their child classes incl
 1. Mean Ratios: The method DeconvoBuddies::get_mean_ratios2(), supported by the
 class meanratiosParam.
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

@@ -22,4 +22,5 @@ Convert SummarizedExperiment to ExpressionSet.
 \examples{
 se <- sce_to_se(random_sce())
 se_to_eset(se)
+
 }

@@ -34,4 +34,5 @@ Get pseudobulk from a SingleCellExperiment object.
 \examples{
 sce.example <- random_sce()
 ypb_from_sce(sce.example)
+
 }

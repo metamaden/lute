@@ -15,3 +15,7 @@ Example data as list.
 \description{
 Get example data for SCDC
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

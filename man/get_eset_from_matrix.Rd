@@ -17,3 +17,7 @@ ExpressionSet.
 \description{
 Makes an ExpressionSet from a matrix.
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

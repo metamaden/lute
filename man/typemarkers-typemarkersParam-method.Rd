@@ -15,3 +15,7 @@ Info related to gene markers for cell types.
 \description{
 Method for class \linkS4class{typemarkersParam}
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

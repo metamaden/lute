@@ -227,5 +227,11 @@ example showing how to access the NNLS algorithm by calling the `deconvolution`
 generic on an object of class `nnlsParam`. If you found this guide useful, you 
 may also find the other vignettes included in `lute` to be helpful.
 
+# Session Info
+
+```{r}
+sessionInfo()
+```
+
 # Works cited
 

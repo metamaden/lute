@@ -35,10 +35,6 @@ measure summaries were made.
 Further details about the reference table can be found in the cellScaleFactors package.
 }
 \examples{
-# get the full table
-# get_csf_reference()
-
-# get a subset on brain cell types
-# get_csf_reference(c("neuron", "glial"))
+example.data <- get_decon_example_data()
 
 }

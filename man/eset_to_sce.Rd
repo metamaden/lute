@@ -22,4 +22,5 @@ Convert ExpressionSet to SingleCellExperiment.
 \examples{
 eset <- get_decon_example_data_bisque()$sc.eset
 eset_to_sce(eset)
+
 }

@@ -26,3 +26,7 @@ Example data as list.
 \description{
 Make example data for deconvolution.
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

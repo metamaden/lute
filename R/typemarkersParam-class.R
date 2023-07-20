@@ -45,6 +45,9 @@ setClass("typemarkersParam", slots=c(markers.per.type = "numeric",
 #' 1. Mean Ratios: The method DeconvoBuddies::get_mean_ratios2(), supported by the
 #' class meanratiosParam.
 #' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
 #' @export
 typemarkersParam <- function(markers.per.type = 20, return.info = FALSE) {
   new("typemarkersParam", markers.per.type = markers.per.type, 
@@ -56,6 +59,9 @@ typemarkersParam <- function(markers.per.type = 20, return.info = FALSE) {
 #' @param object An object of class \linkS4class{typemarkersParam}.
 #' 
 #' @returns Info related to gene markers for cell types.
+#'
+#' @examples
+#' example.data <- get_decon_example_data()
 #'
 #' @export
 setMethod("typemarkers", signature(object = "typemarkersParam"), function(object){
@@ -70,5 +76,9 @@ setMethod("typemarkers", signature(object = "typemarkersParam"), function(object
 #' @param i Slot to access.
 #' @returns Contents of specified slot.
 #' @details Inspect slot in \linkS4class{typemarkersParam} object
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
 #' @export
 setMethod("[[", "typemarkersParam", function(x, i) {slot(x, i)})

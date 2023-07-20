@@ -15,3 +15,7 @@ Inspect cellProportionsPredictions object.
 \details{
 Method behavior for show.
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

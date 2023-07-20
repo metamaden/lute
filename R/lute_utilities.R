@@ -32,9 +32,11 @@
 #' \code{sce} coldata.
 #' @param S Vector of cell type size scale factors. Optional.
 #' @returns Matrix of simulated bulk convoluted signals.
+#' 
 #' @examples
 #' sce.example <- random_sce()
 #' ypb_from_sce(sce.example)
+#' 
 #' @export
 ypb_from_sce <- function(sce, assay.name = "counts", 
                          celltype.variable = "celltype", 
@@ -95,9 +97,11 @@ ypb_from_sce <- function(sce, assay.name = "counts",
 #' @details Calculate a Z signature matrix from object of type 
 #' \linkS4class{SingleCellExperiment}.
 #' @returns New Z signature matrix.
+#' 
 #' @examples
 #' sce.example <- random_sce()
 #' signature_matrix_from_sce(sce.example)
+#' 
 #' @export
 signature_matrix_from_sce <- function(sce, 
                                       celltype.variable = "celltype", 
@@ -148,6 +152,9 @@ signature_matrix_from_sce <- function(sce,
 #' @returns ExpressionSet.
 #'
 #' @importFrom Biobase ExpressionSet AnnotatedDataFrame
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
 #'
 #' @export
 get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
@@ -177,6 +184,9 @@ get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
 #' @returns Example data as list.
 #' 
 #' @importFrom stats rpois
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
 #' 
 #' @export
 get_decon_example_data <- function(num.bulk.samples = 2, num.markers = 10,
@@ -217,6 +227,9 @@ get_decon_example_data <- function(num.bulk.samples = 2, num.markers = 10,
 #' @importFrom Biobase ExpressionSet
 #' @importFrom Biobase AnnotatedDataFrame
 #' @importFrom BiocGenerics counts
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
 #'
 #' @export
 get_decon_example_data_bisque <- function(num.bulk.samples = 100,
@@ -257,6 +270,10 @@ get_decon_example_data_bisque <- function(num.bulk.samples = 100,
 #' @importFrom Biobase ExpressionSet
 #' @importFrom Biobase AnnotatedDataFrame
 #' @importFrom BiocGenerics counts
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
 #' @export
 get_decon_example_data_scdc <- function(seed.num = 0){
   set.seed(seed.num)

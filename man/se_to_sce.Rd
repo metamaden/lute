@@ -19,4 +19,5 @@ Convert SummarizedExperiment to SingleCellExperiment.
 }
 \examples{
 se_to_sce(SummarizedExperiment())
+
 }

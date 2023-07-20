@@ -20,3 +20,7 @@ Inspect slot in \linkS4class{deconvolutionParam} object
 \details{
 Inspect slot in \linkS4class{deconvolutionParam} object
 }
+\examples{
+example.data <- get_decon_example_data()
+
+}

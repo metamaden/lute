@@ -24,6 +24,11 @@ Get cell type gene markers using standard accessors to supported functions.
 This generic manages tasks for marker gene identification. In particular, it
 takes a specified amount of marker genes to return per type.
 }
+\examples{
+example.data <- get_decon_example_data()
+
+
+}
 \seealso{
 \linkS4class{typemarkersParam}
 }

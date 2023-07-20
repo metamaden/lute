@@ -35,4 +35,5 @@ Calculate a Z signature matrix from object of type
 \examples{
 sce.example <- random_sce()
 signature_matrix_from_sce(sce.example)
+
 }
