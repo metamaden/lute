@@ -17,10 +17,8 @@
 #' 
 #' @examples
 #' # example
-#' lexample <- get_decon_example_data()
-#' # param <- musicParam(s = lexample[["s"]], 
-#' #                      y = lexample[["y"]], 
-#' #                      z = lexample[["z"]])
+#' lexample <- lute:::.get_decon_example_data()
+#' # param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' # deconvolution(param)
@@ -61,10 +59,8 @@ setClass("musicParam", contains="referencebasedParam",
 #'
 #' @examples
 #' # example
-#' lexample <- get_decon_example_data()
-#' # param <- musicParam(s = lexample[["s"]], 
-#' #                      y = lexample[["y"]], 
-#' #                      z = lexample[["z"]])
+#' lexample <- lute:::.get_decon_example_data()
+#' # param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' # deconvolution(param)
@@ -98,10 +94,8 @@ musicParam <- function(y, z, s = NULL, sigma = NULL, nu = NULL,
 #' 
 #' @examples
 #' # example
-#' lexample <- get_decon_example_data()
-#' # param <- musicParam(s = lexample[["s"]], 
-#' #                      y = lexample[["y"]], 
-#' #                      z = lexample[["z"]])
+#' lexample <- lute:::.get_decon_example_data()
+#' # param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' # deconvolution(param)

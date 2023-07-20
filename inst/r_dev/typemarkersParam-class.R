@@ -20,7 +20,7 @@
 #' with predicted proportions.
 #' 
 #' @examples
-#' lexample <- get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' 
 #' @aliases 
 #' TypemarkersParam-class, TypeMarkersParam-class

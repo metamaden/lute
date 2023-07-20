@@ -20,7 +20,7 @@ scales, (e.g. a K-length vector of equal values). See
 `vignette(package="lute")` for details about experiment terms.
 }
 \examples{
-lexample <- lute:::.get_decon_example_data()
+lexample <- get_decon_example_data()
 referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
 
 }

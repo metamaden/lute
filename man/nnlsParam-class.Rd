@@ -12,8 +12,9 @@ Uses nnls::nnls().
 Main constructor for class \linkS4class{nnlsParam}.
 }
 \examples{
-lexample <- lute:::.get_decon_example_data()
-param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+lexample <- get_decon_example_data()
+param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
+                    z = lexample[["z"]])
 
 # return only predicted proportions
 deconvolution(param)

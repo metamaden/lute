@@ -16,6 +16,6 @@ Prints data summary messages to console.
 Show generic behavior for object of class referencebasedParam
 }
 \examples{
-lexample <- lute:::.get_decon_example_data()
+lexample <- get_decon_example_data()
 referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
 }

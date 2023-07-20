@@ -17,14 +17,10 @@
 #' 
 #' @examples
 #' # get data
-#' lexample <- get_decon_example_data_bisque()
+#' lexample <- lute:::.get_decon_example_data_bisque()
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = lexample[["y.eset"]], 
-#'                       sc.data = lexample[["sc.eset"]], 
-#'                       batch.variable = "SubjectName", 
-#'                       celltype.variable = "cellType", 
-#'                       use.overlap = FALSE)
+#' param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.data = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
 #' 
 #' # get predicted proportions
 #' res <- deconvolution(param)
@@ -68,14 +64,10 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' 
 #' @examples
 #' # get data
-#' lexample <- get_decon_example_data_bisque()
+#' lexample <- lute:::.get_decon_example_data_bisque()
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = lexample[["y.eset"]], 
-#'                      sc.data = lexample[["sc.eset"]], 
-#'                      batch.variable = "SubjectName", 
-#'                      celltype.variable = "cellType", 
-#'                      use.overlap = FALSE)
+#' param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.data = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
 #' 
 #' # get predicted proportions
 #' res <- deconvolution(param)
@@ -102,7 +94,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   } else{
       if(is(y.eset, "NULL")){
       message("Making ExpressionSet from provided y...")
-      y.eset <- get_eset_from_matrix(mat = y, batch.variable = "SubjectName")
+      y.eset <- .get_eset_from_matrix(mat = y, batch.id = "SubjectName")
       # need at least 2 columns/samples to pass to bisque
       if(ncol(y.eset) == 1){
         sample.name <- colnames(y.eset)
@@ -210,14 +202,10 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #' 
 #' @examples
 #' # get data
-#' lexample <- get_decon_example_data_bisque()
+#' lexample <- lute:::.get_decon_example_data_bisque()
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = lexample[["y.eset"]], 
-#'                       sc.data = lexample[["sc.eset"]], 
-#'                       batch.variable = "SubjectName", 
-#'                       celltype.variable = "cellType", 
-#'                       use.overlap = FALSE)
+#' param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.data = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
 #' 
 #' # get predicted proportions
 #' res <- deconvolution(param)

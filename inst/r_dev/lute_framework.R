@@ -43,7 +43,7 @@
 #' 
 #' @examples 
 #' # get example bulk data
-#' y <- get_decon_example_data()$y
+#' y <- lute:::.get_decon_example_data()$y
 #' 
 #' # get example sce
 #' sce <- random_sce()[seq(10),]

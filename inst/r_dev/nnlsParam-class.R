@@ -14,9 +14,8 @@
 #' @seealso \linkS4class{deconParam}
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-#'                     z = lexample[["z"]])
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
@@ -44,9 +43,8 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' with predicted proportions.
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-#'                     z = lexample[["z"]])
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
@@ -82,9 +80,8 @@ nnlsParam <- function(y, z, s, return.info = FALSE) {
 #' * \code{b} : \code{z}, signature matrix.
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-#'                     z = lexample[["z"]])
+#' lexample <- lute:::.get_decon_example_data()
+#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)

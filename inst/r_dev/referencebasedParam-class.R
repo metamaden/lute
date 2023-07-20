@@ -20,7 +20,7 @@
 #' `vignette(package="lute")` for details about experiment terms.
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
 #' 
 setClass("referencebasedParam", contains="deconvolutionParam", 
@@ -37,7 +37,7 @@ setClass("referencebasedParam", contains="deconvolutionParam",
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #'
 #' @examples 
-#' lexample <- get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
 #'
 #' @returns New object of class \linkS4class{referencebasedParam}.
@@ -54,7 +54,7 @@ referencebasedParam <- function(y, z, s, return.info = FALSE) {
 #' @details Method for behavior of deconvolution generic when called for object of class 
 #' \linkS4class{referencebasedParam}
 #' @examples 
-#' lexample <- get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
 #' @export
 setMethod("deconvolution", "referencebasedParam", function(object) {
@@ -114,7 +114,7 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
 #' Show generic behavior for object of class referencebasedParam
 #' @param object Object of class \linkS4class{referencebasedParam}.
 #' @examples 
-#' lexample <- get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
 #' @returns Prints data summary messages to console.
 #' @export

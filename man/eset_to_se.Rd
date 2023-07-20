@@ -20,6 +20,6 @@ eset_to_se
 Convert ExpressionSet to SummarizedExperiment.
 }
 \examples{
-eset <- lute:::.get_decon_example_data_bisque()$sc.eset
+eset <- get_decon_example_data_bisque()$sc.eset
 eset_to_se(eset, "counts")
 }

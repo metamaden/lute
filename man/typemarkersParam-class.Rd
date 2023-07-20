@@ -20,7 +20,7 @@ generic.
 Main constructor for class \linkS4class{typemarkersParam}.
 }
 \examples{
-lexample <- lute:::.get_decon_example_data()
+lexample <- get_decon_example_data()
 
 }
 \seealso{

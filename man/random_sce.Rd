@@ -53,4 +53,5 @@ Make a random SingleCellExperiment object.
 }
 \examples{
 sce <- random_sce()
+
 }

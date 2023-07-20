@@ -56,10 +56,14 @@ into ExpressionSet objects compatible with the main bisque method.
 }
 \examples{
 # get data
-lexample <- lute:::.get_decon_example_data_bisque()
+lexample <- get_decon_example_data_bisque()
 
 # get param object
-param <- bisqueParam(y.eset = lexample[["y.eset"]], sc.data = lexample[["sc.eset"]], batch.variable = "SubjectName", celltype.variable = "cellType", use.overlap = FALSE)
+param <- bisqueParam(y.eset = lexample[["y.eset"]], 
+                     sc.data = lexample[["sc.eset"]], 
+                     batch.variable = "SubjectName", 
+                     celltype.variable = "cellType", 
+                     use.overlap = FALSE)
 
 # get predicted proportions
 res <- deconvolution(param)

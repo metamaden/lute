@@ -13,29 +13,31 @@ BugReports: https://github.com/metamaden/lute/issues
 LazyData: FALSE
 Depends:
     R (>= 4.2),
+    stats,
+    methods,
+    utils,
     SummarizedExperiment,
     SingleCellExperiment,
-    Biobase,
-    S4Vectors
+    BiocGenerics,
+    dplyr
 Imports:
-    methods,
-    stats
+    S4Vectors,
+    Biobase,
+    DeconvoBuddies,
+    MuSiC
 Suggests:
     nnls, 
-    dplyr,
     knitr,
     testthat,
-    sva,
-    gridExtra,
     rmarkdown,
     BiocStyle,
     GenomicRanges,
     limma,
     ExperimentHub,
     AnnotationHub,
-    ComplexHeatmap,
     DelayedMatrixStats,
-    BisqueRNA
+    BisqueRNA,
+    DelayedArray
 VignetteBuilder:
     knitr
 biocViews: RNASeq
@@ -46,6 +48,7 @@ Collate:
     'referencebasedParam-class.R'
     'independentbulkParam-class.R'
     'bisqueParam-class.R'
+    'globals.R'
     'lute_cellScaleFactors.R'
     'lute_classes.R'
     'lute_conversions.R'

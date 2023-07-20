@@ -71,7 +71,7 @@ both Z and Y need to be provided or derivable in order to run deconvolution.
 }
 \examples{
 # get example bulk data
-y <- lute:::.get_decon_example_data()$y
+y <- get_decon_example_data()$y
 
 # get example sce
 sce <- random_sce()[seq(10),]

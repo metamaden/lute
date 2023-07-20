@@ -2,10 +2,9 @@
 
 # Author: Sean Maden
 
-#' meanratiosParam-class
+#' nnlsParam-class
 #'
-#' class definition for meanratiosParam, which uses 
-#' DeconvoBuddies::get_mean_ratio2()
+#' Uses DeconvoBuddies::get_mean_ratio2()
 #' 
 #' @include lute_generics.R
 #' @include typemarkersParam-class.R
@@ -19,11 +18,10 @@
 #' @param celltype.variable Name of cell type variable in sce coldata.
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
+#' lexample <- lute:::.get_decon_example_data()
 #' sce.example <- random_sce()
-#' # new.param <- DeconvoBuddies::meanratiosParam(sce = sce.example, 
-#' # celltype.variable = "celltype", markers.per.type = 20)
-#' # markers <- typemarkers(new.param)
+#' #new.param <- meanratiosParam(sce = sce.example, celltype.variable = "celltype", markers.per.type = 20)
+#' #markers <- typemarkers(new.param)
 #' 
 #' @aliases 
 #' MeanratiosParam-class, MeanRatiosParam-class
@@ -71,9 +69,6 @@ meanratiosParam <- function(sce, assay.name = "counts",
 #' returning either a vector of cell type gene markers, or (if 
 #' \code{return.info == TRUE}) a list containing such a vector along with 
 #' original function outputs.
-#' 
-#' @importFrom DeconvoBuddies get_mean_ratio2
-#' @importFrom dplyr %>%
 #'
 #' @returns Either a vector of gene markers, or a list containing such a vector 
 #' with the original method outputs.
@@ -85,9 +80,10 @@ setMethod("typemarkers", signature(object = "meanratiosParam"), function(object)
   assay.name = object[["assay.name"]]
   markers.per.type <- object[["markers.per.type"]]
   # get marker results
-  marker.table <- get_mean_ratio2(sce = sce, cellType_col = celltype.variable,
-                                  assay_name = assay.name,
-                                  add_symbol = FALSE)
+  marker.table <- DeconvoBuddies::get_mean_ratio2(sce = sce,
+                                                  cellType_col = celltype.variable,
+                                                  assay_name = assay.name,
+                                                  add_symbol = FALSE)
   marker.table <- as.data.frame(marker.table)
   # filter top markers
   unique.cell.types <- sce[[celltype.variable]]
@@ -95,13 +91,13 @@ setMethod("typemarkers", signature(object = "meanratiosParam"), function(object)
   unique.cell.types <- unique(unique.cell.types)
   
   top.markers.list <- lapply(unique.cell.types, function(unique.type.id){
-    #marker.table <- filter(marker.table, cellType.target == unique.type.id)
-    #marker.table <- arrange(marker.table, rank_ratio)
-    #marker.table <- top_n(marker.table, n = markers.per.type)
-    marker.table %>% 
-      dplyr::filter(cellType.target == unique.type.id) %>% 
-      dplyr::arrange(rank_ratio) %>% 
-      dplyr::top_n(n = markers.per.type)
+    marker.table <- dplyr::filter(marker.table, cellType.target == unique.type.id)
+    marker.table <- dplyr::arrange(marker.table, rank_ratio)
+    marker.table <- dplyr::top_n(marker.table, n = markers.per.type)
+    #marker.table %>% 
+    #  dplyr::filter(cellType.target == unique.type.id) %>% 
+    #  dplyr::arrange(rank_ratio) %>% 
+    #  dplyr::top_n(n = markers.per.type)
   })
   top.markers.table <- do.call(rbind, top.markers.list)
   top.markers.vector <- top.markers.table$gene

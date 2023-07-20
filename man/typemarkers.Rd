@@ -9,7 +9,7 @@
 typemarkers(object)
 }
 \arguments{
-\item{object}{A \linkS4class{typemarkers}-type object.}
+\item{object}{A \linkS4class{typemarkersParam}-type object.}
 }
 \value{
 By default, return a vector of marker genes.
@@ -25,7 +25,7 @@ This generic manages tasks for marker gene identification. In particular, it
 takes a specified amount of marker genes to return per type.
 }
 \seealso{
-\linkS4class{typemarkers}
+\linkS4class{typemarkersParam}
 }
 \author{
 Sean Maden

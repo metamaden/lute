@@ -28,8 +28,6 @@
 #' 
 #' Further details about the reference table can be found in the cellScaleFactors package.
 #' 
-#' @importFrom methods is
-#' 
 #' @examples
 #' # get the full table
 #' # get_csf_reference()
@@ -40,6 +38,7 @@
 #' @returns Table of type "data.frame" or "tibble".
 #' @export
 get_csf_reference <- function(user.celltypes.vector = NULL, prefer.orthogonal = TRUE){
+  requireNamespace("cellScaleFactors")
   ref <- load_csf_rda()
   if(prefer.orthogonal){
     data.source.vector <- unique(ref$scale.factor.data.source)
@@ -59,9 +58,9 @@ get_csf_reference <- function(user.celltypes.vector = NULL, prefer.orthogonal = 
   return(ref)
 }
 
-
 #'
 load_csf_rda <- function(){
+  requireNamespace("cellScaleFactors")
   path <- system.file(
     file.path("rda", "cellScaleFactors.rda"), 
     package = "cellScaleFactors")
@@ -70,6 +69,7 @@ load_csf_rda <- function(){
 
 #'
 csf_filter_labels <- function(labels, reference = NULL){
+  requireNamespace("cellScaleFactors")
   if(is(reference, "NULL")){reference <- get_csf_reference()}
   reference.labels <- reference$cell_type
   df <- do.call(rbind, lapply(labels, function(label){

@@ -69,9 +69,6 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
 #' @param seed.num Seed value for randomization.
 #' @returns Listed lgv object containing the randomized marker values across 
 #' types.
-#' 
-#' @importFrom stats rnbinom
-#' 
 #' @examples 
 #' set.seed(0)
 #' random_lgv(gindexv = c(rep(1, 10), rep(2, 5)))
@@ -118,13 +115,9 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2,
 #' @param zero.fract Fraction of zero-count values to include.
 #' @param verbose Whether to show verbose status messages.
 #' @return New randomized SingleCellExperiment object.
-#' 
-#' @importFrom stats rnbinom
 #' @importFrom S4Vectors metadata
-#' 
 #' @examples 
 #' sce <- random_sce()
-#' 
 #' @export
 random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2, 
                        fract.types = NULL, dispersion = NULL, 
@@ -166,12 +159,12 @@ random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2,
   genev <- paste0("gene", seq(nrow(expr.ct)))
   rd <- data.frame(gene.id = genev)
   rownames(expr.ct) <- genev
+  if(verbose){message("Making new sce object...")}
+  sce <- SingleCellExperiment::SingleCellExperiment(
+    assays = list(counts=expr.ct), colData = cd, rowData = rd)
   # manage new metadata
   description.str <- "random SingleCellExperiment made using random_sce()"
   lmd <- list(description = description.str)
-  if(verbose){message("Making new sce object...")}
-  sce <- SingleCellExperiment::SingleCellExperiment(
-    assays = list(counts=expr.ct), colData = cd, rowData = rd,
-    metadata = lmd)
+  metadata(sce) <- lmd
   return(sce)
 }

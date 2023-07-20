@@ -19,8 +19,10 @@ Main deconvolution method for the \linkS4class{musicParam} to run the
 }
 \examples{
 # example
-lexample <- lute:::.get_decon_example_data()
-# param <- musicParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+lexample <- get_decon_example_data()
+# param <- musicParam(s = lexample[["s"]], 
+#                      y = lexample[["y"]], 
+#                      z = lexample[["z"]])
 
 # return only predicted proportions
 # deconvolution(param)

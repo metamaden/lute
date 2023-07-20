@@ -31,11 +31,11 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame
 #' @param cell.type.vector Character vector of cell type labels.
 #' @param sample.id.vector Character vector of sample id labels.
 #' @returns cellProportionsPredictions object.
-#' @importFrom methods new
 #' @export
 cellProportionsPredictions <- function(predictions.table, 
                                        cell.type.vector = NULL, 
                                        sample.id.vector = NULL) {
+  library(dplyr)
   if(is(cell.type.vector, "NULL")){
     cell.type.vector <- colnames(predictions.table) 
   }
@@ -51,8 +51,6 @@ cellProportionsPredictions <- function(predictions.table,
 
 #' Inspect cellProportionsPredictions object.
 #' @param object cellProportionsPredictions object.
-#' @importFrom methods show
-#' @importFrom utils head
 #' @details Method behavior for show.
 #' @export
 setMethod("show", "cellProportionsPredictions", function(object) {

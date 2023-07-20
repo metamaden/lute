@@ -30,8 +30,9 @@ Main parameter class for mapping inputs to the non-negative least
 squares (NNLS) deconvolution algorithm, implemented as \code{nnls::nnls()}.
 }
 \examples{
-lexample <- lute:::.get_decon_example_data()
-param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+lexample <- get_decon_example_data()
+param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
+                    z = lexample[["z"]])
 
 # return only predicted proportions
 deconvolution(param)

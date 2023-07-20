@@ -139,18 +139,9 @@ signature_matrix_from_sce <- function(sce,
   return(sce)
 }
 
-#' get_eset_from_matrix
-#' 
-#' Makes an ExpressionSet from a matrix.
-#'
-#' @param mat Matrix.
-#' @param batch.variable Batch variable name.
-#' @returns ExpressionSet.
-#'
-#' @importFrom Biobase ExpressionSet AnnotatedDataFrame
-#'
 #' @export
-get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
+#' @noRd
+.get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
   pdata <- data.frame(new.variable = colnames(mat))
   colnames(pdata) <- batch.variable
   rownames(pdata) <- colnames(mat)
@@ -166,21 +157,8 @@ get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
   rowMeans(datav)
 }
 
-#' get_decon_example_data
-#' 
-#' Make example data for deconvolution.
-#' 
-#' @param num.bulk.samples Bulk samples count.
-#' @param num.markers Markers count.
-#' @param num.types Cell types count.
-#' @param seed.num Random seed.
-#' @returns Example data as list.
-#' 
-#' @importFrom stats rpois
-#' 
-#' @export
-get_decon_example_data <- function(num.bulk.samples = 2, num.markers = 10,
-                                    num.types = 2, seed.num = 0){
+.get_decon_example_data <- function(num.bulk.samples = 2, num.markers = 10,
+                                    num.types = 2, seed.num=0){
   set.seed(seed.num)
   y <- matrix(
     rpois(n=num.markers*num.bulk.samples, lambda = seq(0, 50, 5)), 
@@ -203,28 +181,12 @@ get_decon_example_data <- function(num.bulk.samples = 2, num.markers = 10,
   z.var
 }
 
-#' get_decon_example_data_bisque
-#'
-#' Get example data for Bisque algorithm.
-#'
-#' @param num.bulk.samples Bulk samples count.
-#' @param num.markers Markers count.
-#' @param num.cells Cells count.
-#' @param num.types Cell types count.
-#' @param seed.num Random seed.
-#' @returns Example data as list.
-#'
-#' @importFrom Biobase ExpressionSet
-#' @importFrom Biobase AnnotatedDataFrame
-#' @importFrom BiocGenerics counts
-#'
-#' @export
-get_decon_example_data_bisque <- function(num.bulk.samples = 100,
+.get_decon_example_data_bisque <- function(num.bulk.samples = 100,
                                            num.markers = 1000, 
                                            num.cells = 1000, 
                                            num.types = 2, seed.num = 0){
   set.seed(seed.num)
-  lexample <- get_decon_example_data(num.bulk.samples = num.bulk.samples,
+  lexample <- .get_decon_example_data(num.bulk.samples = num.bulk.samples,
                                num.markers = num.markers,
                                num.types = num.types)
   y <- lexample[["y"]]
@@ -247,21 +209,10 @@ get_decon_example_data_bisque <- function(num.bulk.samples = 100,
   return(lr)
 }
 
-#' get_decon_example_data_scdc
-#' 
-#' Get example data for SCDC
-#'
-#' @param seed.num Random seed.
-#' @returns Example data as list.
-#'
-#' @importFrom Biobase ExpressionSet
-#' @importFrom Biobase AnnotatedDataFrame
-#' @importFrom BiocGenerics counts
-#' @export
-get_decon_example_data_scdc <- function(seed.num = 0){
+.get_decon_example_data_scdc <- function(seed.num = 0){
   set.seed(seed.num)
   # get y.eset
-  y <- get_decon_example_data()[["y"]]
+  y <- .get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
   df.y.pheno <- data.frame(SubjectName = colnames(y))
@@ -280,16 +231,10 @@ get_decon_example_data_scdc <- function(seed.num = 0){
   return(lr)
 }
 
-#'
-#'
-#' @importFrom Biobase ExpressionSet
-#' @importFrom Biobase AnnotatedDataFrame
-#' @importFrom BiocGenerics counts
-#'
 .get_decon_example_data_music2 <- function(seed.num = 0){
   set.seed(seed.num)
   # get y.eset
-  y <- get_decon_example_data()[["y"]]
+  y <- .get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), 
                    paste0("bulk",seq(ncol(y)-2)))
