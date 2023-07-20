@@ -10,6 +10,7 @@
 #' View details about supported deconvolution algorithms.
 #'
 #' @returns Table of supported deconvolution algorithms.
+#'
 #' @importFrom utils read.csv
 #' 
 #' @export

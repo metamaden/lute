@@ -24,7 +24,6 @@ returning a list.
 \examples{
 # get data
 lexample <- get_decon_example_data_bisque()
-
 # get param object
 param <- bisqueParam(y.eset = lexample[["y.eset"]], 
                       sc.data = lexample[["sc.eset"]], 

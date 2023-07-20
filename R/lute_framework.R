@@ -60,8 +60,6 @@ lute <- function(sce = NULL, z = NULL, y = NULL, y.se = NULL, s = NULL,
                  verbose = TRUE){
   results.list <- list()
   if(!is(typemarker.algorithm, "NULL")){
-    if(is(sce, "NULL")){
-      stop("Error, provide sce to perform typemarkers analyses.")}
     if(verbose){message("Parsing marker gene arguments...")}
     typemarker.results <- marker.vector <- map_typemarker_algorithm(
       algorithm = typemarker.algorithm,
@@ -75,21 +73,14 @@ lute <- function(sce = NULL, z = NULL, y = NULL, y.se = NULL, s = NULL,
     if(verbose){message("Filtering sce...")}
     sce.filter <- rownames(sce) %in% marker.vector
     sce <- sce[sce.filter,]
-    z <- .get_z_from_sce(sce, assay.name, celltype.variable)
+    z <- get_z_from_sce(sce, assay.name, celltype.variable)
     results.list[["typemarker.results"]] <- typemarker.results
   }
   y.cond <- is(y, "NULL") & !is(y.se, "NULL")
   if(y.cond){y <- assays(y.se)[[assay.name]]}
   if(!is(deconvolution.algorithm, "NULL")){
     if(is(z, "NULL")){
-      if(is(sce, "NULL")){
-        stop("Error, provide either sce or z to perform deconvolution.")
-      } else{
-        z <- .get_z_from_sce(sce, assay.name, celltype.variable)
-      }
-    }
-    if(is(y, "NULL")){
-      stop("Error, provide y to perform deconvolution.")
+      z <- get_z_from_sce(sce, assay.name, celltype.variable)
     }
     if(is(s, "NULL")){s <- rep(1, ncol(z))}
     if(verbose){message("Parsing deconvolution arguments...")}

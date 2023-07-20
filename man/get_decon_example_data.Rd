@@ -4,12 +4,7 @@
 \alias{get_decon_example_data}
 \title{get_decon_example_data}
 \usage{
-get_decon_example_data(
-  num.bulk.samples = 2,
-  num.markers = 10,
-  num.types = 2,
-  seed.num = 0
-)
+get_decon_example_data(num.bulk.samples = 2, num.markers = 10, num.types = 2)
 }
 \arguments{
 \item{num.bulk.samples}{Bulk samples count.}
@@ -17,8 +12,6 @@ get_decon_example_data(
 \item{num.markers}{Markers count.}
 
 \item{num.types}{Cell types count.}
-
-\item{seed.num}{Random seed.}
 }
 \value{
 Example data as list.

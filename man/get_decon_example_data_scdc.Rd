@@ -4,10 +4,7 @@
 \alias{get_decon_example_data_scdc}
 \title{get_decon_example_data_scdc}
 \usage{
-get_decon_example_data_scdc(seed.num = 0)
-}
-\arguments{
-\item{seed.num}{Random seed.}
+get_decon_example_data_scdc()
 }
 \value{
 Example data as list.

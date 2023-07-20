@@ -15,7 +15,6 @@
 #' @param sample.id.vector Character vector of sample id labels.
 #' @examples 
 #' new("cellProportionsPredictions")
-#' # 
 #' ptable <- matrix(sample(100,50),nrow=10)
 #' colnames(ptable) <- paste0("cell_type",seq(ncol(ptable)))
 #' rownames(ptable) <- paste0("sample", seq(nrow(ptable)))
@@ -54,6 +53,7 @@ cellProportionsPredictions <- function(predictions.table,
 }
 
 #' Inspect cellProportionsPredictions object.
+#' 
 #' @param object cellProportionsPredictions object.
 #' @importFrom methods show
 #' @importFrom utils head

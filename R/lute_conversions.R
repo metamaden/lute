@@ -138,3 +138,25 @@ se_to_eset <- function(se, assay.name = "counts"){
 	                        as.data.frame(colData(se))))
 	return(eset)
 }
+
+#' get_eset_from_matrix
+#' 
+#' Makes an ExpressionSet from a matrix.
+#'
+#' @param mat Matrix.
+#' @param batch.variable Batch variable name.
+#' @returns ExpressionSet.
+#'
+#' @importFrom Biobase ExpressionSet AnnotatedDataFrame
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#'
+#' @export
+get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
+  pdata <- data.frame(new.variable = colnames(mat))
+  colnames(pdata) <- batch.variable
+  rownames(pdata) <- colnames(mat)
+  eset <- Biobase::ExpressionSet(assayData = mat, phenoData = Biobase::AnnotatedDataFrame(pdata))
+  return(eset)
+}

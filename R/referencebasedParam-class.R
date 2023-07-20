@@ -71,42 +71,35 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
     condition.s.types <- is(names(s), "NULL")
     if(!condition.s.types){
       filter.s.types <- names(s) %in% unique.types
-      s <- s[filter.s.types]
-      s <- s[order(names(s), unique.types)]
+      s <- s[filter.s.types]; s <- s[order(names(s), unique.types)]
     }
   }
   z <- .zstransform(z, s)
-  
   # matching markers in y and z
-  markers.y <- rownames(y)
-  markers.z <- rownames(z)
+  markers.y <- rownames(y); markers.z <- rownames(z)
   if(!is(markers.y, "NULL") & !is(markers.z, "NULL")){
     # markers.y <- rownames(y); markers.z <- rownames(z)
     unique.markers <- unique(c(markers.y, markers.z))
     overlapping.markers <- intersect(markers.y, markers.z)
     y.filter <- rownames(y) %in% overlapping.markers
     z.filter <- rownames(z) %in% overlapping.markers
-    y <- y[y.filter,,drop=F]; z <- z[z.filter,,drop=F]
+    y <- y[y.filter,,drop=FALSE]; z <- z[z.filter,,drop=FALSE]
     y <- y[order(match(rownames(y), overlapping.markers)),]
     z <- z[order(match(rownames(z), overlapping.markers)),]
   } else{
     message("Warning, rownames not provided in both y and z. ",
             "Can't match marker labels.")
   }
-  
   # parse additional warnings
-  if(is(markers.y, "NULL")){cat("Warning, object 'y' has no marker labels (rownames)\n")}
-  if(is(markers.z, "NULL")){cat("Warning, object 'z' has no marker labels (rownames)\n")}
-  
+  if(is(markers.y, "NULL")){message("Warning, object 'y' has no marker labels (rownames)\n")}
+  if(is(markers.z, "NULL")){message("Warning, object 'z' has no marker labels (rownames)\n")}
   # get final metadata
   g <- nrow(z); j <- ncol(y); k <- ncol(z)
   metadata.list <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
               markers.y = markers.y, marker.z = markers.z)
   # return list
   return(
-    list(y = as.matrix(y), 
-         z = as.matrix(z), 
-         s = as.numeric(s), 
+    list(y = as.matrix(y), z = as.matrix(z), s = as.numeric(s), 
          metadata = metadata.list)
     )
 })

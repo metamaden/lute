@@ -29,9 +29,7 @@
 #' # get predicted proportions
 #' res <- deconvolution(param)
 #' 
-#' @references 
-#' 
-#' Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
+#' @references Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
 #' Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.
 #' URL: https://CRAN.R-project.org/package=BisqueRNA
 #' 
@@ -93,12 +91,8 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
                         use.overlap = FALSE, return.info = FALSE) {
   # check y.eset/y
   if(is(y, "NULL")){
-    if(is(y.eset, "NULL")){
-      stop("Error, need to provide either y or bulk.eset.")
-    } else{
-      message("Getting y from provided bulk.eset...")
-      y <- as.matrix(exprs(y.eset))
-    }
+    message("Getting y from provided bulk.eset...")
+    y <- as.matrix(exprs(y.eset))
   } else{
       if(is(y.eset, "NULL")){
       message("Making ExpressionSet from provided y...")
@@ -121,24 +115,23 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
     message("Provided sc.data object is an ExpressionSet.")
     sc.eset <- sc.data
   } else if(is(sc.data, "NULL")){
-    stop("Error, sc.data not provided.")
+    message("Error, sc.data not provided.");return()
   } else{
-    stop("Error, unrecognized sc.data class.")
+    message("Error, unrecognized sc.data class.");return()
   }
-  
   # parse z data
   if(!celltype.variable %in% colnames(pData(sc.eset))){
-    stop("Error, didn't find celltype id variable ", celltype.variable, 
-         " in sc.eset pData/coldata.")
+    message("Error, didn't find celltype id variable ", celltype.variable, 
+         " in sc.eset pData/coldata.");return()
   }
   if(is(z, "NULL")){
     sce <- eset_to_sce(sc.eset, "counts")
-    z <- .get_z_from_sce(sce = sce, assay.name = assay.name, 
+    z <- get_z_from_sce(sce = sce, assay.name = assay.name, 
                                 celltype.variable = celltype.variable)
   }
   if(!batch.variable %in% colnames(pData(sc.eset))){
-    stop("Error, didn't find batch id variable ",batch.variable,
-         " in sc.eset pData/coldata.")
+    message("Error, didn't find batch id variable ",batch.variable,
+         " in sc.eset pData/coldata.");return()
   } else{
     id.sc <- unique(sc.eset[[batch.variable]])
   }
@@ -155,7 +148,8 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   # parse batch ids in bulk and sc
   message("Checking batch ids in bulk and sc eset...")
   if(cond <- !batch.variable %in% colnames(pData(y.eset))){
-    stop("Error, didn't find batch variable in y.eset pData: ", batch.variable)
+    message("Error, didn't find batch variable in y.eset pData: ", 
+            batch.variable);stop()
   } else{
     id.bulk <- unique(y.eset[[batch.variable]])
   }
@@ -172,8 +166,8 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   # parse independent bulk samples
   if(length(id.onlybulk)==0){
     if(is(yi, "NULL")){
-      stop("Error, no independent bulk samples found. ",
-        "Provide either yi, or additional y samples.")
+      message("Error, no independent bulk samples found. ",
+        "Provide either yi, or additional y samples.");return()
     } else{
       message("Using provided yi for independent bulk samples...")
     }
@@ -211,7 +205,6 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #' @examples
 #' # get data
 #' lexample <- get_decon_example_data_bisque()
-#' 
 #' # get param object
 #' param <- bisqueParam(y.eset = lexample[["y.eset"]], 
 #'                       sc.data = lexample[["sc.eset"]], 
@@ -222,9 +215,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #' # get predicted proportions
 #' res <- deconvolution(param)
 #' 
-#' @references 
-#' 
-#' Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
+#' @references Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
 #' Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.
 #' URL: https://CRAN.R-project.org/package=BisqueRNA
 #' 

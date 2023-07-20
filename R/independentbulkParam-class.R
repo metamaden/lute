@@ -75,16 +75,11 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
     markers.y <- rownames(y); markers.yi <- rownames(yi) # parse bulk marker IDs
     
     # compare marker labels and subset yi on overlapping markers
-    if(is(markers.y, "NULL")){
-        message("Warning, no marker labels found in y.")
-    } else if(is(markers.yi, "NULL")){
-        message("Warning, no marker labels found in yi.")
+    if(is(markers.y, "NULL")|is(markers.yi, "NULL")){
+        message("Warning, no marker labels found in either y or yi.")
     } else{
-        message("Found marker labels in y, yi. Comparing...")
         unique.marker.labels <- unique(markers.y, markers.yi)
         overlapping.marker.labels <- intersect(markers.y, markers.yi)
-        message("Found ", length(overlapping.marker.labels), 
-                " overlapping markers.")
         if(length(overlapping.marker.labels) > 0){
             message("Subsetting yi on markers overlapping in y.")
             yi <- yi[overlapping.marker.labels,]
@@ -94,20 +89,15 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
     # compare sample labels and remove overlapping samples
     samples.y <- colnames(y); samples.yi <- colnames(yi) # parse bulk sample IDs
     # compare sample IDs
-    if(is(samples.y, "NULL")){
-        message("Warning, no sample labels found in y.")
-    } else if(is(samples.yi, "NULL")){
-        message("Warning, no sample labels found in yi.")
+    if(is(samples.y, "NULL")|is(samples.yi, "NULL")){
+        message("Warning, no sample labels found in either y or yi.")
     } else{
-        message("Found sample labels in y, yi. Comparing...")
         unique.sample.labels <- unique(samples.y, samples.yi)
         overlapping.sample.labels <- intersect(samples.y, samples.yi)
-        message("Found ", length(overlapping.sample.labels), 
-                " overlapping samples.")
         if(length(overlapping.samples) > 0){
             message("Removing overlapping samples from yi.")
             filter <- !colnames(yi) %in% overlapping.sample.labels
-            yi <- yi[, filter, drop=F]
+            yi <- yi[, filter, drop=FALSE]
         }
     }
   

@@ -76,7 +76,7 @@ csf_filter_labels <- function(labels, reference = NULL){
     filter5 <- grepl(gsub(" ", "", toupper(label)), 
                      gsub(" ", "", toupper(reference.labels)))
     label.filter <- filter1|filter2|filter3|filter4|filter5
-    reference[label.filter,,drop=F]
+    reference[label.filter,,drop=FALSE]
   }))
   df <- as.data.frame(df)
   df

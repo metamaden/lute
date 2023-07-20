@@ -8,8 +8,7 @@ get_decon_example_data_bisque(
   num.bulk.samples = 100,
   num.markers = 1000,
   num.cells = 1000,
-  num.types = 2,
-  seed.num = 0
+  num.types = 2
 )
 }
 \arguments{
@@ -20,8 +19,6 @@ get_decon_example_data_bisque(
 \item{num.cells}{Cells count.}
 
 \item{num.types}{Cell types count.}
-
-\item{seed.num}{Random seed.}
 }
 \value{
 Example data as list.

@@ -152,7 +152,7 @@ random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2,
   cpertype <- round(num.cells/num.types, 0)
   
   if(is(fract.types, "NULL")){
-    fract.types = rep((1/num.types), num.types)}
+    fract.types <- rep((1/num.types), num.types)}
   typev <- paste0("type", seq(num.types))
   typev <- unlist(lapply(seq(length(typev)), function(ti){
     num <- fract.types[ti]*num.cells; rep(typev[ti], num)
