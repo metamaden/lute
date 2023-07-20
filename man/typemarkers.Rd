@@ -14,7 +14,7 @@ typemarkers(object)
 \value{
 By default, return a vector of marker genes.
 
-If \code{return.info==T}, provides detailed results, including original 
+If \code{return.info==TRUE}, provides detailed results, including original 
 outputs.
 }
 \description{

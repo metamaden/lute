@@ -11,8 +11,7 @@ random_lgv(
   lambda.neg = 2,
   method = "nbinom",
   gamma.size.pos = 10,
-  gamma.size.neg = 10,
-  seed.num = 0
+  gamma.size.neg = 10
 )
 }
 \arguments{
@@ -40,8 +39,6 @@ This is applied when the "nbinom" method is used.}
 
 \item{gamma.size.neg}{The gamma distribution magnitude for "negative" markers. 
 This is applied when the "nbinom" method is used.}
-
-\item{seed.num}{Seed value for randomization.}
 }
 \value{
 Listed lgv object containing the randomized marker values across 
@@ -61,6 +58,5 @@ markers for type 1 (negative for type 2) and a single positive marker for
 type 2 (negative for type 1).
 }
 \examples{
-set.seed(0)
 random_lgv(gindexv = c(rep(1, 10), rep(2, 5)))
 }

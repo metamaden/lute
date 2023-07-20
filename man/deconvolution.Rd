@@ -16,7 +16,7 @@ deconvolution(object)
 By default, return named numeric vector of predicted proportions for each
 cell type.
 
-If \code{return.info==T}, instead returns a list including proportions, 
+If \code{return.info==TRUE}, instead returns a list including proportions, 
 results object returned from specified method, and additional metadata.
 }
 \description{

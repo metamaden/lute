@@ -66,20 +66,18 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
 #' This is applied when the "nbinom" method is used.
 #' @param gamma.size.neg The gamma distribution magnitude for "negative" markers. 
 #' This is applied when the "nbinom" method is used.
-#' @param seed.num Seed value for randomization.
 #' @returns Listed lgv object containing the randomized marker values across 
 #' types.
 #' 
 #' @importFrom stats rnbinom
 #' 
 #' @examples 
-#' set.seed(0)
 #' random_lgv(gindexv = c(rep(1, 10), rep(2, 5)))
 #' @export
 random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2, 
                        method = "nbinom", gamma.size.pos = 10, 
-                       gamma.size.neg = 10, seed.num = 0){
-  set.seed(seed.num); ktotal <- length(unique(gindexv))
+                       gamma.size.neg = 10){
+  ktotal <- length(unique(gindexv))
   lgv <- lapply(seq(ktotal), function(ki){
     gmarkerv <- gindexv
     which.pos <- which(gindexv==ki); which.neg <- which(!gindexv==ki)
