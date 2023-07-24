@@ -20,7 +20,9 @@ Depends:
     BiocGenerics
 Imports:
     S4Vectors,
-    Biobase
+    Biobase,
+    scran,
+    dplyr
 Suggests:
     nnls, 
     knitr,
@@ -32,7 +34,6 @@ Suggests:
     ExperimentHub,
     AnnotationHub,
     DelayedMatrixStats,
-    scran,
     BisqueRNA,
     DelayedArray
 VignetteBuilder:

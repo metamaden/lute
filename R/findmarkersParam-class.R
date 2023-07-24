@@ -9,8 +9,8 @@
 #' @include lute_generics.R
 #' @include typemarkersParam-class.R
 #' 
-#' @details Main constructor for class \linkS4class{meanratiosParam}.
-#' @rdname meanratiosParam-class
+#' @details Main constructor for class \linkS4class{findmarkersParam}.
+#' @rdname findmarkersParam-class
 #' @seealso \linkS4class{typemarkersParam}
 #' 
 #' @param assay.name Name of expression matrix in sce assays.
@@ -26,7 +26,7 @@
 #' markers <- typemarkers(new.param)
 #' 
 #' @aliases 
-#' MeanratiosParam-class, MeanRatiosParam-class
+#' FindmarkersParam-class, findMarkersParam-class
 #' 
 setClass("findmarkersParam", contains="typemarkersParam", 
          slots = c(assay.name = "character", 
@@ -34,9 +34,9 @@ setClass("findmarkersParam", contains="typemarkersParam",
                    celltype.variable = "character",
                    test.type = "character"))
 
-#' Make new object of class meanratiosParam
+#' Make new object of class findmarkersParam
 #'
-#' Main constructor for class \linkS4class{meanratiosParam}.
+#' Main constructor for class \linkS4class{findmarkersParam}.
 #'
 #' @param assay.name Name of expression matrix in sce assays.
 #' @param sce Object of type SingleCellExperiment.
@@ -46,7 +46,7 @@ setClass("findmarkersParam", contains="typemarkersParam",
 #' @param return.info Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
-#' @returns Object of class \linkS4class{meanratiosParam}
+#' @returns Object of class \linkS4class{findmarkersParam}
 #' 
 #' @seealso \linkS4class{typemarkersParam}
 #'

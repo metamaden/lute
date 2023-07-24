@@ -3,8 +3,8 @@
 \docType{class}
 \name{findmarkersParam-class}
 \alias{findmarkersParam-class}
-\alias{MeanratiosParam-class,}
-\alias{MeanRatiosParam-class}
+\alias{FindmarkersParam-class,}
+\alias{findMarkersParam-class}
 \title{findmarkersParam-class}
 \arguments{
 \item{assay.name}{Name of expression matrix in sce assays.}
@@ -19,7 +19,7 @@
 class definition for findmarkersParam, which uses scran::findMarkers()
 }
 \details{
-Main constructor for class \linkS4class{meanratiosParam}.
+Main constructor for class \linkS4class{findmarkersParam}.
 }
 \examples{
 lexample <- get_decon_example_data()

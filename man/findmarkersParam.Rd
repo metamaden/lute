@@ -2,7 +2,7 @@
 % Please edit documentation in R/findmarkersParam-class.R
 \name{findmarkersParam}
 \alias{findmarkersParam}
-\title{Make new object of class meanratiosParam}
+\title{Make new object of class findmarkersParam}
 \usage{
 findmarkersParam(
   sce,
@@ -28,10 +28,10 @@ findmarkersParam(
 with predicted proportions.}
 }
 \value{
-Object of class \linkS4class{meanratiosParam}
+Object of class \linkS4class{findmarkersParam}
 }
 \description{
-Main constructor for class \linkS4class{meanratiosParam}.
+Main constructor for class \linkS4class{findmarkersParam}.
 }
 \details{
 Main class for mapping arguments to the findMarkers method 
