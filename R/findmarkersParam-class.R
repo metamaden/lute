@@ -94,11 +94,11 @@ setMethod("typemarkers", signature(object = "findmarkersParam"), function(object
   for(type in unique.cell.types){
     scef <- sce[!rownames(sce) %in% markers.filter,]
     message("selecting among ",nrow(scef)," genes for markers of type: ", type, "...")
-    list.markers[[type]] <- findMarkers(x = scef, 
+    list.result[[type]] <- findMarkers(x = scef, 
                                         group = sce[[celltype.variable]],
                                         assay.type = assay.name,
                                         test.type = test.type)[[type]]
-    dfi <- list.markers[[type]][,seq(4)]
+    dfi <- list.result[[type]][,seq(4)]
     summary.colname <- colnames(dfi)[grepl("summary\\..*", colnames(dfi))]
     new.colname <- paste0("abs.", summary.colname)
     dfi$abs.summary <- dfi[,summary.colname] %>% as.numeric() %>% abs()
