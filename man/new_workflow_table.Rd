@@ -25,9 +25,11 @@ new_workflow_table(
 
 \item{celltype.variable}{Name of variable containing cell type labels.}
 
-\item{table.directory}{Directory to write new table.}
+\item{table.directory}{Directory to write table.}
 
-\item{table.filename}{Filename of new table to write.}
+\item{table.filename}{Filename of table.}
+
+\item{save}{Whether to save table.}
 
 \item{overwrite}{Whether to overwrite old table files.}
 
@@ -44,6 +46,6 @@ Makes and returns/saves a r-nf_deconvolution experiment table.
 Checks for existence of provided files.
 }
 \examples{
-new_workflow_table(save = F)
+new_workflow_table(save = FALSE)
 
 }

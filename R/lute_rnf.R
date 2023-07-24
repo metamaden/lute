@@ -12,16 +12,18 @@
 #' @param data.directory Directory containing datasets to load.
 #' @param true.proportions.filename.stem File name stem of true proportions values.
 #' @param celltype.variable Name of variable containing cell type labels.
-#' @param table.directory Directory to write new table.
-#' @param table.filename Filename of new table to write.
+#' @param table.directory Directory to write table.
+#' @param table.filename Filename of table.
+#' @param save Whether to save table.
 #' @param overwrite Whether to overwrite old table files.
 #' @param verbose Whether to show verbose messages.
 #' @details Makes and returns/saves a r-nf_deconvolution experiment table. 
 #' Checks for existence of provided files.
 #' @returns New r-nf_deconvolution compatible table of experiment/run metadata.
+#' @importFrom utils write.csv
 #' 
 #' @examples
-#' new_workflow_table(save = F)
+#' new_workflow_table(save = FALSE)
 #'
 #' @export
 new_workflow_table <- function(sce.names = NULL, data.directory = "data",
@@ -33,7 +35,7 @@ new_workflow_table <- function(sce.names = NULL, data.directory = "data",
                     "decon_args", "run_info", "assay_name", "celltype_variable")
   table.filepath <- file.path(table.directory, table.filename)
   if(file.exists(table.filepath) & !overwrite){
-    stop("Found existing workflow table at path ", table.fpath, ".")}
+    stop("Found existing table ", table.filepath, ". Stopping.")}
   dfnew <- matrix(nrow = 0, ncol = length(rnf.colnames))
   newline <- c(file.path("$launchDir", data.directory),
                file.path("$launchDir", data.directory), "nnls", "NA", 
