@@ -32,6 +32,7 @@ Suggests:
     ExperimentHub,
     AnnotationHub,
     DelayedMatrixStats,
+    scran,
     BisqueRNA,
     DelayedArray
 VignetteBuilder:
@@ -44,6 +45,8 @@ Collate:
     'referencebasedParam-class.R'
     'independentbulkParam-class.R'
     'bisqueParam-class.R'
+    'typemarkersParam-class.R'
+    'findmarkersParam-class.R'
     'globals.R'
     'lute_cellScaleFactors.R'
     'lute_classes.R'
@@ -54,4 +57,3 @@ Collate:
     'lute_rnf.R'
     'lute_utilities.R'
     'nnlsParam-class.R'
-    'typemarkersParam-class.R'

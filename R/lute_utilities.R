@@ -334,14 +334,15 @@ get_decon_example_data_music2 <- function(){
 .parse_deconvolution_predictions_results <- function(list.pred, 
                                                      column.labels, 
                                                      row.labels){
+  if(is(column.labels, "NULL")){column.labels <- seq(length(list.pred[[1]]))}
+  if(is(row.labels, "NULL")){row.labels <- seq(length(list.pred))}
   table.pred <- do.call(rbind, list.pred)
   table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) 
   table.pred <- t(table.pred)
   colnames(table.pred) <- column.labels
   rownames(table.pred) <- row.labels
   # convert
-  table.pred <- cellProportionsPredictions(table.pred, 
-                                           column.labels, 
+  table.pred <- cellProportionsPredictions(table.pred, column.labels, 
                                            row.labels)
   return(table.pred)
 }

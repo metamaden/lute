@@ -14,7 +14,7 @@ lute(
   markers.per.type = 20,
   assay.name = "counts",
   celltype.variable = "celltype",
-  typemarker.algorithm = "meanratio",
+  typemarker.algorithm = "findmarkers",
   deconvolution.algorithm = "nnls",
   verbose = TRUE
 )

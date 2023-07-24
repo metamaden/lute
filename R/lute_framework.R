@@ -55,7 +55,7 @@
 lute <- function(sce = NULL, z = NULL, y = NULL, y.se = NULL, s = NULL, 
                  return.info = FALSE, markers.per.type = 20,
                  assay.name = "counts", celltype.variable = "celltype",
-                 typemarker.algorithm = "meanratio", 
+                 typemarker.algorithm = "findmarkers", 
                  deconvolution.algorithm = "nnls",
                  verbose = TRUE){
   results.list <- list()
@@ -102,6 +102,10 @@ map_typemarker_algorithm <- function(algorithm, sce, assay.name,
                          "meanratios", "meanRatios", "Meanratio", "MeanRatio")){
     message("Using meanratiosParam...")
     typemarker.string <- "meanratiosParam"
+  } else if(algorithm %in% c("findmarkers", "findmarker", "Findmarker", 
+                             "Findmarkers", "findMarkers", "FindMarkers")){
+    message("Using meanratiosParam...")
+    typemarker.string <- "findmarkersParam"
   } else{
     message("Warning, unidentified marker selection algorithm provided. ",
             "Skipping marker selection")
