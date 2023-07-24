@@ -1,3 +1,12 @@
+
+<!-- badges: start -->
+
+[![R build
+status](https://github.com/metamaden/lute/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/metamaden/lute/actions)
+
+<!-- badges: end -->
+
+
 # lute
 
 Authors: Sean Maden, Stephanie Hicks
