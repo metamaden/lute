@@ -144,8 +144,7 @@ deconvolution.results.table <- function(experiment.list,
                       s = size.data, return.info = FALSE, 
                       typemarker.algorithm = typemarker.algorithm,
                       deconvolution.algorithm = deconvolution.algorithm)
-      results <- results[["deconvolution.results"]]
-      if(sum(results) > 1){results <- results/sum(results)}
+      results <- results[["deconvolution.results"]]@predictions.table
       return(results)
     })
     results.table.sample <- do.call(rbind, results.list.sample) %>% 
