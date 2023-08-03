@@ -39,7 +39,7 @@ The following algorithms are included in the current build of `lute`:
 
 * Bisque : The `bisqueParam` class supports the `BisqueRNA::ReferenceBasedDecomposition` implementation of the Bisque deconvolution algorithm ([url](https://github.com/cozygene/bisque); [yml](https://github.com/metamaden/lute/blob/main/inst/yml/bisque.yml)).
 
-The following algorithms have been supported and tested using `lute`'s specialized classes, but they have not been included in the latest build as they are not currently available on CRAN or Bioconductor.
+The following algorithms have been supported and tested using `lute`'s specialized classes, but they have not been included in the latest build.
 
 * MuSiC : The `musicParam` class supports the `MuSiC::music.basic()` implementation of the MuSiC deconvolution algorithm ([url](https://github.com/xuranw/MuSiC); [yml](https://github.com/metamaden/lute/blob/main/inst/yml/music.yml)).
 
