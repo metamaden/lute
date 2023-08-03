@@ -29,8 +29,6 @@ devtools::install("metamaden/lute")
 
 The `lute` R package supports bulk transcriptomics deconvolution experiments. It gets its name from the word "deconvolute," the problem of predicting cell amounts from cell mixtures. Users can use the `lute()` function to select for markers and perform deconvolution either with or without a cell size scale factor normalization (see `?lute` for details). For normalizations, data may be incorporated from the `cellScaleFactor` package and passed to the `s` argument for transformation of cell reference expression data prior to deconvolution.   
 
-[<img style="float: center;" src = "inst/jpg/lute_framework_diagram.jpeg"/>](https://github.com/metamaden/lute)
-
 ## Deconvolution methods supported
 
 `lute` supports standard access to deconvolution algorithms with the `deconvolution()` generic function and affiliated class definitions. The below algorithms are currently supported or have bee tested using these specialized classes. They are listed with links to their main repos as well as conda YML scripts to install them with dependencies.
