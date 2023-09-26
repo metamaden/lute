@@ -39,7 +39,7 @@ Suggests:
     DelayedArray
 VignetteBuilder:
     knitr
-biocViews: RNASeq, Sequencing, SingleCell, Coverage, Transcriptomics
+biocViews: RNASeq, Sequencing, SingleCell, Coverage, Transcriptomics, Normalization
 RoxygenNote: 7.2.3
 Collate: 
     'lute_generics.R'

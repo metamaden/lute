@@ -121,12 +121,8 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   stop.option <- FALSE
   if(length(id.onlybulk)==0){
     if(is(yi, "NULL")){
-      message("Error, no independent bulk samples found. ",
-              "Provide either yi, or additional y samples.")
       stop.option <- TRUE
-    } else{
-      message("Using provided yi for independent bulk samples...")
-    }
+    } else{}
   } else{
     if(is(yi, "NULL")){
       message("Making yi from provided y bulk...")
@@ -134,9 +130,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
       yi <- exprs(y.eset)[,filter.yi]
       colnames(yi) <- colnames(y.eset)[filter.yi]
       rownames(yi) <- rownames(y.eset)
-    } else{
-      message("Using provided yi for independent bulk samples...")
-    }
+    } else{}
   }
   if(stop.option){stop("Error parsing independent bulk data.")}
   filter.bulk.samples.y <- colnames(y) %in% colnames(yi)
@@ -152,21 +146,13 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   if(batch.variable %in% colnames(pData(y.eset))){
     id.bulk <- unique(y.eset[[batch.variable]])
   } else{
-    message("Error, didn't find batch variable in y.eset pData: ", 
-            batch.variable);stop.option <- TRUE
+    stop.option <- TRUE
   }
   id.overlap <- intersect(id.sc, id.bulk)
   id.unique <- unique(c(id.sc, id.bulk))
   id.onlybulk <- id.bulk[!id.bulk %in% id.overlap]
   id.onlysc <- id.sc[!id.sc %in% id.overlap]
-  message("Found ", length(id.unique), " unique batch ids...")
-  message("Found ", length(id.overlap), " overlapping batch ids...")
-  message("Found ", length(id.onlybulk), " bulk-only batch ids...")
-  message("Found ", length(id.onlysc), " sc-only batch ids...")
-  if(length(id.overlap) == 0){
-    message("Error, no overlapping markers in y.eset and sc.eset.")
-    stop.option <- TRUE
-  }
+  if(length(id.overlap) == 0){stop.option <- TRUE}
   if(stop.option){stop("Error parsing batches.")}
   return(list(id.sc = id.sc, 
               id.bulk = id.bulk, 
@@ -181,9 +167,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   unique.types <- colnames(z)
   unique.types <- unique.types[order(unique.types)]
   if(is(s, "NULL")){
-    message("Setting equal cell size factors...")
-    s <- rep(1, ncol(z))
-    names(s) <- unique.types
+    s <- rep(1, ncol(z)); names(s) <- unique.types
   }
   return(s = s)
 }
@@ -195,8 +179,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
                      celltype.variable = "celltype"){
   stop.option <- FALSE
   if(!celltype.variable %in% colnames(pData(sc.eset))){
-    message("Error, didn't find celltype id variable ", celltype.variable, 
-            " in sc.eset pData/coldata.");stop.option <- TRUE
+    stop.option <- TRUE
   }
   if(is(z, "NULL")){
     sce <- eset_to_sce(sc.eset, "counts")
@@ -207,8 +190,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   if(batch.variable %in% colnames(pData(sc.eset))){
     id.sc <- unique(sc.eset[[batch.variable]])
   } else{
-    message("Error, didn't find batch id variable ",batch.variable,
-            " in sc.eset pData/coldata.");stop.option <- TRUE
+    stop.option <- TRUE
   }
   if(stop.option){stop("Error parsing Z data.")}
   return(list(sce = sce, z = z, id.sc = id.sc))
@@ -222,12 +204,11 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   } else if(is(sc.data, "SummarizedExperiment")){
     sc.eset <- se_to_eset(sc.data, assay.name = assay.name)
   } else if(is(sc.data, "ExpressionSet")){
-    message("Provided sc.data object is an ExpressionSet.")
     sc.eset <- sc.data
   } else if(is(sc.data, "NULL")){
-    message("Error, sc.data not provided.");stop.option <- TRUE
+    stop.option <- TRUE
   } else{
-    message("Error, unrecognized sc.data class.");stop.option <- TRUE
+    stop.option <- TRUE
   }
   if(stop.option){stop("Error parsing sc data.")}
   return(sc.eset)
@@ -236,11 +217,9 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #'
 .parse_y <- function(y = NULL, y.eset = NULL){
   if(is(y, "NULL")){
-    message("Getting y from provided bulk.eset...")
     y <- as.matrix(exprs(y.eset))
   } else{
     if(is(y.eset, "NULL")){
-      message("Making ExpressionSet from provided y...")
       y.eset <- get_eset_from_matrix(mat = y, batch.variable = "SubjectName")
       # need at least 2 columns/samples to pass to bisque
       if(ncol(y.eset) == 1){

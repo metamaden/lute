@@ -86,7 +86,6 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         unique.marker.labels <- unique(markers.y, markers.yi)
         overlapping.marker.labels <- intersect(markers.y, markers.yi)
         if(length(overlapping.marker.labels) > 0){
-            message("Subsetting yi on markers overlapping in y.")
             yi <- yi[overlapping.marker.labels,]
         }
     }
@@ -100,7 +99,6 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         unique.sample.labels <- unique(samples.y, samples.yi)
         overlapping.sample.labels <- intersect(samples.y, samples.yi)
         if(length(overlapping.samples) > 0){
-            message("Removing overlapping samples from yi.")
             filter <- !colnames(yi) %in% overlapping.sample.labels
             yi <- yi[, filter, drop=FALSE]
         }
