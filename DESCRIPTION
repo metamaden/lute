@@ -15,7 +15,6 @@ Depends:
     stats,
     methods,
     utils,
-    testthat,
     SummarizedExperiment,
     SingleCellExperiment,
     BiocGenerics
