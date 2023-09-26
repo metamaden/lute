@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{An object of class \linkS4class{referencebasedParam}.}
 }
+\value{
+Method results.
+}
 \description{
 Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}
 }

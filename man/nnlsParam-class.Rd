@@ -5,6 +5,9 @@
 \alias{nnlsParam-class}
 \alias{NNLSParam-class}
 \title{nnlsParam-class}
+\value{
+New object.
+}
 \description{
 Uses nnls::nnls().
 }

@@ -12,6 +12,9 @@
 \item{return.info}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 }
+\value{
+New object.
+}
 \description{
 Main constructor for class to manage mappings to the \code{typemarkers()} 
 generic.

@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{An object of class \linkS4class{deconvolutionParam}.}
 }
+\value{
+Shows object summaries.
+}
 \description{
 Show generic behavior for object of class \linkS4class{deconvolutionParam}
 }

@@ -13,6 +13,8 @@
 }
 \value{
 Contents of specified slot.
+
+Object slot contents.
 }
 \description{
 Inspect slot in \linkS4class{deconvolutionParam} object

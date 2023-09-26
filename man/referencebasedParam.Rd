@@ -18,6 +18,8 @@ provided ExpressionSet containing single-cell data.}
 }
 \value{
 New object of class \linkS4class{referencebasedParam}.
+
+New object.
 }
 \description{
 Main constructor for class \linkS4class{referencebasedParam}.

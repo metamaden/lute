@@ -15,6 +15,9 @@
 
 \item{test.type}{Test type (see ?findMarkers for options).}
 }
+\value{
+New object.
+}
 \description{
 class definition for findmarkersParam, which uses scran::findMarkers()
 }

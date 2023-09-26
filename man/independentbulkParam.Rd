@@ -24,6 +24,9 @@ provided ExpressionSet containing single-cell data.}
 
 \item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
 }
+\value{
+New object.
+}
 \description{
 Function to make a new object of class \linkS4class{independentbulkParam}
 }

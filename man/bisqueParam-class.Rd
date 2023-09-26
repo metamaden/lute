@@ -5,6 +5,9 @@
 \alias{bisqueParam-class}
 \alias{BisqueParam-class}
 \title{bisqueParam-class}
+\value{
+New object of class \linkS4class{bisqueParam}.
+}
 \description{
 Applies the BisqueRNA::ReferenceBasedDecomposition() implementation of the 
 Bisque deconvolution algorithm.

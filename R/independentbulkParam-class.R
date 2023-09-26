@@ -23,6 +23,7 @@
 #' @examples 
 #' new("independentbulkParam")
 #' 
+#' @returns New object.
 setClass("independentbulkParam", contains="referencebasedParam", 
          slots = c(yi = "matrix"))
 
@@ -39,6 +40,8 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' 
 #' @examples 
 #' new("independentbulkParam")
+#'
+#' @returns New object.
 #'
 #' @export
 independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
@@ -65,6 +68,8 @@ independentbulkParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #' 
 #' @examples 
 #' new("independentbulkParam")
+#'
+#' @returns Method results.
 #'
 #' @export
 setMethod("deconvolution", "independentbulkParam", function(object) {
@@ -118,6 +123,8 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
 #' 
 #' @examples 
 #' new("independentbulkParam")
+#'
+#' @returns Shows object summaries.
 #'
 #' @export
 setMethod("show", "independentbulkParam", function(object) {

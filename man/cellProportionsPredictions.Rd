@@ -19,6 +19,8 @@ cellProportionsPredictions(
 }
 \value{
 cellProportionsPredictions object.
+
+New cellProportionsPredictions object.
 }
 \description{
 Make new cellProportionsPredictions object.

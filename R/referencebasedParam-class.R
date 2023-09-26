@@ -22,6 +22,8 @@
 #' @examples 
 #' lexample <- get_decon_example_data()
 #' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+#'
+#' @returns New object.
 #' 
 setClass("referencebasedParam", contains="deconvolutionParam", 
          slots=c(z = "matrix", s = "numeric"))
@@ -43,6 +45,8 @@ setClass("referencebasedParam", contains="deconvolutionParam",
 #' @returns New object of class \linkS4class{referencebasedParam}.
 #'
 #' @details Takes standard inputs for reference-based deconvolution algorithms.
+#'
+#' @returns New object.
 #' 
 #' @export
 referencebasedParam <- function(y, z, s, return.info = FALSE) {
@@ -56,6 +60,7 @@ referencebasedParam <- function(y, z, s, return.info = FALSE) {
 #' @examples 
 #' lexample <- get_decon_example_data()
 #' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+#' @returns Method results.
 #' @export
 setMethod("deconvolution", "referencebasedParam", function(object) {
   # get metadata

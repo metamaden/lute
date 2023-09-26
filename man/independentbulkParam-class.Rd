@@ -8,6 +8,9 @@
 \item{yi}{Mixed signals matrix from bulk samples, independent from primary 
 mixed signals matrix y.}
 }
+\value{
+New object.
+}
 \description{
 Class and methods for managing methods requiring independent bulk samples.
 }

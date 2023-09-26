@@ -24,6 +24,8 @@
 #' # return full results
 #' param@return.info <- TRUE
 #' names(deconvolution(param))
+#'
+#' @returns New object.
 #' 
 #' @aliases 
 #' NNLSParam-class

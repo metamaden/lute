@@ -11,6 +11,9 @@
 
 \item{sample.id.vector}{Character vector of sample id labels.}
 }
+\value{
+New cellProportionsPredictions object.
+}
 \description{
 Class for cell type predictions.
 }

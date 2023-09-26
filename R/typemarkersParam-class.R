@@ -21,6 +21,8 @@
 #' 
 #' @examples
 #' lexample <- get_decon_example_data()
+#'
+#' @returns New object.
 #' 
 #' @aliases 
 #' TypemarkersParam-class, TypeMarkersParam-class

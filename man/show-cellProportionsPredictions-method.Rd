@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{cellProportionsPredictions object.}
 }
+\value{
+Shows object summaries.
+}
 \description{
 Inspect cellProportionsPredictions object.
 }

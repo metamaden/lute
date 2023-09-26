@@ -36,7 +36,9 @@
 #' Brandon Jew et al. Accurate estimation of cell composition in bulk 
 #' expression through robust integration of single-cell information. 
 #' Nat Commun 11, 1971 (2020). https://doi.org/10.1038/s41467-020-15816-6
-#' 
+#'
+#' @returns New object of class \linkS4class{bisqueParam}.
+#'
 #' @aliases 
 #' BisqueParam-class
 #'

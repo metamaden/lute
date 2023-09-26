@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{An object of class \linkS4class{independentbulkParam}.}
 }
+\value{
+Shows object summaries.
+}
 \description{
 Method for \linkS4class{independentbulkParam}
 }

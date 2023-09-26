@@ -28,6 +28,8 @@
 #' @aliases 
 #' FindmarkersParam-class, findMarkersParam-class
 #' 
+#' @returns New object.
+#'
 setClass("findmarkersParam", contains="typemarkersParam", 
          slots = c(assay.name = "character", 
                    sce = "SingleCellExperiment",

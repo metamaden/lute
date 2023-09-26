@@ -7,6 +7,9 @@
 \alias{DeconParam-class,}
 \alias{deconParam-class}
 \title{deconvolutionParam-class}
+\value{
+New deconvolutionParam object.
+}
 \description{
 Defines the principal parent class for all deconvolution method parameters.
 }

@@ -4,6 +4,9 @@
 \name{referencebasedParam-class}
 \alias{referencebasedParam-class}
 \title{referencebasedParam-class}
+\value{
+New object.
+}
 \description{
 Class and methods for managing reference-based deconvolution methods.
 }

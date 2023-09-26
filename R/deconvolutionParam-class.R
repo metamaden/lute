@@ -27,6 +27,8 @@
 #' @aliases 
 #' DeconvolutionParam-class, DeconParam-class, deconParam-class
 #'
+#' @returns New deconvolutionParam object.
+#'
 #' @export
 setClass("deconvolutionParam",  slots=c(y="matrix", return.info = "logical"))
 
@@ -39,6 +41,8 @@ setClass("deconvolutionParam",  slots=c(y="matrix", return.info = "logical"))
 #' @examples
 #' example.data <- get_decon_example_data()
 #' 
+#' @returns Object slot contents.
+#' 
 #' @export
 setMethod("[[", "deconvolutionParam", function(x, i) {slot(x, i)})
 
@@ -46,6 +50,7 @@ setMethod("[[", "deconvolutionParam", function(x, i) {slot(x, i)})
 #' @param object An object of class \linkS4class{deconvolutionParam}.
 #' @details Method for behavior of deconvolution generic when called for object of class 
 #' \linkS4class{deconvolutionParam}
+#' @returns Null method.
 #' @export
 setMethod("deconvolution", "deconvolutionParam", function(object) {})
 
@@ -56,6 +61,8 @@ setMethod("deconvolution", "deconvolutionParam", function(object) {})
 #' 
 #' @examples
 #' example.data <- get_decon_example_data()
+#' 
+#' @returns Shows object summaries.
 #' 
 #' @export
 setMethod("show", "deconvolutionParam", function(object) {

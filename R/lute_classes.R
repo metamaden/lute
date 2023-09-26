@@ -13,6 +13,7 @@
 #' @param predictions.table Table containing cell type predictions.
 #' @param cell.type.vector Character vector of cell type labels.
 #' @param sample.id.vector Character vector of sample id labels.
+#' @returns New cellProportionsPredictions object.
 #' @examples 
 #' new("cellProportionsPredictions")
 #' ptable <- matrix(sample(100,50),nrow=10)
@@ -31,6 +32,7 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame
 #' @param sample.id.vector Character vector of sample id labels.
 #' @returns cellProportionsPredictions object.
 #' @importFrom methods new
+#' @returns New cellProportionsPredictions object.
 #' 
 #' @examples
 #' example.data <- get_decon_example_data()
@@ -58,6 +60,7 @@ cellProportionsPredictions <- function(predictions.table,
 #' @importFrom methods show
 #' @importFrom utils head
 #' @details Method behavior for show.
+#' @returns Shows object summaries.
 #' 
 #' @examples
 #' example.data <- get_decon_example_data()
