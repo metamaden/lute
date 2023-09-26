@@ -22,3 +22,11 @@ returning either a vector of cell type gene markers, or (if
 \code{return.info == TRUE}) a list containing such a vector along with 
 original function outputs.
 }
+\examples{
+lexample <- get_decon_example_data()
+sce.example <- random_sce()
+new.param <- findmarkersParam(sce = sce.example, 
+celltype.variable = "celltype", markers.per.type = 5)
+markers <- typemarkers(new.param)
+
+}

@@ -12,3 +12,7 @@ Table of supported deconvolution algorithms.
 \description{
 View details about supported deconvolution algorithms.
 }
+\examples{
+lute_supported_deconvolution_algorithms()
+
+}

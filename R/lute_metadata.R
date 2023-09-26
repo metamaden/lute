@@ -13,6 +13,9 @@
 #'
 #' @importFrom utils read.csv
 #' 
+#' @examples
+#' lute_supported_deconvolution_algorithms()
+#' 
 #' @export
 lute_supported_deconvolution_algorithms <- function(){
   csv.name <- "lute-deconvolution_transfer-learning-table.csv"

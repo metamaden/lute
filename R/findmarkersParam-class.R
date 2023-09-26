@@ -55,6 +55,13 @@ setClass("findmarkersParam", contains="typemarkersParam",
 #' @details Main class for mapping arguments to the findMarkers method 
 #' implemented as \code{scran::findMarkers()}.
 #' 
+#' @examples 
+#' lexample <- get_decon_example_data()
+#' sce.example <- random_sce()
+#' new.param <- findmarkersParam(sce = sce.example, 
+#' celltype.variable = "celltype", markers.per.type = 5)
+#' markers <- typemarkers(new.param)
+#' 
 #' @export
 findmarkersParam <- function(sce, assay.name = "counts", 
                              celltype.variable = "cellType",
@@ -79,6 +86,13 @@ findmarkersParam <- function(sce, assay.name = "counts",
 #' 
 #' @importFrom scran findMarkers
 #' @importFrom dplyr %>%
+#' 
+#' @examples 
+#' lexample <- get_decon_example_data()
+#' sce.example <- random_sce()
+#' new.param <- findmarkersParam(sce = sce.example, 
+#' celltype.variable = "celltype", markers.per.type = 5)
+#' markers <- typemarkers(new.param)
 #'
 #' @returns Returns the top available markers, with type-specific marker filters,
 #' as either a vector of marker IDs or a results list.

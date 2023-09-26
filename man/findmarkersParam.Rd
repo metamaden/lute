@@ -37,6 +37,14 @@ Main constructor for class \linkS4class{findmarkersParam}.
 Main class for mapping arguments to the findMarkers method 
 implemented as \code{scran::findMarkers()}.
 }
+\examples{
+lexample <- get_decon_example_data()
+sce.example <- random_sce()
+new.param <- findmarkersParam(sce = sce.example, 
+celltype.variable = "celltype", markers.per.type = 5)
+markers <- typemarkers(new.param)
+
+}
 \seealso{
 \linkS4class{typemarkersParam}
 }
