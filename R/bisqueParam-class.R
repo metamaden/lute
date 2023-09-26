@@ -69,9 +69,10 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @examples
 #' # get data
 #' lexample <- get_decon_example_data_bisque()
+#' y.eset <- lexample["y.eset"]; yi <- exprs(y.eset)
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = lexample[["y.eset"]], 
+#' param <- bisqueParam(y.eset = y.eset, yi = yi,
 #'                      sc.data = lexample[["sc.eset"]], 
 #'                      batch.variable = "SubjectName", 
 #'                      celltype.variable = "cellType", 
@@ -99,7 +100,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   list.z <- .parse_z(sc.eset, z, assay.name, batch.variable, 
                      celltype.variable)
   # parse s
-  s <- .parse_s(z, s)
+  s <- .parse_s(list.z[["z"]], s)
   # parse batch ids in bulk and sc
   list.batchid <- .parse_batches(batch.variable = batch.variable,
                                  y.eset = y.eset, id.sc = list.z[["id.sc"]])
@@ -107,7 +108,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   y <- .parse_independent_bulk(id.onlybulk = list.batchid[["id.onlybulk"]], 
                                y = list.y[["y"]], yi = yi, 
                                y.eset = list.y[["y.eset"]])
-  new("bisqueParam", y = y, yi = yi, z = z, s = s, 
+  new("bisqueParam", y = y, yi = yi, z = list.z[["z"]], s = s, 
       y.eset = list.y[["y.eset"]], sc.eset = sc.eset, 
       assay.name = assay.name, batch.variable = batch.variable, 
       celltype.variable = celltype.variable, 
@@ -233,7 +234,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 }
 
 #'
-.parse_y <- function(y = "NULL", y.eset = "NULL"){
+.parse_y <- function(y = NULL, y.eset = NULL){
   if(is(y, "NULL")){
     message("Getting y from provided bulk.eset...")
     y <- as.matrix(exprs(y.eset))

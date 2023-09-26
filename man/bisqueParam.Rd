@@ -57,9 +57,10 @@ into ExpressionSet objects compatible with the main bisque method.
 \examples{
 # get data
 lexample <- get_decon_example_data_bisque()
+y.eset <- lexample["y.eset"]; yi <- exprs(y.eset)
 
 # get param object
-param <- bisqueParam(y.eset = lexample[["y.eset"]], 
+param <- bisqueParam(y.eset = y.eset, yi = yi,
                      sc.data = lexample[["sc.eset"]], 
                      batch.variable = "SubjectName", 
                      celltype.variable = "cellType", 
