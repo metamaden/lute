@@ -70,15 +70,14 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @examples
 #' # get data
 #' lexample <- get_decon_example_data_bisque()
-#' y.eset <- lexample["y.eset"]; yi <- exprs(y.eset)
-#' 
+#' y.eset <- lexample[["y.eset"]]
+#' yi <- exprs(y.eset)
+#' sc.data <- lexample[["sc.eset"]]
 #' # get param object
-#' param <- bisqueParam(y.eset = y.eset, yi = yi,
-#'                      sc.data = lexample[["sc.eset"]], 
-#'                      batch.variable = "SubjectName", 
-#'                      celltype.variable = "cellType", 
-#'                      use.overlap = FALSE)
-#' 
+#' param <- bisqueParam(
+#' y.eset = y.eset, yi = yi, sc.data = sc.data, batch.variable = "SubjectName", 
+#' celltype.variable = "cellType", use.overlap = FALSE
+#' )
 #' # get predicted proportions
 #' res <- deconvolution(param)
 #'
