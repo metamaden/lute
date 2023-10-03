@@ -18,7 +18,8 @@ Main constructor for class \linkS4class{bisqueParam}.
 \examples{
 # get data
 lexample <- get_decon_example_data_bisque()
-y.eset <- lexample["y.eset"]; yi <- exprs(y.eset)
+y.eset <- lexample[["y.eset"]]
+yi <- exprs(y.eset)
 
 # get param object
 param <- bisqueParam(y.eset = y.eset, yi = yi,
