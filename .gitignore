@@ -1,3 +1,5 @@
+
+
 Meta
 doc
 # History files
@@ -71,3 +73,6 @@ R/make_marker_methods_data.R
 
 # ignore contents of "ignore" dir
 ignore/
+
+lutekey
+lutekey.pub
