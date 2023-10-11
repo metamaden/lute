@@ -53,10 +53,10 @@ The following algorithms have been supported and tested using `lute`'s specializ
 
 ## Conda environments
 
-To run specific deconvolution methods and algorithms, `lute` contains conda YML scripts. For example, set up an environement to run the MuSiC method with the following:
+To run specific deconvolution methods and algorithms, `lute` contains conda YML scripts. For example, set up an environement to run the NNLS algorithm with the following:
 
 ```
-conda env create -f ./lute/inst/yml/music.yml
+conda env create -f ./lute/inst/yml/nnls.yml
 ```
 
 ## Acknowledgements

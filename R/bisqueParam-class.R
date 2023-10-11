@@ -289,3 +289,18 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
                 y.eset = y.eset, sc.eset = sc.eset))}
   return(lr)
 })
+
+#' Show generic behavior for object of class \linkS4class{bisqueParam}
+#' @param object An object of class \linkS4class{bisqueParam}.
+#' @details Method for behavior of show generic when called for object of class 
+#' \linkS4class{bisqueParam}
+#' 
+#' @examples
+#' example.data <- get_decon_example_data()
+#' 
+#' @returns Shows object summaries.
+#' 
+#' @export
+setMethod("show", signature(object = "bisqueParam"), function(object){
+  show(object)
+})
