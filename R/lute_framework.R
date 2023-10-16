@@ -49,25 +49,25 @@
 #' sce <- random_sce()[seq(10),]
 #' 
 #' # get framework results
-#' experiment.results <- lute(sce = sce, y = y, typemarker.algorithm = NULL)
+#' experiment.results <- lute(sce=sce, y=y, typemarker.algorithm=NULL)
 #' 
 #' @export
-lute <- function(sce = NULL, z = NULL, y = NULL, y.se = NULL, s = NULL, 
-                 return.info = FALSE, markers.per.type = 20,
-                 assay.name = "counts", celltype.variable = "celltype",
-                 typemarker.algorithm = "findmarkers", 
-                 deconvolution.algorithm = "nnls",
-                 verbose = TRUE){
+lute <- function(sce=NULL, z=NULL, y=NULL, y.se=NULL, s=NULL, 
+                 return.info=FALSE, markers.per.type=20,
+                 assay.name="counts", celltype.variable="celltype",
+                 typemarker.algorithm="findmarkers", 
+                 deconvolution.algorithm="nnls",
+                 verbose=TRUE){
   results.list <- list()
   if(!is(typemarker.algorithm, "NULL")){
     if(verbose){message("Parsing marker gene arguments...")}
     typemarker.results <- marker.vector <- map_typemarker_algorithm(
-      algorithm = typemarker.algorithm,
-      sce = sce,
-      assay.name = assay.name,
-      celltype.variable = celltype.variable,
-      markers.per.type = markers.per.type,
-      return.info = return.info)
+      algorithm=typemarker.algorithm,
+      sce=sce,
+      assay.name=assay.name,
+      celltype.variable=celltype.variable,
+      markers.per.type=markers.per.type,
+      return.info=return.info)
     if(is(typemarker.results, "list")){
       marker.vector <- typemarker.results[["markers"]]}
     if(verbose){message("Filtering sce...")}
@@ -85,8 +85,8 @@ lute <- function(sce = NULL, z = NULL, y = NULL, y.se = NULL, s = NULL,
     if(is(s, "NULL")){s <- rep(1, ncol(z))}
     if(verbose){message("Parsing deconvolution arguments...")}
     deconvolution.results <- map_deconvolution_algorithm(
-      algorithm = deconvolution.algorithm,
-      z = z, y = y, s = s, return.info = return.info)
+      algorithm=deconvolution.algorithm,
+      z=z, y=y, s=s, return.info=return.info)
     results.list[["deconvolution.results"]] <- deconvolution.results
   }
   return(results.list)
@@ -112,18 +112,18 @@ map_typemarker_algorithm <- function(algorithm, sce, assay.name,
     return.string <- "FALSE"
   }
   typemarker.string <- paste0(typemarker.string, 
-                              "(sce = sce, assay.name = '",assay.name,"', ",
-                              "markers.per.type = ", markers.per.type, ", ",
-                              "celltype.variable = '",celltype.variable,"',",
-                              "return.info = ", return.info, ")")
-  new.param <- eval(parse(text = typemarker.string))
+                              "(sce=sce, assay.name='",assay.name,"', ",
+                              "markers.per.type=", markers.per.type, ", ",
+                              "celltype.variable='",celltype.variable,"',",
+                              "return.info=", return.info, ")")
+  new.param <- eval(parse(text=typemarker.string))
   return(typemarkers(new.param))
 }
 
 #'
 #'
-map_deconvolution_algorithm <- function(algorithm, y = y, z = z, s = s, 
-                                        return.info = return.info){
+map_deconvolution_algorithm <- function(algorithm, y=y, z=z, s=s, 
+                                        return.info=return.info){
   if(algorithm %in% c("nnls", "Nnls", "NNLS", "nnlsParam", "NNLSParam", "NnlsParam")){
     message("Using NNLS...")
     deconvolution.string <- "nnlsParam"
@@ -151,8 +151,8 @@ map_deconvolution_algorithm <- function(algorithm, y = y, z = z, s = s,
     stop("Error, unidentified deconvolution algorithm provided. ")
   }
   deconvolution.string <- paste0(deconvolution.string,
-                                 "(y = y, z = z, s = s, ",
-                                 "return.info = ", return.info, ")")
-  new.param <- eval(parse(text = deconvolution.string))
+                                 "(y=y, z=z, s=s, ",
+                                 "return.info=", return.info, ")")
+  new.param <- eval(parse(text=deconvolution.string))
   return(deconvolution(new.param))
 }

@@ -22,11 +22,11 @@
 #' yi <- exprs(y.eset)
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = y.eset, yi = yi,
-#'                      sc.data = lexample[["sc.eset"]], 
-#'                      batch.variable = "SubjectName", 
-#'                      celltype.variable = "cellType", 
-#'                      use.overlap = FALSE)
+#' param <- bisqueParam(y.eset=y.eset, yi=yi,
+#'                      sc.data=lexample[["sc.eset"]], 
+#'                      batch.variable="SubjectName", 
+#'                      celltype.variable="cellType", 
+#'                      use.overlap=FALSE)
 #' 
 #' # get predicted proportions
 #' res <- deconvolution(param)
@@ -45,9 +45,9 @@
 #' BisqueParam-class
 #'
 setClass("bisqueParam", contains="independentbulkParam", 
-         slots=c(y.eset = "ExpressionSet", sc.eset = "ExpressionSet", assay.name = "character",
-                  batch.variable = "character", celltype.variable = "character",
-                 use.overlap = "logical"))
+         slots=c(y.eset="ExpressionSet", sc.eset="ExpressionSet", 
+                 assay.name="character", batch.variable="character", 
+                 celltype.variable="character", use.overlap="logical"))
 
 #' Make new object of class bisqueParam
 #'
@@ -76,8 +76,8 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' sc.data <- lexample[["sc.eset"]]
 #' # get param object
 #' param <- bisqueParam(
-#' y.eset = y.eset, yi = yi, sc.data = sc.data, batch.variable = "SubjectName", 
-#' celltype.variable = "cellType", use.overlap = FALSE
+#' y.eset=y.eset, yi=yi, sc.data=sc.data, batch.variable="SubjectName", 
+#' celltype.variable="cellType", use.overlap=FALSE
 #' )
 #' # get predicted proportions
 #' res <- deconvolution(param)
@@ -88,11 +88,11 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' into ExpressionSet objects compatible with the main bisque method.
 #' 
 #' @export
-bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL, 
-                        y.eset = NULL, sc.data = NULL, assay.name = "counts", 
-                        batch.variable = "batch.id", 
-                        celltype.variable = "celltype", 
-                        use.overlap = FALSE, return.info = FALSE) {
+bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL, 
+                        y.eset=NULL, sc.data=NULL, assay.name="counts", 
+                        batch.variable="batch.id", 
+                        celltype.variable="celltype", 
+                        use.overlap=FALSE, return.info=FALSE) {
   # check y.eset/y
   list.y <- .parse_y(y, y.eset)
   # parse sc.data
@@ -103,22 +103,22 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   # parse s
   s <- .parse_s(list.z[["z"]], s)
   # parse batch ids in bulk and sc
-  list.batchid <- .parse_batches(batch.variable = batch.variable,
-                                 y.eset = y.eset, id.sc = list.z[["id.sc"]])
+  list.batchid <- .parse_batches(batch.variable=batch.variable,
+                                 y.eset=y.eset, id.sc=list.z[["id.sc"]])
   # parse independent bulk samples
-  y <- .parse_independent_bulk(id.onlybulk = list.batchid[["id.onlybulk"]], 
-                               y = list.y[["y"]], yi = yi, 
-                               y.eset = list.y[["y.eset"]])
-  new("bisqueParam", y = y, yi = yi, z = list.z[["z"]], s = s, 
-      y.eset = list.y[["y.eset"]], sc.eset = sc.eset, 
-      assay.name = assay.name, batch.variable = batch.variable, 
-      celltype.variable = celltype.variable, 
-      use.overlap = use.overlap, return.info = return.info)
+  y <- .parse_independent_bulk(id.onlybulk=list.batchid[["id.onlybulk"]], 
+                               y=list.y[["y"]], yi=yi, 
+                               y.eset=list.y[["y.eset"]])
+  new("bisqueParam", y=y, yi=yi, z=list.z[["z"]], s=s, 
+      y.eset=list.y[["y.eset"]], sc.eset=sc.eset, 
+      assay.name=assay.name, batch.variable=batch.variable, 
+      celltype.variable=celltype.variable, 
+      use.overlap=use.overlap, return.info=return.info)
 }
 
 #'
-.parse_independent_bulk <- function(id.onlybulk = NULL, y = NULL,
-                                    yi = NULL, y.eset = NULL){
+.parse_independent_bulk <- function(id.onlybulk=NULL, y=NULL,
+                                    yi=NULL, y.eset=NULL){
   stop.option <- FALSE
   if(length(id.onlybulk)==0){
     if(is(yi, "NULL")){
@@ -140,8 +140,8 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 }
 
 #'
-.parse_batches <- function(batch.variable = NULL, y.eset = NULL,
-                           id.sc = NULL){
+.parse_batches <- function(batch.variable=NULL, y.eset=NULL,
+                           id.sc=NULL){
   stop.option <- FALSE
   message("Checking batch ids in bulk and sc eset...")
   if(batch.variable %in% colnames(pData(y.eset))){
@@ -155,38 +155,38 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
   id.onlysc <- id.sc[!id.sc %in% id.overlap]
   if(length(id.overlap) == 0){stop.option <- TRUE}
   if(stop.option){stop("Error parsing batches.")}
-  return(list(id.sc = id.sc, 
-              id.bulk = id.bulk, 
-              id.overlap = id.overlap, 
-              id.unique = id.unique, 
-              id.onlybulk = id.onlybulk, 
-              id.onlysc = id.onlysc))
+  return(list(id.sc=id.sc, 
+              id.bulk=id.bulk, 
+              id.overlap=id.overlap, 
+              id.unique=id.unique, 
+              id.onlybulk=id.onlybulk, 
+              id.onlysc=id.onlysc))
 }
 
 #'
-.parse_s <- function(z = NULL, s = NULL){
+.parse_s <- function(z=NULL, s=NULL){
   unique.types <- colnames(z)
   unique.types <- unique.types[order(unique.types)]
   if(is(s, "NULL")){
     s <- rep(1, ncol(z)); names(s) <- unique.types
   }
-  return(s = s)
+  return(s=s)
 }
 
 #'
-.parse_z <- function(sc.eset = NULL, z = NULL,
-                     assay.name = "counts",
-                     batch.variable = "group",
-                     celltype.variable = "celltype"){
+.parse_z <- function(sc.eset=NULL, z=NULL,
+                     assay.name="counts",
+                     batch.variable="group",
+                     celltype.variable="celltype"){
   stop.option <- FALSE
   if(!celltype.variable %in% colnames(pData(sc.eset))){
     stop.option <- TRUE
   }
   if(is(z, "NULL")){
     sce <- eset_to_sce(sc.eset, "counts")
-    z <- get_z_from_sce(sce = sce, 
-                        assay.name = assay.name, 
-                        celltype.variable = celltype.variable)
+    z <- get_z_from_sce(sce=sce, 
+                        assay.name=assay.name, 
+                        celltype.variable=celltype.variable)
   }
   if(batch.variable %in% colnames(pData(sc.eset))){
     id.sc <- unique(sc.eset[[batch.variable]])
@@ -194,16 +194,16 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
     stop.option <- TRUE
   }
   if(stop.option){stop("Error parsing Z data.")}
-  return(list(sce = sce, z = z, id.sc = id.sc))
+  return(list(sce=sce, z=z, id.sc=id.sc))
 }
 
 #'
-.parse_sc <- function(sc.data = NULL, assay.name = assay.name){
+.parse_sc <- function(sc.data=NULL, assay.name=assay.name){
   stop.option <- FALSE
   if(is(sc.data, "SingleCellExperiment")){
-    sc.eset <- sce_to_eset(sc.data, assay.name = assay.name)
+    sc.eset <- sce_to_eset(sc.data, assay.name=assay.name)
   } else if(is(sc.data, "SummarizedExperiment")){
-    sc.eset <- se_to_eset(sc.data, assay.name = assay.name)
+    sc.eset <- se_to_eset(sc.data, assay.name=assay.name)
   } else if(is(sc.data, "ExpressionSet")){
     sc.eset <- sc.data
   } else if(is(sc.data, "NULL")){
@@ -216,12 +216,12 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 }
 
 #'
-.parse_y <- function(y = NULL, y.eset = NULL){
+.parse_y <- function(y=NULL, y.eset=NULL){
   if(is(y, "NULL")){
     y <- as.matrix(exprs(y.eset))
   } else{
     if(is(y.eset, "NULL")){
-      y.eset <- get_eset_from_matrix(mat = y, batch.variable = "SubjectName")
+      y.eset <- get_eset_from_matrix(mat=y, batch.variable="SubjectName")
       # need at least 2 columns/samples to pass to bisque
       if(ncol(y.eset) == 1){
         sample.name <- colnames(y.eset)
@@ -230,7 +230,7 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
       }
     }
   }
-  return(list(y = y, y.eset = y.eset))
+  return(list(y=y, y.eset=y.eset))
 }
 
 #' Deconvolution method for bisqueParam
@@ -252,11 +252,11 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #' yi <- exprs(y.eset)
 #' 
 #' # get param object
-#' param <- bisqueParam(y.eset = y.eset, yi = yi,
-#'                      sc.data = lexample[["sc.eset"]], 
-#'                      batch.variable = "SubjectName", 
-#'                      celltype.variable = "cellType", 
-#'                      use.overlap = FALSE)
+#' param <- bisqueParam(y.eset=y.eset, yi=yi,
+#'                      sc.data=lexample[["sc.eset"]], 
+#'                      batch.variable="SubjectName", 
+#'                      celltype.variable="cellType", 
+#'                      use.overlap=FALSE)
 #' 
 #' # get predicted proportions
 #' res <- deconvolution(param)
@@ -270,23 +270,23 @@ bisqueParam <- function(y = NULL, yi = NULL, z = NULL, s = NULL,
 #' Nat Commun 11, 1971 (2020). https://doi.org/10.1038/s41467-020-15816-6
 #'
 #' @export
-setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
+setMethod("deconvolution", signature(object="bisqueParam"), function(object){
   lparam <- callNextMethod()
   y.eset <- object[["y.eset"]]
   sc.eset <- object[["sc.eset"]]
   use.overlap <- object[["use.overlap"]]
-  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset = y.eset, 
-                                                   sc.eset = sc.eset, 
-                                                   use.overlap = use.overlap)
+  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset=y.eset, 
+                                                   sc.eset=sc.eset, 
+                                                   use.overlap=use.overlap)
   predictions <- result$bulk.props
   lpred <- lapply(seq(ncol(predictions)), function(index){predictions[,index]})
   lr <- .parse_deconvolution_predictions_results(lpred, 
                                                  row.names(predictions), 
                                                  colnames(predictions))
   if(object[["return.info"]]){
-    lr <- list(predictions = predictions, result.info = result, 
-               metadata = list(lmd = lparam[["metadata"]], 
-                y.eset = y.eset, sc.eset = sc.eset))}
+    lr <- list(predictions=predictions, result.info=result, 
+               metadata=list(lmd=lparam[["metadata"]], 
+                y.eset=y.eset, sc.eset=sc.eset))}
   return(lr)
 })
 
@@ -301,6 +301,6 @@ setMethod("deconvolution", signature(object = "bisqueParam"), function(object){
 #' @returns Shows object summaries.
 #' 
 #' @export
-setMethod("show", signature(object = "bisqueParam"), function(object){
+setMethod("show", signature(object="bisqueParam"), function(object){
   show(object)
 })

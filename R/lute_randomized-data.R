@@ -14,10 +14,10 @@
 #' the reverse of k1. Types k > 1 are assumed to have equal proportions 
 #' complementary to k1.
 #' 
-#' For k1 = c(0, 0.5, 1), ktotal = 2 will generate an additional type with 
+#' For k1=c(0, 0.5, 1), ktotal=2 will generate an additional type with 
 #' proportions c(1, 0.5, 0).
 #' 
-#' For the same k1 above, ktotal = 3, will generate 2 types with the same 
+#' For the same k1 above, ktotal=3, will generate 2 types with the same 
 #' proportions as c(0.5, 0.25, 0).
 #'
 #' @param ktotal Total types to simulate.
@@ -25,9 +25,9 @@
 #' seq(1e-3, 1-1e-3, 1e-3).
 #' @returns lpv, a list of proportions vectors for simulation iterations.
 #' @examples
-#' make_lpv(k1 = c(0, 0.5, 1))
+#' make_lpv(k1=c(0, 0.5, 1))
 #' @export
-make_lpv <- function(ktotal = 2, k1 = NULL){
+make_lpv <- function(ktotal=2, k1=NULL){
   if(is(k1, "NULL")){k1 <- seq(0, 1, 1e-3)}
   num.iter <- length(k1); ki <- rev(k1)/(ktotal-1)
   lpv <- lapply(seq(num.iter), function(ii){
@@ -72,23 +72,23 @@ make_lpv <- function(ktotal = 2, k1 = NULL){
 #' @importFrom stats rnbinom
 #' 
 #' @examples 
-#' random_lgv(gindexv = c(rep(1, 10), rep(2, 5)))
+#' random_lgv(gindexv=c(rep(1, 10), rep(2, 5)))
 #' @export
-random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2, 
-                       method = "nbinom", gamma.size.pos = 10, 
-                       gamma.size.neg = 10){
+random_lgv <- function(gindexv, num.iter=1, lambda.pos=25, lambda.neg=2, 
+                       method="nbinom", gamma.size.pos=10, 
+                       gamma.size.neg=10){
   ktotal <- length(unique(gindexv))
   lgv <- lapply(seq(ktotal), function(ki){
     gmarkerv <- gindexv
     which.pos <- which(gindexv==ki); which.neg <- which(!gindexv==ki)
     if(method == "poisson"){
-      gmarkerv[which.pos] <- rpois(lambda = lambda.pos, n = length(which.pos))
-      gmarkerv[which.neg] <- rpois(lambda = lambda.neg, n = length(which.neg))      
+      gmarkerv[which.pos] <- rpois(lambda=lambda.pos, n=length(which.pos))
+      gmarkerv[which.neg] <- rpois(lambda=lambda.neg, n=length(which.neg))      
     } else if(method == "nbinom"){
-      gmarkerv[which.pos] <- rnbinom(size = gamma.size.pos, mu = lambda.pos,
-                                     n = length(which.pos))
-      gmarkerv[which.neg] <- rnbinom(size = gamma.size.neg, mu = lambda.neg,
-                                     n = length(which.neg))
+      gmarkerv[which.pos] <- rnbinom(size=gamma.size.pos, mu=lambda.pos,
+                                     n=length(which.pos))
+      gmarkerv[which.neg] <- rnbinom(size=gamma.size.neg, mu=lambda.neg,
+                                     n=length(which.neg))
     } else{
       stop("Error, invalid method.")
     }
@@ -124,25 +124,25 @@ random_lgv <- function(gindexv, num.iter = 1, lambda.pos = 25, lambda.neg = 2,
 #' sce <- random_sce()
 #' 
 #' @export
-random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2, 
-                       fract.types = NULL, dispersion = NULL, 
-                       expr.mean = 10, na.include = FALSE, 
-                       na.fract = 0.2, zero.include = FALSE, 
-                       zero.fract = 0.2, verbose = FALSE, 
-                       seed.num = 0){
+random_sce <- function(num.genes=20, num.cells=12, num.types=2, 
+                       fract.types=NULL, dispersion=NULL, 
+                       expr.mean=10, na.include=FALSE, 
+                       na.fract=0.2, zero.include=FALSE, 
+                       zero.fract=0.2, verbose=FALSE, 
+                       seed.num=0){
   if(verbose){message("Getting random expression data...")}
   if(is(dispersion, "NULL")){dispersion <- expr.mean}
-  mdat <- rnbinom(n = (num.cells*num.genes), 
-                  size = dispersion, mu = expr.mean)
+  mdat <- rnbinom(n=(num.cells*num.genes), 
+                  size=dispersion, mu=expr.mean)
   if(na.include){ # manually add NAs
     if(verbose){message("Including NA values...")}
-    num.na <- round(length(mdat)*na.fract, digits = 0)
+    num.na <- round(length(mdat)*na.fract, digits=0)
     na.index <- sample(seq(length(mdat)), num.na)
     mdat[na.index] <- NA
   }
   if(zero.include){ # manually add zero counts
     if(verbose){message("Including NA values...")}
-    num.zero <- round(length(mdat)*zero.fract, digits = 0)
+    num.zero <- round(length(mdat)*zero.fract, digits=0)
     zero.index <- sample(seq(length(mdat)), num.zero)
     mdat[zero.index] <- 0
   }
@@ -158,18 +158,18 @@ random_sce <- function(num.genes = 20, num.cells = 12, num.types = 2,
     num <- fract.types[ti]*num.cells; rep(typev[ti], num)
   }))
   
-  cd <- data.frame(cell.id = cellv, celltype = typev)
+  cd <- data.frame(cell.id=cellv, celltype=typev)
   colnames(expr.ct) <- cellv
   if(verbose){message("Getting new rowData...")}
   genev <- paste0("gene", seq(nrow(expr.ct)))
-  rd <- data.frame(gene.id = genev)
+  rd <- data.frame(gene.id=genev)
   rownames(expr.ct) <- genev
   # manage new metadata
   description.str <- "random SingleCellExperiment made using random_sce()"
-  lmd <- list(description = description.str)
+  lmd <- list(description=description.str)
   if(verbose){message("Making new sce object...")}
   sce <- SingleCellExperiment::SingleCellExperiment(
-    assays = list(counts=expr.ct), colData = cd, rowData = rd,
-    metadata = lmd)
+    assays=list(counts=expr.ct), colData=cd, rowData=rd,
+    metadata=lmd)
   return(sce)
 }

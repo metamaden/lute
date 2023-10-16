@@ -15,8 +15,8 @@
 #' 
 #' @examples 
 #' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-#'                     z = lexample[["z"]])
+#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
+#'                     z=lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
@@ -47,8 +47,8 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' 
 #' @examples 
 #' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-#'                     z = lexample[["z"]])
+#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
+#'                     z=lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
@@ -65,8 +65,8 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' squares (NNLS) deconvolution algorithm, implemented as \code{nnls::nnls()}.
 #' 
 #' @export
-nnlsParam <- function(y, z, s, return.info = FALSE) {
-  new("nnlsParam", s = s, y = y, z = z, return.info = return.info)
+nnlsParam <- function(y, z, s, return.info=FALSE) {
+  new("nnlsParam", s=s, y=y, z=z, return.info=return.info)
 }
 
 #' Deconvolution method for nnlsParam
@@ -85,8 +85,8 @@ nnlsParam <- function(y, z, s, return.info = FALSE) {
 #' 
 #' @examples 
 #' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-#'                     z = lexample[["z"]])
+#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
+#'                     z=lexample[["z"]])
 #' 
 #' # return only predicted proportions
 #' deconvolution(param)
@@ -105,14 +105,14 @@ nnlsParam <- function(y, z, s, return.info = FALSE) {
 #' URL: https://cran.r-project.org/web/packages/nnls/index.html
 #'
 #' @export
-setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
+setMethod("deconvolution", signature(object="nnlsParam"), function(object){
   lparam <- callNextMethod()
   y <- lparam[["y"]]; z <- lparam[["z"]]; s <- lparam[["s"]]
   bulk.samples.index.vector <- seq(ncol(y))
   result <- lapply(
     bulk.samples.index.vector, function(index){
       
-      nnls::nnls(A = z, b = y[,index])
+      nnls::nnls(A=z, b=y[,index])
   
       }
     )
@@ -124,9 +124,9 @@ setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
                                                  colnames(y))
   if(object[["return.info"]]){
     
-    lr <- list(predictions = predictions, 
-               result.info = result, 
-               metadata = lparam[["metadata"]])
+    lr <- list(predictions=predictions, 
+               result.info=result, 
+               metadata=lparam[["metadata"]])
     
     }
   return(lr)
@@ -139,12 +139,12 @@ setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
 #' 
 #' @examples
 #' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], z=lexample[["z"]])
 #' param
 #' 
 #' @returns Shows object summaries.
 #' 
 #' @export
-setMethod("show", signature(object = "nnlsParam"), function(object){
+setMethod("show", signature(object="nnlsParam"), function(object){
   show(object)
 })

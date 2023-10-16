@@ -21,9 +21,9 @@
 #' sce_to_eset(sce, "counts")
 #' 
 #' @export
-sce_to_eset <- function(sce, assay.name = "counts"){
-	eset <- ExpressionSet(assayData = assays(sce)[[assay.name]],
-	                      phenoData = AnnotatedDataFrame(
+sce_to_eset <- function(sce, assay.name="counts"){
+	eset <- ExpressionSet(assayData=assays(sce)[[assay.name]],
+	                      phenoData=AnnotatedDataFrame(
 	                        as.data.frame(colData(sce))))
 	return(eset)
 }
@@ -44,11 +44,11 @@ sce_to_eset <- function(sce, assay.name = "counts"){
 #' eset_to_sce(eset)
 #' 
 #' @export
-eset_to_sce <- function(eset, assay.name = "counts"){
-  assays.list <- list(assay.name = exprs(eset))
+eset_to_sce <- function(eset, assay.name="counts"){
+  assays.list <- list(assay.name=exprs(eset))
   names(assays.list) <- assay.name
-	sce.new <- SingleCellExperiment(assays = assays.list,
-	                                colData = DataFrame(as.matrix(pData(eset))))
+	sce.new <- SingleCellExperiment(assays=assays.list,
+	                                colData=DataFrame(as.matrix(pData(eset))))
 	return(sce.new)
 }
 
@@ -66,9 +66,9 @@ eset_to_sce <- function(eset, assay.name = "counts"){
 #' sce_to_se(sce)
 #' @export
 sce_to_se <- function(sce){
-	se <- SummarizedExperiment(assays = assays(sce),
-	                           colData = colData(sce),
-	                           metadata = metadata(sce))
+	se <- SummarizedExperiment(assays=assays(sce),
+	                           colData=colData(sce),
+	                           metadata=metadata(sce))
 	return(se)
 }
 
@@ -86,9 +86,9 @@ sce_to_se <- function(sce){
 #' 
 #' @export
 se_to_sce <- function(se){
-	sce <- SingleCellExperiment(assays = assays(se),
-	                            colData = colData(se),
-	                            metadata = metadata(se))
+	sce <- SingleCellExperiment(assays=assays(se),
+	                            colData=colData(se),
+	                            metadata=metadata(se))
 	return(sce)
 }
 
@@ -108,11 +108,11 @@ se_to_sce <- function(se){
 #' eset_to_se(eset, "counts")
 #' 
 #' @export
-eset_to_se <- function(eset, assay.name = "counts"){
-  assays.list <- list(assay.name = exprs(eset))
+eset_to_se <- function(eset, assay.name="counts"){
+  assays.list <- list(assay.name=exprs(eset))
   names(assays.list) <- assay.name
-	se.new <- SummarizedExperiment(assays = assays.list,
-	                               colData = DataFrame(as.matrix(pData(eset))))
+	se.new <- SummarizedExperiment(assays=assays.list,
+	                               colData=DataFrame(as.matrix(pData(eset))))
 	return(se.new)
 }
 
@@ -132,9 +132,9 @@ eset_to_se <- function(eset, assay.name = "counts"){
 #' se_to_eset(se)
 #' 
 #' @export
-se_to_eset <- function(se, assay.name = "counts"){
-	eset <- ExpressionSet(assayData = assays(se)[[assay.name]],
-	                      phenoData = AnnotatedDataFrame(
+se_to_eset <- function(se, assay.name="counts"){
+	eset <- ExpressionSet(assayData=assays(se)[[assay.name]],
+	                      phenoData=AnnotatedDataFrame(
 	                        as.data.frame(colData(se))))
 	return(eset)
 }
@@ -153,10 +153,10 @@ se_to_eset <- function(se, assay.name = "counts"){
 #' example.data <- get_decon_example_data()
 #'
 #' @export
-get_eset_from_matrix <- function(mat, batch.variable = "SampleName"){
-  pdata <- data.frame(new.variable = colnames(mat))
+get_eset_from_matrix <- function(mat, batch.variable="SampleName"){
+  pdata <- data.frame(new.variable=colnames(mat))
   colnames(pdata) <- batch.variable
   rownames(pdata) <- colnames(mat)
-  eset <- Biobase::ExpressionSet(assayData = mat, phenoData = Biobase::AnnotatedDataFrame(pdata))
+  eset <- Biobase::ExpressionSet(assayData=mat, phenoData=Biobase::AnnotatedDataFrame(pdata))
   return(eset)
 }

@@ -22,16 +22,16 @@
 #' lexample <- get_decon_example_data()
 #'
 #' @export
-get_celltypes_from_sce <- function(sce, celltype.variable = "celltype"){
+get_celltypes_from_sce <- function(sce, celltype.variable="celltype"){
   celltype.vector <- as.data.frame(SummarizedExperiment::colData(sce))[,celltype.variable]
   celltype.char <- as.character(celltype.vector)
   unique.types <- unique(celltype.char)
   unique.types <- unique.types[order(unique.types)]
-  celltype.fact <- factor(celltype.vector, levels = unique.types)
-  lr <- list(variable = celltype.variable, 
-             unique.types = unique.types, 
-             character = celltype.char, 
-             factor = celltype.fact)
+  celltype.fact <- factor(celltype.vector, levels=unique.types)
+  lr <- list(variable=celltype.variable, 
+             unique.types=unique.types, 
+             character=celltype.char, 
+             factor=celltype.fact)
   return(lr)
 }
 
@@ -53,9 +53,9 @@ get_celltypes_from_sce <- function(sce, celltype.variable = "celltype"){
 #' ypb_from_sce(sce.example)
 #' 
 #' @export
-ypb_from_sce <- function(sce, assay.name = "counts", 
-                         celltype.variable = "celltype", 
-                         sample.id.variable = NULL, S = NULL){
+ypb_from_sce <- function(sce, assay.name="counts", 
+                         celltype.variable="celltype", 
+                         sample.id.variable=NULL, S=NULL){
   num.groups <- 1; unique.group.id.vector <- ""
   if(!is(sample.id.variable, "NULL")){
     group.id.vector <- sce[[sample.id.variable]]
@@ -65,7 +65,7 @@ ypb_from_sce <- function(sce, assay.name = "counts",
     num.groups <- length(unique.group.id.vector)
   }
   list.cell.types <- get_celltypes_from_sce(
-    sce = sce, celltype.variable = celltype.variable)
+    sce=sce, celltype.variable=celltype.variable)
   num.types <- length(list.cell.types[["unique.types"]])
   ypb.list <- lapply(unique.group.id.vector, function(group.id){
     sce.filter <- sce
@@ -119,9 +119,9 @@ ypb_from_sce <- function(sce, assay.name = "counts",
 #' 
 #' @export
 signature_matrix_from_sce <- function(sce, 
-                                      celltype.variable = "celltype", 
-                                      summary.method = "mean", 
-                                      assay.name = "counts"){
+                                      celltype.variable="celltype", 
+                                      summary.method="mean", 
+                                      assay.name="counts"){
   # gets the z signature matrix from an sce object
   expression.matrix <- assays(sce)[[assay.name]]
   expression.matrix <- as.matrix(expression.matrix)
@@ -154,8 +154,8 @@ signature_matrix_from_sce <- function(sce,
 #' @examples
 #' lexample <- get_decon_example_data()
 #' @export
-get_z_from_sce <- function(sce, assay.name = "counts", celltype.variable = "celltype"){
-  ltype <- get_celltypes_from_sce(sce = sce, celltype.variable = celltype.variable)
+get_z_from_sce <- function(sce, assay.name="counts", celltype.variable="celltype"){
+  ltype <- get_celltypes_from_sce(sce=sce, celltype.variable=celltype.variable)
   mexpr <- as.matrix(assays(sce)[[assay.name]])
   Znew <- do.call(cbind, lapply(ltype[["unique.types"]], function(typei){
     datav <- mexpr[,ltype[["character"]]==typei]; .z_operator(datav)
@@ -166,7 +166,7 @@ get_z_from_sce <- function(sce, assay.name = "counts", celltype.variable = "cell
 }
 
 .zstransform <- function(z, s){
-  sweep(z, 2, s, FUN = "*")
+  sweep(z, 2, s, FUN="*")
 }
 
 .z_operator <- function(datav){
@@ -188,24 +188,24 @@ get_z_from_sce <- function(sce, assay.name = "counts", celltype.variable = "cell
 #' example.data <- get_decon_example_data()
 #' 
 #' @export
-get_decon_example_data <- function(num.bulk.samples = 2, num.markers = 10,
-                                    num.types = 2){
+get_decon_example_data <- function(num.bulk.samples=2, num.markers=10,
+                                    num.types=2){
   y <- matrix(
-    rpois(n=num.markers*num.bulk.samples, lambda = seq(0, 50, 5)), 
-    ncol = num.bulk.samples)
+    rpois(n=num.markers*num.bulk.samples, lambda=seq(0, 50, 5)), 
+    ncol=num.bulk.samples)
   z <- matrix(
-    rpois(n=num.types*num.markers, lambda = seq(0, 50, 5)), 
-    ncol = num.types)
+    rpois(n=num.types*num.markers, lambda=seq(0, 50, 5)), 
+    ncol=num.types)
   rownames(y) <- rownames(z) <- paste0("marker", seq(num.markers))
   colnames(z) <- paste0("type", seq(num.types))
   colnames(y) <- paste0("sample", seq(num.bulk.samples))
   s <- c(1, 10)
   names(s) <- colnames(z)
-  return(list(z = z, y = y, s = s))
+  return(list(z=z, y=y, s=s))
 }
 
 .get_zvar <- function(z){
-  z.var <- matrix(0, nrow = nrow(z), ncol = ncol(z))
+  z.var <- matrix(0, nrow=nrow(z), ncol=ncol(z))
   rownames(z.var) <- rownames(z)
   colnames(z.var) <- colnames(z)
   z.var
@@ -229,30 +229,30 @@ get_decon_example_data <- function(num.bulk.samples = 2, num.markers = 10,
 #' example.data <- get_decon_example_data()
 #'
 #' @export
-get_decon_example_data_bisque <- function(num.bulk.samples = 100,
-                                           num.markers = 1000, 
-                                           num.cells = 1000, 
-                                           num.types = 2){
-  lexample <- get_decon_example_data(num.bulk.samples = num.bulk.samples,
-                               num.markers = num.markers,
-                               num.types = num.types)
+get_decon_example_data_bisque <- function(num.bulk.samples=100,
+                                           num.markers=1000, 
+                                           num.cells=1000, 
+                                           num.types=2){
+  lexample <- get_decon_example_data(num.bulk.samples=num.bulk.samples,
+                               num.markers=num.markers,
+                               num.types=num.types)
   y <- lexample[["y"]]
   colnames(y) <- c(paste0("sample", seq(num.bulk.samples/2)), 
                    paste0("bulk", seq(num.bulk.samples/2)))
-  df.y.pheno <- data.frame(SubjectName = colnames(y))
+  df.y.pheno <- data.frame(SubjectName=colnames(y))
   rownames(df.y.pheno) <- colnames(y)
-  y.eset <- ExpressionSet(assayData = y, phenoData = AnnotatedDataFrame(df.y.pheno))
-  sce <- random_sce(num.genes = num.markers, 
-                    num.cells = num.cells, 
-                    num.types = num.types)
-  df.z.pheno <- data.frame(cellType = sce[["celltype"]], 
-                           SubjectName = 
+  y.eset <- ExpressionSet(assayData=y, phenoData=AnnotatedDataFrame(df.y.pheno))
+  sce <- random_sce(num.genes=num.markers, 
+                    num.cells=num.cells, 
+                    num.types=num.types)
+  df.z.pheno <- data.frame(cellType=sce[["celltype"]], 
+                           SubjectName=
                              paste0("sample", seq(num.cells)))
   rownames(df.z.pheno) <- colnames(sce)
-  z.eset <- ExpressionSet(assayData = counts(sce), 
-                          phenoData = AnnotatedDataFrame(df.z.pheno))
+  z.eset <- ExpressionSet(assayData=counts(sce), 
+                          phenoData=AnnotatedDataFrame(df.z.pheno))
   rownames(z.eset) <- rownames(y.eset)
-  lr <- list(y.eset = y.eset, sc.eset = z.eset)
+  lr <- list(y.eset=y.eset, sc.eset=z.eset)
   return(lr)
 }
 
@@ -275,19 +275,19 @@ get_decon_example_data_scdc <- function(){
   y <- get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
-  df.y.pheno <- data.frame(SubjectName = colnames(y))
+  df.y.pheno <- data.frame(SubjectName=colnames(y))
   rownames(df.y.pheno) <- colnames(y)
-  y.eset <- ExpressionSet(assayData = y, phenoData = AnnotatedDataFrame(df.y.pheno))
+  y.eset <- ExpressionSet(assayData=y, phenoData=AnnotatedDataFrame(df.y.pheno))
 
   # get z.eset
-  sce <- random_sce(num.genes = 10, num.cells = 300, num.types = 4)
-  df.z.pheno <- data.frame(cellType = sce[["celltype"]], SubjectName = paste0("sample", seq(ncol(sce))))
+  sce <- random_sce(num.genes=10, num.cells=300, num.types=4)
+  df.z.pheno <- data.frame(cellType=sce[["celltype"]], SubjectName=paste0("sample", seq(ncol(sce))))
   rownames(df.z.pheno) <- colnames(sce)
-  z.eset <- ExpressionSet(assayData = counts(sce), phenoData = AnnotatedDataFrame(df.z.pheno))
+  z.eset <- ExpressionSet(assayData=counts(sce), phenoData=AnnotatedDataFrame(df.z.pheno))
   rownames(z.eset) <- rownames(y.eset)
   
   # return
-  lr <- list(y.eset = y.eset, sc.eset = z.eset)
+  lr <- list(y.eset=y.eset, sc.eset=z.eset)
   return(lr)
 }
 
@@ -304,22 +304,22 @@ get_decon_example_data_music2 <- function(){
   colnames(y) <- c(paste0("sample", seq(2)), 
                    paste0("bulk",seq(ncol(y)-2)))
   
-  df.y.pheno <- data.frame(SubjectName = colnames(y))
+  df.y.pheno <- data.frame(SubjectName=colnames(y))
   rownames(df.y.pheno) <- colnames(y)
-  y.eset <- ExpressionSet(assayData = y, 
-                          phenoData = AnnotatedDataFrame(df.y.pheno))
+  y.eset <- ExpressionSet(assayData=y, 
+                          phenoData=AnnotatedDataFrame(df.y.pheno))
 
   # get z.eset
-  sce <- random_sce(num.genes = 10, num.cells = 300, num.types = 2)
-  df.z.pheno <- data.frame(cellType = sce[["celltype"]], 
-                           SubjectName = paste0("sample", seq(ncol(sce))))
+  sce <- random_sce(num.genes=10, num.cells=300, num.types=2)
+  df.z.pheno <- data.frame(cellType=sce[["celltype"]], 
+                           SubjectName=paste0("sample", seq(ncol(sce))))
   rownames(df.z.pheno) <- colnames(sce)
-  z.eset <- ExpressionSet(assayData = counts(sce), 
-                          phenoData = AnnotatedDataFrame(df.z.pheno))
+  z.eset <- ExpressionSet(assayData=counts(sce), 
+                          phenoData=AnnotatedDataFrame(df.z.pheno))
   rownames(z.eset) <- rownames(y.eset)
   
   # return
-  lr <- list(y.eset = y.eset, sc.eset = z.eset)
+  lr <- list(y.eset=y.eset, sc.eset=z.eset)
   return(lr)
 }
 

@@ -27,8 +27,8 @@
 #' @aliases 
 #' TypemarkersParam-class, TypeMarkersParam-class
 #'
-setClass("typemarkersParam", slots=c(markers.per.type = "numeric", 
-                                     return.info = "logical"))
+setClass("typemarkersParam", slots=c(markers.per.type="numeric", 
+                                     return.info="logical"))
 
 #' Make new object of class typemarkersParam
 #'
@@ -51,9 +51,9 @@ setClass("typemarkersParam", slots=c(markers.per.type = "numeric",
 #' example.data <- get_decon_example_data()
 #' 
 #' @export
-typemarkersParam <- function(markers.per.type = 20, return.info = FALSE) {
-  new("typemarkersParam", markers.per.type = markers.per.type, 
-      return.info = return.info)
+typemarkersParam <- function(markers.per.type=20, return.info=FALSE) {
+  new("typemarkersParam", markers.per.type=markers.per.type, 
+      return.info=return.info)
 }
 
 #' Method for class \linkS4class{typemarkersParam}
@@ -66,7 +66,7 @@ typemarkersParam <- function(markers.per.type = 20, return.info = FALSE) {
 #' example.data <- get_decon_example_data()
 #'
 #' @export
-setMethod("typemarkers", signature(object = "typemarkersParam"), function(object){
+setMethod("typemarkers", signature(object="typemarkersParam"), function(object){
   lparam <- callNextMethod()
   # instantiate and format objects
   markers.per.type <- lparam[["markers.per.type"]]
@@ -96,6 +96,6 @@ setMethod("[[", "typemarkersParam", function(x, i) {slot(x, i)})
 #' @returns Shows object summaries.
 #' 
 #' @export
-setMethod("show", signature(object = "typemarkersParam"), function(object){
+setMethod("show", signature(object="typemarkersParam"), function(object){
   show(object)
 })

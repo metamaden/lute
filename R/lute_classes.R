@@ -21,9 +21,9 @@
 #' rownames(ptable) <- paste0("sample", seq(nrow(ptable)))
 #' pred <- cellProportionsPredictions(ptable)
 #' pred
-setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame",
-                                                 cell.type.vector = "character",
-                                                 sample.id.vector = "character"))
+setClass("cellProportionsPredictions", slots=c(predictions.table="data.frame",
+                                                 cell.type.vector="character",
+                                                 sample.id.vector="character"))
 
 #' Make new cellProportionsPredictions object.
 #' 
@@ -39,8 +39,8 @@ setClass("cellProportionsPredictions", slots = c(predictions.table = "data.frame
 #' 
 #' @export
 cellProportionsPredictions <- function(predictions.table, 
-                                       cell.type.vector = NULL, 
-                                       sample.id.vector = NULL) {
+                                       cell.type.vector=NULL, 
+                                       sample.id.vector=NULL) {
   if(is(cell.type.vector, "NULL")){
     cell.type.vector <- colnames(predictions.table) 
   }
@@ -49,9 +49,9 @@ cellProportionsPredictions <- function(predictions.table,
   }
   predictions.df <- as.data.frame(predictions.table)
   new("cellProportionsPredictions", 
-      predictions.table = predictions.df,
-      cell.type.vector = as.character(cell.type.vector),
-      sample.id.vector = as.character(sample.id.vector))
+      predictions.table=predictions.df,
+      cell.type.vector=as.character(cell.type.vector),
+      sample.id.vector=as.character(sample.id.vector))
 }
 
 #' Inspect cellProportionsPredictions object.
@@ -72,11 +72,11 @@ setMethod("show", "cellProportionsPredictions", function(object) {
   unique.cell.types.vector <- colnames(ptable)
   unique.sample.id.vector <- rownames(ptable)
   message("Number of bulk samples (J): ", 
-          paste0(length(object@sample.id.vector), collapse = "; "))
+          paste0(length(object@sample.id.vector), collapse="; "))
   message("Number of cell types (K): ", 
-          paste0(length(object@cell.type.vector), collapse = "; "))
+          paste0(length(object@cell.type.vector), collapse="; "))
   message("Cell type labels:\n", 
-          paste0("\t", object@cell.type.vector, collapse = "; "))
+          paste0("\t", object@cell.type.vector, collapse="; "))
   # table summary
   print(
     message("predictions.table summary:\n"))

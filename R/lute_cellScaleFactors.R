@@ -35,7 +35,7 @@
 #' 
 #' @returns Table of type "data.frame" or "tibble".
 #' @export
-get_csf_reference <- function(user.celltypes.vector = NULL, prefer.orthogonal = TRUE){
+get_csf_reference <- function(user.celltypes.vector=NULL, prefer.orthogonal=TRUE){
   ref <- load_csf_rda()
   if(prefer.orthogonal){
     data.source.vector <- unique(ref$scale.factor.data.source)
@@ -60,12 +60,12 @@ get_csf_reference <- function(user.celltypes.vector = NULL, prefer.orthogonal = 
 load_csf_rda <- function(){
   path <- system.file(
     file.path("rda", "cellScaleFactors.rda"), 
-    package = "cellScaleFactors")
+    package="cellScaleFactors")
   return(get(load(path)))
 }
 
 #'
-csf_filter_labels <- function(labels, reference = NULL){
+csf_filter_labels <- function(labels, reference=NULL){
   if(is(reference, "NULL")){reference <- get_csf_reference()}
   reference.labels <- reference$cell_type
   df <- do.call(rbind, lapply(labels, function(label){

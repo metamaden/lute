@@ -19,7 +19,7 @@
 #' @export
 lute_supported_deconvolution_algorithms <- function(){
   csv.name <- "lute-deconvolution_transfer-learning-table.csv"
-  path <- system.file("csv", package = "lute")
+  path <- system.file("csv", package="lute")
   path <- file.path(path, csv.name)
   csv <- read.csv(path)
   return(csv)

@@ -23,20 +23,20 @@
 #' @importFrom utils write.csv
 #' 
 #' @examples
-#' new_workflow_table(save = FALSE)
+#' new_workflow_table(save=FALSE)
 #'
 #' @export
-new_workflow_table <- function(sce.names = NULL, data.directory = "data",
-                               true.proportions.filename.stem = "true_proportions_",
-                               celltype.variable = "celltype", table.directory = ".", 
-                               table.filename = "workflow_table.csv", save = TRUE, 
-                               overwrite = TRUE, verbose = FALSE){
+new_workflow_table <- function(sce.names=NULL, data.directory="data",
+                               true.proportions.filename.stem="true_proportions_",
+                               celltype.variable="celltype", table.directory=".", 
+                               table.filename="workflow_table.csv", save=TRUE, 
+                               overwrite=TRUE, verbose=FALSE){
   rnf.colnames <- c("sce_filepath", "true_proportions_path", "decon_method", 
                     "decon_args", "run_info", "assay_name", "celltype_variable")
   table.filepath <- file.path(table.directory, table.filename)
   if(file.exists(table.filepath) & !overwrite){
     stop("Found existing table ", table.filepath, ". Stopping.")}
-  dfnew <- matrix(nrow = 0, ncol = length(rnf.colnames))
+  dfnew <- matrix(nrow=0, ncol=length(rnf.colnames))
   newline <- c(file.path("$launchDir", data.directory),
                file.path("$launchDir", data.directory), "nnls", "NA", 
                "lung_adeno_first_benchmark", "counts", celltype.variable)
@@ -68,6 +68,6 @@ new_workflow_table <- function(sce.names = NULL, data.directory = "data",
     dfnew <- rbind(dfnew, linei)
   }
   colnames(dfnew) <- rnf.colnames
-  if(save){write.csv(dfnew, file = table.filepath, row.names = FALSE)}
+  if(save){write.csv(dfnew, file=table.filepath, row.names=FALSE)}
   return(dfnew)
 }

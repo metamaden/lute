@@ -30,7 +30,7 @@
 #' @returns New deconvolutionParam object.
 #'
 #' @export
-setClass("deconvolutionParam",  slots=c(y="matrix", return.info = "logical"))
+setClass("deconvolutionParam",  slots=c(y="matrix", return.info="logical"))
 
 #' Inspect slot in \linkS4class{deconvolutionParam} object
 #' @param x Object to access.
@@ -73,8 +73,8 @@ setMethod("show", "deconvolutionParam", function(object) {
   message("\tNumber of bulk samples: ", ncol(y))
   markers <- rownames(y)
   if(length(markers) > 10){markers <- markers[seq(10)]}
-  message("\tFirst bulk marker labels:\n", paste0(rownames(y), collapse = "; "))
+  message("\tFirst bulk marker labels:\n", paste0(rownames(y), collapse="; "))
   samples <- colnames(y)
   if(length(samples) > 10){samples <- samples[seq(10)]}
-  message("\tFirst sample labels:\n", paste0(samples, collapse = "; "), "\n\n")
+  message("\tFirst sample labels:\n", paste0(samples, collapse="; "), "\n\n")
 })
