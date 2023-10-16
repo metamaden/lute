@@ -1,9 +1,9 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
-#
-# Parses options to get cell scale factors from reference (package cellScaleFactors).
-#
+### Author: Sean Maden
+###
+### Parses options to get cell scale factors from reference (package cellScaleFactors).
+###
 
 #' get_csf_reference
 #'

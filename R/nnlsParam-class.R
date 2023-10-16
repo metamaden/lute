@@ -1,6 +1,6 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
+### Author: Sean Maden
 
 #' nnlsParam-class
 #'
@@ -18,7 +18,7 @@
 #' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
 #'                     z=lexample[["z"]])
 #' 
-#' # return only predicted proportions
+#' ## return only predicted proportions
 #' deconvolution(param)
 #' 
 #' # return full results
@@ -50,7 +50,7 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
 #'                     z=lexample[["z"]])
 #' 
-#' # return only predicted proportions
+#' ## return only predicted proportions
 #' deconvolution(param)
 #' 
 #' # return full results
@@ -88,7 +88,7 @@ nnlsParam <- function(y, z, s, return.info=FALSE) {
 #' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
 #'                     z=lexample[["z"]])
 #' 
-#' # return only predicted proportions
+#' ## return only predicted proportions
 #' deconvolution(param)
 #' 
 #' # return full results

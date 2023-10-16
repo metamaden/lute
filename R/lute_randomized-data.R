@@ -1,11 +1,11 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
-#
-# Functions to get randomized or synthetic datasets.
-#
-#
-#
+### Author: Sean Maden
+###
+### Functions to get randomized or synthetic datasets.
+###
+###
+###
 
 #' make_lpv
 #'
@@ -164,7 +164,7 @@ random_sce <- function(num.genes=20, num.cells=12, num.types=2,
   genev <- paste0("gene", seq(nrow(expr.ct)))
   rd <- data.frame(gene.id=genev)
   rownames(expr.ct) <- genev
-  # manage new metadata
+  ## manage new metadata
   description.str <- "random SingleCellExperiment made using random_sce()"
   lmd <- list(description=description.str)
   if(verbose){message("Making new sce object...")}

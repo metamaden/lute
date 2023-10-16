@@ -1,6 +1,6 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
+### Author: Sean Maden
 
 #' independentbulkParam-class
 #'
@@ -79,7 +79,7 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
     y <- lparam[["y"]]; yi <- lparam[["yi"]] # get bulk data
     markers.y <- rownames(y); markers.yi <- rownames(yi) # parse bulk marker IDs
     
-    # compare marker labels and subset yi on overlapping markers
+    ## compare marker labels and subset yi on overlapping markers
     if(is(markers.y, "NULL")|is(markers.yi, "NULL")){
         message("Warning, no marker labels found in either y or yi.")
     } else{
@@ -90,9 +90,9 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         }
     }
   
-    # compare sample labels and remove overlapping samples
+    ## compare sample labels and remove overlapping samples
     samples.y <- colnames(y); samples.yi <- colnames(yi) # parse bulk sample IDs
-    # compare sample IDs
+    ## compare sample IDs
     if(is(samples.y, "NULL")|is(samples.yi, "NULL")){
         message("Warning, no sample labels found in either y or yi.")
     } else{
@@ -104,8 +104,8 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         }
     }
   
-    # parse return list
-    # get metadata to return
+    ## parse return list
+    ## get metadata to return
     lmd <- list(unique.marker.labels=unique.marker.labels,
                 unique.sample.labels=unique.sample.labels,
                 overlapping.marker.labels=overlapping.marker.labels,
@@ -129,7 +129,7 @@ setMethod("show", "independentbulkParam", function(object) {
   y <- object[["y"]]; yi <- object[["yi"]] # get bulk data
   samples.y <- colnames(y); samples.yi <- colnames(yi) # get samples
   markers.y <- rownames(y); markers.yi <- rownames(yi) # get markers
-  # print info summaries
+  ## print info summaries
   message("Summary of independentbulkParam data:")
   message("\tNumber of unique sample IDs : ", 
           length(unique(markers.y, markers.yi)), "\n")

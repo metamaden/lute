@@ -1,6 +1,6 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
+### Author: Sean Maden
 
 #' referencebasedParam-class
 #'
@@ -63,10 +63,10 @@ referencebasedParam <- function(y, z, s, return.info = FALSE) {
 #' @returns Method results.
 #' @export
 setMethod("deconvolution", "referencebasedParam", function(object) {
-  # get metadata
+  ## get metadata
   s <- object[["s"]]; y <- object[["y"]]; z <- object[["z"]]
   
-  # cell types in z, s
+  ## cell types in z, s
   if(is(s, "NULL")){s <- rep(1, ncol(z))}
   unique.types <- try(colnames(object[["z"]]))
   condition.z.types <- is(unique.types, "NULL")|is(unique.types, "try-error")
@@ -80,10 +80,10 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
     }
   }
   z <- .zstransform(z, s)
-  # matching markers in y and z
+  ## matching markers in y and z
   markers.y <- rownames(y); markers.z <- rownames(z)
   if(!is(markers.y, "NULL") & !is(markers.z, "NULL")){
-    # markers.y <- rownames(y); markers.z <- rownames(z)
+    ## markers.y <- rownames(y); markers.z <- rownames(z)
     unique.markers <- unique(c(markers.y, markers.z))
     overlapping.markers <- intersect(markers.y, markers.z)
     y.filter <- rownames(y) %in% overlapping.markers
@@ -95,14 +95,14 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
     message("Warning, rownames not provided in both y and z. ",
             "Can't match marker labels.")
   }
-  # parse additional warnings
+  ## parse additional warnings
   if(is(markers.y, "NULL")){message("Warning, object 'y' has no marker labels (rownames)\n")}
   if(is(markers.z, "NULL")){message("Warning, object 'z' has no marker labels (rownames)\n")}
-  # get final metadata
+  ## get final metadata
   g <- nrow(z); j <- ncol(y); k <- ncol(z)
   metadata.list <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
               markers.y = markers.y, marker.z = markers.z)
-  # return list
+  ## return list
   return(
     list(y = as.matrix(y), z = as.matrix(z), s = as.numeric(s), 
          metadata = metadata.list)
@@ -117,7 +117,7 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
 #' @returns Prints data summary messages to console.
 #' @export
 setMethod("show", "referencebasedParam", function(object) {
-  # get metadata
+  ## get metadata
   s <- object[["s"]]; y <- object[["y"]]; z <- object[["z"]]
   unique.types <- try(colnames(object[["z"]]))
   markers.y <- rownames(y); markers.z <- rownames(z)
@@ -126,19 +126,19 @@ setMethod("show", "referencebasedParam", function(object) {
   g <- nrow(z); j <- ncol(y); k <- ncol(z)
   lmd <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
               markers.y = markers.y, marker.z = markers.z)
-  # post console messages
+  ## post console messages
   cat(paste0("class: ", class(object)[1], "\n\n"))
   cat("key deconvolution run info:\n")
   cat("\tmarker info:\n")
   cat("\tsignature markers (Gz): ", g, "\n")
   cat("\tunique marker labels (Gy | Gz): ", length(unique.markers), "\n")
   cat("\toverlapping marker labels (Gy & Gz): ", length(overlapping.markers), "\n\n")
-  # bulk samples
+  ## bulk samples
   cat("\tsamples info:\n")
   cat("\tnumber of bulk samples (J): ", ncol(object[["y"]]), "\n")
   cat("\tsample labels: ", paste0(colnames(y), collapse = "; "), "\n")
   cat("\n")
-  # cell size factors
+  ## cell size factors
   cat("\tcell size factor properties:\n")
   s <- object[["s"]]
   if(!is(s, "NULL")){
@@ -146,7 +146,7 @@ setMethod("show", "referencebasedParam", function(object) {
       cat("\tscale factor for type ", type, ": ", s[type], "\n")}
     if(length(s) == ncol(z)){z <- .zstransform(z, s)}
   }; cat("\n")
-  # cell types
+  ## cell types
   cat("\ttypes info:\n")
   cat("\tnumber of types (K): ", ncol(object[["z"]]), "\n")
   if(!(is(unique.types, "NULL")|is(unique.types, "try-error"))){
@@ -155,7 +155,7 @@ setMethod("show", "referencebasedParam", function(object) {
   } else{
     cat("\nWarning, object 'z' has no type labels (colnames)\n")
   }; cat("\n")
-  # parse additional warnings
+  ## parse additional warnings
   if(is(markers.y, "NULL")){cat("Warning, object 'y' has no marker labels (rownames)\n\n")}
   if(is(markers.z, "NULL")){cat("Warning, object 'z' has no marker labels (rownames)\n\n")}
 })

@@ -1,8 +1,8 @@
 #!/usr/bin/env R
 
-#
-# Functions to convert between data object classes.
-#
+###
+### Functions to convert between data object classes.
+###
 
 #' sce_to_eset
 #' Convert SingleCellExperiment to ExpressionSet.

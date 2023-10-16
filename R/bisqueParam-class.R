@@ -1,6 +1,6 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
+### Author: Sean Maden
 
 #' bisqueParam-class
 #'
@@ -16,19 +16,19 @@
 #' \linkS4class{independentbulkParam}
 #' 
 #' @examples
-#' # get data
+#' ## get data
 #' lexample <- get_decon_example_data_bisque()
 #' y.eset <- lexample[["y.eset"]]
 #' yi <- exprs(y.eset)
 #' 
-#' # get param object
+#' ## get param object
 #' param <- bisqueParam(y.eset=y.eset, yi=yi,
 #'                      sc.data=lexample[["sc.eset"]], 
 #'                      batch.variable="SubjectName", 
 #'                      celltype.variable="cellType", 
 #'                      use.overlap=FALSE)
 #' 
-#' # get predicted proportions
+#' ## get predicted proportions
 #' res <- deconvolution(param)
 #' 
 #' @references Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
@@ -69,17 +69,17 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #' 
 #' @examples
-#' # get data
+#' ## get data
 #' lexample <- get_decon_example_data_bisque()
 #' y.eset <- lexample[["y.eset"]]
 #' yi <- exprs(y.eset)
 #' sc.data <- lexample[["sc.eset"]]
-#' # get param object
+#' ## get param object
 #' param <- bisqueParam(
 #' y.eset=y.eset, yi=yi, sc.data=sc.data, batch.variable="SubjectName", 
 #' celltype.variable="cellType", use.overlap=FALSE
 #' )
-#' # get predicted proportions
+#' ## get predicted proportions
 #' res <- deconvolution(param)
 #'
 #' @returns New object of class \linkS4class{bisqueParam}.
@@ -93,19 +93,19 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
                         batch.variable="batch.id", 
                         celltype.variable="celltype", 
                         use.overlap=FALSE, return.info=FALSE) {
-  # check y.eset/y
+  ## check y.eset/y
   list.y <- .parse_y(y, y.eset)
-  # parse sc.data
+  ## parse sc.data
   sc.eset <- .parse_sc(sc.data, assay.name)
-  # parse z data
+  ## parse z data
   list.z <- .parse_z(sc.eset, z, assay.name, batch.variable, 
                      celltype.variable)
-  # parse s
+  ## parse s
   s <- .parse_s(list.z[["z"]], s)
-  # parse batch ids in bulk and sc
+  ## parse batch ids in bulk and sc
   list.batchid <- .parse_batches(batch.variable=batch.variable,
                                  y.eset=y.eset, id.sc=list.z[["id.sc"]])
-  # parse independent bulk samples
+  ## parse independent bulk samples
   y <- .parse_independent_bulk(id.onlybulk=list.batchid[["id.onlybulk"]], 
                                y=list.y[["y"]], yi=yi, 
                                y.eset=list.y[["y.eset"]])
@@ -222,7 +222,7 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
   } else{
     if(is(y.eset, "NULL")){
       y.eset <- get_eset_from_matrix(mat=y, batch.variable="SubjectName")
-      # need at least 2 columns/samples to pass to bisque
+      ## need at least 2 columns/samples to pass to bisque
       if(ncol(y.eset) == 1){
         sample.name <- colnames(y.eset)
         y.eset <- cbind(y.eset, y.eset)
@@ -246,19 +246,19 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #' predictions, metadata, and original outputs.
 #' 
 #' @examples
-#' # get data
+#' ## get data
 #' lexample <- get_decon_example_data_bisque()
 #' y.eset <- lexample[["y.eset"]]
 #' yi <- exprs(y.eset)
 #' 
-#' # get param object
+#' ## get param object
 #' param <- bisqueParam(y.eset=y.eset, yi=yi,
 #'                      sc.data=lexample[["sc.eset"]], 
 #'                      batch.variable="SubjectName", 
 #'                      celltype.variable="cellType", 
 #'                      use.overlap=FALSE)
 #' 
-#' # get predicted proportions
+#' ## get predicted proportions
 #' res <- deconvolution(param)
 #' 
 #' @references Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 

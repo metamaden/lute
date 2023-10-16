@@ -1,9 +1,9 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
-#
-# Utilities and miscellaneous functions supporting the lute package for deconvolution experiments.
-#
+### Author: Sean Maden
+###
+### Utilities and miscellaneous functions supporting the lute package for deconvolution experiments.
+###
 
 #' get_celltypes_from_sce
 #' 
@@ -122,7 +122,7 @@ signature_matrix_from_sce <- function(sce,
                                       celltype.variable="celltype", 
                                       summary.method="mean", 
                                       assay.name="counts"){
-  # gets the z signature matrix from an sce object
+  ## gets the z signature matrix from an sce object
   expression.matrix <- assays(sce)[[assay.name]]
   expression.matrix <- as.matrix(expression.matrix)
   cd <- colData(sce)
@@ -271,7 +271,7 @@ get_decon_example_data_bisque <- function(num.bulk.samples=100,
 #' 
 #' @export
 get_decon_example_data_scdc <- function(){
-  # get y.eset
+  ## get y.eset
   y <- get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
@@ -279,14 +279,14 @@ get_decon_example_data_scdc <- function(){
   rownames(df.y.pheno) <- colnames(y)
   y.eset <- ExpressionSet(assayData=y, phenoData=AnnotatedDataFrame(df.y.pheno))
 
-  # get z.eset
+  ## get z.eset
   sce <- random_sce(num.genes=10, num.cells=300, num.types=4)
   df.z.pheno <- data.frame(cellType=sce[["celltype"]], SubjectName=paste0("sample", seq(ncol(sce))))
   rownames(df.z.pheno) <- colnames(sce)
   z.eset <- ExpressionSet(assayData=counts(sce), phenoData=AnnotatedDataFrame(df.z.pheno))
   rownames(z.eset) <- rownames(y.eset)
   
-  # return
+  ## return
   lr <- list(y.eset=y.eset, sc.eset=z.eset)
   return(lr)
 }
@@ -298,7 +298,7 @@ get_decon_example_data_scdc <- function(){
 #' @importFrom BiocGenerics counts
 #'
 get_decon_example_data_music2 <- function(){
-  # get y.eset
+  ## get y.eset
   y <- get_decon_example_data()[["y"]]
   y <- cbind(y, y, y, y, y, y)
   colnames(y) <- c(paste0("sample", seq(2)), 
@@ -309,7 +309,7 @@ get_decon_example_data_music2 <- function(){
   y.eset <- ExpressionSet(assayData=y, 
                           phenoData=AnnotatedDataFrame(df.y.pheno))
 
-  # get z.eset
+  ## get z.eset
   sce <- random_sce(num.genes=10, num.cells=300, num.types=2)
   df.z.pheno <- data.frame(cellType=sce[["celltype"]], 
                            SubjectName=paste0("sample", seq(ncol(sce))))
@@ -318,7 +318,7 @@ get_decon_example_data_music2 <- function(){
                           phenoData=AnnotatedDataFrame(df.z.pheno))
   rownames(z.eset) <- rownames(y.eset)
   
-  # return
+  ## return
   lr <- list(y.eset=y.eset, sc.eset=z.eset)
   return(lr)
 }
@@ -341,7 +341,7 @@ get_decon_example_data_music2 <- function(){
   table.pred <- t(table.pred)
   colnames(table.pred) <- column.labels
   rownames(table.pred) <- row.labels
-  # convert
+  ## convert
   table.pred <- cellProportionsPredictions(table.pred, column.labels, 
                                            row.labels)
   return(table.pred)

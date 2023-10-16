@@ -1,8 +1,8 @@
 #!/usr/bin/env R
 
-# 
-# Functions supporting r-nf_deconvolution workflow runs.
-#
+### 
+### Functions supporting r-nf_deconvolution workflow runs.
+###
 
 #' new_workflow_table
 #' 

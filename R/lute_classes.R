@@ -1,8 +1,9 @@
 #!/usr/bin/env R
 
-#
-# Classes supporting generic and framework functions.
-#
+### Author: Sean Maden
+###
+### Classes supporting generic and framework functions.
+###
 
 #' cellProportionsPredictions-class
 #'
@@ -68,7 +69,7 @@ cellProportionsPredictions <- function(predictions.table,
 #' @export
 setMethod("show", "cellProportionsPredictions", function(object) {
   ptable <- object@predictions.table
-  # metadata summaries
+  ## metadata summaries
   unique.cell.types.vector <- colnames(ptable)
   unique.sample.id.vector <- rownames(ptable)
   message("Number of bulk samples (J): ", 
@@ -77,7 +78,7 @@ setMethod("show", "cellProportionsPredictions", function(object) {
           paste0(length(object@cell.type.vector), collapse="; "))
   message("Cell type labels:\n", 
           paste0("\t", object@cell.type.vector, collapse="; "))
-  # table summary
+  ## table summary
   print(
     message("predictions.table summary:\n"))
   print(head(ptable))

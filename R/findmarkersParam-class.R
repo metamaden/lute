@@ -1,6 +1,6 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
+### Author: Sean Maden
 
 #' findmarkersParam-class
 #'
@@ -104,7 +104,7 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
   assay.name <- object[["assay.name"]]
   markers.per.type <- object[["markers.per.type"]]
   test.type <- object[["test.type"]]
-  # get marker results
+  ## get marker results
   list.result <- list.marker.table <- list(); markers.filter <- c()
   unique.cell.types <- sce[[celltype.variable]] %>% as.character() %>% unique()
   for(type in unique.cell.types){
@@ -121,14 +121,14 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
     dfi$cellType.target <- type
     dfi$gene <- rownames(dfi)
     dfi <- as.data.frame(dfi)
-    # get filtered markers
+    ## get filtered markers
     list.marker.table[[type]] <- dfi %>% dplyr::arrange(abs.summary) %>% 
       dplyr::top_n(n=markers.per.type) %>% as.data.frame()
     markers.filter <- list.marker.table[[type]]$gene
   }
   top.marker.table <- do.call(rbind, list.marker.table) %>% as.data.frame()
   top.markers.vector <- top.marker.table$gene
-  # parse return.info
+  ## parse return.info
   return.list <- top.markers.vector %>% unique()
   if(object[["return.info"]]){
     return.list <- list(markers=top.markers.vector,

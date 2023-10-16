@@ -1,8 +1,8 @@
 #!/usr/bin/env r
 
-# Author: Sean Maden
-#
-# Framework functions and utilities for the lute package.
+### Author: Sean Maden
+###
+### Framework functions and utilities for the lute package.
 
 #' lute framework
 #'

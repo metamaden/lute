@@ -1,9 +1,9 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
-#
-# Get metadata about the lute package.
-#
+### Author: Sean Maden
+###
+### Get metadata about the lute package.
+###
 
 #' lute_supported_deconvolution_algorithms
 #'

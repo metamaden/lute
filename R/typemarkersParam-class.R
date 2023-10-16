@@ -1,6 +1,6 @@
 #!/usr/bin/env R
 
-# Author: Sean Maden
+### Author: Sean Maden
 
 #' typemarkersParam-class
 #'
@@ -68,7 +68,7 @@ typemarkersParam <- function(markers.per.type=20, return.info=FALSE) {
 #' @export
 setMethod("typemarkers", signature(object="typemarkersParam"), function(object){
   lparam <- callNextMethod()
-  # instantiate and format objects
+  ## instantiate and format objects
   markers.per.type <- lparam[["markers.per.type"]]
   return.info <- lparam[["return.info"]]
 })
