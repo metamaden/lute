@@ -31,7 +31,7 @@ setClass("cellProportionsPredictions", slots=c(predictions.table="data.frame",
 #' @param predictions.table Table of cell type predictions.
 #' @param cell.type.vector Character vector of cell type labels.
 #' @param sample.id.vector Character vector of sample id labels.
-#' @returns cellProportionsPredictions object.
+#' @returns New cellProportionsPredictions object.
 #' @importFrom methods new
 #' @returns New cellProportionsPredictions object.
 #' 
@@ -57,7 +57,8 @@ cellProportionsPredictions <- function(predictions.table,
 
 #' Inspect cellProportionsPredictions object.
 #' 
-#' @param object cellProportionsPredictions object.
+#' @param object Object of type cellProportionsPredictions (see 
+#' \code{?cellProportionsPredictions}).
 #' @importFrom methods show
 #' @importFrom utils head
 #' @details Method behavior for show.

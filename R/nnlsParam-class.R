@@ -41,7 +41,8 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' @param z Signature matrix of cell type-specific signals. If not provided, 
 #' can be computed from a provided \linkS4class{ExpressionSet} containing 
 #' single-cell data.
-#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param s Cell size factor transformations of length equal to the K cell 
+#' types to deconvolve.
 #' @param return.info Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
@@ -73,7 +74,8 @@ nnlsParam <- function(y, z, s, return.info=FALSE) {
 #'
 #' Defines the deconvolution method for \linkS4class{nnlsParam}.
 #'
-#' @param object An object of class \linkS4class{nnlsParam}.
+#' @param object An object of class \linkS4class{nnlsParam} (see 
+#' \code{?nnlsParam}).
 #'
 #' @details Takes an object of class \linkS4class{nnlsParam} as input, returning 
 #' either a list containing proportions, return info, and metadata, or a vector 
@@ -133,7 +135,8 @@ setMethod("deconvolution", signature(object="nnlsParam"), function(object){
 })
 
 #' Show generic behavior for object of class \linkS4class{nnlsParam}
-#' @param object An object of class \linkS4class{nnlsParam}.
+#' @param object An object of class \linkS4class{nnlsParam} (see 
+#' \code{?nnlsParam}).
 #' @details Method for behavior of show generic when called for object of class 
 #' \linkS4class{nnlsParam}
 #' 

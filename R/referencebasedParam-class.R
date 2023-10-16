@@ -32,11 +32,14 @@ setClass("referencebasedParam", contains="deconvolutionParam",
 #'
 #' Main constructor for class \linkS4class{referencebasedParam}.
 #'
-#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
-#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
-#' provided ExpressionSet containing single-cell data.
-#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
-#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#' @param y Bulk mixed signals matrix of samples, which can be matched to 
+#' single-cell samples.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can 
+#' be computed from a provided ExpressionSet containing single-cell data.
+#' @param s Cell size factor transformations of length equal to the K cell types 
+#' to deconvolve.
+#' @param return.info Whether to return metadata and original method outputs 
+#' with predicted proportions.
 #'
 #' @examples 
 #' lexample <- get_decon_example_data()
@@ -54,9 +57,10 @@ referencebasedParam <- function(y, z, s, return.info = FALSE) {
 }
 
 #' Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}
-#' @param object An object of class \linkS4class{referencebasedParam}.
-#' @details Method for behavior of deconvolution generic when called for object of class 
-#' \linkS4class{referencebasedParam}
+#' @param object An object of class \linkS4class{referencebasedParam} (see 
+#' \code{?referencebasedParam}).
+#' @details Method for behavior of deconvolution generic when called for object 
+#' of class \linkS4class{referencebasedParam}.
 #' @examples 
 #' lexample <- get_decon_example_data()
 #' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
@@ -112,7 +116,8 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
 })
 
 #' Show generic behavior for object of class referencebasedParam
-#' @param object Object of class \linkS4class{referencebasedParam}.
+#' @param object Object of class \linkS4class{referencebasedParam} (see 
+#' \code{?referencebasedParam}).
 #' @examples 
 #' lexample <- get_decon_example_data()
 #' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)

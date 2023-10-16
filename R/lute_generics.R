@@ -6,7 +6,8 @@
 #'
 #' Get predicted cell type proportions using a deconvolution method.
 #'
-#' @param object A \linkS4class{deconvolutionParam}-type object.
+#' @param object A \linkS4class{deconvolutionParam}-type object (see 
+#' \code{?`deconvolutionParam-class`}).
 #' @return 
 #' By default, return named numeric vector of predicted proportions for each
 #' cell type.
@@ -48,7 +49,8 @@ setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))
 #'
 #' Get cell type gene markers using standard accessors to supported functions.
 #'
-#' @param object A \linkS4class{typemarkersParam}-type object.
+#' @param object A \linkS4class{typemarkersParam}-type object (see 
+#' \code{?typemarkersParam}).
 #' @return 
 #' By default, return a vector of marker genes.
 #' 

@@ -13,10 +13,13 @@
 #' @rdname findmarkersParam-class
 #' @seealso \linkS4class{typemarkersParam}
 #' 
-#' @param assay.name Name of expression matrix in sce assays.
-#' @param sce Object of type SingleCellExperiment.
-#' @param celltype.variable Name of cell type variable in sce coldata.
-#' @param test.type Test type (see ?findMarkers for options).
+#' @param assay.name Name of expression matrix in SingleCellExperiment assays 
+#' (e.g. "counts").
+#' @param sce Object of type SingleCellExperiment (see 
+#' \code{?SingleCellExperiment}).
+#' @param celltype.variable Name of cell type variable in SingleCellExperiment 
+#' coldata.
+#' @param test.type Test type (see \code{?findMarkers} for options).
 #' 
 #' @examples 
 #' lexample <- get_decon_example_data()
@@ -40,11 +43,14 @@ setClass("findmarkersParam", contains="typemarkersParam",
 #'
 #' Main constructor for class \linkS4class{findmarkersParam}.
 #'
-#' @param assay.name Name of expression matrix in sce assays.
-#' @param sce Object of type SingleCellExperiment.
-#' @param celltype.variable Name of cell type variable in sce coldata.
+#' @param assay.name Name of expression matrix in SingleCellExperiment assays 
+#' (e.g. "counts").
+#' @param sce Object of type SingleCellExperiment (see 
+#' \code{?SingleCellExperiment}).
+#' @param celltype.variable Name of cell type variable in SingleCellExperiment 
+#' coldata.
 #' @param markers.per.type Number of top markers to get per cell type.
-#' @param test.type Test type (see ?findMarkers for options).
+#' @param test.type Test type (see \code{?findMarkers} for options).
 #' @param return.info Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
@@ -77,7 +83,8 @@ findmarkersParam <- function(sce, assay.name="counts",
 #'
 #' Defines the typemarkers method for \linkS4class{findmarkersParam}.
 #'
-#' @param object An object of class \linkS4class{findmarkersParam}.
+#' @param object An object of class \linkS4class{findmarkersParam} (see 
+#' \code{?findmarkersParam}).
 #'
 #' @details Takes an object of class \linkS4class{findmarkersParam} as input, 
 #' returning either a vector of cell type gene markers, or (if 
@@ -138,7 +145,8 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
 })
 
 #' Show generic behavior for object of class \linkS4class{findmarkersParam}
-#' @param object An object of class \linkS4class{findmarkersParam}.
+#' @param object An object of class \linkS4class{findmarkersParam} (see 
+#' \code{?findmarkersParam}).
 #' @details Method for behavior of show generic when called for object of class 
 #' \linkS4class{findmarkersParam}
 #' 

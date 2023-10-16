@@ -31,12 +31,16 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' 
 #' Function to make a new object of class \linkS4class{independentbulkParam}
 #'
-#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
-#' @param yi Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
-#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
-#' provided ExpressionSet containing single-cell data.
-#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
-#' @param return.info Whether to return metadata and original method outputs with predicted proportions.
+#' @param y Bulk mixed signals matrix of samples, which can be matched to 
+#' single-cell samples.
+#' @param yi Bulk mixed signals matrix of independent samples, which should not 
+#' overlap samples in y.
+#' @param z Signature matrix of cell type-specific signals. If not provided, can 
+#' be computed from a provided ExpressionSet containing single-cell data.
+#' @param s Cell size factor transformations of length equal to the K cell types 
+#' to deconvolve.
+#' @param return.info Whether to return metadata and original method outputs 
+#' with predicted proportions.
 #' 
 #' @examples 
 #' new("independentbulkParam")
@@ -118,8 +122,10 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
 
 #' Method for \linkS4class{independentbulkParam}
 #'
-#' @param object An object of class \linkS4class{independentbulkParam}.
-#' @details Display data summaries for an object of class \linkS4class{independentbulkParam}.
+#' @param object An object of class \linkS4class{independentbulkParam} (see 
+#' \code{?independentbulkParam}).
+#' @details Display data summaries for an object of class 
+#' \linkS4class{independentbulkParam}.
 #' 
 #' @examples 
 #' new("independentbulkParam")

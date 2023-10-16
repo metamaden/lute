@@ -238,7 +238,8 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #' Main method to access the Bisque deconvolution method from the main lute 
 #' \code{deconvolution} generic.
 #'
-#' @param object Object of type \linkS4class{bisqueParam}.
+#' @param object Object of type \linkS4class{bisqueParam} (see 
+#' \code{?bisqueParam}).
 #' @details Takes an object of class \linkS4class{bisqueParam} as input, 
 #' returning a list.
 #'

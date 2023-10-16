@@ -47,15 +47,17 @@ setClass("deconvolutionParam",  slots=c(y="matrix", return.info="logical"))
 setMethod("[[", "deconvolutionParam", function(x, i) {slot(x, i)})
 
 #' Deconvolution generic behavior for object of class \linkS4class{deconvolutionParam}
-#' @param object An object of class \linkS4class{deconvolutionParam}.
-#' @details Method for behavior of deconvolution generic when called for object of class 
-#' \linkS4class{deconvolutionParam}
+#' @param object An object of class \linkS4class{deconvolutionParam} (see 
+#' \code{?deconvolutionParam}).
+#' @details Method for behavior of deconvolution generic when called for object 
+#' of class \linkS4class{deconvolutionParam}.
 #' @returns Null method.
 #' @export
 setMethod("deconvolution", "deconvolutionParam", function(object) {})
 
 #' Show generic behavior for object of class \linkS4class{deconvolutionParam}
-#' @param object An object of class \linkS4class{deconvolutionParam}.
+#' @param object An object of class \linkS4class{deconvolutionParam} (see 
+#' \code{?deconvolutionParam}).
 #' @details Method for behavior of show generic when called for object of class 
 #' \linkS4class{deconvolutionParam}
 #' 

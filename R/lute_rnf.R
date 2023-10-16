@@ -13,10 +13,10 @@
 #' @param true.proportions.filename.stem File name stem of true proportions values.
 #' @param celltype.variable Name of variable containing cell type labels.
 #' @param table.directory Directory to write table.
-#' @param table.filename Filename of table.
-#' @param save Whether to save table.
+#' @param table.filename The file name of the new table to write.
+#' @param save Whether to save the new table.
 #' @param overwrite Whether to overwrite old table files.
-#' @param verbose Whether to show verbose messages.
+#' @param verbose Whether to show verbose messages (T/F).
 #' @details Makes and returns/saves a r-nf_deconvolution experiment table. 
 #' Checks for existence of provided files.
 #' @returns New r-nf_deconvolution compatible table of experiment/run metadata.

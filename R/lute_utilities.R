@@ -9,8 +9,9 @@
 #' 
 #' Extract cell type values from SingleCellExperiment.
 #' 
-#' @param sce SingleCellExperiment
-#' @param celltype.variable Variable containing cell type labels.
+#' @param sce A SingleCellExperiment object.
+#' @param celltype.variable Variable containing cell type labels (e.g. "type1", 
+#' "type2", etc.).
 #' @returns List of cell type variable metadata and values.
 #'
 #' @importFrom Biobase ExpressionSet AnnotatedDataFrame pData exprs
@@ -106,9 +107,10 @@ ypb_from_sce <- function(sce, assay.name="counts",
 #' \linkS4class{SingleCellExperiment}.
 #' 
 #' @param sce An object of type \linkS4class{SingleCellExperiment}.
-#' @param assay.name Name of expression matrix in \code{sce} assays.
+#' @param assay.name Name of expression matrix in \code{sce} assays (e.g. 
+#' "counts").
 #' @param celltype.variable Variable name for cell type labels in \code{sce} 
-#' coldata. 
+#' coldata (e.g. "type1", "type2", etc.). 
 #' @param summary.method Summary statistic function to use.
 #' @details Calculate a Z signature matrix from object of type 
 #' \linkS4class{SingleCellExperiment}.
@@ -145,9 +147,10 @@ signature_matrix_from_sce <- function(sce,
 #' 
 #' Makes the Z cell atlas reference from a SingleCellExperiment.
 #' 
-#' @param sce SingleCellExperiment.
-#' @param assay.name Name of expression assay type.
-#' @param celltype.variable Name of variable containing cell type labels.
+#' @param sce A SingleCellExperiment object.
+#' @param assay.name Name of expression assay type (e.g. "counts").
+#' @param celltype.variable Name of variable containing cell type labels (e.g. 
+#' "type1", "type2", etc.).
 #' @returns Matrix of cell summary values (Z reference atlas).
 #'
 #' @importFrom SummarizedExperiment assays
@@ -178,9 +181,9 @@ get_z_from_sce <- function(sce, assay.name="counts", celltype.variable="celltype
 #' 
 #' Make example data for deconvolution.
 #' 
-#' @param num.bulk.samples Bulk samples count.
-#' @param num.markers Markers count.
-#' @param num.types Cell types count.
+#' @param num.bulk.samples Number of bulk samples.
+#' @param num.markers Number of cell type markers.
+#' @param num.types Number of cell types.
 #' @returns Example data as list.
 #' 
 #' @importFrom stats rpois
@@ -216,10 +219,10 @@ get_decon_example_data <- function(num.bulk.samples=2, num.markers=10,
 #'
 #' Get example data for Bisque algorithm.
 #'
-#' @param num.bulk.samples Bulk samples count.
-#' @param num.markers Markers count.
-#' @param num.cells Cells count.
-#' @param num.types Cell types count.
+#' @param num.bulk.samples Number of bulk samples.
+#' @param num.markers Number of cell type markers.
+#' @param num.cells Number of cells.
+#' @param num.types Number of cell types.
 #' @returns Example data as list.
 #'
 #' @importFrom Biobase ExpressionSet
@@ -331,9 +334,11 @@ get_decon_example_data_music2 <- function(){
 
 #'
 #'
-#' @param list.pred Predictions list.
-#' @param column.labels cell type labels.
-#' @param row.labels sample id labels.
+#' @param list.pred List of cell type proportions predictions.
+#' @param column.labels Vector of cell type labels 
+#' (e.g. "type1", "type2", etc.).
+#' @param row.labels Vector of sample id labels 
+#' (e.g. "sample1", "sample2", etc.).
 #'
 #'
 .parse_deconvolution_predictions_results <- function(list.pred, 

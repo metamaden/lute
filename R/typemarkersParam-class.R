@@ -86,7 +86,8 @@ setMethod("typemarkers", signature(object="typemarkersParam"), function(object){
 setMethod("[[", "typemarkersParam", function(x, i) {slot(x, i)})
 
 #' Show generic behavior for object of class \linkS4class{typemarkersParam}
-#' @param object An object of class \linkS4class{typemarkersParam}.
+#' @param object An object of class \linkS4class{typemarkersParam} (see 
+#' \code{?typemarkersParam}).
 #' @details Method for behavior of show generic when called for object of class 
 #' \linkS4class{typemarkersParam}
 #' 
