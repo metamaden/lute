@@ -9,7 +9,7 @@ test_that("random_sce works properly", {
 test_that("nnlsParam works properly", {
 
 	lexample <- get_decon_example_data()
-	param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+	param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], z=lexample[["z"]])
 
 	expect_true(is(param, "nnlsParam"))
 

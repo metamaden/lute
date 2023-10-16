@@ -23,8 +23,8 @@ vignette: >
 
 ```{r setup, include=FALSE}
 libv <- c("lute", "SummarizedExperiment", "SingleCellExperiment")
-sapply(libv, library, character.only = TRUE)
-knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+sapply(libv, library, character.only=TRUE)
+knitr::opts_chunk$set(echo=TRUE, eval=TRUE)
 ```
 
 # How to use this guide
@@ -92,7 +92,7 @@ matrix and $P$ cell type proportions, defined as above, as well as some
 $K$-length vector $S$, which contains cell size estimates used for rescaling 
 $Z$. This looks like the following: 
 
-$$Y_{PB} = Z * P * S$$
+$$Y_{PB}=Z * P * S$$
 
 Inclusion of the $S$ vector of cell size scaling factors is an important 
 strategy to correct for potential bias due to systematic differences in sizes 
@@ -152,7 +152,7 @@ algorithm-specific synonyms.
 The `deconvolutionParam` class hierarchy for supported algorithms is visualized 
 in the following diagram:
 
-<img style="float: center; width = 200" src = "deconvolutionParam_hierarchy_diagram.jpeg"/>
+<img style="float: center; width=200" src="deconvolutionParam_hierarchy_diagram.jpeg"/>
 
 The `deconvolutionParam` class hierarchy is intended to be extensible to new 
 algorithms. A future vignette will provide a step-by-step guide to supporting 
@@ -174,15 +174,15 @@ type, which we will identify from an initial set of 100 genes:
 ```{r}
 markers.per.type <- 5
 total.genes <- 100
-sce.example <- random_sce(num.genes = total.genes)
+sce.example <- random_sce(num.genes=total.genes)
 ```
 
 We could identify marker genes in `sce.example` now by running `lute` without
 setting the deconvolution algorithm argument:
 
 ```{r}
-markers <- lute(sce = sce.example, markers.per.type = markers.per.type, 
-                deconvolution.algorithm = NULL)
+markers <- lute(sce=sce.example, markers.per.type=markers.per.type, 
+                deconvolution.algorithm=NULL)
 length(markers$typemarker.results)
 ```
 
@@ -193,9 +193,9 @@ we define $Y$ as a pseudobulk from the provided `sce.example` data using
 `ypb_from_sce()` (see `?ypb_from_sce` for details).
 
 ```{r}
-y <- ypb_from_sce(sce = sce.example, 
-                  assay.name = "counts", 
-                  celltype.variable = "celltype")
+y <- ypb_from_sce(sce=sce.example, 
+                  assay.name="counts", 
+                  celltype.variable="celltype")
 y <- as.matrix(y)
 ```
 
@@ -205,7 +205,7 @@ Finally, we run marker selection and deconvolution in succession with `lute` as
 follows:
 
 ```{r}
-experiment.results <- lute(sce = sce.example, y = y, typemarker.algorithm = NULL)
+experiment.results <- lute(sce=sce.example, y=y, typemarker.algorithm=NULL)
 ```
 
 By default, `lute` used the mean ratios algorithm to get markers, then the 
