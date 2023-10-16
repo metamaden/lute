@@ -120,7 +120,7 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 .parse_independent_bulk <- function(id.onlybulk=NULL, y=NULL,
                                     yi=NULL, y.eset=NULL){
   stop.option <- FALSE
-  if(length(id.onlybulk)==0){
+  if(length(id.onlybulk) == 0){
     if(is(yi, "NULL")){
       stop.option <- TRUE
     } else{}

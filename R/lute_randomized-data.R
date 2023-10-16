@@ -80,7 +80,7 @@ random_lgv <- function(gindexv, num.iter=1, lambda.pos=25, lambda.neg=2,
   ktotal <- length(unique(gindexv))
   lgv <- lapply(seq(ktotal), function(ki){
     gmarkerv <- gindexv
-    which.pos <- which(gindexv==ki); which.neg <- which(!gindexv==ki)
+    which.pos <- which(gindexv == ki); which.neg <- which(!gindexv == ki)
     if(method == "poisson"){
       gmarkerv[which.pos] <- rpois(lambda=lambda.pos, n=length(which.pos))
       gmarkerv[which.neg] <- rpois(lambda=lambda.neg, n=length(which.neg))      
