@@ -36,23 +36,24 @@
 #' @returns Table of type "data.frame" or "tibble".
 #' @export
 get_csf_reference <- function(user.celltypes.vector=NULL, prefer.orthogonal=TRUE){
-  ref <- load_csf_rda()
+  reference_return <- load_csf_rda()
   if(prefer.orthogonal){
-    data.source.vector <- unique(ref$scale.factor.data.source)
+    data.source.vector <- unique(reference_return$scale.factor.data.source)
     orthogonal.sources.vector <- 
       data.source.vector[!data.source.vector == "expression"]
     if(length(orthogonal.sources.vector) == 0){
       message("No orthogonal data sources. Returning expression scale factors.")
     } else{
       is.orthogonal <- 
-        ref$scale.factor.data.source %in% orthogonal.sources.vector
-      ref <- ref[is.orthogonal,]
+        reference_return$scale.factor.data.source %in% orthogonal.sources.vector
+      reference_return <- reference_return[is.orthogonal,]
     }
   }
   if(!is(user.celltypes.vector, "NULL")){
-    ref <- csf_filter_labels(user.celltypes.vector, ref)
+    reference_return <- csf_filter_labels(user.celltypes.vector, 
+                                          reference_return)
   }
-  return(ref)
+  return(reference_return)
 }
 
 
@@ -68,7 +69,7 @@ load_csf_rda <- function(){
 csf_filter_labels <- function(labels, reference=NULL){
   if(is(reference, "NULL")){reference <- get_csf_reference()}
   reference.labels <- reference$cell_type
-  df <- do.call(rbind, lapply(labels, function(label){
+  df_return <- do.call(rbind, lapply(labels, function(label){
     filter1 <- grepl(label, reference.labels)
     filter2 <- grepl(toupper(label), toupper(reference.labels))
     filter3 <- grepl(label, gsub(" ", "",reference.labels))
@@ -78,6 +79,6 @@ csf_filter_labels <- function(labels, reference=NULL){
     label.filter <- filter1|filter2|filter3|filter4|filter5
     reference[label.filter,,drop=FALSE]
   }))
-  df <- as.data.frame(df)
-  df
+  df_return <- as.data.frame(df_return)
+  df_return
 }

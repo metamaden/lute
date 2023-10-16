@@ -64,33 +64,34 @@ referencebasedParam <- function(y, z, s, return.info = FALSE) {
 #' @export
 setMethod("deconvolution", "referencebasedParam", function(object) {
   ## get metadata
-  s <- object[["s"]]; y <- object[["y"]]; z <- object[["z"]]
+  input_s <- object[["s"]]; input_y <- object[["y"]]; input_z <- object[["z"]]
   
   ## cell types in z, s
-  if(is(s, "NULL")){s <- rep(1, ncol(z))}
+  if(is(input_s, "NULL")){input_s <- rep(1, ncol(input_z))}
   unique.types <- try(colnames(object[["z"]]))
   condition.z.types <- is(unique.types, "NULL")|is(unique.types, "try-error")
   if(!condition.z.types){
     unique.types <- unique.types[order(unique.types)]
-    z <- z[,order(colnames(z), unique.types)]
-    condition.s.types <- is(names(s), "NULL")
+    input_z <- input_z[,order(colnames(input_z), unique.types)]
+    condition.s.types <- is(names(input_s), "NULL")
     if(!condition.s.types){
-      filter.s.types <- names(s) %in% unique.types
-      s <- s[filter.s.types]; s <- s[order(names(s), unique.types)]
+      filter.s.types <- names(input_s) %in% unique.types
+      input_s <- input_s[filter.s.types]
+      input_s <- input_s[order(names(input_s), unique.types)]
     }
   }
-  z <- .zstransform(z, s)
+  input_z <- .zstransform(input_z, input_s)
   ## matching markers in y and z
-  markers.y <- rownames(y); markers.z <- rownames(z)
+  markers.y <- rownames(input_y); markers.z <- rownames(input_z)
   if(!is(markers.y, "NULL") & !is(markers.z, "NULL")){
     ## markers.y <- rownames(y); markers.z <- rownames(z)
     unique.markers <- unique(c(markers.y, markers.z))
     overlapping.markers <- intersect(markers.y, markers.z)
-    y.filter <- rownames(y) %in% overlapping.markers
-    z.filter <- rownames(z) %in% overlapping.markers
-    y <- y[y.filter,,drop=FALSE]; z <- z[z.filter,,drop=FALSE]
-    y <- y[order(match(rownames(y), overlapping.markers)),]
-    z <- z[order(match(rownames(z), overlapping.markers)),]
+    y.filter <- rownames(input_y) %in% overlapping.markers
+    z.filter <- rownames(input_z) %in% overlapping.markers
+    input_y <- input_y[y.filter,,drop=FALSE]; input_z <- input_z[z.filter,,drop=FALSE]
+    input_y <- input_y[order(match(rownames(input_y), overlapping.markers)),]
+    input_z <- input_z[order(match(rownames(input_z), overlapping.markers)),]
   } else{
     message("Warning, rownames not provided in both y and z. ",
             "Can't match marker labels.")
@@ -99,13 +100,14 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
   if(is(markers.y, "NULL")){message("Warning, object 'y' has no marker labels (rownames)\n")}
   if(is(markers.z, "NULL")){message("Warning, object 'z' has no marker labels (rownames)\n")}
   ## get final metadata
-  g <- nrow(z); j <- ncol(y); k <- ncol(z)
-  metadata.list <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
-              markers.y = markers.y, marker.z = markers.z)
+  input_g <- nrow(input_z); input_j <- ncol(input_y); input_k <- ncol(input_z)
+  metadata.list <- list(g = input_g, j = input_j, k = input_k, 
+                        s = input_s, unique.types = unique.types,
+                        markers.y = markers.y, marker.z = markers.z)
   ## return list
   return(
-    list(y = as.matrix(y), z = as.matrix(z), s = as.numeric(s), 
-         metadata = metadata.list)
+    list(y = as.matrix(input_y), z = as.matrix(input_z), 
+         s = as.numeric(input_s), metadata = metadata.list)
     )
 })
 
@@ -118,33 +120,34 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
 #' @export
 setMethod("show", "referencebasedParam", function(object) {
   ## get metadata
-  s <- object[["s"]]; y <- object[["y"]]; z <- object[["z"]]
+  input_s <- object[["s"]]; input_y <- object[["y"]]; input_z <- object[["z"]]
   unique.types <- try(colnames(object[["z"]]))
-  markers.y <- rownames(y); markers.z <- rownames(z)
+  markers.y <- rownames(input_y); markers.z <- rownames(input_z)
   unique.markers <- unique(c(markers.y, markers.z))
   overlapping.markers <- intersect(markers.y, markers.z)
-  g <- nrow(z); j <- ncol(y); k <- ncol(z)
-  lmd <- list(g = g, j = j, k = k, s = s, unique.types = unique.types, 
+  input_g <- nrow(input_z); input_j <- ncol(input_y); input_k <- ncol(input_z)
+  lmd <- list(g = input_g, j = input_j, k = input_k, 
+              s = input_s, unique.types = unique.types, 
               markers.y = markers.y, marker.z = markers.z)
   ## post console messages
   cat(paste0("class: ", class(object)[1], "\n\n"))
   cat("key deconvolution run info:\n")
   cat("\tmarker info:\n")
-  cat("\tsignature markers (Gz): ", g, "\n")
+  cat("\tsignature markers (Gz): ", input_g, "\n")
   cat("\tunique marker labels (Gy | Gz): ", length(unique.markers), "\n")
   cat("\toverlapping marker labels (Gy & Gz): ", length(overlapping.markers), "\n\n")
   ## bulk samples
   cat("\tsamples info:\n")
   cat("\tnumber of bulk samples (J): ", ncol(object[["y"]]), "\n")
-  cat("\tsample labels: ", paste0(colnames(y), collapse = "; "), "\n")
+  cat("\tsample labels: ", paste0(colnames(input_y), collapse = "; "), "\n")
   cat("\n")
   ## cell size factors
   cat("\tcell size factor properties:\n")
-  s <- object[["s"]]
-  if(!is(s, "NULL")){
-    for(type in names(object[["s"]])){
-      cat("\tscale factor for type ", type, ": ", s[type], "\n")}
-    if(length(s) == ncol(z)){z <- .zstransform(z, s)}
+  if(!is(input_s, "NULL")){
+    for(type in names(input_s)){
+      cat("\tscale factor for type ", type, ": ", input_s[type], "\n")}
+    if(length(input_s) == ncol(input_z)){
+      input_z <- .zstransform(input_z, input_s)}
   }; cat("\n")
   ## cell types
   cat("\ttypes info:\n")

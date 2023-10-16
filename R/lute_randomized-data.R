@@ -28,11 +28,12 @@
 #' make_lpv(k1=c(0, 0.5, 1))
 #' @export
 make_lpv <- function(ktotal=2, k1=NULL){
-  if(is(k1, "NULL")){k1 <- seq(0, 1, 1e-3)}
-  num.iter <- length(k1); ki <- rev(k1)/(ktotal-1)
-  lpv <- lapply(seq(num.iter), function(ii){
-    c(k1[ii], rep(ki[ii], ktotal-1))})
-  return(lpv)
+  input_k1 <- k1
+  if(is(input_k1, "NULL")){input_k1 <- seq(0, 1, 1e-3)}
+  num.iter <- length(input_k1); input_ki <- rev(input_k1)/(ktotal-1)
+  list_proportions_vectors <- lapply(seq(num.iter), function(ii){
+    c(input_k1[ii], rep(input_ki[ii], ktotal-1))})
+  return(list_proportions_vectors)
 }
 
 #' random_lgv
@@ -166,10 +167,10 @@ random_sce <- function(num.genes=20, num.cells=12, num.types=2,
   rownames(expr.ct) <- genev
   ## manage new metadata
   description.str <- "random SingleCellExperiment made using random_sce()"
-  lmd <- list(description=description.str)
+  list_metadata <- list(description=description.str)
   if(verbose){message("Making new sce object...")}
   sce <- SingleCellExperiment::SingleCellExperiment(
     assays=list(counts=expr.ct), colData=cd, rowData=rd,
-    metadata=lmd)
+    metadata=list_metadata)
   return(sce)
 }

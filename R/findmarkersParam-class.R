@@ -114,15 +114,15 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
                                         group=sce[[celltype.variable]],
                                         assay.type=assay.name,
                                         test.type=test.type)[[type]]
-    dfi <- list.result[[type]][,seq(4)]
-    summary.colname <- colnames(dfi)[grepl("summary\\..*", colnames(dfi))]
+    df_iter <- list.result[[type]][,seq(4)]
+    summary.colname <- colnames(df_iter)[grepl("summary\\..*", colnames(df_iter))]
     new.colname <- paste0("abs.", summary.colname)
-    dfi$abs.summary <- dfi[,summary.colname] %>% as.numeric() %>% abs()
-    dfi$cellType.target <- type
-    dfi$gene <- rownames(dfi)
-    dfi <- as.data.frame(dfi)
+    df_iter$abs.summary <- df_iter[,summary.colname] %>% as.numeric() %>% abs()
+    df_iter$cellType.target <- type
+    df_iter$gene <- rownames(df_iter)
+    df_iter <- as.data.frame(df_iter)
     ## get filtered markers
-    list.marker.table[[type]] <- dfi %>% dplyr::arrange(abs.summary) %>% 
+    list.marker.table[[type]] <- df_iter %>% dplyr::arrange(abs.summary) %>% 
       dplyr::top_n(n=markers.per.type) %>% as.data.frame()
     markers.filter <- list.marker.table[[type]]$gene
   }

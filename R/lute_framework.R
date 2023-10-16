@@ -73,20 +73,20 @@ lute <- function(sce=NULL, z=NULL, y=NULL, y.se=NULL, s=NULL,
     if(verbose){message("Filtering sce...")}
     sce.filter <- rownames(sce) %in% marker.vector
     sce <- sce[sce.filter,]
-    z <- get_z_from_sce(sce, assay.name, celltype.variable)
+    input_z <- get_z_from_sce(sce, assay.name, celltype.variable)
     results.list[["typemarker.results"]] <- typemarker.results
   }
   y.cond <- is(y, "NULL") & !is(y.se, "NULL")
-  if(y.cond){y <- assays(y.se)[[assay.name]]}
+  if(y.cond){input_y <- assays(y.se)[[assay.name]]}
   if(!is(deconvolution.algorithm, "NULL")){
     if(is(z, "NULL")){
-      z <- get_z_from_sce(sce, assay.name, celltype.variable)
+      input_z <- get_z_from_sce(sce, assay.name, celltype.variable)
     }
-    if(is(s, "NULL")){s <- rep(1, ncol(z))}
+    if(is(s, "NULL")){input_s <- rep(1, ncol(input_z))}
     if(verbose){message("Parsing deconvolution arguments...")}
     deconvolution.results <- map_deconvolution_algorithm(
       algorithm=deconvolution.algorithm,
-      z=z, y=y, s=s, return.info=return.info)
+      z=input_z, y=input_y, s=input_s, return.info=return.info)
     results.list[["deconvolution.results"]] <- deconvolution.results
   }
   return(results.list)

@@ -193,10 +193,10 @@ we define $Y$ as a pseudobulk from the provided `sce.example` data using
 `ypb_from_sce()` (see `?ypb_from_sce` for details).
 
 ```{r}
-y <- ypb_from_sce(sce=sce.example, 
+input_y <- ypb_from_sce(sce=sce.example, 
                   assay.name="counts", 
                   celltype.variable="celltype")
-y <- as.matrix(y)
+input_y <- as.matrix(input_y)
 ```
 
 By default, the pseudobulk used all available cell data in `sce.example`. 
@@ -205,7 +205,8 @@ Finally, we run marker selection and deconvolution in succession with `lute` as
 follows:
 
 ```{r}
-experiment.results <- lute(sce=sce.example, y=y, typemarker.algorithm=NULL)
+experiment.results <- lute(sce=sce.example, y=input_y, 
+                           typemarker.algorithm=NULL)
 ```
 
 By default, `lute` used the mean ratios algorithm to get markers, then the 

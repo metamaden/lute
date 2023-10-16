@@ -107,24 +107,24 @@ nnlsParam <- function(y, z, s, return.info=FALSE) {
 #' @export
 setMethod("deconvolution", signature(object="nnlsParam"), function(object){
   lparam <- callNextMethod()
-  y <- lparam[["y"]]; z <- lparam[["z"]]; s <- lparam[["s"]]
-  bulk.samples.index.vector <- seq(ncol(y))
+  input_y <- lparam[["y"]]; input_z <- lparam[["z"]]; input_s <- lparam[["s"]]
+  bulk.samples.index.vector <- seq(ncol(input_y))
   result <- lapply(
     bulk.samples.index.vector, function(index){
       
-      nnls::nnls(A=z, b=y[,index])
+      nnls::nnls(A=input_z, b=input_y[,index])
   
       }
     )
   
-  names(result) <- colnames(y)
+  names(result) <- colnames(input_y)
   predictions <- lapply(result, function(iter){iter$x})
-  lr <- .parse_deconvolution_predictions_results(predictions, 
-                                                 colnames(z), 
-                                                 colnames(y))
+  return_list <- .parse_deconvolution_predictions_results(predictions, 
+                                                 colnames(input_z), 
+                                                 colnames(input_y))
   if(object[["return.info"]]){
     
-    lr <- list(predictions=predictions, 
+    return_list <- list(predictions=predictions, 
                result.info=result, 
                metadata=lparam[["metadata"]])
     

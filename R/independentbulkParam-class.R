@@ -76,7 +76,7 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
     lparam <- callNextMethod()
     unique.marker.labels <- unique.sample.labels <- NULL
     overlapping.marker.labels <- overlapping.sample.labels <- NULL
-    y <- lparam[["y"]]; yi <- lparam[["yi"]] # get bulk data
+    input_y <- lparam[["y"]]; input_yi <- lparam[["yi"]] # get bulk data
     markers.y <- rownames(y); markers.yi <- rownames(yi) # parse bulk marker IDs
     
     ## compare marker labels and subset yi on overlapping markers
@@ -86,12 +86,13 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         unique.marker.labels <- unique(markers.y, markers.yi)
         overlapping.marker.labels <- intersect(markers.y, markers.yi)
         if(length(overlapping.marker.labels) > 0){
-            yi <- yi[overlapping.marker.labels,]
+          input_yi <- input_yi[overlapping.marker.labels,]
         }
     }
   
     ## compare sample labels and remove overlapping samples
-    samples.y <- colnames(y); samples.yi <- colnames(yi) # parse bulk sample IDs
+    samples.y <- colnames(input_y)
+    samples.yi <- colnames(input_yi) # parse bulk sample IDs
     ## compare sample IDs
     if(is(samples.y, "NULL")|is(samples.yi, "NULL")){
         message("Warning, no sample labels found in either y or yi.")
@@ -99,19 +100,20 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
         unique.sample.labels <- unique(samples.y, samples.yi)
         overlapping.sample.labels <- intersect(samples.y, samples.yi)
         if(length(overlapping.samples) > 0){
-            filter <- !colnames(yi) %in% overlapping.sample.labels
-            yi <- yi[, filter, drop=FALSE]
+            filter <- !colnames(input_yi) %in% overlapping.sample.labels
+            input_yi <- input_yi[, filter, drop=FALSE]
         }
     }
   
     ## parse return list
     ## get metadata to return
-    lmd <- list(unique.marker.labels=unique.marker.labels,
+    list_metadata <- list(unique.marker.labels=unique.marker.labels,
                 unique.sample.labels=unique.sample.labels,
                 overlapping.marker.labels=overlapping.marker.labels,
                 overlapping.sample.labels=overlapping.sample.labels)
-    lr <- list(y=y, yi=yi, object=object, metadata=lmd)
-    return(lr)
+    return_list <- list(y=input_y, yi=input_yi, object=object, 
+                        metadata=list_metadata)
+    return(return_list)
 })
 
 #' Method for \linkS4class{independentbulkParam}
@@ -126,9 +128,9 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
 #'
 #' @export
 setMethod("show", "independentbulkParam", function(object) {
-  y <- object[["y"]]; yi <- object[["yi"]] # get bulk data
-  samples.y <- colnames(y); samples.yi <- colnames(yi) # get samples
-  markers.y <- rownames(y); markers.yi <- rownames(yi) # get markers
+  input_y <- object[["y"]]; input_yi <- object[["yi"]] # get bulk data
+  samples.y <- colnames(input_y); samples.yi <- colnames(input_yi) # get samples
+  markers.y <- rownames(input_y); markers.yi <- rownames(input_yi) # get markers
   ## print info summaries
   message("Summary of independentbulkParam data:")
   message("\tNumber of unique sample IDs : ", 
