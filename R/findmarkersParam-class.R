@@ -136,3 +136,22 @@ setMethod("typemarkers", signature(object = "findmarkersParam"), function(object
                         metadata = object)}
   return(return.list)
 })
+
+#' Show generic behavior for object of class \linkS4class{findmarkersParam}
+#' @param object An object of class \linkS4class{findmarkersParam}.
+#' @details Method for behavior of show generic when called for object of class 
+#' \linkS4class{findmarkersParam}
+#' 
+#' @examples
+#' lexample <- get_decon_example_data()
+#' sce.example <- random_sce()
+#' new.param <- findmarkersParam(sce = sce.example, 
+#' celltype.variable = "celltype", markers.per.type = 5)
+#' new.param
+#' 
+#' @returns Shows object summaries.
+#' 
+#' @export
+setMethod("show", signature(object = "findmarkersParam"), function(object){
+  show(object)
+})

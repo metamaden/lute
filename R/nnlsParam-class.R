@@ -131,3 +131,20 @@ setMethod("deconvolution", signature(object = "nnlsParam"), function(object){
     }
   return(lr)
 })
+
+#' Show generic behavior for object of class \linkS4class{nnlsParam}
+#' @param object An object of class \linkS4class{nnlsParam}.
+#' @details Method for behavior of show generic when called for object of class 
+#' \linkS4class{nnlsParam}
+#' 
+#' @examples
+#' lexample <- get_decon_example_data()
+#' param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], z = lexample[["z"]])
+#' param
+#' 
+#' @returns Shows object summaries.
+#' 
+#' @export
+setMethod("show", signature(object = "nnlsParam"), function(object){
+  show(object)
+})
