@@ -237,7 +237,7 @@ This vignette showed how to conduct a basic pseudobulk experiment using cell
 size scale factors. Some key details include sourcing and snRNA-seq data, 
 defining a new cell type variable, setting the scale factors, making predictions, 
 and performing comparative analyses of the prediction results. Further details 
-about the importance of cell size scale factors are discussed in @maden_2023, 
+about the importance of cell size scale factors are discussed in @maden_challenges_2023, 
 and examples of their utilizations may be found in @monaco_rna-seq_2019, 
 @racle_epic_2020, and @sosina_strategies_2021.
 
