@@ -21,6 +21,7 @@ Method for behavior of show generic when called for object of class
 \linkS4class{deconvolutionParam}
 }
 \examples{
-example.data <- get_decon_example_data()
+param <- new("deconvolutionParam")
+deconvolution(param)
 
 }

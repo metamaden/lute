@@ -92,7 +92,7 @@ setMethod("[[", "typemarkersParam", function(x, i) {slot(x, i)})
 #' \linkS4class{typemarkersParam}
 #' 
 #' @examples
-#' show(new("typemarkersParam"))
+#' lexample <- get_decon_example_data()
 #' 
 #' @returns Shows object summaries.
 #' 

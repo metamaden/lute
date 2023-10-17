@@ -59,6 +59,7 @@ lute <- function(sce=NULL, z=NULL, y=NULL, y.se=NULL, s=NULL,
                  typemarker.algorithm="findmarkers", 
                  deconvolution.algorithm="nnls",
                  verbose=TRUE){
+  input_z <- z; input_s <- s; input_y <- y; input_yse <- y.se
   results.list <- list()
   if(!is(typemarker.algorithm, "NULL")){
     if(verbose){message("Parsing marker gene arguments...")}
@@ -77,14 +78,12 @@ lute <- function(sce=NULL, z=NULL, y=NULL, y.se=NULL, s=NULL,
     input_z <- get_z_from_sce(sce, assay.name, celltype.variable)
     results.list[["typemarker.results"]] <- typemarker.results
   }
-  input_yse <- y.se; input_y <- y
   y.cond <- is(input_y, "NULL") & !is(input_yse, "NULL")
   if(y.cond){input_y <- assays(input_yse)[[assay.name]]}
   if(!is(deconvolution.algorithm, "NULL")){
-    if(is(z, "NULL")){
+    if(is(input_z, "NULL")){
       input_z <- get_z_from_sce(sce, assay.name, celltype.variable)
     }
-    input_s <- s
     if(is(input_s, "NULL")){input_s <- rep(1, ncol(input_z))}
     if(verbose){message("Parsing deconvolution arguments...")}
     deconvolution.results <- map_deconvolution_algorithm(
@@ -125,8 +124,7 @@ map_typemarker_algorithm <- function(algorithm, sce, assay.name,
 
 #'
 #'
-map_deconvolution_algorithm <- function(algorithm, y=y, z=z, s=s, 
-                                        return.info=return.info){
+map_deconvolution_algorithm <- function(algorithm, y, z, s, return.info){
   if(algorithm %in% c("nnls", "Nnls", "NNLS", "nnlsParam", "NNLSParam", "NnlsParam")){
     message("Using NNLS...")
     deconvolution.string <- "nnlsParam"

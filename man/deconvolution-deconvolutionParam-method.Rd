@@ -20,3 +20,7 @@ Deconvolution generic behavior for object of class \linkS4class{deconvolutionPar
 Method for behavior of deconvolution generic when called for object 
 of class \linkS4class{deconvolutionParam}.
 }
+\examples{
+param <- new("deconvolutionParam")
+deconvolution(param)
+}

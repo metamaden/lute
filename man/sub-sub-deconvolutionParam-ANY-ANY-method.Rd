@@ -23,6 +23,7 @@ Inspect slot in \linkS4class{deconvolutionParam} object
 Inspect slot in \linkS4class{deconvolutionParam} object
 }
 \examples{
-example.data <- get_decon_example_data()
+param <- new("deconvolutionParam")
+deconvolution(param)
 
 }
