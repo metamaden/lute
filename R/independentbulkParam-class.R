@@ -50,11 +50,13 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' @export
 independentbulkParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL, 
                                  return.info=FALSE) {
-    if(is(y, "NULL")){y <- matrix(0)}
-    if(is(z, "NULL")){z <- matrix(0)}
-    if(is(yi, "NULL")){yi <- matrix(0)}
-    if(is(s, "NULL")){s <- rep(1, ncol(z))}
-    param <- new("independentbulkParam", y=y, yi=yi, z=z, s=s, 
+  input_y <- y; input_yi <- yi; input_z <- z; input_s <- s
+    if(is(input_y, "NULL")){input_y <- matrix(0)}
+    if(is(input_z, "NULL")){input_z <- matrix(0)}
+    if(is(input_yi, "NULL")){input_yi <- matrix(0)}
+    if(is(input_s, "NULL")){input_s <- rep(1, ncol(input_z))}
+    param <- new("independentbulkParam", 
+                 y=input_y, yi=input_yi, z=input_z, s=input_s, 
                  return.info=return.info)
     return(param)
 }
@@ -111,7 +113,8 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
   
     ## parse return list
     ## get metadata to return
-    list_metadata <- list(unique.marker.labels=unique.marker.labels,
+    list_metadata <- list(
+      unique.marker.labels=unique.marker.labels,
                 unique.sample.labels=unique.sample.labels,
                 overlapping.marker.labels=overlapping.marker.labels,
                 overlapping.sample.labels=overlapping.sample.labels)

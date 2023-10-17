@@ -71,8 +71,9 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' @examples
 #' ## get data
 #' lexample <- get_decon_example_data_bisque()
-#' input_y_eset <- lexample[["y.eset"]]
-#' input_yi <- exprs(input_y_eset)
+#' input_y_eset <- lexample[["y.eset"]][,seq(10)]
+#' input_yi <- exprs(lexample[["y.eset"]])
+#' input_yi <- input_yi[,c(11:ncol(input_yi))]
 #' 
 #' ## get param object
 #' param <- bisqueParam(y.eset=input_y_eset, yi=input_yi,
@@ -95,23 +96,26 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
                         batch.variable="batch.id", 
                         celltype.variable="celltype", 
                         use.overlap=FALSE, return.info=FALSE) {
+  input_y <- y; input_yi <- yi; input_z <- z; input_s <- s; 
+  input_y_eset <- y.eset
   ## check y.eset/y
-  list.y <- .parse_y(y, y.eset)
+  list.y <- .parse_y(input_y, input_y_eset)
   ## parse sc.data
   sc.eset <- .parse_sc(sc.data, assay.name)
   ## parse z data
-  list.z <- .parse_z(sc.eset, z, assay.name, batch.variable, 
+  list.z <- .parse_z(sc.eset, input_z, assay.name, batch.variable, 
                      celltype.variable)
   ## parse s
-  input_s <- .parse_s(list.z[["z"]], s)
+  input_s <- .parse_s(list.z[["z"]], input_s)
   ## parse batch ids in bulk and sc
   list.batchid <- .parse_batches(batch.variable=batch.variable,
                                  y.eset=y.eset, id.sc=list.z[["id.sc"]])
   ## parse independent bulk samples
-  input_y <- .parse_independent_bulk(id.onlybulk=list.batchid[["id.onlybulk"]], 
-                               y=list.y[["y"]], yi=yi, 
-                               y.eset=list.y[["y.eset"]])
-  new("bisqueParam", y=input_y, yi=yi, z=list.z[["z"]], s=input_s, 
+  input_y <- .parse_independent_bulk(
+    id.onlybulk=list.batchid[["id.onlybulk"]], y=list.y[["y"]], 
+    yi=input_yi, y.eset=list.y[["y.eset"]])
+  
+  new("bisqueParam", y=input_y, yi=input_yi, z=list.z[["z"]], s=input_s, 
       y.eset=list.y[["y.eset"]], sc.eset=sc.eset, 
       assay.name=assay.name, batch.variable=batch.variable, 
       celltype.variable=celltype.variable, 
@@ -121,33 +125,34 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #'
 .parse_independent_bulk <- function(id.onlybulk=NULL, y=NULL,
                                     yi=NULL, y.eset=NULL){
+  input_y <- y; input_yi <- yi; input_y_eset <- y.eset
   stop.option <- FALSE
   if(length(id.onlybulk) == 0){
-    if(is(yi, "NULL")){
+    if(is(input_yi, "NULL")){
       stop.option <- TRUE
     } else{}
   } else{
-    if(is(yi, "NULL")){
+    if(is(input_yi, "NULL")){
       message("Making yi from provided y bulk...")
-      filter.yi <- colnames(y.eset) %in% id.onlybulk
-      yi <- exprs(y.eset)[,filter.yi]
-      colnames(yi) <- colnames(y.eset)[filter.yi]
-      rownames(yi) <- rownames(y.eset)
+      filter.yi <- colnames(input_y_eset) %in% id.onlybulk
+      input_yi <- exprs(input_y_eset)[,filter.yi]
+      colnames(input_yi) <- colnames(input_y_eset)[filter.yi]
+      rownames(input_yi) <- rownames(input_y_eset)
     } else{}
   }
   if(stop.option){stop("Error parsing independent bulk data.")}
-  filter.bulk.samples.y <- colnames(y) %in% colnames(yi)
-  input_y <- y[,!filter.bulk.samples.y]
+  filter.bulk.samples.y <- colnames(input_y) %in% colnames(input_yi)
+  input_y <- input_y[,!filter.bulk.samples.y]
   return(input_y)
 }
 
 #'
 .parse_batches <- function(batch.variable=NULL, y.eset=NULL,
                            id.sc=NULL){
-  stop.option <- FALSE
+  stop.option <- FALSE; input_y_eset <- y.eset
   message("Checking batch ids in bulk and sc eset...")
-  if(batch.variable %in% colnames(pData(y.eset))){
-    id.bulk <- unique(y.eset[[batch.variable]])
+  if(batch.variable %in% colnames(pData(input_y_eset))){
+    id.bulk <- unique(input_y_eset[[batch.variable]])
   } else{
     stop.option <- TRUE
   }
@@ -167,10 +172,11 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 
 #'
 .parse_s <- function(z=NULL, s=NULL){
-  unique.types <- colnames(z)
+  input_z <- z; input_s <- s
+  unique.types <- colnames(input_z)
   unique.types <- unique.types[order(unique.types)]
-  if(is(s, "NULL")){
-    input_s <- rep(1, ncol(z)); names(input_s) <- unique.types
+  if(is(input_s, "NULL")){
+    input_s <- rep(1, ncol(input_z)); names(input_s) <- unique.types
   }
   return(s=input_s)
 }
@@ -180,7 +186,7 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
                      assay.name="counts",
                      batch.variable="group",
                      celltype.variable="celltype"){
-  stop.option <- FALSE
+  stop.option <- FALSE; input_z <- z
   if(!celltype.variable %in% colnames(pData(sc.eset))){
     stop.option <- TRUE
   }
@@ -219,15 +225,17 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 
 #'
 .parse_y <- function(y=NULL, y.eset=NULL){
-  if(is(y, "NULL")){
-    input_y <- as.matrix(exprs(y.eset))
+  input_y <- y; input_y_eset <- y.eset
+  if(is(input_y, "NULL")){
+    input_y <- as.matrix(exprs(input_y_eset))
   } else{
-    if(is(y.eset, "NULL")){
-      input_y_eset <- get_eset_from_matrix(mat=y, batch.variable="SubjectName")
+    if(is(input_y_eset, "NULL")){
+      input_y_eset <- get_eset_from_matrix(
+        mat=input_y, batch.variable="SubjectName")
       ## need at least 2 columns/samples to pass to bisque
       if(ncol(input_y_eset) == 1){
         sample.name <- colnames(input_y_eset)
-        input_y_eset <- cbind(y.eset, input_y_eset)
+        input_y_eset <- cbind(input_y_eset, input_y_eset)
         colnames(input_y_eset) <- c(sample.name, paste0(sample.name, "_rep1"))
       }
     }
@@ -251,11 +259,12 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #' @examples
 #' ## get data
 #' lexample <- get_decon_example_data_bisque()
-#' input_y_eset <- lexample[["y.eset"]]
-#' input_yi <- exprs(input_y_eset)
+#' input_y_eset <- lexample[["y.eset"]][,seq(10)]
+#' input_yi <- exprs(lexample[["y.eset"]])
+#' input_yi <- input_yi[,c(11:ncol(input_yi))]
 #' 
 #' ## get param object
-#' param <- bisqueParam(y.eset=y.eset, yi=yi,
+#' param <- bisqueParam(y.eset=input_y_eset, yi=input_yi,
 #'                      sc.data=lexample[["sc.eset"]], 
 #'                      batch.variable="SubjectName", 
 #'                      celltype.variable="cellType", 
@@ -263,7 +272,7 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #' 
 #' ## get predicted proportions
 #' res <- deconvolution(param)
-#' 
+#'
 #' @references Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
 #' Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.
 #' URL: https://CRAN.R-project.org/package=BisqueRNA
