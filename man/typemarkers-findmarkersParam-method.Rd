@@ -7,7 +7,8 @@
 \S4method{typemarkers}{findmarkersParam}(object)
 }
 \arguments{
-\item{object}{An object of class \linkS4class{findmarkersParam}.}
+\item{object}{An object of class \linkS4class{findmarkersParam} (see 
+\code{?findmarkersParam}).}
 }
 \value{
 Returns the top available markers, with type-specific marker filters,
@@ -25,8 +26,8 @@ original function outputs.
 \examples{
 lexample <- get_decon_example_data()
 sce.example <- random_sce()
-new.param <- findmarkersParam(sce = sce.example, 
-celltype.variable = "celltype", markers.per.type = 5)
+new.param <- findmarkersParam(sce=sce.example, 
+celltype.variable="celltype", markers.per.type=5)
 markers <- typemarkers(new.param)
 
 }

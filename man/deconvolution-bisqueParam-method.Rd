@@ -7,7 +7,8 @@
 \S4method{deconvolution}{bisqueParam}(object)
 }
 \arguments{
-\item{object}{Object of type \linkS4class{bisqueParam}.}
+\item{object}{Object of type \linkS4class{bisqueParam} (see 
+\code{?bisqueParam}).}
 }
 \value{
 Either a vector of predicted proportions, or a list containing 
@@ -22,19 +23,19 @@ Takes an object of class \linkS4class{bisqueParam} as input,
 returning a list.
 }
 \examples{
-# get data
+## get data
 lexample <- get_decon_example_data_bisque()
-y.eset <- lexample[["y.eset"]]
-yi <- exprs(y.eset)
+input_y_eset <- lexample[["y.eset"]]
+input_yi <- exprs(input_y_eset)
 
-# get param object
-param <- bisqueParam(y.eset = y.eset, yi = yi,
-                     sc.data = lexample[["sc.eset"]], 
-                     batch.variable = "SubjectName", 
-                     celltype.variable = "cellType", 
-                     use.overlap = FALSE)
+## get param object
+param <- bisqueParam(y.eset=y.eset, yi=yi,
+                     sc.data=lexample[["sc.eset"]], 
+                     batch.variable="SubjectName", 
+                     celltype.variable="cellType", 
+                     use.overlap=FALSE)
 
-# get predicted proportions
+## get predicted proportions
 res <- deconvolution(param)
 
 }

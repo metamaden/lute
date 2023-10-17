@@ -7,7 +7,8 @@
 \S4method{deconvolution}{referencebasedParam}(object)
 }
 \arguments{
-\item{object}{An object of class \linkS4class{referencebasedParam}.}
+\item{object}{An object of class \linkS4class{referencebasedParam} (see 
+\code{?referencebasedParam}).}
 }
 \value{
 Method results.
@@ -16,8 +17,8 @@ Method results.
 Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}
 }
 \details{
-Method for behavior of deconvolution generic when called for object of class 
-\linkS4class{referencebasedParam}
+Method for behavior of deconvolution generic when called for object 
+of class \linkS4class{referencebasedParam}.
 }
 \examples{
 lexample <- get_decon_example_data()

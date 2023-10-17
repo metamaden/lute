@@ -7,7 +7,8 @@
 \S4method{deconvolution}{nnlsParam}(object)
 }
 \arguments{
-\item{object}{An object of class \linkS4class{nnlsParam}.}
+\item{object}{An object of class \linkS4class{nnlsParam} (see 
+\code{?nnlsParam}).}
 }
 \value{
 Either a vector of predicted proportions, or a list containing 
@@ -27,10 +28,10 @@ The key term mappings for this method include:
 }
 \examples{
 lexample <- get_decon_example_data()
-param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-                    z = lexample[["z"]])
+param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
+                    z=lexample[["z"]])
 
-# return only predicted proportions
+## return only predicted proportions
 deconvolution(param)
 
 # return full results

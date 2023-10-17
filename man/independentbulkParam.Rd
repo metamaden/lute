@@ -13,16 +13,20 @@ independentbulkParam(
 )
 }
 \arguments{
-\item{y}{Bulk mixed signals matrix of samples, which can be matched to single-cell samples.}
+\item{y}{Bulk mixed signals matrix of samples, which can be matched to 
+single-cell samples.}
 
-\item{yi}{Bulk mixed signals matrix of independent samples, which should not overlap samples in y.}
+\item{yi}{Bulk mixed signals matrix of independent samples, which should not 
+overlap samples in y.}
 
-\item{z}{Signature matrix of cell type-specific signals. If not provided, can be computed from a
-provided ExpressionSet containing single-cell data.}
+\item{z}{Signature matrix of cell type-specific signals. If not provided, can 
+be computed from a provided ExpressionSet containing single-cell data.}
 
-\item{s}{Cell size factor transformations of length equal to the K cell types to deconvolve.}
+\item{s}{Cell size factor transformations of length equal to the K cell types 
+to deconvolve.}
 
-\item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
+\item{return.info}{Whether to return metadata and original method outputs 
+with predicted proportions.}
 }
 \value{
 New object.

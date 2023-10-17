@@ -18,7 +18,7 @@ cellProportionsPredictions(
 \item{sample.id.vector}{Character vector of sample id labels.}
 }
 \value{
-cellProportionsPredictions object.
+New cellProportionsPredictions object.
 
 New cellProportionsPredictions object.
 }

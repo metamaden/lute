@@ -1,0 +1,250 @@
+---
+title: "Pseudobulk examples using cell size scale factors"
+author:
+- Sean K. Maden
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+bibliography: bibliography.bib
+package: lute
+output:
+  BiocStyle::html_document:
+    code_folding: show
+    toc: no
+    tocfloat: no
+  BiocStyle::pdf_document: 
+    toc: no
+    toc_depth: 0
+vignette: > 
+  %\VignetteIndexEntry{Pseudobulk examples using cell size scale factors}
+  %\usepackage[UTF-8]{inputenc} 
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r setup, include=FALSE}
+libv <- c("lute", "ggplot2")
+sapply(libv, library, character.only = TRUE)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This vignette shows an example pseudobulk experiment testing cell size scale factors 
+using available scRNAseq data from the `scRNAseq` package. Predictions are made 
+using `lute`, and results plots are generated using `ggplot2`.
+
+# Experiment setup
+
+In this example, we source a single-nucleus RNA-seq dataset of human brain, 
+including cortex and hippocampus. This, along with other single-nucleus and 
+single-cell RNA-seq datasets, is accessed from the `scRNAseq` package. 
+
+Source and inspect the Darmanis et al 2015 human cortex brain dataset (view 
+citation info with `?DarmanisBrainData`).
+
+```{r}
+library(scRNAseq)
+data <- DarmanisBrainData()
+data
+dim(data)
+```
+
+The loaded dataset is of type `SingleCellExperiment`, which is handled by the 
+`lute()` function (see `?lute` for details). Before calling the framework 
+function, it needs to be processed to (1) define cell types and samples of 
+interest (2) subset on cell type markers, and (3) define pseudobulks for each 
+available sample.
+
+For this experiment, we will consider two principal cell types for brain, neuron 
+and glial cells (a.k.a. "K2"). First, identify nuclei labeled from only these 
+types and remove the rest. Then define a new label `"k2"` using the valid 
+remaining nuclei.
+
+```{r}
+sample.id.variable <- "experiment_sample_name"
+old.types <- "cell.type"; new.types <- "k2"
+# remove non-k2 types
+filter.k2 <- data[[old.types]] %in% 
+  c("neurons", "oligodendrocytes", "astrocytes", "OPC", "microglia")
+data <- data[,filter.k2]
+# define new k2 variable
+data[[new.types]] <- ifelse(data[[old.types]]=="neurons", "neuron", "glial")
+data[[new.types]] <- factor(data[[new.types]])
+```
+
+Next, define the samples of interest for the experiment. We will select samples 
+having at least 20 nuclei.
+
+```{r}
+min.nuclei <- 20
+nuclei.per.sample <- table(data[[sample.id.variable]])
+sample.id.vector <- unique(data[[sample.id.variable]])
+sample.id.vector <- sample.id.vector[nuclei.per.sample >= min.nuclei]
+sample.id.vector # view
+```
+
+View the summaries by sample id, then save these as the true cell type proportions.
+These will be used later to assess the predictions.
+
+```{r}
+list.proportions <- lapply(sample.id.vector, function(sample.id){
+  prop.table(table(data[,data$experiment_sample_name==sample.id]$k2))
+})
+df.proportions <- do.call(rbind, list.proportions)
+rownames(df.proportions) <- sample.id.vector
+colnames(df.proportions) <- paste0(colnames(df.proportions), ".true")
+df.proportions <- as.data.frame(df.proportions)
+df.proportions # view
+```
+
+Define the cell size scale factors and use these to make the pseudobulks. 
+For demonstration we set these to have large difference (i.e. neuron/glial > 3).
+While we set these manually, the cell scale factors could also be defined from 
+library sizes or by referencing the `cellScaleFactors` package ([link]()).
+
+```{r}
+s.vector <- c("glial" = 3, "neuron" = 10)
+```
+
+Next make the pseudobulk datasets. 
+
+```{r}
+assay.name <- "counts"
+list.pseudobulk <- lapply(sample.id.vector, function(sample.id){
+  data.iter <- data[,data[[sample.id.variable]]==sample.id]
+  ypb_from_sce(data.iter, assay.name, new.types, S = s.vector)
+})
+
+df.pseudobulk <- do.call(cbind, list.pseudobulk)
+
+df.pseudobulk <- as.data.frame(df.pseudobulk)
+
+colnames(df.pseudobulk) <- sample.id.vector
+
+head(df.pseudobulk)
+```
+
+
+
+# Get predictions
+
+Predict the neuron proportions using non-negative least squares (NNLS), the 
+default deconvolution algorithm used by `lute()`. First, get the scaled proportions
+by setting the argument `s = s.vector`.
+
+```{r}
+result.scaled <- lute(
+  sce = data, 
+  y = as.matrix(df.pseudobulk), 
+  s = s.vector,
+  typemarker.algorithm = NULL,
+  celltype.variable = new.types,
+  assay.name = assay.name)
+proportions.scaled <- result.scaled[[1]]@predictions.table
+proportions.scaled # view
+```
+
+Next, get the unscaled result without setting `s`.
+
+```{r}
+result.unscaled <- lute(
+  sce = data, 
+  y = as.matrix(df.pseudobulk), 
+  typemarker.algorithm = NULL,
+  celltype.variable = new.types,
+  assay.name = assay.name)
+proportions.unscaled <- result.unscaled[[1]]@predictions.table
+proportions.unscaled # view
+```
+
+Note proportions didn't change for samples which had all glial or all neuron 
+(`AB_S8` and `AB_S3`).
+
+# Plot differences
+
+We will show the outcome of performing the cell scale factor adjustments using
+scatterplots and boxplots. Begin by appending the neuron proportion predictions
+from scaling treatments (scaled and unscaled) to the true proportions table 
+`df.proportions`.
+
+```{r}
+df.proportions$neuron.unscaled <- proportions.unscaled$neuron
+df.proportions$neuron.scaled <- proportions.scaled$neuron
+df.proportions # view
+```
+
+Calculate bias as the difference between true and predicted neuron proportions. 
+Then calculate the error as the absolute of the bias thus defined.
+
+```{r}
+# get bias
+df.proportions$bias.neuron.unscaled <- 
+  df.proportions$neuron.true-df.proportions$neuron.unscaled
+df.proportions$bias.neuron.scaled <- 
+  df.proportions$neuron.true-df.proportions$neuron.scaled
+# get error
+df.proportions$error.neuron.unscaled <- 
+  abs(df.proportions$bias.neuron.unscaled)
+df.proportions$error.neuron.scaled <- 
+  abs(df.proportions$bias.neuron.scaled)
+```
+
+Make the tall version of `df.proportions` in order to generate a plot with facets
+on the scale treatment (either "scaled" or "unscaled").
+
+```{r}
+df.plot.tall <- rbind(
+  data.frame(true = df.proportions$neuron.true, 
+             predicted = df.proportions$neuron.scaled,
+             error = df.proportions$error.neuron.scaled,
+             sample.id = rownames(df.proportions),
+             type = rep("scaled", nrow(df.proportions))),
+  data.frame(true = df.proportions$neuron.true, 
+             predicted = df.proportions$neuron.unscaled, 
+             error = df.proportions$error.neuron.unscaled,
+             sample.id = rownames(df.proportions),
+             type = rep("unscaled", nrow(df.proportions)))
+)
+df.plot.tall <- as.data.frame(df.plot.tall)
+```
+
+Show sample results scatterplots of true (x-axis) by predicted (y-axis) neuron 
+proportions. Also include a reference line (slope = 1, yintercept = 0) showing
+where agreement is absolute between proportions.
+
+```{r}
+text.size <- 15
+ggplot(df.plot.tall, aes(x = true, y = predicted)) + 
+  geom_point(size = 4, alpha = 0.5) + 
+  geom_abline(slope = 1, intercept = 0) + xlim(0, 1) + ylim(0, 1) +
+  facet_wrap(~type) + theme(text = element_text(size = text.size))
+```
+
+Show jitters and boxplots by sample, depicting the neuron error (y-axis) by 
+scale treatment (x-axis). The sample IDs are depicted by the point colors.
+
+```{r}
+ggplot(df.plot.tall, 
+       aes(x = type, y = error, color = sample.id)) + 
+  geom_jitter(alpha = 0.5, size = 4) + 
+  geom_boxplot(alpha = 0, color = "cyan") +
+  theme(text = element_text(size = text.size))
+```
+
+This process could be readily repeated for the remaining cell types, or just 
+glial cells in this case.
+
+# Conclusions
+
+This vignette showed how to conduct a basic pseudobulk experiment using cell 
+size scale factors. Some key details include sourcing and snRNA-seq data, 
+defining a new cell type variable, setting the scale factors, making predictions, 
+and performing comparative analyses of the prediction results. Further details 
+about the importance of cell size scale factors are discussed in @maden_2023, 
+and examples of their utilizations may be found in @monaco_rna-seq_2019, 
+@racle_epic_2020, and @sosina_strategies_2021.
+
+# Session info
+
+```{r}
+sessionInfo()
+```
+
+# Works cited

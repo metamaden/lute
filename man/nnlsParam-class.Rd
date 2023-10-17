@@ -16,10 +16,10 @@ Main constructor for class \linkS4class{nnlsParam}.
 }
 \examples{
 lexample <- get_decon_example_data()
-param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-                    z = lexample[["z"]])
+param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
+                    z=lexample[["z"]])
 
-# return only predicted proportions
+## return only predicted proportions
 deconvolution(param)
 
 # return full results

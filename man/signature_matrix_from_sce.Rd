@@ -15,11 +15,12 @@ signature_matrix_from_sce(
 \item{sce}{An object of type \linkS4class{SingleCellExperiment}.}
 
 \item{celltype.variable}{Variable name for cell type labels in \code{sce} 
-coldata.}
+coldata (e.g. "type1", "type2", etc.).}
 
 \item{summary.method}{Summary statistic function to use.}
 
-\item{assay.name}{Name of expression matrix in \code{sce} assays.}
+\item{assay.name}{Name of expression matrix in \code{sce} assays (e.g. 
+"counts").}
 }
 \value{
 New Z signature matrix.

@@ -7,13 +7,13 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 bibliography: bibliography.bib
 package: lute
 output:
+  BiocStyle::pdf_document: 
+    toc: no
+    toc_depth: 0
   BiocStyle::html_document:
     code_folding: show
     toc: no
     tocfloat: no
-  BiocStyle::pdf_document: 
-    toc: no
-    toc_depth: 0
 vignette: > 
   %\VignetteIndexEntry{The lute user's guide}
   %\usepackage[UTF-8]{inputenc} 
@@ -39,6 +39,16 @@ Begin by passing the following to your active R session:
 ```{r}
 library(lute)
 ```
+
+# Installation
+
+Install `lute` by passing the following to the console from an active R session.
+You must have the `BiocManager` package installed.
+
+```{r, eval = F}
+BiocManager::install("lute")
+```
+
 
 # Deconvolution overview
 

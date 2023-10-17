@@ -12,13 +12,13 @@ get_decon_example_data_bisque(
 )
 }
 \arguments{
-\item{num.bulk.samples}{Bulk samples count.}
+\item{num.bulk.samples}{Number of bulk samples.}
 
-\item{num.markers}{Markers count.}
+\item{num.markers}{Number of cell type markers.}
 
-\item{num.cells}{Cells count.}
+\item{num.cells}{Number of cells.}
 
-\item{num.types}{Cell types count.}
+\item{num.types}{Number of cell types.}
 }
 \value{
 Example data as list.

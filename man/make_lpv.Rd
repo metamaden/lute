@@ -7,9 +7,9 @@
 make_lpv(ktotal = 2, k1 = NULL)
 }
 \arguments{
-\item{ktotal}{Total types to simulate.}
+\item{ktotal}{Total number of cell types to simulate.}
 
-\item{k1}{Vector of first type proportions. If NULL, uses 
+\item{k1}{Vector of first cell type proportions. If NULL, uses 
 seq(1e-3, 1-1e-3, 1e-3).}
 }
 \value{
@@ -22,12 +22,12 @@ the reverse of k1. Types k > 1 are assumed to have equal proportions
 complementary to k1.
 }
 \details{
-For k1 = c(0, 0.5, 1), ktotal = 2 will generate an additional type with 
+For k1=c(0, 0.5, 1), ktotal=2 will generate an additional type with 
 proportions c(1, 0.5, 0).
 
-For the same k1 above, ktotal = 3, will generate 2 types with the same 
+For the same k1 above, ktotal=3, will generate 2 types with the same 
 proportions as c(0.5, 0.25, 0).
 }
 \examples{
-make_lpv(k1 = c(0, 0.5, 1))
+make_lpv(k1=c(0, 0.5, 1))
 }

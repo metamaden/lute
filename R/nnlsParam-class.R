@@ -131,7 +131,7 @@ setMethod("deconvolution", signature(object="nnlsParam"), function(object){
                metadata=lparam[["metadata"]])
     
     }
-  return(lr)
+  return(return_list)
 })
 
 #' Show generic behavior for object of class \linkS4class{nnlsParam}

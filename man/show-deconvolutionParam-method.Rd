@@ -7,7 +7,8 @@
 \S4method{show}{deconvolutionParam}(object)
 }
 \arguments{
-\item{object}{An object of class \linkS4class{deconvolutionParam}.}
+\item{object}{An object of class \linkS4class{deconvolutionParam} (see 
+\code{?deconvolutionParam}).}
 }
 \value{
 Shows object summaries.

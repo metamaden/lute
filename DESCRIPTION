@@ -35,7 +35,9 @@ Suggests:
     AnnotationHub,
     DelayedMatrixStats,
     BisqueRNA,
-    DelayedArray
+    DelayedArray,
+    ggplot2,
+    scRNAseq
 VignetteBuilder:
     knitr
 biocViews: RNASeq, Sequencing, SingleCell, Coverage, Transcriptomics, Normalization

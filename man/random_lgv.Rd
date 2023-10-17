@@ -58,5 +58,5 @@ markers for type 1 (negative for type 2) and a single positive marker for
 type 2 (negative for type 1).
 }
 \examples{
-random_lgv(gindexv = c(rep(1, 10), rep(2, 5)))
+random_lgv(gindexv=c(rep(1, 10), rep(2, 5)))
 }

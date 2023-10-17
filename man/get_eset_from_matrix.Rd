@@ -7,9 +7,9 @@
 get_eset_from_matrix(mat, batch.variable = "SampleName")
 }
 \arguments{
-\item{mat}{Matrix.}
+\item{mat}{User-specified expression matrix.}
 
-\item{batch.variable}{Batch variable name.}
+\item{batch.variable}{Name of the batch variable.}
 }
 \value{
 ExpressionSet.

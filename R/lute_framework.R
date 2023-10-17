@@ -77,13 +77,15 @@ lute <- function(sce=NULL, z=NULL, y=NULL, y.se=NULL, s=NULL,
     input_z <- get_z_from_sce(sce, assay.name, celltype.variable)
     results.list[["typemarker.results"]] <- typemarker.results
   }
-  y.cond <- is(y, "NULL") & !is(y.se, "NULL")
-  if(y.cond){input_y <- assays(y.se)[[assay.name]]}
+  input_yse <- y.se; input_y <- y
+  y.cond <- is(input_y, "NULL") & !is(input_yse, "NULL")
+  if(y.cond){input_y <- assays(input_yse)[[assay.name]]}
   if(!is(deconvolution.algorithm, "NULL")){
     if(is(z, "NULL")){
       input_z <- get_z_from_sce(sce, assay.name, celltype.variable)
     }
-    if(is(s, "NULL")){input_s <- rep(1, ncol(input_z))}
+    input_s <- s
+    if(is(input_s, "NULL")){input_s <- rep(1, ncol(input_z))}
     if(verbose){message("Parsing deconvolution arguments...")}
     deconvolution.results <- map_deconvolution_algorithm(
       algorithm=deconvolution.algorithm,

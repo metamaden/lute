@@ -7,11 +7,11 @@
 get_decon_example_data(num.bulk.samples = 2, num.markers = 10, num.types = 2)
 }
 \arguments{
-\item{num.bulk.samples}{Bulk samples count.}
+\item{num.bulk.samples}{Number of bulk samples.}
 
-\item{num.markers}{Markers count.}
+\item{num.markers}{Number of cell type markers.}
 
-\item{num.types}{Cell types count.}
+\item{num.types}{Number of cell types.}
 }
 \value{
 Example data as list.

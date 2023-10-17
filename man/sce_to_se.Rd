@@ -8,7 +8,8 @@ Convert SingleCellExperiment to SummarizedExperiment.}
 sce_to_se(sce)
 }
 \arguments{
-\item{sce}{SingleCellExperiment.}
+\item{sce}{Object of type SingleCellExperiment (see 
+\code{?SingleCellExperiment}).}
 }
 \value{
 SummarizedExperiment.

@@ -20,16 +20,17 @@ lute(
 )
 }
 \arguments{
-\item{sce}{Object of type SingleCellExperiment. Optional (see z).}
+\item{sce}{Object of type SingleCellExperiment. Optional (see argument z).}
 
-\item{z}{Signature matrix of cell type-specific signals. Optional (see sce).}
+\item{z}{Signature matrix of cell type-specific signals. Optional (see 
+argument sce).}
 
 \item{y}{Bulk mixed signals matrix of samples, which can be matched to 
-single-cell samples. Optional (see y.se).}
+single-cell samples. Optional (see argument y.se).}
 
 \item{y.se}{SummarizedExperiment or similar data type containing the bulk signals
 matrix in its assays (e.g. accessible with assays(y.se)[[assay.name]] using
-the provided assay.name argument). Optional (see y).}
+the provided assay.name argument). Optional (see argument y).}
 
 \item{s}{Cell size factor transformations of length equal to the K cell types 
 to deconvolve. Optional, if not provided, uses equal weights for types.}
@@ -40,11 +41,11 @@ with predicted proportions.}
 \item{markers.per.type}{Number of top markers to get per cell type.}
 
 \item{assay.name}{Name of expression matrix in sce, and optionally y.se, 
-assays. Optional (see sce, y.se).}
+assays. Optional (e.g. "counts"; see arguments sce, y.se).}
 
 \item{celltype.variable}{Name of cell type variable in sce coldata.}
 
-\item{typemarker.algorithm}{Which type-specific marker selection algorthm to 
+\item{typemarker.algorithm}{Which type-specific marker selection algorithm to 
 use. If NULL, skips type marker analyses.}
 
 \item{deconvolution.algorithm}{Where deconvolution algorithm to use. If NULL, 
@@ -77,6 +78,6 @@ y <- get_decon_example_data()$y
 sce <- random_sce()[seq(10),]
 
 # get framework results
-experiment.results <- lute(sce = sce, y = y, typemarker.algorithm = NULL)
+experiment.results <- lute(sce=sce, y=y, typemarker.algorithm=NULL)
 
 }

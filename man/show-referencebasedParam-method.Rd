@@ -7,7 +7,8 @@
 \S4method{show}{referencebasedParam}(object)
 }
 \arguments{
-\item{object}{Object of class \linkS4class{referencebasedParam}.}
+\item{object}{Object of class \linkS4class{referencebasedParam} (see 
+\code{?referencebasedParam}).}
 }
 \value{
 Prints data summary messages to console.

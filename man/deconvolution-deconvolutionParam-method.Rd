@@ -7,7 +7,8 @@
 \S4method{deconvolution}{deconvolutionParam}(object)
 }
 \arguments{
-\item{object}{An object of class \linkS4class{deconvolutionParam}.}
+\item{object}{An object of class \linkS4class{deconvolutionParam} (see 
+\code{?deconvolutionParam}).}
 }
 \value{
 Null method.
@@ -16,6 +17,6 @@ Null method.
 Deconvolution generic behavior for object of class \linkS4class{deconvolutionParam}
 }
 \details{
-Method for behavior of deconvolution generic when called for object of class 
-\linkS4class{deconvolutionParam}
+Method for behavior of deconvolution generic when called for object 
+of class \linkS4class{deconvolutionParam}.
 }

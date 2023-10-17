@@ -14,7 +14,8 @@ single-cell samples.}
 can be computed from a provided \linkS4class{ExpressionSet} containing 
 single-cell data.}
 
-\item{s}{Cell size factor transformations of length equal to the K cell types to deconvolve.}
+\item{s}{Cell size factor transformations of length equal to the K cell 
+types to deconvolve.}
 
 \item{return.info}{Whether to return metadata and original method outputs 
 with predicted proportions.}
@@ -31,10 +32,10 @@ squares (NNLS) deconvolution algorithm, implemented as \code{nnls::nnls()}.
 }
 \examples{
 lexample <- get_decon_example_data()
-param <- nnlsParam(s = lexample[["s"]], y = lexample[["y"]], 
-                    z = lexample[["z"]])
+param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
+                    z=lexample[["z"]])
 
-# return only predicted proportions
+## return only predicted proportions
 deconvolution(param)
 
 # return full results

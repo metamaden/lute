@@ -27,13 +27,13 @@ new_workflow_table(
 
 \item{table.directory}{Directory to write table.}
 
-\item{table.filename}{Filename of table.}
+\item{table.filename}{The file name of the new table to write.}
 
-\item{save}{Whether to save table.}
+\item{save}{Whether to save the new table.}
 
 \item{overwrite}{Whether to overwrite old table files.}
 
-\item{verbose}{Whether to show verbose messages.}
+\item{verbose}{Whether to show verbose messages (T/F).}
 }
 \value{
 New r-nf_deconvolution compatible table of experiment/run metadata.
@@ -46,6 +46,6 @@ Makes and returns/saves a r-nf_deconvolution experiment table.
 Checks for existence of provided files.
 }
 \examples{
-new_workflow_table(save = FALSE)
+new_workflow_table(save=FALSE)
 
 }

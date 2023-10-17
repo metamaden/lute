@@ -7,7 +7,8 @@
 \S4method{show}{cellProportionsPredictions}(object)
 }
 \arguments{
-\item{object}{cellProportionsPredictions object.}
+\item{object}{Object of type cellProportionsPredictions (see 
+\code{?cellProportionsPredictions}).}
 }
 \value{
 Shows object summaries.

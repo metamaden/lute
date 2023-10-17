@@ -55,17 +55,17 @@ Takes standard inputs for the Bisque method. If user provides matrices, will con
 into ExpressionSet objects compatible with the main bisque method.
 }
 \examples{
-# get data
+## get data
 lexample <- get_decon_example_data_bisque()
-y.eset <- lexample[["y.eset"]]
-yi <- exprs(y.eset)
+input_y_eset <- lexample[["y.eset"]]
+yi <- exprs(input_y_eset)
 sc.data <- lexample[["sc.eset"]]
-# get param object
+## get param object
 param <- bisqueParam(
-y.eset = y.eset, yi = yi, sc.data = sc.data, batch.variable = "SubjectName", 
-celltype.variable = "cellType", use.overlap = FALSE
+y.eset=input_y_eset, yi=yi, sc.data=sc.data, batch.variable="SubjectName", 
+celltype.variable="cellType", use.overlap=FALSE
 )
-# get predicted proportions
+## get predicted proportions
 res <- deconvolution(param)
 
 }

@@ -8,12 +8,13 @@ Convert SummarizedExperiment to ExpressionSet.}
 se_to_eset(se, assay.name = "counts")
 }
 \arguments{
-\item{se}{SummarizedExperiment.}
+\item{se}{Object of type SummarizedExperiment (see 
+\code{?SummarizedExperiment}).}
 
-\item{assay.name}{Name of assay to store in new eset.}
+\item{assay.name}{Name of assay to store in new ExpressionSet object.}
 }
 \value{
-ExpressionSet.
+New object of type ExpressionSet.
 }
 \description{
 se_to_eset

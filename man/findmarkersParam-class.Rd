@@ -7,13 +7,16 @@
 \alias{findMarkersParam-class}
 \title{findmarkersParam-class}
 \arguments{
-\item{assay.name}{Name of expression matrix in sce assays.}
+\item{assay.name}{Name of expression matrix in SingleCellExperiment assays 
+(e.g. "counts").}
 
-\item{sce}{Object of type SingleCellExperiment.}
+\item{sce}{Object of type SingleCellExperiment (see 
+\code{?SingleCellExperiment}).}
 
-\item{celltype.variable}{Name of cell type variable in sce coldata.}
+\item{celltype.variable}{Name of cell type variable in SingleCellExperiment 
+coldata.}
 
-\item{test.type}{Test type (see ?findMarkers for options).}
+\item{test.type}{Test type (see \code{?findMarkers} for options).}
 }
 \value{
 New object.
@@ -27,8 +30,8 @@ Main constructor for class \linkS4class{findmarkersParam}.
 \examples{
 lexample <- get_decon_example_data()
 sce.example <- random_sce()
-new.param <- findmarkersParam(sce = sce.example, 
-celltype.variable = "celltype", markers.per.type = 5)
+new.param <- findmarkersParam(sce=sce.example, 
+celltype.variable="celltype", markers.per.type=5)
 markers <- typemarkers(new.param)
 
 }

@@ -7,11 +7,12 @@
 get_z_from_sce(sce, assay.name = "counts", celltype.variable = "celltype")
 }
 \arguments{
-\item{sce}{SingleCellExperiment.}
+\item{sce}{A SingleCellExperiment object.}
 
-\item{assay.name}{Name of expression assay type.}
+\item{assay.name}{Name of expression assay type (e.g. "counts").}
 
-\item{celltype.variable}{Name of variable containing cell type labels.}
+\item{celltype.variable}{Name of variable containing cell type labels (e.g. 
+"type1", "type2", etc.).}
 }
 \value{
 Matrix of cell summary values (Z reference atlas).

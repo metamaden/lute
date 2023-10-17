@@ -7,9 +7,10 @@
 get_celltypes_from_sce(sce, celltype.variable = "celltype")
 }
 \arguments{
-\item{sce}{SingleCellExperiment}
+\item{sce}{A SingleCellExperiment object.}
 
-\item{celltype.variable}{Variable containing cell type labels.}
+\item{celltype.variable}{Variable containing cell type labels (e.g. "type1", 
+"type2", etc.).}
 }
 \value{
 List of cell type variable metadata and values.

@@ -8,9 +8,9 @@ Convert ExpressionSet to SingleCellExperiment.}
 eset_to_sce(eset, assay.name = "counts")
 }
 \arguments{
-\item{eset}{ExpressionSet.}
+\item{eset}{Object of type ExpressionSet (see \code{?ExpressionSet}).}
 
-\item{assay.name}{Name of new assay in SingleCellExperiment.}
+\item{assay.name}{Name of new assay in new SingleCellExperiment object.}
 }
 \value{
 ExpressionSet.
