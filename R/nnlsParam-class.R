@@ -142,8 +142,15 @@ setMethod("deconvolution", signature(object="nnlsParam"), function(object){
 #' 
 #' @examples
 #' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], z=lexample[["z"]])
-#' param
+#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
+#'                     z=lexample[["z"]])
+#' 
+#' ## return only predicted proportions
+#' deconvolution(param)
+#' 
+#' # return full results
+#' param@return.info <- TRUE
+#' names(deconvolution(param))
 #' 
 #' @returns Shows object summaries.
 #' 
