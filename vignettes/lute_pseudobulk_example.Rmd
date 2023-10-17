@@ -1,5 +1,5 @@
 ---
-title: "Pseudobulk examples using cell size scale factors"
+title: "Pseudobulk cell size rescaling example"
 author:
 - Sean K. Maden
 date: "`r format(Sys.time(), '%d %B, %Y')`"
@@ -14,7 +14,7 @@ output:
     toc: no
     toc_depth: 0
 vignette: > 
-  %\VignetteIndexEntry{Pseudobulk examples using cell size scale factors}
+  %\VignetteIndexEntry{Pseudobulk cell size rescaling example}
   %\usepackage[UTF-8]{inputenc} 
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}

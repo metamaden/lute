@@ -7,13 +7,13 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 bibliography: bibliography.bib
 package: lute
 output:
-  BiocStyle::pdf_document: 
-    toc: no
-    toc_depth: 0
   BiocStyle::html_document:
     code_folding: show
     toc: no
     tocfloat: no
+  BiocStyle::pdf_document: 
+    toc: no
+    toc_depth: 0
 vignette: > 
   %\VignetteIndexEntry{The lute user's guide}
   %\usepackage[UTF-8]{inputenc} 
@@ -104,11 +104,16 @@ $Z$. This looks like the following:
 
 $$Y_{PB}=Z * P * S$$
 
+## Biological importance of cell size scale factors
+
 Inclusion of the $S$ vector of cell size scaling factors is an important 
 strategy to correct for potential bias due to systematic differences in sizes 
 between the sizes of predicted cell types. It has been used in deconvolution 
 studies of a variety of tissues, including brain and blood 
-(@monaco_rna-seq_2019, @racle_epic_2020, @sosina_strategies_2021).
+(@monaco_rna-seq_2019, @racle_epic_2020, @sosina_strategies_2021). Proportions
+predictions not incorporating cell size scale factors assume equal cell sizes
+between the predicted types, leading to very biased predictions in tissues 
+such as brain that feature principal cell types with very different sizes.
 
 ## Deconvolution algorithms
 
@@ -162,7 +167,7 @@ algorithm-specific synonyms.
 The `deconvolutionParam` class hierarchy for supported algorithms is visualized 
 in the following diagram:
 
-<img style="float: center; width=200" src="deconvolutionParam_hierarchy_diagram.jpeg"/>
+<img style="float: center; width=500" src="deconvolutionParam_hierarchy_diagram.jpeg"/>
 
 The `deconvolutionParam` class hierarchy is intended to be extensible to new 
 algorithms. A future vignette will provide a step-by-step guide to supporting 

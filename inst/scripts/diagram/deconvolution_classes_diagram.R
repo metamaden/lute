@@ -195,3 +195,11 @@ deconvolution_classes_chart <- function(csv.filename=paste0("lute-deconvolution"
 ## example
 new.chart <- deconvolution_classes_chart()
 new.chart$chart
+
+##-----
+## save
+##-----
+jpeg("deconvolutionParam_hierarchy_diagram.jpg",
+     res = 400, units = "in", width = 4, height = 4)
+new.chart$chart
+dev.off()
