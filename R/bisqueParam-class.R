@@ -72,13 +72,15 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' ## get data
 #' lexample <- get_decon_example_data_bisque()
 #' input_y_eset <- lexample[["y.eset"]]
-#' yi <- exprs(input_y_eset)
-#' sc.data <- lexample[["sc.eset"]]
+#' input_yi <- exprs(input_y_eset)
+#' 
 #' ## get param object
-#' param <- bisqueParam(
-#' y.eset=input_y_eset, yi=yi, sc.data=sc.data, batch.variable="SubjectName", 
-#' celltype.variable="cellType", use.overlap=FALSE
-#' )
+#' param <- bisqueParam(y.eset=input_y_eset, yi=input_yi,
+#'                      sc.data=lexample[["sc.eset"]], 
+#'                      batch.variable="SubjectName", 
+#'                      celltype.variable="cellType", 
+#'                      use.overlap=FALSE)
+#' 
 #' ## get predicted proportions
 #' res <- deconvolution(param)
 #'
@@ -281,14 +283,15 @@ setMethod("deconvolution", signature(object="bisqueParam"), function(object){
                                                    use.overlap=use.overlap)
   predictions <- result$bulk.props
   lpred <- lapply(seq(ncol(predictions)), function(index){predictions[,index]})
-  lr <- .parse_deconvolution_predictions_results(lpred, 
+  return_list <- .parse_deconvolution_predictions_results(lpred, 
                                                  row.names(predictions), 
                                                  colnames(predictions))
   if(object[["return.info"]]){
-    lr <- list(predictions=predictions, result.info=result, 
-               metadata=list(lmd=lparam[["metadata"]], 
-                y.eset=input_y_eset, sc.eset=sc.eset))}
-  return(lr)
+    return_list <- list(
+      predictions=predictions, result.info=result, 
+      metadata=
+        list(lmd=lparam[["metadata"]], y.eset=input_y_eset, sc.eset=sc.eset))}
+  return(return_list)
 })
 
 #' Show generic behavior for object of class \linkS4class{bisqueParam}

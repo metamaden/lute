@@ -58,13 +58,15 @@ into ExpressionSet objects compatible with the main bisque method.
 ## get data
 lexample <- get_decon_example_data_bisque()
 input_y_eset <- lexample[["y.eset"]]
-yi <- exprs(input_y_eset)
-sc.data <- lexample[["sc.eset"]]
+input_yi <- exprs(input_y_eset)
+
 ## get param object
-param <- bisqueParam(
-y.eset=input_y_eset, yi=yi, sc.data=sc.data, batch.variable="SubjectName", 
-celltype.variable="cellType", use.overlap=FALSE
-)
+param <- bisqueParam(y.eset=input_y_eset, yi=input_yi,
+                     sc.data=lexample[["sc.eset"]], 
+                     batch.variable="SubjectName", 
+                     celltype.variable="cellType", 
+                     use.overlap=FALSE)
+
 ## get predicted proportions
 res <- deconvolution(param)
 

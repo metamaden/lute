@@ -72,7 +72,7 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
   
   ## cell types in z, s
   if(is(input_s, "NULL")){input_s <- rep(1, ncol(input_z))}
-  unique.types <- try(colnames(object[["z"]]))
+  unique.types <- try(colnames(input_z))
   condition.z.types <- is(unique.types, "NULL")|is(unique.types, "try-error")
   if(!condition.z.types){
     unique.types <- unique.types[order(unique.types)]
@@ -93,7 +93,8 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
     overlapping.markers <- intersect(markers.y, markers.z)
     y.filter <- rownames(input_y) %in% overlapping.markers
     z.filter <- rownames(input_z) %in% overlapping.markers
-    input_y <- input_y[y.filter,,drop=FALSE]; input_z <- input_z[z.filter,,drop=FALSE]
+    input_y <- input_y[y.filter,,drop=FALSE]
+    input_z <- input_z[z.filter,,drop=FALSE]
     input_y <- input_y[order(match(rownames(input_y), overlapping.markers)),]
     input_z <- input_z[order(match(rownames(input_z), overlapping.markers)),]
   } else{
