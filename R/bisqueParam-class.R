@@ -18,8 +18,9 @@
 #' @examples
 #' ## get data
 #' lexample <- get_decon_example_data_bisque()
-#' input_y_eset <- lexample[["y.eset"]]
-#' input_yi <- exprs(input_y_eset)
+#' input_y_eset <- lexample[["y.eset"]][,seq(10)]
+#' input_yi <- exprs(lexample[["y.eset"]])
+#' input_yi <- input_yi[,c(11:ncol(input_yi))]
 #' 
 #' ## get param object
 #' param <- bisqueParam(y.eset=input_y_eset, yi=input_yi,
@@ -30,7 +31,7 @@
 #' 
 #' ## get predicted proportions
 #' res <- deconvolution(param)
-#' 
+#'
 #' @references Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
 #' Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.
 #' URL: https://CRAN.R-project.org/package=BisqueRNA

@@ -83,7 +83,8 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
     unique.marker.labels <- unique.sample.labels <- NULL
     overlapping.marker.labels <- overlapping.sample.labels <- NULL
     input_y <- lparam[["y"]]; input_yi <- lparam[["yi"]] # get bulk data
-    markers.y <- rownames(y); markers.yi <- rownames(yi) # parse bulk marker IDs
+    markers.y <- rownames(input_y)
+    markers.yi <- rownames(input_yi) # parse bulk marker IDs
     
     ## compare marker labels and subset yi on overlapping markers
     if(is(markers.y, "NULL")|is(markers.yi, "NULL")){

@@ -155,7 +155,7 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
 #' sce.example <- random_sce()
 #' new.param <- findmarkersParam(sce=sce.example, 
 #' celltype.variable="celltype", markers.per.type=5)
-#' new.param
+#' markers <- typemarkers(new.param)
 #' 
 #' @returns Shows object summaries.
 #' 
