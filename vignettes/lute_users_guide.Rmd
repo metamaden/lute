@@ -239,8 +239,17 @@ This User's Guide introduced the `lute` framework for deconvolution, including
 an outline of deconvolution experiment variables, an introduction to the 
 different deconvolution methods for bulk transcriptomics, and a small runnable
 example showing how to access the NNLS algorithm by calling the `deconvolution`
-generic on an object of class `nnlsParam`. If you found this guide useful, you 
-may also find the other vignettes included in `lute` to be helpful.
+generic on an object of class `nnlsParam`.
+
+If you found this guide useful, you may also find the other vignettes included 
+in `lute` to be helpful. The vignette "Pseudobulk cell size rescaling example" 
+shows a small example experiment contrasting predictions with and without using 
+cell scale factors using real human brain single-nucleus RNA-seq data accessed 
+from the `scRNAseq` package.
+
+More background about cell scale factors can be found in the 
+@maden_challenges_2023 commentary, and examples of their uses can be read about 
+in @monaco_rna-seq_2019, @racle_epic_2020, and @sosina_strategies_2021.
 
 # Session Info
 
