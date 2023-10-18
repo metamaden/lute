@@ -1,5 +1,5 @@
 Package: lute
-Version: 0.99.7
+Version: 0.99.8
 Title: Framework for cell size scale factor normalized bulk transcriptomics deconvolution experiments
 Authors@R: c(person(c("Sean", "K"), "Maden", role = c("cre", "aut"), 
     email = "maden.sean@gmail.com", comment = c(ORCID = "0000-0002-2212-4894")),
@@ -22,7 +22,9 @@ Imports:
     S4Vectors,
     Biobase,
     scran,
-    dplyr
+    dplyr,
+    scRNAseq,
+    ggplot2
 Suggests:
     nnls, 
     knitr,
@@ -35,9 +37,7 @@ Suggests:
     AnnotationHub,
     DelayedMatrixStats,
     BisqueRNA,
-    DelayedArray,
-    ggplot2,
-    scRNAseq
+    DelayedArray
 VignetteBuilder:
     knitr
 biocViews: RNASeq, Sequencing, SingleCell, Coverage, Transcriptomics, Normalization
