@@ -13,20 +13,20 @@
 #' @rdname findmarkersParam-class
 #' @seealso \linkS4class{typemarkersParam}
 #' 
-#' @param assay.name Name of expression matrix in SingleCellExperiment assays 
+#' @param assayName Name of expression matrix in SingleCellExperiment assays 
 #' (e.g. "counts").
-#' @param sce Object of type SingleCellExperiment (see 
+#' @param singleCellExperiment Object of type SingleCellExperiment (see 
 #' \code{?SingleCellExperiment}).
-#' @param celltype.variable Name of cell type variable in SingleCellExperiment 
+#' @param cellTypeVariable Name of cell type variable in SingleCellExperiment 
 #' coldata.
-#' @param test.type Test type (see \code{?findMarkers} for options).
+#' @param testType Test type (see \code{?findMarkers} for options).
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' sce.example <- random_sce()
-#' new.param <- findmarkersParam(sce=sce.example, 
-#' celltype.variable="celltype", markers.per.type=5)
-#' markers <- typemarkers(new.param)
+#' exampleList <- get_decon_example_data()
+#' singleCellExperimentExample <- random_singleCellExperiment()
+#' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
+#' cellTypeVariable="celltype", markersPerType=5)
+#' markers <- typemarkers(newParam)
 #' 
 #' @aliases 
 #' FindmarkersParam-class, findMarkersParam-class
@@ -34,24 +34,24 @@
 #' @returns New object.
 #'
 setClass("findmarkersParam", contains="typemarkersParam", 
-         slots=c(assay.name="character", 
-                   sce="SingleCellExperiment",
-                   celltype.variable="character",
-                   test.type="character"))
+         slots=c(assayName="character", 
+                 singleCellExperiment="SingleCellExperiment",
+                 cellTypeVariable="character",
+                 testType="character"))
 
 #' Make new object of class findmarkersParam
 #'
 #' Main constructor for class \linkS4class{findmarkersParam}.
 #'
-#' @param assay.name Name of expression matrix in SingleCellExperiment assays 
+#' @param assayName Name of expression matrix in SingleCellExperiment assays 
 #' (e.g. "counts").
-#' @param sce Object of type SingleCellExperiment (see 
+#' @param singleCellExperiment Object of type SingleCellExperiment (see 
 #' \code{?SingleCellExperiment}).
-#' @param celltype.variable Name of cell type variable in SingleCellExperiment 
+#' @param cellTypeVariable Name of cell type variable in SingleCellExperiment 
 #' coldata.
-#' @param markers.per.type Number of top markers to get per cell type.
-#' @param test.type Test type (see \code{?findMarkers} for options).
-#' @param return.info Whether to return metadata and original method outputs 
+#' @param markersPerType Number of top markers to get per cell type.
+#' @param testType Test type (see \code{?findMarkers} for options).
+#' @param returnInfo Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
 #' @returns Object of class \linkS4class{findmarkersParam}
@@ -62,21 +62,22 @@ setClass("findmarkersParam", contains="typemarkersParam",
 #' implemented as \code{scran::findMarkers()}.
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' sce.example <- random_sce()
-#' new.param <- findmarkersParam(sce=sce.example, 
-#' celltype.variable="celltype", markers.per.type=5)
-#' markers <- typemarkers(new.param)
+#' exampleList <- get_decon_example_data()
+#' singleCellExperimentExample <- random_singleCellExperiment()
+#' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
+#' cellTypeVariable="celltype", markersPerType=5)
+#' markers <- typemarkers(newParam)
 #' 
 #' @export
-findmarkersParam <- function(sce, assay.name="counts", 
-                             celltype.variable="cellType",
-                             test.type="wilcox",
-                             markers.per.type=20, 
-                             return.info=FALSE) {
-  new("findmarkersParam", 
-      sce=sce, assay.name=assay.name, celltype.variable=celltype.variable,
-      test.type=test.type, markers.per.type=markers.per.type, return.info=return.info)
+findmarkersParam <- function(singleCellExperiment, 
+                             assayName="counts", 
+                             cellTypeVariable="cellType",
+                             testType="wilcox",
+                             markersPerType=20, 
+                             returnInfo=FALSE) {
+  new("findmarkersParam", singleCellExperiment=singleCellExperiment, 
+      assayName=assayName, cellTypeVariable=cellTypeVariable, testType=testType, 
+      markersPerType=markersPerType, returnInfo=returnInfo)
 }
 
 #' Cell type markers method for findmarkersParam
@@ -88,60 +89,64 @@ findmarkersParam <- function(sce, assay.name="counts",
 #'
 #' @details Takes an object of class \linkS4class{findmarkersParam} as input, 
 #' returning either a vector of cell type gene markers, or (if 
-#' \code{return.info == TRUE}) a list containing such a vector along with 
+#' \code{returnInfo == TRUE}) a list containing such a vector along with 
 #' original function outputs.
 #' 
 #' @importFrom scran findMarkers
 #' @importFrom dplyr %>%
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' sce.example <- random_sce()
-#' new.param <- findmarkersParam(sce=sce.example, 
-#' celltype.variable="celltype", markers.per.type=5)
-#' markers <- typemarkers(new.param)
+#' exampleList <- get_decon_example_data()
+#' singleCellExperimentExample <- random_singleCellExperiment()
+#' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
+#' cellTypeVariable="celltype", markersPerType=5)
+#' markers <- typemarkers(newParam)
 #'
 #' @returns Returns the top available markers, with type-specific marker filters,
 #' as either a vector of marker IDs or a results list.
 #'
 #' @export
 setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
-  sce <- object[["sce"]]
-  celltype.variable <- object[["celltype.variable"]]
-  assay.name <- object[["assay.name"]]
-  markers.per.type <- object[["markers.per.type"]]
-  test.type <- object[["test.type"]]
+  singleCellExperiment <- object[["singleCellExperiment"]]
+  cellTypeVariable <- object[["cellTypeVariable"]]
+  assayName <- object[["assayName"]]
+  markersPerType <- object[["markersPerType"]]
+  testType <- object[["testType"]]
   ## get marker results
-  list.result <- list.marker.table <- list(); markers.filter <- c()
-  unique.cell.types <- sce[[celltype.variable]] %>% as.character() %>% unique()
-  for(type in unique.cell.types){
-    scef <- sce[!rownames(sce) %in% markers.filter,]
-    message("selecting among ",nrow(scef)," genes for markers of type: ", type, "...")
-    list.result[[type]] <- findMarkers(x=scef, 
-                                        group=sce[[celltype.variable]],
-                                        assay.type=assay.name,
-                                        test.type=test.type)[[type]]
-    df_iter <- list.result[[type]][,seq(4)]
-    summary.colname <- colnames(df_iter)[grepl("summary\\..*", colnames(df_iter))]
+  resultList <- markerTableList <- list(); markersFilter <- c()
+  uniqueCellTypes <- singleCellExperiment[[cellTypeVariable]] %>% 
+    as.character() %>% unique()
+  for(type in uniqueCellTypes){
+    singleCellExperiment <- 
+      singleCellExperiment[!rownames(singleCellExperiment) %in% markersFilter,]
+    message("selecting among ",nrow(singleCellExperiment),
+            " genes for markers of type: ", type, "...")
+    resultList[[type]] <- findMarkers(x=singleCellExperiment, 
+                                      group=singleCellExperiment[[cellTypeVariable]],
+                                      assay.type=assayName,
+                                      testType=testType)[[type]]
+    dfIterate <- resultList[[type]][,seq(4)]
+    summary.colname <- 
+      colnames(dfIterate)[grepl("summary\\..*", colnames(dfIterate))]
     new.colname <- paste0("abs.", summary.colname)
-    df_iter$abs.summary <- df_iter[,summary.colname] %>% as.numeric() %>% abs()
-    df_iter$cellType.target <- type
-    df_iter$gene <- rownames(df_iter)
-    df_iter <- as.data.frame(df_iter)
+    dfIterate$abs.summary <- 
+      dfIterate[,summary.colname] %>% as.numeric() %>% abs()
+    dfIterate$cellType.target <- type
+    dfIterate$gene <- rownames(dfIterate)
+    dfIterate <- as.data.frame(dfIterate)
     ## get filtered markers
-    list.marker.table[[type]] <- df_iter %>% dplyr::arrange(abs.summary) %>% 
-      dplyr::top_n(n=markers.per.type) %>% as.data.frame()
-    markers.filter <- list.marker.table[[type]]$gene
+    markerTableList[[type]] <- dfIterate %>% dplyr::arrange(abs.summary) %>% 
+      dplyr::top_n(n=markersPerType) %>% as.data.frame()
+    markersFilter <- markerTableList[[type]]$gene
   }
-  top.marker.table <- do.call(rbind, list.marker.table) %>% as.data.frame()
-  top.markers.vector <- top.marker.table$gene
-  ## parse return.info
-  return.list <- top.markers.vector %>% unique()
-  if(object[["return.info"]]){
-    return.list <- list(markers=top.markers.vector,
-                        result.info=marker.table,
-                        metadata=object)}
-  return(return.list)
+  topMarkerTable <- do.call(rbind, markerTableList) %>% as.data.frame()
+  topMarkersVector <- topMarkerTable$gene
+  ## parse returnInfo
+  returnList <- topMarkersVector %>% unique()
+  if(object[["returnInfo"]]){
+    returnList <- list(
+      markers=topMarkersVector, result.info=markerTable, metadata=object)}
+  return(returnList)
 })
 
 #' Show generic behavior for object of class \linkS4class{findmarkersParam}
@@ -151,11 +156,11 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
 #' \linkS4class{findmarkersParam}
 #' 
 #' @examples
-#' lexample <- get_decon_example_data()
-#' sce.example <- random_sce()
-#' new.param <- findmarkersParam(sce=sce.example, 
-#' celltype.variable="celltype", markers.per.type=5)
-#' markers <- typemarkers(new.param)
+#' exampleList <- get_decon_example_data()
+#' singleCellExperimentExample <- random_singleCellExperiment()
+#' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
+#' cellTypeVariable="celltype", markersPerType=5)
+#' markers <- typemarkers(newParam)
 #' 
 #' @returns Shows object summaries.
 #' 
