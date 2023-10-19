@@ -116,7 +116,7 @@ se_to_sce <- function(summarizedExperiment){
 #' 
 #' @examples
 #' expressionSet <- get_decon_example_data_bisque()$singleCellExpressionSet
-#' eset_to_se(expressionSet "counts")
+#' eset_to_se(expressionSet, "counts")
 #' 
 #' @export
 eset_to_se <- function(expressionSet, assayName="counts"){
