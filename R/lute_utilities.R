@@ -242,10 +242,10 @@ getDeconvolutionExampleData <- function(
 #' @importFrom BiocGenerics counts
 #' 
 #' @examples
-#' example.data <- getDeconvolutionExampleData()
+#' exampleData <- getDeconvolutionExampleDataBisque()
 #'
 #' @export
-getDeconvolutionExampleData_bisque <- function(numberBulkSamples=100,
+getDeconvolutionExampleDataBisque <- function(numberBulkSamples=100,
                                                numberMarkers=1000, 
                                                numberCells=1000, 
                                                numberType=2){
@@ -272,12 +272,12 @@ getDeconvolutionExampleData_bisque <- function(numberBulkSamples=100,
     assayData=counts(singleCellExperiment), 
     phenoData=AnnotatedDataFrame(dfReferenceExpressionPheno))
   rownames(referenceExpressionSet) <- rownames(bulkExpressionSet)
-  returnList <- list(bulkExpressionSet=bulkExpressionSet, 
-                      sc.eset=referenceExpressionSet)
+  returnList <- list(bulkExpressionSet=bulkExpressionSet,
+                     singleCellExpressionSet=referenceExpressionSet)
   return(returnList)
 }
 
-#' getDeconvolutionExampleData_scdc
+#' getDeconvolutionExampleDataSCDC
 #' 
 #' Get example data for SCDC
 #'
@@ -288,10 +288,10 @@ getDeconvolutionExampleData_bisque <- function(numberBulkSamples=100,
 #' @importFrom BiocGenerics counts
 #' 
 #' @examples
-#' example.data <- getDeconvolutionExampleData()
+#' exampleData <- getDeconvolutionExampleDataSCDC()
 #' 
 #' @export
-getDeconvolutionExampleData_scdc <- function(){
+getDeconvolutionExampleDataSCDC <- function(){
   ## get bulkExpressionSet
   bulkExpression <- getDeconvolutionExampleData()[["y"]]
   bulkExpression <- cbind(bulkExpression, bulkExpression, bulkExpression, 
@@ -317,8 +317,9 @@ getDeconvolutionExampleData_scdc <- function(){
   rownames(referenceExpressionSet) <- rownames(bulkExpressionSet)
   
   ## return
-  returnList <- list(bulkExpressionSet=bulkExpressionSet, 
-                      singleCellExpressionSet=referenceExpressionSet)
+  returnList <- list(
+    bulkExpressionSet=bulkExpressionSet, 
+    singleCellExpressionSet=referenceExpressionSet)
   return(returnList)
 }
 
@@ -371,9 +372,8 @@ getDeconvolutionExampleData_music2 <- function(){
 #' (e.g. "sample1", "sample2", etc.).
 #'
 #'
-.parse_deconvolution_predictions_results <- function(listPred, 
-                                                     columnLabels, 
-                                                     rowLabels){
+.parseDeconvolutionPredictionsResults <- function(listPred, columnLabels, 
+                                                  rowLabels){
   if(is(columnLabels, "NULL")){
     columnLabels <- seq(length(listPred[[1]]))}
   if(is(rowLabels, "NULL")){
