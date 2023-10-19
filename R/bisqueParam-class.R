@@ -25,9 +25,9 @@
 #' ## get param object
 #' param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, bulkExpression=bulkExpression,
 #'                      singleCellExperimentData=exampleList[["singleCellExpressionSet"]], 
-#'                      batch.variable="SubjectName", 
-#'                      celltype.variable="cellType", 
-#'                      use.overlap=FALSE)
+#'                      batchVariable="SubjectName", 
+#'                      cellTypeVariable="cellType", 
+#'                      useOverlap=FALSE)
 #' 
 #' ## get predicted proportions
 #' res <- deconvolution(param)
@@ -45,46 +45,46 @@
 #' @aliases 
 #' BisqueParam-class
 #'
-setClass("bisqueParam", contains="independentbulkParam", 
-         slots=c(bulkExpressionSet="ExpressionSet", 
+setClass("bisqueParam", containsizeFactor="independentbulkParam", 
+         slotsizeFactor=c(bulkExpressionSet="ExpressionSet", 
                  singleCellExpressionSet="ExpressionSet", 
                  assayName="character", 
-                 batch.variable="character", 
-                 celltype.variable="character", 
-                 use.overlap="logical"))
+                 batchVariable="character", 
+                 cellTypeVariable="character", 
+                 useOverlap="logical"))
 
 #' Make new object of class bisqueParam
 #'
 #' Main constructor for class \linkS4class{bisqueParam}.
 #'
-#' @param y Bulk mixed signals matrix of samples, which can be matched to single-cell samples.
-#' @param yi Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
+#' @param bulkExpressionBulk mixed signals matrix of samples, which can be matched to single-cell samples.
+#' @param bulkExpressionIndependent Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
 #' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
 #' provided ExpressionSet containing single-cell data.
-#' @param s Cell size factor transformations of length equal to the K cell types to deconvolve.
+#' @paramsizeFactorCell size factor transformations of length equal to the K cell types to deconvolve.
 #' @param bulkExpressionSet ExpressionSet of bulk mixed signals.
-#' @param sc.data SummarizedExperiment-type object of single-cell transcriptomics data. Accepts
+#' @param scData SummarizedExperiment-type object of single-cell transcriptomics data. Accepts
 #' ExpressionSet, SummarizedExperiment, and SingleCellExperiment object types.
 #' @param assayName Expression data type (e.g. counts, logcounts, tpm, etc.).
-#' @param batch.variable Name of variable identifying the batches in singleCellExpressionSet pData/coldata.
-#' @param celltype.variable Name of cell type labels variable in singleCellExpressionSet pData/coldata.
-#' @param use.overlap Whether to deconvolve samples overlapping bulk and sc 
+#' @param batchVariable Name of variable identifbulkExpressionIndependentng the batches in singleCellExpressionSet pData/coldata.
+#' @param cellTypeVariable Name of cell type labels variable in singleCellExpressionSet pData/coldata.
+#' @param useOverlap Whether to deconvolve samples overlapping bulk and sc 
 #' esets (logical, FALSE).
 #' @param return.info Whether to return metadata and original method outputs with predicted proportions.
 #' 
 #' @examples
 #' ## get data
-#' lexample <- get_decon_example_data_bisque()
-#' input_y_eset <- lexample[["bulkExpressionSet"]][,seq(10)]
-#' input_yi <- exprs(lexample[["bulkExpressionSet"]])
-#' input_yi <- input_yi[,c(11:ncol(input_yi))]
+#' exampleList <- get_decon_example_data_bisque()
+#' bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
+#' bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
+#' bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 #' 
 #' ## get param object
-#' param <- bisqueParam(bulkExpressionSet=input_y_eset, yi=input_yi,
-#'                      sc.data=lexample[["singleCellExpressionSet"]], 
-#'                      batch.variable="SubjectName", 
-#'                      celltype.variable="cellType", 
-#'                      use.overlap=FALSE)
+#' param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, bulkExpressionIndependent=bulkExpression,
+#'                      scData=exampleList[["singleCellExpressionSet"]], 
+#'                      batchVariable="SubjectName", 
+#'                      cellTypeVariable="cellType", 
+#'                      useOverlap=FALSE)
 #' 
 #' ## get predicted proportions
 #' res <- deconvolution(param)
@@ -95,156 +95,171 @@ setClass("bisqueParam", contains="independentbulkParam",
 #' into ExpressionSet objects compatible with the main bisque method.
 #' 
 #' @export
-bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL, 
-                        bulkExpressionSet=NULL, sc.data=NULL, assayName="counts", 
-                        batch.variable="batch.id", 
-                        celltype.variable="celltype", 
-                        use.overlap=FALSE, return.info=FALSE) {
-  input_y <- y; input_yi <- yi; input_z <- z; input_s <- s; 
-  input_y_eset <- bulkExpressionSet
+bisqueParam <- function(bulkExpression=NULL, 
+                        bulkExpressionIndependent=NULL, 
+                        referenceExpression=NULL, sizeFactor=NULL, 
+                        bulkExpressionSet=NULL, scData=NULL, assayName="counts", 
+                        batchVariable="batch.id", 
+                        cellTypeVariable="celltype", 
+                        useOverlap=FALSE, return.info=FALSE) {
   ## check bulkExpressionSet/y
-  list.y <- .parse_y(input_y, input_y_eset)
-  ## parse sc.data
-  singleCellExpressionSet <- .parse_sc(sc.data, assayName)
+  list.bulkExpression<- .parseBulkExpression(bulkExpression, bulkExpressionSet)
+  ## parse scData
+  singleCellExpressionSet <- .parseSingleCellData(scData, assayName)
   ## parse z data
-  list.z <- .parse_z(singleCellExpressionSet, input_z, assayName, batch.variable, 
-                     celltype.variable)
+  listReferenceExpression <- .parseReferenceExpression(
+    singleCellExpressionSet, referenceExpression, assayName, batchVariable, cellTypeVariable)
   ## parse s
-  input_s <- .parse_s(list.z[["z"]], input_s)
+  sizeFactor <- .parseCellSize(listReferenceExpression[["referenceExpression"]], sizeFactor)
   ## parse batch ids in bulk and sc
-  list.batchid <- .parse_batches(batch.variable=batch.variable,
-                                 bulkExpressionSet=bulkExpressionSet, id.sc=list.z[["id.sc"]])
+  listBatchID <- .parseBatches(batchVariable=batchVariable,
+                                 bulkExpressionSet=bulkExpressionSet, 
+                                idSC=listReferenceExpression[["idSC"]])
   ## parse independent bulk samples
-  input_y <- .parse_independent_bulk(
-    id.onlybulk=list.batchid[["id.onlybulk"]], y=list.y[["y"]], 
-    yi=input_yi, bulkExpressionSet=list.y[["bulkExpressionSet"]])
+  bulkExpression <- .parseBulkExpressionIndependent(
+    idOnlyBulk=listBatchID[["idOnlyBulk"]], 
+    bulkExpression=listBulk[["bulkExpression"]], 
+    bulkExpressionIndependent=bulkExpression, 
+    bulkExpressionSet=listBulk[["bulkExpressionSet"]])
   
-  new("bisqueParam", y=input_y, yi=input_yi, z=list.z[["z"]], s=input_s, 
-      bulkExpressionSet=list.y[["bulkExpressionSet"]], singleCellExpressionSet=singleCellExpressionSet, 
-      assayName=assayName, batch.variable=batch.variable, 
-      celltype.variable=celltype.variable, 
-      use.overlap=use.overlap, return.info=return.info)
+  new("bisqueParam", bulkExpression=bulkExpression, 
+      bulkExpressionIndependent=bulkExpressionIndependent, 
+      referenceExpression=listReferenceExpression[["referenceExpression"]], 
+      sizeFactor=sizeFactor, 
+      bulkExpressionSet=listBulk[["bulkExpressionSet"]], 
+      singleCellExpressionSet=singleCellExpressionSet, 
+      assayName=assayName, 
+      batchVariable=batchVariable, 
+      cellTypeVariable=cellTypeVariable, 
+      useOverlap=useOverlap, 
+      return.info=return.info)
 }
 
 #'
-.parse_independent_bulk <- function(id.onlybulk=NULL, y=NULL,
-                                    yi=NULL, bulkExpressionSet=NULL){
-  input_y <- y; input_yi <- yi; input_y_eset <- bulkExpressionSet
-  stop.option <- FALSE
-  if(length(id.onlybulk) == 0){
-    if(is(input_yi, "NULL")){
-      stop.option <- TRUE
+.parseBulkExpressionIndependent <- function(idOnlyBulk=NULL, 
+                                            bulkExpression=NULL,
+                                            bulkExpressionIndependent=NULL, 
+                                            bulkExpressionSet=NULL){
+  stopOption <- FALSE
+  if(length(idOnlyBulk) == 0){
+    if(is(bulkExpression, "NULL")){
+      stopOption <- TRUE
     } else{}
   } else{
-    if(is(input_yi, "NULL")){
-      message("Making yi from provided y bulk...")
-      filter.yi <- colnames(input_y_eset) %in% id.onlybulk
-      input_yi <- exprs(input_y_eset)[,filter.yi]
-      colnames(input_yi) <- colnames(input_y_eset)[filter.yi]
-      rownames(input_yi) <- rownames(input_y_eset)
+    if(is(bulkExpressionIndependent, "NULL")){
+      message("Making bulkExpressionIndependent from provided bulkExpression...")
+      filterBulkExpressionIndependent <- 
+        colnames(bulkExpressionSet) %in% idOnlyBulk
+      bulkExpressionIndependent <- 
+        exprs(bulkExpressionSet)[,filterBulkExpressionIndependent]
+      colnames(bulkExpressionIndependent) <- 
+        colnames(bulkExpressionSet)[filterBulkExpressionIndependent]
+      rownames(bulkExpressionIndependent) <- rownames(bulkExpressionSet)
     } else{}
   }
-  if(stop.option){stop("Error parsing independent bulk data.")}
-  filter.bulk.samples.y <- colnames(input_y) %in% colnames(input_yi)
-  input_y <- input_y[,!filter.bulk.samples.y]
-  return(input_y)
+  if(stopOption){stop("Error parsing independent bulk data.")}
+  filterBulkSamples<- 
+    colnames(bulkExpression) %in% colnames(bulkExpressionIndependent)
+  bulkExpression<- bulkExpression[,!filterBulkSamples]
+  return(bulkExpression)
 }
 
 #'
-.parse_batches <- function(batch.variable=NULL, bulkExpressionSet=NULL,
-                           id.sc=NULL){
-  stop.option <- FALSE; input_y_eset <- bulkExpressionSet
-  message("Checking batch ids in bulk and sc eset...")
-  if(batch.variable %in% colnames(pData(input_y_eset))){
-    id.bulk <- unique(input_y_eset[[batch.variable]])
+.parseBatches <- function(batchVariable=NULL, bulkExpressionSet=NULL,idSC=NULL){
+  stopOption <- FALSE
+  message("Checking batch ids in bulk and sc esets...")
+  if(batchVariable %in% colnames(pData(bulkExpressionSet))){
+    idBulk <- unique(bulkExpressionSet[[batchVariable]])
   } else{
-    stop.option <- TRUE
+    stopOption <- TRUE
   }
-  id.overlap <- intersect(id.sc, id.bulk)
-  id.unique <- unique(c(id.sc, id.bulk))
-  id.onlybulk <- id.bulk[!id.bulk %in% id.overlap]
-  id.onlysc <- id.sc[!id.sc %in% id.overlap]
-  if(length(id.overlap) == 0){stop.option <- TRUE}
-  if(stop.option){stop("Error parsing batches.")}
-  return(list(id.sc=id.sc, 
-              id.bulk=id.bulk, 
-              id.overlap=id.overlap, 
-              id.unique=id.unique, 
-              id.onlybulk=id.onlybulk, 
-              id.onlysc=id.onlysc))
+  idOverlap <- intersect(idSC, idBulk)
+  idUnique <- unique(c(idSC, idBulk))
+  idOnlyBulk <- idBulk[!idBulk %in% idOverlap]
+  idOnlySC <-idSC[!idSC %in% idOverlap]
+  if(length(idOverlap) == 0){stopOption <- TRUE}
+  if(stopOption){stop("Error parsing batches.")}
+  return(
+    list(idSC=idSC, idBulk=idBulk, idOverlap=idOverlap,
+         idUnique=idUnique, idOnlyBulk=idOnlyBulk, idOnlySC=idOnlySC)
+  )
 }
 
 #'
-.parse_s <- function(z=NULL, s=NULL){
-  input_z <- z; input_s <- s
-  unique.types <- colnames(input_z)
-  unique.types <- unique.types[order(unique.types)]
-  if(is(input_s, "NULL")){
-    input_s <- rep(1, ncol(input_z)); names(input_s) <- unique.types
+.parseCellSize <- function(referenceExpression=NULL, sizeFactor=NULL){
+  uniqueTypes <- colnames(referenceExpression)
+  uniqueTypes <- uniqueTypes[order(uniqueTypes)]
+  if(is(sizeFactor, "NULL")){
+    sizeFactor <- rep(1, ncol(referenceExpression))
+    names(sizeFactor) <- uniqueTypes
   }
-  return(s=input_s)
+  return(sizeFactor=sizeFactor)
 }
 
 #'
-.parse_z <- function(singleCellExpressionSet=NULL, z=NULL,
-                     assayName="counts",
-                     batch.variable="group",
-                     celltype.variable="celltype"){
-  stop.option <- FALSE; input_z <- z
-  if(!celltype.variable %in% colnames(pData(singleCellExpressionSet))){
-    stop.option <- TRUE
+.parseReferenceExpression <- function(singleCellExpressionSet=NULL, 
+                                      referenceExpression=NULL, 
+                                      assayName="counts",
+                                      batchVariable="group",
+                                      cellTypeVariable="celltype"){
+  stopOption <- FALSE
+  if(!cellTypeVariable %in% colnames(pData(singleCellExpressionSet))){
+    stopOption <- TRUE
   }
-  if(is(z, "NULL")){
-    sce <- eset_to_sce(singleCellExpressionSet, "counts")
-    input_z <- get_z_from_sce(sce=sce, 
-                        assayName=assayName, 
-                        celltype.variable=celltype.variable)
+  if(is(referenceExpression, "NULL")){
+    singleCellExperiment <- eset_to_sce(singleCellExpressionSet, "counts")
+    referenceExpression <- get_z_from_sce(sce=sce, assayName=assayName, 
+                                          cellTypeVariable=cellTypeVariable)
   }
-  if(batch.variable %in% colnames(pData(singleCellExpressionSet))){
-    id.sc <- unique(singleCellExpressionSet[[batch.variable]])
+  if(batchVariable %in% colnames(pData(singleCellExpressionSet))){
+   idSC <- unique(singleCellExpressionSet[[batchVariable]])
   } else{
-    stop.option <- TRUE
+    stopOption <- TRUE
   }
-  if(stop.option){stop("Error parsing Z data.")}
-  return(list(sce=sce, z=input_z, id.sc=id.sc))
+  if(stopOption){stop("Error parsing Z data.")}
+  return(
+    list(singleCellExperiment=singleCellExperiment,
+         referenceExpression=referenceExpression, idSC=idSC)
+    )
 }
 
 #'
-.parse_sc <- function(sc.data=NULL, assayName=assayName){
-  stop.option <- FALSE
-  if(is(sc.data, "SingleCellExperiment")){
-    singleCellExpressionSet <- sce_to_eset(sc.data, assayName=assayName)
-  } else if(is(sc.data, "SummarizedExperiment")){
-    singleCellExpressionSet <- se_to_eset(sc.data, assayName=assayName)
-  } else if(is(sc.data, "ExpressionSet")){
-    singleCellExpressionSet <- sc.data
-  } else if(is(sc.data, "NULL")){
-    stop.option <- TRUE
+.parseSingleCellData <- function(scData=NULL, assayName=assayName){
+  stopOption <- FALSE
+  if(is(scData, "SingleCellExperiment")){
+    singleCellExpressionSet <- sce_to_eset(scData, assayName=assayName)
+  } else if(is(scData, "SummarizedExperiment")){
+    singleCellExpressionSet <- se_to_eset(scData, assayName=assayName)
+  } else if(is(scData, "ExpressionSet")){
+    singleCellExpressionSet <- scData
+  } else if(is(scData, "NULL")){
+    stopOption <- TRUE
   } else{
-    stop.option <- TRUE
+    stopOption <- TRUE
   }
-  if(stop.option){stop("Error parsing sc data.")}
+  if(stopOption){stop("Error parsing sc data.")}
   return(singleCellExpressionSet)
 }
 
 #'
-.parse_y <- function(y=NULL, bulkExpressionSet=NULL){
-  input_y <- y; input_y_eset <- bulkExpressionSet
-  if(is(input_y, "NULL")){
-    input_y <- as.matrix(exprs(input_y_eset))
+.parseBulkExpression<- function(bulkExpression=NULL, bulkExpressionSet=NULL){
+  if(is(bulkExpression, "NULL")){
+    bulkExpression <- as.matrix(exprs(bulkExpressionSet))
   } else{
-    if(is(input_y_eset, "NULL")){
-      input_y_eset <- get_eset_from_matrix(
-        mat=input_y, batch.variable="SubjectName")
+    if(is(bulkExpressionSet, "NULL")){
+      bulkExpressionSet <- get_eset_from_matrix(
+        mat=bulkExpression, batchVariable="SubjectName")
       ## need at least 2 columns/samples to pass to bisque
-      if(ncol(input_y_eset) == 1){
-        sample.name <- colnames(input_y_eset)
-        input_y_eset <- cbind(input_y_eset, input_y_eset)
-        colnames(input_y_eset) <- c(sample.name, paste0(sample.name, "_rep1"))
+      if(ncol(bulkExpressionSet) == 1){
+        sampleName <- colnames(bulkExpressionSet)
+        bulkExpressionSet <- 
+          cbind(bulkExpressionSet, bulkExpressionSet)
+        colnames(bulkExpressionSet) <- 
+          c(sampleName, paste0(sampleName, "_rep1"))
       }
     }
   }
-  return(list(y=input_y, bulkExpressionSet=input_y_eset))
+  return(list(bulkExpression=bulkExpression, bulkExpressionSet=bulkExpressionSet))
 }
 
 #' Deconvolution method for bisqueParam
@@ -262,17 +277,17 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #' 
 #' @examples
 #' ## get data
-#' lexample <- get_decon_example_data_bisque()
-#' input_y_eset <- lexample[["bulkExpressionSet"]][,seq(10)]
-#' input_yi <- exprs(lexample[["bulkExpressionSet"]])
-#' input_yi <- input_yi[,c(11:ncol(input_yi))]
+#' exampleList <- get_decon_example_data_bisque()
+#' bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
+#' bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
+#' bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 #' 
 #' ## get param object
-#' param <- bisqueParam(bulkExpressionSet=input_y_eset, yi=input_yi,
-#'                      sc.data=lexample[["singleCellExpressionSet"]], 
-#'                      batch.variable="SubjectName", 
-#'                      celltype.variable="cellType", 
-#'                      use.overlap=FALSE)
+#' param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, bulkExpressionIndependent=bulkExpression,
+#'                      scData=exampleList[["singleCellExpressionSet"]], 
+#'                      batchVariable="SubjectName", 
+#'                      cellTypeVariable="cellType", 
+#'                      useOverlap=FALSE)
 #' 
 #' ## get predicted proportions
 #' res <- deconvolution(param)
@@ -287,24 +302,29 @@ bisqueParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #'
 #' @export
 setMethod("deconvolution", signature(object="bisqueParam"), function(object){
-  lparam <- callNextMethod()
-  input_y_eset <- object[["bulkExpressionSet"]]
+  parametersList <- callNextMethod()
+  bulkExpressionSet <- object[["bulkExpressionSet"]]
   singleCellExpressionSet <- object[["singleCellExpressionSet"]]
-  use.overlap <- object[["use.overlap"]]
-  result <- BisqueRNA::ReferenceBasedDecomposition(bulk.eset=input_y_eset, 
-                                                   singleCellExpressionSet=singleCellExpressionSet, 
-                                                   use.overlap=use.overlap)
+  useOverlap <- object[["useOverlap"]]
+  result <- BisqueRNA::ReferenceBasedDecomposition(
+    bulk.eset=bulkExpressionSet, singleCellExpressionSet=singleCellExpressionSet, 
+    useOverlap=useOverlap
+  )
   predictions <- result$bulk.props
-  lpred <- lapply(seq(ncol(predictions)), function(index){predictions[,index]})
-  return_list <- .parse_deconvolution_predictions_results(lpred, 
+  predictionsList <- lapply(seq(ncol(predictions)), function(index){predictions[,index]})
+  returnList <- .parsedeconvolution_predictions_results(predictionsList, 
                                                  row.names(predictions), 
                                                  colnames(predictions))
   if(object[["return.info"]]){
-    return_list <- list(
-      predictions=predictions, result.info=result, 
+    returnList <- list(
+      predictionsizeFactor=predictions, 
+      resultInfo=result, 
       metadata=
-        list(lmd=lparam[["metadata"]], bulkExpressionSet=input_y_eset, singleCellExpressionSet=singleCellExpressionSet))}
-  return(return_list)
+        list(metadataList=parametersList[["metadata"]], 
+             bulkExpressionSet=bulkExpressionSet, 
+             singleCellExpressionSet=singleCellExpressionSet))
+  }
+  return(returnList)
 })
 
 #' Show generic behavior for object of class \linkS4class{bisqueParam}
