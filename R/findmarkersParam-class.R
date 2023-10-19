@@ -126,11 +126,11 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
                                       assay.type=assayName,
                                       testType=testType)[[type]]
     dfIterate <- resultList[[type]][,seq(4)]
-    summary.colname <- 
+    summaryColname <- 
       colnames(dfIterate)[grepl("summary\\..*", colnames(dfIterate))]
-    new.colname <- paste0("abs.", summary.colname)
+    newColname <- paste0("abs.", summaryColname)
     dfIterate$abs.summary <- 
-      dfIterate[,summary.colname] %>% as.numeric() %>% abs()
+      dfIterate[,summaryColname] %>% as.numeric() %>% abs()
     dfIterate$cellType.target <- type
     dfIterate$gene <- rownames(dfIterate)
     dfIterate <- as.data.frame(dfIterate)
