@@ -363,16 +363,29 @@ getDeconvolutionExampleData_music2 <- function(){
 }
 
 
+#' getDeconvolutionExampleDataSCDC
+#' 
+#' Get example data for SCDC
 #'
-#'
+
+#' parseDeconvolutionPredictionsResults
+#' 
+#' Gets formatted predicted cell type proportions table from deconvolution 
+#' results list.
+#' 
 #' @param listPred List of cell type proportions predictions.
 #' @param columnLabels Vector of cell type labels 
 #' (e.g. "type1", "type2", etc.).
 #' @param rowLabels Vector of sample id labels 
 #' (e.g. "sample1", "sample2", etc.).
-#'
-#'
-.parseDeconvolutionPredictionsResults <- function(listPred, columnLabels, 
+#' 
+#' @examples
+#' exampleData <- getDeconvolutionExampleData()
+#' 
+#' @returns Example data as list.
+#' 
+#' @export
+parseDeconvolutionPredictionsResults <- function(listPred, columnLabels, 
                                                   rowLabels){
   if(is(columnLabels, "NULL")){
     columnLabels <- seq(length(listPred[[1]]))}

@@ -5,61 +5,63 @@
 \title{lute framework}
 \usage{
 lute(
-  sce = NULL,
-  z = NULL,
-  y = NULL,
-  y.se = NULL,
-  s = NULL,
-  return.info = FALSE,
-  markers.per.type = 20,
-  assay.name = "counts",
-  celltype.variable = "celltype",
-  typemarker.algorithm = "findmarkers",
-  deconvolution.algorithm = "nnls",
+  singleCellExperiment = NULL,
+  referenceExpression = NULL,
+  bulkExpression = NULL,
+  bulkSummarizedExperiment = NULL,
+  cellScaleFactor = NULL,
+  returnInfo = FALSE,
+  markersPerType = 20,
+  assayName = "counts",
+  cellTypeVariable = "celltype",
+  typemarkerAlgorithm = "findmarkers",
+  deconvolutionAlgorithm = "nnls",
   verbose = TRUE
 )
 }
 \arguments{
-\item{sce}{Object of type SingleCellExperiment. Optional (see argument z).}
+\item{singleCellExperiment}{Object of type SingleCellExperiment. Optional (see argument z).}
 
-\item{z}{Signature matrix of cell type-specific signals. Optional (see 
-argument sce).}
+\item{referenceExpression}{Signature matrix of cell type-specific signals. Optional (see 
+argument singleCellExperiment).}
 
-\item{y}{Bulk mixed signals matrix of samples, which can be matched to 
+\item{bulkExpression}{Bulk mixed signals matrix of samples, which can be matched to 
 single-cell samples. Optional (see argument y.se).}
 
-\item{y.se}{SummarizedExperiment or similar data type containing the bulk signals
-matrix in its assays (e.g. accessible with assays(y.se)[[assay.name]] using
-the provided assay.name argument). Optional (see argument y).}
+\item{bulkSummarizedExperiment}{SummarizedExperiment or similar data type containing the bulk signals
+matrix in its assays (e.g. accessible with assays(y.se)[[assayName]] using
+the provided assayName argument). Optional (see argument y).}
 
-\item{s}{Cell size factor transformations of length equal to the K cell types 
-to deconvolve. Optional, if not provided, uses equal weights for types.}
-
-\item{return.info}{Whether to return metadata and original method outputs 
+\item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 
-\item{markers.per.type}{Number of top markers to get per cell type.}
+\item{markersPerType}{Number of top markers to get per cell type.}
 
-\item{assay.name}{Name of expression matrix in sce, and optionally y.se, 
-assays. Optional (e.g. "counts"; see arguments sce, y.se).}
+\item{assayName}{Name of expression matrix in singleCellExperiment, and optionally y.se, 
+assays. Optional (e.g. "counts"; see arguments singleCellExperiment, y.se).}
 
-\item{celltype.variable}{Name of cell type variable in sce coldata.}
+\item{cellTypeVariable}{Name of cell type variable in singleCellExperiment coldata.}
 
-\item{typemarker.algorithm}{Which type-specific marker selection algorithm to 
+\item{typemarkerAlgorithm}{Which type-specific marker selection algorithm to 
 use. If NULL, skips type marker analyses.}
 
-\item{deconvolution.algorithm}{Where deconvolution algorithm to use. If NULL, 
+\item{deconvolutionAlgorithm}{Where deconvolution algorithm to use. If NULL, 
 skips deconvolution.}
 
 \item{verbose}{Whether to show verbose status messages.}
+
+\item{cellScaleFactors}{Cell size factor transformations of length equal to the K cell types 
+to deconvolve. Optional, if not provided, uses equal weights for types.}
 }
 \value{
 A list containing results returned from type marker selection and
 deconvolution runs, with additional information returned if
- \code{return.info == TRUE}.
+ \code{returnInfo == TRUE}.
 }
 \description{
-Perform a deconvolution experiment.
+Obtain cell type markers and proportion predictions from various algorithms. 
+Allows flexible data types and standard application of cell size scale 
+factors.
 }
 \details{
 Main function to use the lute deconvolution framework. Manages data
@@ -67,17 +69,21 @@ conversions and mappings to deconvolution experiment steps, including setup,
 gene marker identification, and main deconvolution runs.
 
 Support is provided for \linkS4class{SummarizedExperiment}-type or 
-matrix-type inputs for the Z signature matrix and Y bulk signals matrix. Note,
+matrix-type inputs for the Z signature matrix (see referenceExpression 
+argument) and Y bulk signals matrix (see bulkExpression arguments). Note,
 both Z and Y need to be provided or derivable in order to run deconvolution.
 }
 \examples{
 # get example bulk data
-y <- get_decon_example_data()$y
+bulkExpression <- getDeconvolutionExampleData()$reference
 
-# get example sce
-sce <- random_sce()[seq(10),]
+# get example singleCellExperiment
+singleCellExperiment <- randomSingleCellExperiment()[seq(10),]
 
 # get framework results
-experiment.results <- lute(sce=sce, y=y, typemarker.algorithm=NULL)
+experiment.results <- lute(
+singleCellExperiment=singleCellExperiment, 
+referenceExpression=referenceExpression, typemarkerAlgorithm=NULL
+)
 
 }
