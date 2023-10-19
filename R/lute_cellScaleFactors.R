@@ -9,8 +9,8 @@
 #'
 #' Retrieves the cell scale factors (csf) reference from the cellScaleFactors package.
 #' 
-#' @param user.celltypes.vector Vector of user-specified cell types.
-#' @param prefer.orthogonal Whether to prefer expression-orthogonal values (if 
+#' @param userCellTypesVector Vector of user-specified cell types.
+#' @param preferOrthogonal Whether to prefer expression-orthogonal values (if 
 #' TRUE, removes expression-based values, but only if alternative value types 
 #' are available).
 #' 
@@ -35,50 +35,48 @@
 #' 
 #' @returns Table of type "data.frame" or "tibble".
 #' @export
-get_csf_reference <- function(user.celltypes.vector=NULL, prefer.orthogonal=TRUE){
-  reference_return <- load_csf_rda()
-  if(prefer.orthogonal){
-    data.source.vector <- unique(reference_return$scale.factor.data.source)
-    orthogonal.sources.vector <- 
-      data.source.vector[!data.source.vector == "expression"]
-    if(length(orthogonal.sources.vector) == 0){
+get_csf_reference <- function(userCellTypesVector=NULL, preferOrthogonal=TRUE){
+  referenceReturn <- load_csf_rda()
+  if(preferOrthogonal){
+    dataSourceVector <- unique(referenceReturn$scale.factor.data.source)
+    orthogonalSourcesVector <- 
+      dataSourceVector[!dataSourceVector == "expression"]
+    if(length(orthogonalSourcesVector) == 0){
       message("No orthogonal data sources. Returning expression scale factors.")
     } else{
-      is.orthogonal <- 
-        reference_return$scale.factor.data.source %in% orthogonal.sources.vector
-      reference_return <- reference_return[is.orthogonal,]
+      isOrthogonal <- 
+        referenceReturn$scale.factor.data.source %in% orthogonalSourcesVector
+      referenceReturn <- referenceReturn[isOrthogonal,]
     }
   }
-  if(!is(user.celltypes.vector, "NULL")){
-    reference_return <- csf_filter_labels(user.celltypes.vector, 
-                                          reference_return)
+  if(!is(userCellTypesVector, "NULL")){
+    referenceReturn <- csf_filter_labels(userCellTypesVector, referenceReturn)
   }
-  return(reference_return)
+  return(referenceReturn)
 }
 
 
 #'
 load_csf_rda <- function(){
   path <- system.file(
-    file.path("rda", "cellScaleFactors.rda"), 
-    package="cellScaleFactors")
+    file.path("rda", "cellScaleFactors.rda"), package="cellScaleFactors")
   return(get(load(path)))
 }
 
 #'
 csf_filter_labels <- function(labels, reference=NULL){
   if(is(reference, "NULL")){reference <- get_csf_reference()}
-  reference.labels <- reference$cell_type
-  df_return <- do.call(rbind, lapply(labels, function(label){
-    filter1 <- grepl(label, reference.labels)
-    filter2 <- grepl(toupper(label), toupper(reference.labels))
-    filter3 <- grepl(label, gsub(" ", "",reference.labels))
-    filter4 <- grepl(label, gsub(" ", "",reference.labels))
+  referenceLabels <- reference$cell_type
+  dfReturn <- do.call(rbind, lapply(labels, function(label){
+    filter1 <- grepl(label, referenceLabels)
+    filter2 <- grepl(toupper(label), toupper(referenceLabels))
+    filter3 <- grepl(label, gsub(" ", "",referenceLabels))
+    filter4 <- grepl(label, gsub(" ", "",referenceLabels))
     filter5 <- grepl(gsub(" ", "", toupper(label)), 
-                     gsub(" ", "", toupper(reference.labels)))
-    label.filter <- filter1|filter2|filter3|filter4|filter5
-    reference[label.filter,,drop=FALSE]
+                     gsub(" ", "", toupper(referenceLabels)))
+    labelFilter <- filter1|filter2|filter3|filter4|filter5
+    reference[labelFilter,,drop=FALSE]
   }))
-  df_return <- as.data.frame(df_return)
-  df_return
+  dfReturn <- as.data.frame(dfReturn)
+  dfReturn
 }

@@ -9,8 +9,8 @@
 #' @include lute_generics.R
 #' @include referencebasedParam-class.R
 #'
-#' @param yi Mixed signals matrix from bulk samples, independent from primary 
-#' mixed signals matrix y.
+#' @param bulkExpressionIndependent Bulk mixed signals matrix of independent 
+#' samples, which should not overlap samples in y.
 #'
 #' @details The main purpose of this class is to compare bulk sample data 
 #' between the passed objects y and yi. Since we assume yi contains the 
@@ -31,14 +31,15 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' 
 #' Function to make a new object of class \linkS4class{independentbulkParam}
 #'
-#' @param y Bulk mixed signals matrix of samples, which can be matched to 
-#' single-cell samples.
-#' @param yi Bulk mixed signals matrix of independent samples, which should not 
-#' overlap samples in y.
-#' @param z Signature matrix of cell type-specific signals. If not provided, can 
-#' be computed from a provided ExpressionSet containing single-cell data.
-#' @param s Cell size factor transformations of length equal to the K cell types 
-#' to deconvolve.
+#' @param bulkExpression Bulk mixed signals matrix of samples, which can be 
+#' matched to single-cell samples.
+#' @param bulkExpressionIndependent Bulk mixed signals matrix of independent 
+#' samples, which should not overlap samples in y.
+#' @param referenceExpression Signature matrix of cell type-specific signals. 
+#' If not provided, can be computed from a provided ExpressionSet containing 
+#' single-cell data.
+#' @param cellSizeFactor Cell sireferenceExpressione factor transformations of 
+#' length equal to the K cell types to deconvolve.
 #' @param return.info Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
@@ -48,16 +49,20 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' @returns New object.
 #'
 #' @export
-independentbulkParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL, 
-                                 return.info=FALSE) {
-  input_y <- y; input_yi <- yi; input_z <- z; input_s <- s
-    if(is(input_y, "NULL")){input_y <- matrix(0)}
-    if(is(input_z, "NULL")){input_z <- matrix(0)}
-    if(is(input_yi, "NULL")){input_yi <- matrix(0)}
-    if(is(input_s, "NULL")){input_s <- rep(1, ncol(input_z))}
+independentbulkParam <- function(y=NULL, yi=NULL, referenceExpression=NULL, 
+                                 s=NULL, return.info=FALSE) {
+    if(is(bulkExpression, "NULL")){bulkExpression <- matrix(0)}
+    if(is(referenceExpression, "NULL")){referenceExpression <- matrix(0)}
+    if(is(bulkExpressionIndependent, "NULL")){
+      bulkExpressionIndependent <- matrix(0)}
+    if(is(cellSizeFactor, "NULL")){
+      cellSizeFactor <- rep(1, ncol(referenceExpression))}
     param <- new("independentbulkParam", 
-                 y=input_y, yi=input_yi, z=input_z, s=input_s, 
-                 return.info=return.info)
+                 bulkExpression=bulkExpression, 
+                 bulkExpressionIndependent=bulkExpressionIndependent, 
+                 referenceExpression=referenceExpression, 
+                 cellSizeFactor=cellSizeFactor, 
+                 returnInfo=returnInfo)
     return(param)
 }
 
@@ -70,7 +75,8 @@ independentbulkParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #' @param object An object of class \linkS4class{independentbulkParam}.
 #'
 #' @details Takes an object of \linkS4class{independentbulkParam} class as 
-#' input, and returns a list with the filtered/checked/parsed experiment objects.
+#' input, and returns a list with the filtered/checked/parsed experiment 
+#' objects.
 #' 
 #' @examples 
 #' new("independentbulkParam")
@@ -79,49 +85,62 @@ independentbulkParam <- function(y=NULL, yi=NULL, z=NULL, s=NULL,
 #'
 #' @export
 setMethod("deconvolution", "independentbulkParam", function(object) {
-    lparam <- callNextMethod()
-    unique.marker.labels <- unique.sample.labels <- NULL
-    overlapping.marker.labels <- overlapping.sample.labels <- NULL
-    input_y <- lparam[["y"]]; input_yi <- lparam[["yi"]] # get bulk data
-    markers.y <- rownames(input_y)
-    markers.yi <- rownames(input_yi) # parse bulk marker IDs
+    parameterList <- callNextMethod()
+    uniqueMarkerLabels <- uniqueSampleLabels <- NULL
+    overlappingMarkerLabels <- overlappingSampleLabels <- NULL
+    bulkExpression <- parameterList[["bulkExpression"]] # get bulk data
+    bulkExpressionIndependent <- parameterList[["bulkExpressionIndependent"]]
+    markersBulkExpression <- rownames(bulkExpression) # parse bulk marker IDs
+    markersBulkExpressionIndependent <- rownames(bulkExpressionIndependent) 
     
     ## compare marker labels and subset yi on overlapping markers
-    if(is(markers.y, "NULL")|is(markers.yi, "NULL")){
+    if(is(markersBulkExpression, "NULL")|
+       is(markersBulkExpressionIndependent, "NULL")){
         message("Warning, no marker labels found in either y or yi.")
     } else{
-        unique.marker.labels <- unique(markers.y, markers.yi)
-        overlapping.marker.labels <- intersect(markers.y, markers.yi)
-        if(length(overlapping.marker.labels) > 0){
-          input_yi <- input_yi[overlapping.marker.labels,]
+        uniqueMarkerLabels <- 
+          unique(markersBulkExpression, markersBulkExpressionIndependent)
+        overlappingMarkerLabels <- 
+          intersect(markersBulkExpression, markersBulkExpressionIndependent)
+        if(length(overlappingMarkerLabels) > 0){
+          bulkExpressionIndependent <- 
+            bulkExpressionIndependent[overlappingMarkerLabels,]
         }
     }
   
     ## compare sample labels and remove overlapping samples
-    samples.y <- colnames(input_y)
-    samples.yi <- colnames(input_yi) # parse bulk sample IDs
+    samplesBulkExpression <- colnames(bulkExpression) # parse bulk sample IDs
+    samplesBulkExpressionIndependent <- colnames(bulkExpressionIndependent) 
     ## compare sample IDs
-    if(is(samples.y, "NULL")|is(samples.yi, "NULL")){
-        message("Warning, no sample labels found in either y or yi.")
+    if(is(samplesBulkExpression, "NULL")|
+       is(samplesBulkExpressionIndependent, "NULL")){
+        message(
+          paste0("Warning, no sample labels found in either ",
+                 "samplesBulkExpression or samplesBulkExpressionIndependent."))
     } else{
-        unique.sample.labels <- unique(samples.y, samples.yi)
-        overlapping.sample.labels <- intersect(samples.y, samples.yi)
+        uniqueSampleLabels <- unique(
+          samplesBulkExpression, samplesBulkExpressionIndependent)
+        overlappingSampleLabels <- intersect(
+          samplesBulkExpression, samplesBulkExpressionIndependent)
         if(length(overlapping.samples) > 0){
-            filter <- !colnames(input_yi) %in% overlapping.sample.labels
-            input_yi <- input_yi[, filter, drop=FALSE]
+            bulkFilter <- 
+              !colnames(bulkExpressionIndependent) %in% overlappingSampleLabels
+            bulkExpressionIndependent <- 
+              bulkExpressionIndependent[, bulkFilter, drop=FALSE]
         }
     }
   
     ## parse return list
     ## get metadata to return
-    list_metadata <- list(
-      unique.marker.labels=unique.marker.labels,
-                unique.sample.labels=unique.sample.labels,
-                overlapping.marker.labels=overlapping.marker.labels,
-                overlapping.sample.labels=overlapping.sample.labels)
-    return_list <- list(y=input_y, yi=input_yi, object=object, 
-                        metadata=list_metadata)
-    return(return_list)
+    metadataList <- list(
+      uniqueMarkerLabels=uniqueMarkerLabels,
+                uniqueSampleLabels=uniqueSampleLabels,
+                overlappingMarkerLabels=overlappingMarkerLabels,
+                overlappingSampleLabels=overlappingSampleLabels)
+    returnList <- list(bulkExpression=bulkExpression, 
+                        bulkExpressionIndependent=bulkExpressionIndependent, 
+                        object=object, metadata=metadataList)
+    return(returnList)
 })
 
 #' Method for \linkS4class{independentbulkParam}
@@ -138,15 +157,23 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
 #'
 #' @export
 setMethod("show", "independentbulkParam", function(object) {
-  input_y <- object[["y"]]; input_yi <- object[["yi"]] # get bulk data
-  samples.y <- colnames(input_y); samples.yi <- colnames(input_yi) # get samples
-  markers.y <- rownames(input_y); markers.yi <- rownames(input_yi) # get markers
+  bulkExpression <- object[["bulkExpression"]]
+  bulkExpressionIndependent <- object[["bulkExpressionIndependent"]]  
+  samplesBulkExpression <- colnames(bulkExpression)
+  samplesBulkExpressionIndependent <- colnames(bulkExpressionIndependent) 
+  markersBulkExpression <- rownames(bulkExpression)
+  markersBulkExpressionIndependent <- rownames(bulkExpressionIndependent)
   ## print info summaries
   message("Summary of independentbulkParam data:")
   message("\tNumber of unique sample IDs : ", 
-          length(unique(markers.y, markers.yi)), "\n")
+          length(unique(markersBulkExpression, 
+                        markersBulkExpressionIndependent)), "\n")
   message("\tNumber of unique marker IDs : ", 
-          length(unique(samples.y, samples.yi)), "\n")
+          length(unique(samplesBulkExpression, 
+                        samplesBulkExpressionIndependent)), "\n")
   message("\tNumber of independent samples : ", 
-          length(samples.yi[!samples.yi %in% samples.y]), "\n")
+          length(
+            samplesBulkExpressionIndependent[
+              !samplesBulkExpressionIndependent %in% 
+                samplesBulkExpression]), "\n")
 })

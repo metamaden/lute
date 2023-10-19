@@ -45,8 +45,8 @@
 #' @aliases 
 #' BisqueParam-class
 #'
-setClass("bisqueParam", containsizeFactor="independentbulkParam", 
-         slotsizeFactor=c(bulkExpressionSet="ExpressionSet", 
+setClass("bisqueParam", containcellSizeFactor="independentbulkParam", 
+         slotcellSizeFactor=c(bulkExpressionSet="ExpressionSet", 
                  singleCellExpressionSet="ExpressionSet", 
                  assayName="character", 
                  batchVariable="character", 
@@ -59,9 +59,9 @@ setClass("bisqueParam", containsizeFactor="independentbulkParam",
 #'
 #' @param bulkExpressionBulk mixed signals matrix of samples, which can be matched to single-cell samples.
 #' @param bulkExpressionIndependent Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
-#' @param z Signature matrix of cell type-specific signals. If not provided, can be computed from a
+#' @param referenceExpression Signature matrix of cell type-specific signals. If not provided, can be computed from a
 #' provided ExpressionSet containing single-cell data.
-#' @paramsizeFactorCell size factor transformations of length equal to the K cell types to deconvolve.
+#' @paramcellSizeFactorCell size factor transformations of length equal to the K cell types to deconvolve.
 #' @param bulkExpressionSet ExpressionSet of bulk mixed signals.
 #' @param scData SummarizedExperiment-type object of single-cell transcriptomics data. Accepts
 #' ExpressionSet, SummarizedExperiment, and SingleCellExperiment object types.
@@ -97,7 +97,7 @@ setClass("bisqueParam", containsizeFactor="independentbulkParam",
 #' @export
 bisqueParam <- function(bulkExpression=NULL, 
                         bulkExpressionIndependent=NULL, 
-                        referenceExpression=NULL, sizeFactor=NULL, 
+                        referenceExpression=NULL, cellSizeFactor=NULL, 
                         bulkExpressionSet=NULL, scData=NULL, assayName="counts", 
                         batchVariable="batch.id", 
                         cellTypeVariable="celltype", 
@@ -110,7 +110,7 @@ bisqueParam <- function(bulkExpression=NULL,
   listReferenceExpression <- .parseReferenceExpression(
     singleCellExpressionSet, referenceExpression, assayName, batchVariable, cellTypeVariable)
   ## parse s
-  sizeFactor <- .parseCellSize(listReferenceExpression[["referenceExpression"]], sizeFactor)
+  cellSizeFactor <- .parseCellSize(listReferenceExpression[["referenceExpression"]], cellSizeFactor)
   ## parse batch ids in bulk and sc
   listBatchID <- .parseBatches(batchVariable=batchVariable,
                                  bulkExpressionSet=bulkExpressionSet, 
@@ -125,7 +125,7 @@ bisqueParam <- function(bulkExpression=NULL,
   new("bisqueParam", bulkExpression=bulkExpression, 
       bulkExpressionIndependent=bulkExpressionIndependent, 
       referenceExpression=listReferenceExpression[["referenceExpression"]], 
-      sizeFactor=sizeFactor, 
+      cellSizeFactor=cellSizeFactor, 
       bulkExpressionSet=listBulk[["bulkExpressionSet"]], 
       singleCellExpressionSet=singleCellExpressionSet, 
       assayName=assayName, 
@@ -186,14 +186,14 @@ bisqueParam <- function(bulkExpression=NULL,
 }
 
 #'
-.parseCellSize <- function(referenceExpression=NULL, sizeFactor=NULL){
+.parseCellSize <- function(referenceExpression=NULL, cellSizeFactor=NULL){
   uniqueTypes <- colnames(referenceExpression)
   uniqueTypes <- uniqueTypes[order(uniqueTypes)]
-  if(is(sizeFactor, "NULL")){
-    sizeFactor <- rep(1, ncol(referenceExpression))
-    names(sizeFactor) <- uniqueTypes
+  if(is(cellSizeFactor, "NULL")){
+    cellSizeFactor <- rep(1, ncol(referenceExpression))
+    names(cellSizeFactor) <- uniqueTypes
   }
-  return(sizeFactor=sizeFactor)
+  return(cellSizeFactor=cellSizeFactor)
 }
 
 #'
@@ -317,7 +317,7 @@ setMethod("deconvolution", signature(object="bisqueParam"), function(object){
                                                  colnames(predictions))
   if(object[["return.info"]]){
     returnList <- list(
-      predictionsizeFactor=predictions, 
+      predictioncellSizeFactor=predictions, 
       resultInfo=result, 
       metadata=
         list(metadataList=parametersList[["metadata"]], 

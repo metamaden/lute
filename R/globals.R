@@ -5,5 +5,7 @@
 ### used in dplyr functions filter(), arrange(), etc.
 ###
 
-utils::globalVariables(c("cellType.target", "rank_ratio", 
-                         "overlapping.samples", "abs.summary", "marker.table"))
+utils::globalVariables(
+  c("cellType.target", "rank_ratio", "overlapping.samples", "abs.summary", 
+    "marker.table")
+)
