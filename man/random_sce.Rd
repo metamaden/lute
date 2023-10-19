@@ -2,48 +2,48 @@
 % Please edit documentation in R/lute_randomized-data.R
 \name{random_sce}
 \alias{random_sce}
-\title{random_sce}
+\title{randomSingleCellExperiment}
 \usage{
 random_sce(
-  num.genes = 20,
-  num.cells = 12,
-  num.types = 2,
-  fract.types = NULL,
+  numberGenes = 20,
+  numberCells = 12,
+  numTypes = 2,
+  fractionTypes = NULL,
   dispersion = NULL,
-  expr.mean = 10,
-  na.include = FALSE,
-  na.fract = 0.2,
-  zero.include = FALSE,
-  zero.fract = 0.2,
+  expressionMean = 10,
+  naInclude = FALSE,
+  naFraction = 0.2,
+  zeroInclude = FALSE,
+  zeroFraction = 0.2,
   verbose = FALSE,
-  seed.num = 0
+  seedNumber = 0
 )
 }
 \arguments{
-\item{num.genes}{Number of genes to randomize.}
+\item{numberGenes}{Number of genes to randomize.}
 
-\item{num.cells}{Numnber of cells to randomize.}
+\item{numberCells}{Numnber of cells to randomize.}
 
-\item{num.types}{Number of cell types to annotate.}
-
-\item{fract.types}{Vector of fractions by type.}
+\item{fractionTypes}{Vector of fractions by type.}
 
 \item{dispersion}{Disperison of gene expression. If NULL, uses the mean from 
-expr.mean}
+expressionMean}
 
-\item{expr.mean}{Poisson dist mean for random expression data.}
+\item{expressionMean}{Poisson dist mean for random expression data.}
 
-\item{na.include}{Whether to include random NA values.}
+\item{naInclude}{Whether to include random NA values.}
 
-\item{na.fract}{Fraction of NA values to include.}
+\item{naFraction}{Fraction of NA values to include.}
 
-\item{zero.include}{Whether to include random zero-count values.}
+\item{zeroInclude}{Whether to include random zero-count values.}
 
-\item{zero.fract}{Fraction of zero-count values to include.}
+\item{zeroFraction}{Fraction of zero-count values to include.}
 
 \item{verbose}{Whether to show verbose status messages.}
 
-\item{seed.num}{Seed value for randomization of expression data.}
+\item{seedNumber}{Seed value for randomization of expression data.}
+
+\item{numberTypes}{Number of cell types to annotate.}
 }
 \value{
 New randomized SingleCellExperiment object.

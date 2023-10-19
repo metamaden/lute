@@ -4,13 +4,13 @@
 \alias{typemarkersParam}
 \title{Make new object of class typemarkersParam}
 \usage{
-typemarkersParam(markers.per.type = 20, return.info = FALSE)
+typemarkersParam(markersPerType = 20, returnInfo = FALSE)
 }
 \arguments{
-\item{markers.per.type}{Bulk mixed signals matrix of samples, which can be 
+\item{markersPerType}{Bulk mixed signals matrix of samples, which can be 
 matched to single-cell samples.}
 
-\item{return.info}{Whether to return metadata and original marker selection 
+\item{returnInfo}{Whether to return metadata and original marker selection 
 method outputs with predicted proportions.}
 }
 \value{

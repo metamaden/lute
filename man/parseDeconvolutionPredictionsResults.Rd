@@ -2,7 +2,7 @@
 % Please edit documentation in R/lute_utilities.R
 \name{parseDeconvolutionPredictionsResults}
 \alias{parseDeconvolutionPredictionsResults}
-\title{getDeconvolutionExampleDataSCDC}
+\title{getDeconvolutionExampleDataSnewColDataC}
 \usage{
 parseDeconvolutionPredictionsResults(listPred, columnLabels, rowLabels)
 }
@@ -19,7 +19,7 @@ parseDeconvolutionPredictionsResults(listPred, columnLabels, rowLabels)
 Example data as list.
 }
 \description{
-Get example data for SCDC
+Get example data for SnewColDataC
 }
 \details{
 parseDeconvolutionPredictionsResults

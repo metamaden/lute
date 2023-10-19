@@ -5,10 +5,10 @@
 \title{sce_to_se
 Convert SingleCellExperiment to SummarizedExperiment.}
 \usage{
-sce_to_se(sce)
+sce_to_se(singleCellExperiment)
 }
 \arguments{
-\item{sce}{Object of type SingleCellExperiment (see 
+\item{singleCellExperiment}{Object of type SingleCellExperiment (see 
 \code{?SingleCellExperiment}).}
 }
 \value{

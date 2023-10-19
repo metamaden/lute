@@ -2,26 +2,24 @@
 % Please edit documentation in R/lute_conversions.R
 \name{se_to_eset}
 \alias{se_to_eset}
-\title{se_to_eset
-Convert SummarizedExperiment to ExpressionSet.}
+\title{se_to_eset}
 \usage{
-se_to_eset(se, assay.name = "counts")
+se_to_eset(summarizedExperiment, assayName = "counts")
 }
 \arguments{
+\item{assayName}{Name of assay to store in new ExpressionSet object.}
+
 \item{se}{Object of type SummarizedExperiment (see 
 \code{?SummarizedExperiment}).}
-
-\item{assay.name}{Name of assay to store in new ExpressionSet object.}
 }
 \value{
 New object of type ExpressionSet.
 }
 \description{
-se_to_eset
 Convert SummarizedExperiment to ExpressionSet.
 }
 \examples{
-se <- sce_to_se(random_sce())
-se_to_eset(se)
+summarizedExperiment <- sce_to_se(random_sce())
+se_to_eset(summarizedExperiment)
 
 }

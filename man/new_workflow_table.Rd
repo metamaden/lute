@@ -5,29 +5,29 @@
 \title{new_workflow_table}
 \usage{
 new_workflow_table(
-  sce.names = NULL,
-  data.directory = "data",
-  true.proportions.filename.stem = "true_proportions_",
-  celltype.variable = "celltype",
-  table.directory = ".",
-  table.filename = "workflow_table.csv",
+  singleCellExperimentNames = NULL,
+  dataDirectory = "data",
+  trueProportionsFilenameStem = "true_proportions_",
+  cellTypeVariable = "celltype",
+  tableDirectory = ".",
+  tableFileName = "workflow_table.csv",
   save = TRUE,
   overwrite = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{sce.names}{Names of SingleCellExperiment files to load.}
+\item{singleCellExperimentNames}{Names of SingleCellExperiment files to load.}
 
-\item{data.directory}{Directory containing datasets to load.}
+\item{dataDirectory}{Directory containing datasets to load.}
 
-\item{true.proportions.filename.stem}{File name stem of true proportions values.}
+\item{trueProportionsFilenameStem}{File name stem of true proportions values.}
 
-\item{celltype.variable}{Name of variable containing cell type labels.}
+\item{cellTypeVariable}{Name of variable containing cell type labels.}
 
-\item{table.directory}{Directory to write table.}
+\item{tableDirectory}{Directory to write table.}
 
-\item{table.filename}{The file name of the new table to write.}
+\item{tableFileName}{The file name of the new table to write.}
 
 \item{save}{Whether to save the new table.}
 

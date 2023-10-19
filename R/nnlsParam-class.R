@@ -14,15 +14,16 @@
 #' @seealso \linkS4class{deconParam}
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
-#'                     z=lexample[["z"]])
+#' exampleList <- getDeconvolutionExampleData()
+#' param <- nnlsParam(cellScaleFactors=exampleList[["cellScaleFactors"]], 
+#' bulkExpression=exampleList[["bulkExpression"]],
+#' referenceExpression=exampleList[["referenceExpression"]])
 #' 
 #' ## return only predicted proportions
 #' deconvolution(param)
 #' 
 #' # return full results
-#' param@return.info <- TRUE
+#' param@returnInfo <- TRUE
 #' names(deconvolution(param))
 #'
 #' @returns New object.
@@ -36,26 +37,27 @@ setClass("nnlsParam", contains="referencebasedParam")
 #'
 #' Main constructor for class \linkS4class{nnlsParam}.
 #'
-#' @param y Bulk mixed signals matrix of samples, which can be matched to 
+#' @param bulkExpression Bulk mixed signals matrix of samples, which can be matched to 
 #' single-cell samples.
-#' @param z Signature matrix of cell type-specific signals. If not provided, 
+#' @param referenceExpression Signature matrix of cell type-specific signals. If not provided, 
 #' can be computed from a provided \linkS4class{ExpressionSet} containing 
 #' single-cell data.
-#' @param s Cell size factor transformations of length equal to the K cell 
+#' @param cellScaleFactors Cell size factor transformations of length equal to the K cell 
 #' types to deconvolve.
-#' @param return.info Whether to return metadata and original method outputs 
+#' @param returnInfo Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
-#'                     z=lexample[["z"]])
+#' exampleList <- getDeconvolutionExampleData()
+#' param <- nnlsParam(cellScaleFactors=exampleList[["cellScaleFactors"]], 
+#' bulkExpression=exampleList[["bulkExpression"]],
+#' referenceExpression=exampleList[["referenceExpression"]])
 #' 
 #' ## return only predicted proportions
 #' deconvolution(param)
 #' 
 #' # return full results
-#' param@return.info <- TRUE
+#' param@returnInfo <- TRUE
 #' names(deconvolution(param))
 #' 
 #' @returns Object of class \linkS4class{nnlsParam}
@@ -66,8 +68,11 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' squares (NNLS) deconvolution algorithm, implemented as \code{nnls::nnls()}.
 #' 
 #' @export
-nnlsParam <- function(y, z, s, return.info=FALSE) {
-  new("nnlsParam", s=s, y=y, z=z, return.info=return.info)
+nnlsParam <- function(
+    bulkExpression, referenceExpression, cellScaleFactors, returnInfo=FALSE) {
+  new("nnlsParam", cellScaleFactors=cellScaleFactors, 
+      bulkExpression=bulkExpression, referenceExpression=referenceExpression, 
+      returnInfo=returnInfo)
 }
 
 #' Deconvolution method for nnlsParam
@@ -86,15 +91,17 @@ nnlsParam <- function(y, z, s, return.info=FALSE) {
 #' * \code{b} : \code{z}, signature matrix.
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
-#'                     z=lexample[["z"]])
+#' exampleList <- getDeconvolutionExampleData()
+#' param <- nnlsParam(
+#' cellScaleFactors=exampleList[["cellScaleFactors"]], 
+#' bulkExpression=exampleList[["bulkExpression"]],
+#' referenceExpression=exampleList[["referenceExpression"]])
 #' 
 #' ## return only predicted proportions
 #' deconvolution(param)
 #' 
 #' # return full results
-#' param@return.info <- TRUE
+#' param@returnInfo <- TRUE
 #' names(deconvolution(param))
 #'
 #' @returns Either a vector of predicted proportions, or a list containing 
@@ -108,30 +115,31 @@ nnlsParam <- function(y, z, s, return.info=FALSE) {
 #'
 #' @export
 setMethod("deconvolution", signature(object="nnlsParam"), function(object){
-  lparam <- callNextMethod()
-  input_y <- lparam[["y"]]; input_z <- lparam[["z"]]; input_s <- lparam[["s"]]
-  bulk.samples.index.vector <- seq(ncol(input_y))
+  parametersList <- callNextMethod()
+  bulkExpression <- parametersList[["bulkExpression"]]
+  referenceExpression <- parametersList[["referenceExpression"]]
+  cellScaleFactors <- parametersList[["cellScaleFactors"]]
+  bulkSamplesIndexVector <- seq(ncol(bulkExpression))
   result <- lapply(
-    bulk.samples.index.vector, function(index){
+    bulkSamplesIndexVector, function(index){
       
-      nnls::nnls(A=input_z, b=input_y[,index])
+      nnls::nnls(A=referenceExpression, b=bulkExpression[,index])
   
       }
     )
   
-  names(result) <- colnames(input_y)
+  names(result) <- colnames(bulkExpression)
   predictions <- lapply(result, function(iter){iter$x})
-  return_list <- .parse_deconvolution_predictions_results(predictions, 
-                                                 colnames(input_z), 
-                                                 colnames(input_y))
-  if(object[["return.info"]]){
+  returnList <- parseDeconvolutionPredictionsResults(
+    predictions, colnames(referenceExpression), colnames(bulkExpression))
+  if(object[["returnInfo"]]){
     
-    return_list <- list(predictions=predictions, 
-               result.info=result, 
-               metadata=lparam[["metadata"]])
+    returnList <- list(
+      predictions=predictions, result.info=result, 
+      metadata=parametersList[["metadata"]])
     
     }
-  return(return_list)
+  return(returnList)
 })
 
 #' Show generic behavior for object of class \linkS4class{nnlsParam}
@@ -141,15 +149,17 @@ setMethod("deconvolution", signature(object="nnlsParam"), function(object){
 #' \linkS4class{nnlsParam}
 #' 
 #' @examples
-#' lexample <- get_decon_example_data()
-#' param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
-#'                     z=lexample[["z"]])
+#' exampleList <- getDeconvolutionExampleData()
+#' param <- nnlsParam(
+#' cellScaleFactors=exampleList[["cellScaleFactors"]], 
+#' bulkExpression=exampleList[["bulkExpression"]],
+#' referenceExpression=exampleList[["referenceExpression"]])
 #' 
 #' ## return only predicted proportions
 #' deconvolution(param)
 #' 
 #' # return full results
-#' param@return.info <- TRUE
+#' param@returnInfo <- TRUE
 #' names(deconvolution(param))
 #' 
 #' @returns Shows object summaries.

@@ -20,8 +20,11 @@
 #' `vignette(package="lute")` for details about experiment terms.
 #' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+#' exampleList <- get_decon_example_data()
+#' referencebasedParam(
+#' bulkExpression=lexample$bulkExpression, 
+#' referenceExpression=lexample$referenceExpression, 
+#' cellScaleFactors=lexample$cellScaleFactors)
 #'
 #' @returns New object.
 #' 
@@ -42,8 +45,11 @@ setClass("referencebasedParam", contains="deconvolutionParam",
 #' with predicted proportions.
 #'
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+#' exampleList <- get_decon_example_data()
+#' referencebasedParam(
+#' bulkExpression=lexample$bulkExpression, 
+#' referenceExpression=lexample$referenceExpression, 
+#' cellScaleFactors=lexample$cellScaleFactors)
 #'
 #' @returns New object of class \linkS4class{referencebasedParam}.
 #'
@@ -56,115 +62,154 @@ referencebasedParam <- function(y, z, s, return.info = FALSE) {
   new("referencebasedParam", y = y, z = z, s = s, return.info = return.info)
 }
 
-#' Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}
+#' Deconvolution generic behavior for object of class 
+#' \linkS4class{referencebasedParam}
+#' 
 #' @param object An object of class \linkS4class{referencebasedParam} (see 
 #' \code{?referencebasedParam}).
 #' @details Method for behavior of deconvolution generic when called for object 
 #' of class \linkS4class{referencebasedParam}.
+#' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+#' exampleList <- get_decon_example_data()
+#' referencebasedParam(
+#' bulkExpression=lexample$bulkExpression, 
+#' referenceExpression=lexample$referenceExpression, 
+#' cellScaleFactors=lexample$cellScaleFactors)
+#' 
 #' @returns Method results.
 #' @export
 setMethod("deconvolution", "referencebasedParam", function(object) {
   ## get metadata
-  input_s <- object[["s"]]; input_y <- object[["y"]]; input_z <- object[["z"]]
-  
+  cellScaleFactors <- object[[cellScaleFactors]]
+  bulkExpression <- object[[bulkExpression]]
+  referenceExpression <- object[[referenceExpression]]
   ## cell types in z, s
-  if(is(input_s, "NULL")){input_s <- rep(1, ncol(input_z))}
-  unique.types <- try(colnames(input_z))
-  condition.z.types <- is(unique.types, "NULL")|is(unique.types, "try-error")
+  if(is(cellScaleFactors, "NULL")){
+    cellScaleFactors <- rep(1, ncol(referenceExpression))}
+  uniqueTypes <- try(colnames(referenceExpression))
+  condition.z.types <- is(uniqueTypes, "NULL")|is(uniqueTypes, "try-error")
   if(!condition.z.types){
-    unique.types <- unique.types[order(unique.types)]
-    input_z <- input_z[,order(colnames(input_z), unique.types)]
-    condition.s.types <- is(names(input_s), "NULL")
+    uniqueTypes <- uniqueTypes[order(uniqueTypes)]
+    referenceExpression <- 
+      referenceExpression[,order(colnames(referenceExpression), uniqueTypes)]
+    condition.s.types <- is(names(cellScaleFactors), "NULL")
     if(!condition.s.types){
-      filter.s.types <- names(input_s) %in% unique.types
-      input_s <- input_s[filter.s.types]
-      input_s <- input_s[order(names(input_s), unique.types)]
+      filter.s.types <- names(cellScaleFactors) %in% uniqueTypes
+      cellScaleFactors <- cellScaleFactors[filter.s.types]
+      cellScaleFactors <- 
+        cellScaleFactors[order(names(cellScaleFactors), uniqueTypes)]
     }
   }
-  input_z <- .zstransform(input_z, input_s)
+  referenceExpression <- .zstransform(referenceExpression, cellScaleFactors)
   ## matching markers in y and z
-  markers.y <- rownames(input_y); markers.z <- rownames(input_z)
-  if(!is(markers.y, "NULL") & !is(markers.z, "NULL")){
-    ## markers.y <- rownames(y); markers.z <- rownames(z)
-    unique.markers <- unique(c(markers.y, markers.z))
-    overlapping.markers <- intersect(markers.y, markers.z)
-    y.filter <- rownames(input_y) %in% overlapping.markers
-    z.filter <- rownames(input_z) %in% overlapping.markers
-    input_y <- input_y[y.filter,,drop=FALSE]
-    input_z <- input_z[z.filter,,drop=FALSE]
-    input_y <- input_y[order(match(rownames(input_y), overlapping.markers)),]
-    input_z <- input_z[order(match(rownames(input_z), overlapping.markers)),]
+  markersBulkExpression <- rownames(bulkExpression)
+  markersReferenceExpression <- rownames(referenceExpression)
+  if(!is(markersBulkExpression, "NULL") & 
+     !is(markersReferenceExpression, "NULL")){
+    uniqueMarkers <- unique(
+      c(markersBulkExpression, markersReferenceExpression))
+    overlappingMarkers <- intersect(
+      markersBulkExpression, markersReferenceExpression)
+    y.filter <- rownames(bulkExpression) %in% overlappingMarkers
+    z.filter <- rownames(referenceExpression) %in% overlappingMarkers
+    bulkExpression <- bulkExpression[y.filter,,drop=FALSE]
+    referenceExpression <- referenceExpression[z.filter,,drop=FALSE]
+    bulkExpression <- bulkExpression[
+      order(match(rownames(bulkExpression), overlappingMarkers)),]
+    referenceExpression <- referenceExpression[
+      order(match(rownames(referenceExpression), overlappingMarkers)),]
   } else{
     message("Warning, rownames not provided in both y and z. ",
             "Can't match marker labels.")
   }
   ## parse additional warnings
-  if(is(markers.y, "NULL")){message("Warning, object 'y' has no marker labels (rownames)\n")}
-  if(is(markers.z, "NULL")){message("Warning, object 'z' has no marker labels (rownames)\n")}
+  if(is(markersBulkExpression, "NULL")){
+    message("Warning, object 'y' has no marker labels (rownames)\n")}
+  if(is(markersReferenceExpression, "NULL")){
+    message("Warning, object 'z' has no marker labels (rownames)\n")}
   ## get final metadata
-  input_g <- nrow(input_z); input_j <- ncol(input_y); input_k <- ncol(input_z)
-  metadata.list <- list(g = input_g, j = input_j, k = input_k, 
-                        s = input_s, unique.types = unique.types,
-                        markers.y = markers.y, marker.z = markers.z)
+  markerGenes <- nrow(referenceExpression)
+  bulkSamples <- ncol(bulkExpression)
+  numberCellTypesK <- ncol(referenceExpression)
+  metadataList <- list(markerGenes = markerGenes, bulkSamples = bulkSamples, 
+                        numberCellTypesK = numberCellTypesK, 
+                        cellScaleFactors = cellScaleFactors, 
+                        uniqueTypes = uniqueTypes,
+                        markersBulkExpression = markersBulkExpression, 
+                        markersReferenceExpression = markersReferenceExpression)
   ## return list
   return(
-    list(y = as.matrix(input_y), z = as.matrix(input_z), 
-         s = as.numeric(input_s), metadata = metadata.list)
+    list(bulkExpression = as.matrix(bulkExpression), 
+         referenceExpression = as.matrix(referenceExpression), 
+         cellScaleFactors = as.numeric(cellScaleFactors), 
+         metadata = metadataList)
     )
 })
 
 #' Show generic behavior for object of class referencebasedParam
 #' @param object Object of class \linkS4class{referencebasedParam} (see 
 #' \code{?referencebasedParam}).
+#' 
 #' @examples 
-#' lexample <- get_decon_example_data()
-#' referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+#' exampleList <- get_decon_example_data()
+#' referencebasedParam(
+#' bulkExpression=lexample$bulkExpression, 
+#' referenceExpression=lexample$referenceExpression, 
+#' cellScaleFactors=lexample$cellScaleFactors)
+#' 
 #' @returns Prints data summary messages to console.
 #' @export
 setMethod("show", "referencebasedParam", function(object) {
   ## get metadata
-  input_s <- object[["s"]]; input_y <- object[["y"]]; input_z <- object[["z"]]
-  unique.types <- try(colnames(object[["z"]]))
-  markers.y <- rownames(input_y); markers.z <- rownames(input_z)
-  unique.markers <- unique(c(markers.y, markers.z))
-  overlapping.markers <- intersect(markers.y, markers.z)
-  input_g <- nrow(input_z); input_j <- ncol(input_y); input_k <- ncol(input_z)
-  lmd <- list(g = input_g, j = input_j, k = input_k, 
-              s = input_s, unique.types = unique.types, 
-              markers.y = markers.y, marker.z = markers.z)
+  cellScaleFactors <- object[[cellScaleFactors]]
+  bulkExpression <- object[[bulkExpression]]
+  referenceExpression <- object[[referenceExpression]]
+  uniqueTypes <- try(colnames(object[[referenceExpression]]))
+  markersBulkExpression <- rownames(bulkExpression)
+  markersReferenceExpression <- rownames(referenceExpression)
+  uniqueMarkers <- unique(c(markersBulkExpression, markersReferenceExpression))
+  overlappingMarkers <- 
+    intersect(markersBulkExpression, markersReferenceExpression)
+  markerGenes <- nrow(referenceExpression)
+  bulkSamples <- ncol(bulkExpression)
+  numberCellTypesK <- ncol(referenceExpression)
+  metadataList <- list(
+    markerGenes = markerGenes, bulkSamples = bulkSamples, 
+    numberCellTypesK = numberCellTypesK, cellScaleFactors = cellScaleFactors, 
+    uniqueTypes = uniqueTypes, markersBulkExpression = markersBulkExpression, 
+    markersReferenceExpression = markersReferenceExpression)
   ## post console messages
   cat(paste0("class: ", class(object)[1], "\n\n"))
   cat("key deconvolution run info:\n")
   cat("\tmarker info:\n")
-  cat("\tsignature markers (Gz): ", input_g, "\n")
-  cat("\tunique marker labels (Gy | Gz): ", length(unique.markers), "\n")
-  cat("\toverlapping marker labels (Gy & Gz): ", length(overlapping.markers), "\n\n")
-  ## bulk samples
+  cat("\tsignature markers (Gz): ", markerGenes, "\n")
+  cat("\tunique marker labels (Gy | Gz): ", length(uniqueMarkers), "\n")
+  cat("\toverlapping marker labels (Gy & Gz): ", 
+      length(overlappingMarkers), "\n\n")
   cat("\tsamples info:\n")
-  cat("\tnumber of bulk samples (J): ", ncol(object[["y"]]), "\n")
-  cat("\tsample labels: ", paste0(colnames(input_y), collapse = "; "), "\n")
+  cat("\tnumber of bulk samples (J): ", ncol(object[[bulkExpression]]), "\n")
+  cat("\tsample labels: ", 
+      paste0(colnames(bulkExpression), collapse = "; "), "\n")
   cat("\n")
-  ## cell size factors
   cat("\tcell size factor properties:\n")
-  if(!is(input_s, "NULL")){
-    for(type in names(input_s)){
-      cat("\tscale factor for type ", type, ": ", input_s[type], "\n")}
-    if(length(input_s) == ncol(input_z)){
-      input_z <- .zstransform(input_z, input_s)}
+  if(!is(cellScaleFactors, "NULL")){
+    for(type in names(cellScaleFactors)){
+      cat("\tscale factor for type ", type, ": ", cellScaleFactors[type], "\n")}
+    if(length(cellScaleFactors) == ncol(referenceExpression)){
+      referenceExpression <- .zstransform(referenceExpression, cellScaleFactors)}
   }; cat("\n")
-  ## cell types
   cat("\ttypes info:\n")
-  cat("\tnumber of types (K): ", ncol(object[["z"]]), "\n")
-  if(!(is(unique.types, "NULL")|is(unique.types, "try-error"))){
-    unique.types <- unique.types[order(unique.types)]
-    cat("\tunique type labels: ", paste0(unique.types, collapse = ";"), "\n")
+  cat("\tnumber of types (K): ", ncol(object[[referenceExpression]]), "\n")
+  if(!(is(uniqueTypes, "NULL")|is(uniqueTypes, "try-error"))){
+    uniqueTypes <- uniqueTypes[order(uniqueTypes)]
+    cat("\tunique type labels: ", paste0(uniqueTypes, collapse = ";"), "\n")
   } else{
     cat("\nWarning, object 'z' has no type labels (colnames)\n")
   }; cat("\n")
   ## parse additional warnings
-  if(is(markers.y, "NULL")){cat("Warning, object 'y' has no marker labels (rownames)\n\n")}
-  if(is(markers.z, "NULL")){cat("Warning, object 'z' has no marker labels (rownames)\n\n")}
+  if(is(markersBulkExpression, "NULL")){
+    cat("Warning, object 'y' has no marker labels (rownames)\n\n")}
+  if(is(markersReferenceExpression, "NULL")){
+    cat("Warning, object 'z' has no marker labels (rownames)\n\n")}
 })

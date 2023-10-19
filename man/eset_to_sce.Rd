@@ -5,12 +5,12 @@
 \title{eset_to_sce
 Convert ExpressionSet to SingleCellExperiment.}
 \usage{
-eset_to_sce(eset, assay.name = "counts")
+eset_to_sce(expressionSet, assayName = "counts")
 }
 \arguments{
-\item{eset}{Object of type ExpressionSet (see \code{?ExpressionSet}).}
+\item{expressionSet}{Object of type ExpressionSet (see \code{?ExpressionSet}).}
 
-\item{assay.name}{Name of new assay in new SingleCellExperiment object.}
+\item{assayName}{Name of new assay in new SingleCellExperiment object.}
 }
 \value{
 ExpressionSet.
@@ -20,7 +20,7 @@ eset_to_sce
 Convert ExpressionSet to SingleCellExperiment.
 }
 \examples{
-eset <- get_decon_example_data_bisque()$sc.eset
-eset_to_sce(eset)
+expressionSet <- get_decon_example_data_bisque()$sc.eset
+eset_to_sce(expressionSet)
 
 }

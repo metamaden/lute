@@ -2,7 +2,7 @@
 % Please edit documentation in R/lute_utilities.R
 \name{referenceFromSingleCellExperiment}
 \alias{referenceFromSingleCellExperiment}
-\title{get_z_from_singleCellExperiment}
+\title{referenceFromSingleCellExperiment}
 \usage{
 referenceFromSingleCellExperiment(
   singleCellExperiment,

@@ -17,6 +17,10 @@ Prints data summary messages to console.
 Show generic behavior for object of class referencebasedParam
 }
 \examples{
-lexample <- get_decon_example_data()
-referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+exampleList <- get_decon_example_data()
+referencebasedParam(
+bulkExpression=lexample$bulkExpression, 
+referenceExpression=lexample$referenceExpression, 
+cellScaleFactors=lexample$cellScaleFactors)
+
 }

@@ -27,15 +27,17 @@ The key term mappings for this method include:
 * \code{b} : \code{z}, signature matrix.
 }
 \examples{
-lexample <- get_decon_example_data()
-param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
-                    z=lexample[["z"]])
+exampleList <- getDeconvolutionExampleData()
+param <- nnlsParam(
+cellScaleFactors=exampleList[["cellScaleFactors"]], 
+bulkExpression=exampleList[["bulkExpression"]],
+referenceExpression=exampleList[["referenceExpression"]])
 
 ## return only predicted proportions
 deconvolution(param)
 
 # return full results
-param@return.info <- TRUE
+param@returnInfo <- TRUE
 names(deconvolution(param))
 
 }

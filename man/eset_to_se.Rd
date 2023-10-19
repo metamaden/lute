@@ -2,25 +2,23 @@
 % Please edit documentation in R/lute_conversions.R
 \name{eset_to_se}
 \alias{eset_to_se}
-\title{eset_to_se
-Convert ExpressionSet to SummarizedExperiment.}
+\title{eset_to_se}
 \usage{
-eset_to_se(eset, assay.name = "counts")
+eset_to_se(expressionSet, assayName = "counts")
 }
 \arguments{
-\item{eset}{Object of type ExpressionSet (see \code{?ExpressionSet}).}
+\item{expressionSet}{Object of type ExpressionSet (see \code{?ExpressionSet}).}
 
-\item{assay.name}{Name of assay to store in new SummarizedExperiment object.}
+\item{assayName}{Name of assay to store in new SummarizedExperiment object.}
 }
 \value{
 New object of type SummarizedExperiment.
 }
 \description{
-eset_to_se
 Convert ExpressionSet to SummarizedExperiment.
 }
 \examples{
-eset <- get_decon_example_data_bisque()$sc.eset
-eset_to_se(eset, "counts")
+expressionSet <- get_decon_example_data_bisque()$singleCellExpressionSet
+eset_to_se(expressionSet "counts")
 
 }

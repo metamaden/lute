@@ -4,20 +4,25 @@
 \alias{nnlsParam}
 \title{Make new object of class nnlsParam}
 \usage{
-nnlsParam(y, z, s, return.info = FALSE)
+nnlsParam(
+  bulkExpression,
+  referenceExpression,
+  cellScaleFactors,
+  returnInfo = FALSE
+)
 }
 \arguments{
-\item{y}{Bulk mixed signals matrix of samples, which can be matched to 
+\item{bulkExpression}{Bulk mixed signals matrix of samples, which can be matched to 
 single-cell samples.}
 
-\item{z}{Signature matrix of cell type-specific signals. If not provided, 
+\item{referenceExpression}{Signature matrix of cell type-specific signals. If not provided, 
 can be computed from a provided \linkS4class{ExpressionSet} containing 
 single-cell data.}
 
-\item{s}{Cell size factor transformations of length equal to the K cell 
+\item{cellScaleFactors}{Cell size factor transformations of length equal to the K cell 
 types to deconvolve.}
 
-\item{return.info}{Whether to return metadata and original method outputs 
+\item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 }
 \value{
@@ -31,15 +36,16 @@ Main parameter class for mapping inputs to the non-negative least
 squares (NNLS) deconvolution algorithm, implemented as \code{nnls::nnls()}.
 }
 \examples{
-lexample <- get_decon_example_data()
-param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
-                    z=lexample[["z"]])
+exampleList <- getDeconvolutionExampleData()
+param <- nnlsParam(cellScaleFactors=exampleList[["cellScaleFactors"]], 
+bulkExpression=exampleList[["bulkExpression"]],
+referenceExpression=exampleList[["referenceExpression"]])
 
 ## return only predicted proportions
 deconvolution(param)
 
 # return full results
-param@return.info <- TRUE
+param@returnInfo <- TRUE
 names(deconvolution(param))
 
 }

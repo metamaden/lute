@@ -7,9 +7,9 @@
 \alias{TypeMarkersParam-class}
 \title{typemarkersParam-class}
 \arguments{
-\item{markers.per.type}{Number of top markers to get per cell type.}
+\item{markersPerType}{Number of top markers to get per cell type.}
 
-\item{return.info}{Whether to return metadata and original method outputs 
+\item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 }
 \value{

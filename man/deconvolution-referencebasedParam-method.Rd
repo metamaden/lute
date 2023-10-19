@@ -2,7 +2,8 @@
 % Please edit documentation in R/referencebasedParam-class.R
 \name{deconvolution,referencebasedParam-method}
 \alias{deconvolution,referencebasedParam-method}
-\title{Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}}
+\title{Deconvolution generic behavior for object of class 
+\linkS4class{referencebasedParam}}
 \usage{
 \S4method{deconvolution}{referencebasedParam}(object)
 }
@@ -14,13 +15,18 @@
 Method results.
 }
 \description{
-Deconvolution generic behavior for object of class \linkS4class{referencebasedParam}
+Deconvolution generic behavior for object of class 
+\linkS4class{referencebasedParam}
 }
 \details{
 Method for behavior of deconvolution generic when called for object 
 of class \linkS4class{referencebasedParam}.
 }
 \examples{
-lexample <- get_decon_example_data()
-referencebasedParam(y = lexample$y, z = lexample$z, s = lexample$s)
+exampleList <- get_decon_example_data()
+referencebasedParam(
+bulkExpression=lexample$bulkExpression, 
+referenceExpression=lexample$referenceExpression, 
+cellScaleFactors=lexample$cellScaleFactors)
+
 }

@@ -4,12 +4,12 @@
 \alias{get_eset_from_matrix}
 \title{get_eset_from_matrix}
 \usage{
-get_eset_from_matrix(mat, batch.variable = "SampleName")
+get_eset_from_matrix(inputMatrix, batchVariable = "SampleName")
 }
 \arguments{
-\item{mat}{User-specified expression matrix.}
+\item{inputMatrix}{User-specified expression matrix.}
 
-\item{batch.variable}{Name of the batch variable.}
+\item{batchVariable}{Name of the batch variable.}
 }
 \value{
 ExpressionSet.

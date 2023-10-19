@@ -15,8 +15,8 @@
 #' 
 #' @seealso meanratiosParam
 #' 
-#' @param markers.per.type Number of top markers to get per cell type.
-#' @param return.info Whether to return metadata and original method outputs 
+#' @param markersPerType Number of top markers to get per cell type.
+#' @param returnInfo Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
 #' @examples
@@ -27,16 +27,16 @@
 #' @aliases 
 #' TypemarkersParam-class, TypeMarkersParam-class
 #'
-setClass("typemarkersParam", slots=c(markers.per.type="numeric", 
-                                     return.info="logical"))
+setClass("typemarkersParam", slots=c(markersPerType="numeric", 
+                                     returnInfo="logical"))
 
 #' Make new object of class typemarkersParam
 #'
 #' Main constructor for class \linkS4class{typemarkersParam}.
 #'
-#' @param markers.per.type Bulk mixed signals matrix of samples, which can be 
+#' @param markersPerType Bulk mixed signals matrix of samples, which can be 
 #' matched to single-cell samples.
-#' @param return.info Whether to return metadata and original marker selection 
+#' @param returnInfo Whether to return metadata and original marker selection 
 #' method outputs with predicted proportions.
 #'
 #' @returns New object of class \linkS4class{typemarkersParam}.
@@ -51,9 +51,9 @@ setClass("typemarkersParam", slots=c(markers.per.type="numeric",
 #' example.data <- get_decon_example_data()
 #' 
 #' @export
-typemarkersParam <- function(markers.per.type=20, return.info=FALSE) {
-  new("typemarkersParam", markers.per.type=markers.per.type, 
-      return.info=return.info)
+typemarkersParam <- function(markersPerType=20, returnInfo=FALSE) {
+  new("typemarkersParam", markersPerType=markersPerType, 
+      returnInfo=returnInfo)
 }
 
 #' Method for class \linkS4class{typemarkersParam}
@@ -67,10 +67,10 @@ typemarkersParam <- function(markers.per.type=20, return.info=FALSE) {
 #'
 #' @export
 setMethod("typemarkers", signature(object="typemarkersParam"), function(object){
-  lparam <- callNextMethod()
+  parametersList <- callNextMethod()
   ## instantiate and format objects
-  markers.per.type <- lparam[["markers.per.type"]]
-  return.info <- lparam[["return.info"]]
+  markersPerType <- parametersList[["markersPerType"]]
+  returnInfo <- parametersList[["returnInfo"]]
 })
 
 #' Inspect slot in \linkS4class{typemarkersParam} object

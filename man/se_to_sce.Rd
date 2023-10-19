@@ -2,10 +2,9 @@
 % Please edit documentation in R/lute_conversions.R
 \name{se_to_sce}
 \alias{se_to_sce}
-\title{se_to_sce
-Convert SummarizedExperiment to SingleCellExperiment.}
+\title{se_to_sce}
 \usage{
-se_to_sce(se)
+se_to_sce(summarizedExperiment)
 }
 \arguments{
 \item{se}{Object of type SummarizedExperiment (see 
@@ -15,7 +14,6 @@ se_to_sce(se)
 New SingleCellExperiment object.
 }
 \description{
-se_to_sce
 Convert SummarizedExperiment to SingleCellExperiment.
 }
 \examples{

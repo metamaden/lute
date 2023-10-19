@@ -2,7 +2,7 @@
 % Please edit documentation in R/lute_utilities.R
 \name{getDeconvolutionExampleDataBisque}
 \alias{getDeconvolutionExampleDataBisque}
-\title{getDeconvolutionExampleData_bisque}
+\title{getDeconvolutionExampleDataBisque}
 \usage{
 getDeconvolutionExampleDataBisque(
   numberBulkSamples = 100,

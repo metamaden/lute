@@ -14,13 +14,13 @@
 #' @importFrom utils read.csv
 #' 
 #' @examples
-#' lute_supported_deconvolution_algorithms()
+#' luteSupportedDeconvolutionAlgorithms()
 #' 
 #' @export
-lute_supported_deconvolution_algorithms <- function(){
-  csv.name <- "lute-deconvolution_transfer-learning-table.csv"
-  path <- system.file("csv", package="lute")
-  path <- file.path(path, csv.name)
-  csv <- read.csv(path)
-  return(csv)
+luteSupportedDeconvolutionAlgorithms <- function(){
+  csvName <- "lute-deconvolution_transfer-learning-table.csv"
+  readPath <- system.file("csv", package="lute")
+  readPath <- file.path(path, csvName)
+  csvResult <- read.csv(readPath)
+  return(csvResult)
 }

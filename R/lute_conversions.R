@@ -8,7 +8,7 @@
 #' Convert SingleCellExperiment to ExpressionSet.
 #' @param sce Object of type SingleCellExperiment (see 
 #' \code{?SingleCellExperiment}).
-#' @param assay.name Name of assay to store in new eset.
+#' @param assayName Name of assay to store in new eset.
 #' @returns ExpressionSet.
 #' 
 #' @importFrom SummarizedExperiment colData
@@ -22,17 +22,17 @@
 #' sce_to_eset(sce, "counts")
 #' 
 #' @export
-sce_to_eset <- function(sce, assay.name="counts"){
-	eset <- ExpressionSet(assayData=assays(sce)[[assay.name]],
+sce_to_eset <- function(sce, assayName="counts"){
+	ExpressionSet <- ExpressionSet(assayData=assays(sce)[[assayName]],
 	                      phenoData=AnnotatedDataFrame(
 	                        as.data.frame(colData(sce))))
-	return(eset)
+	return(ExpressionSet)
 }
 
 #' eset_to_sce
 #' Convert ExpressionSet to SingleCellExperiment.
-#' @param eset Object of type ExpressionSet (see \code{?ExpressionSet}).
-#' @param assay.name Name of new assay in new SingleCellExperiment object.
+#' @param expressionSet Object of type ExpressionSet (see \code{?ExpressionSet}).
+#' @param assayName Name of new assay in new SingleCellExperiment object.
 #' @returns ExpressionSet.
 #' 
 #' @importFrom SummarizedExperiment colData
@@ -41,21 +41,23 @@ sce_to_eset <- function(sce, assay.name="counts"){
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' 
 #' @examples
-#' eset <- get_decon_example_data_bisque()$sc.eset
-#' eset_to_sce(eset)
+#' expressionSet <- get_decon_example_data_bisque()$sc.eset
+#' eset_to_sce(expressionSet)
 #' 
 #' @export
-eset_to_sce <- function(eset, assay.name="counts"){
-  assays.list <- list(assay.name=exprs(eset))
-  names(assays.list) <- assay.name
-	sce.new <- SingleCellExperiment(assays=assays.list,
-	                                colData=DataFrame(as.matrix(pData(eset))))
-	return(sce.new)
+eset_to_sce <- function(expressionSet, assayName="counts"){
+  assaysList <- list(assayName=exprs(expressionSet))
+  names(assaysList) <- assayName
+	 singleCellExperimentNew <- SingleCellExperiment(assays=assaysList,
+	                                colData=DataFrame(
+	                                  as.matrix(pData(expressionSet))))
+	return(singleCellExperimentNew)
 }
 
 #' sce_to_se
 #' Convert SingleCellExperiment to SummarizedExperiment.
-#' @param sce Object of type SingleCellExperiment (see 
+#'
+#' @param singleCellExperiment Object of type SingleCellExperiment (see 
 #' \code{?SingleCellExperiment}).
 #' @returns SummarizedExperiment.
 #' 
@@ -67,15 +69,18 @@ eset_to_sce <- function(eset, assay.name="counts"){
 #' sce <- random_sce()
 #' sce_to_se(sce)
 #' @export
-sce_to_se <- function(sce){
-	se <- SummarizedExperiment(assays=assays(sce),
-	                           colData=colData(sce),
-	                           metadata=metadata(sce))
-	return(se)
+sce_to_se <- function(singleCellExperiment){
+  summarizedExperiment <- SummarizedExperiment(
+    assays=assays(singleCellExperiment),
+    colData=colData(singleCellExperiment),
+    metadata=metadata(singleCellExperiment))
+	return(summarizedExperiment)
 }
 
 #' se_to_sce
+#'
 #' Convert SummarizedExperiment to SingleCellExperiment.
+#'
 #' @param se Object of type SummarizedExperiment (see 
 #' \code{?SummarizedExperiment}).
 #' @returns New SingleCellExperiment object.
@@ -88,17 +93,20 @@ sce_to_se <- function(sce){
 #' se_to_sce(SummarizedExperiment())
 #' 
 #' @export
-se_to_sce <- function(se){
-	sce <- SingleCellExperiment(assays=assays(se),
-	                            colData=colData(se),
-	                            metadata=metadata(se))
-	return(sce)
+se_to_sce <- function(summarizedExperiment){
+	singleCellExperiment <- SingleCellExperiment(
+	  assays=assays(summarizedExperiment),
+	  colData=colData(summarizedExperiment),
+	  metadata=metadata(summarizedExperiment))
+	return(singleCellExperiment)
 }
 
 #' eset_to_se
+#'
 #' Convert ExpressionSet to SummarizedExperiment.
-#' @param eset Object of type ExpressionSet (see \code{?ExpressionSet}).
-#' @param assay.name Name of assay to store in new SummarizedExperiment object.
+#'
+#' @param expressionSet Object of type ExpressionSet (see \code{?ExpressionSet}).
+#' @param assayName Name of assay to store in new SummarizedExperiment object.
 #' @returns New object of type SummarizedExperiment.
 #' 
 #' @importFrom SummarizedExperiment colData
@@ -107,23 +115,25 @@ se_to_sce <- function(se){
 #' @importFrom S4Vectors DataFrame
 #' 
 #' @examples
-#' eset <- get_decon_example_data_bisque()$sc.eset
-#' eset_to_se(eset, "counts")
+#' expressionSet <- get_decon_example_data_bisque()$singleCellExpressionSet
+#' eset_to_se(expressionSet "counts")
 #' 
 #' @export
-eset_to_se <- function(eset, assay.name="counts"){
-  assays.list <- list(assay.name=exprs(eset))
-  names(assays.list) <- assay.name
-	se.new <- SummarizedExperiment(assays=assays.list,
-	                               colData=DataFrame(as.matrix(pData(eset))))
-	return(se.new)
+eset_to_se <- function(expressionSet, assayName="counts"){
+  assaysList <- list(assayName=exprs(expressionSet))
+  names(assaysList) <- assayName
+	summarizedExperimentNew <- SummarizedExperiment(
+	  assays=assaysList, colData=DataFrame(as.matrix(pData(expressionSet))))
+	return(summarizedExperimentNew)
 }
 
 #' se_to_eset
+#' 
 #' Convert SummarizedExperiment to ExpressionSet.
+#' 
 #' @param se Object of type SummarizedExperiment (see 
 #' \code{?SummarizedExperiment}).
-#' @param assay.name Name of assay to store in new ExpressionSet object.
+#' @param assayName Name of assay to store in new ExpressionSet object.
 #' @returns New object of type ExpressionSet.
 #'
 #' @importFrom SummarizedExperiment colData
@@ -132,23 +142,24 @@ eset_to_se <- function(eset, assay.name="counts"){
 #' @importFrom Biobase AnnotatedDataFrame
 #'
 #' @examples
-#' se <- sce_to_se(random_sce())
-#' se_to_eset(se)
+#' summarizedExperiment <- sce_to_se(random_sce())
+#' se_to_eset(summarizedExperiment)
 #' 
 #' @export
-se_to_eset <- function(se, assay.name="counts"){
-	eset <- ExpressionSet(assayData=assays(se)[[assay.name]],
-	                      phenoData=AnnotatedDataFrame(
-	                        as.data.frame(colData(se))))
-	return(eset)
+se_to_eset <- function(summarizedExperiment, assayName="counts"){
+	expressionSet <- ExpressionSet(
+	  assayData=assays(summarizedExperiment)[[assayName]],
+	  phenoData=
+	    AnnotatedDataFrame(as.data.frame(colData(summarizedExperiment))))
+	return(expressionSet)
 }
 
 #' get_eset_from_matrix
 #' 
 #' Makes an ExpressionSet from a matrix.
 #'
-#' @param mat User-specified expression matrix.
-#' @param batch.variable Name of the batch variable.
+#' @param inputMatrix User-specified expression matrix.
+#' @param batchVariable Name of the batch variable.
 #' @returns ExpressionSet.
 #'
 #' @importFrom Biobase ExpressionSet AnnotatedDataFrame
@@ -157,10 +168,11 @@ se_to_eset <- function(se, assay.name="counts"){
 #' example.data <- get_decon_example_data()
 #'
 #' @export
-get_eset_from_matrix <- function(mat, batch.variable="SampleName"){
-  pdata <- data.frame(new.variable=colnames(mat))
-  colnames(pdata) <- batch.variable
-  rownames(pdata) <- colnames(mat)
-  eset <- Biobase::ExpressionSet(assayData=mat, phenoData=Biobase::AnnotatedDataFrame(pdata))
-  return(eset)
+get_eset_from_matrix <- function(inputMatrix, batchVariable="SampleName"){
+  phenoData <- data.frame(new.variable=colnames(inputMatrix))
+  colnames(phenoData) <- batch.variable
+  rownames(phenoData) <- colnames(mat)
+  expressionSet <- Biobase::ExpressionSet(
+    assayData=inputMatrix, phenoData=Biobase::AnnotatedDataFrame(phenoData))
+  return(expressionSet)
 }

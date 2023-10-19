@@ -21,15 +21,17 @@ Method for behavior of show generic when called for object of class
 \linkS4class{nnlsParam}
 }
 \examples{
-lexample <- get_decon_example_data()
-param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], 
-                    z=lexample[["z"]])
+exampleList <- getDeconvolutionExampleData()
+param <- nnlsParam(
+cellScaleFactors=exampleList[["cellScaleFactors"]], 
+bulkExpression=exampleList[["bulkExpression"]],
+referenceExpression=exampleList[["referenceExpression"]])
 
 ## return only predicted proportions
 deconvolution(param)
 
 # return full results
-param@return.info <- TRUE
+param@returnInfo <- TRUE
 names(deconvolution(param))
 
 }
