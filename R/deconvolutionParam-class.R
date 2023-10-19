@@ -34,8 +34,8 @@ setClass("deconvolutionParam",
          slots=c(bulkExpression="matrix", return.info="logical"))
 
 #' Inspect slot in \linkS4class{deconvolutionParam} object
-#' @param objectToAccess Object to access.
-#' @param slotToAccess Slot to access.
+#' @param x Object to access.
+#' @param i Slot to access.
 #' @returns Contents of specified slot.
 #' @details Inspect slot in \linkS4class{deconvolutionParam} object
 #' 
@@ -46,8 +46,8 @@ setClass("deconvolutionParam",
 #' @returns Object slot contents.
 #' 
 #' @export
-setMethod("[[", "deconvolutionParam", function(objectToAccess, slotToAccess) {
-  slot(objectToAccess, slotToAccess)})
+setMethod("[[", "deconvolutionParam", function(x, i) {
+  slot(x, i)})
 
 #' Deconvolution generic behavior for object of class \linkS4class{deconvolutionParam}
 #' @param object An object of class \linkS4class{deconvolutionParam} (see 

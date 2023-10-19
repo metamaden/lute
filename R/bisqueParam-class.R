@@ -45,13 +45,15 @@
 #' @aliases 
 #' BisqueParam-class
 #'
-setClass("bisqueParam", containcellSizeFactor="independentbulkParam", 
-         slotcellSizeFactor=c(bulkExpressionSet="ExpressionSet", 
-                 singleCellExpressionSet="ExpressionSet", 
-                 assayName="character", 
-                 batchVariable="character", 
-                 cellTypeVariable="character", 
-                 useOverlap="logical"))
+setClass("bisqueParam", 
+         contains="independentbulkParam", 
+         slots=c(
+           bulkExpressionSet="ExpressionSet",
+           singleCellExpressionSet="ExpressionSet",
+           assayName="character",
+           batchVariable="character",
+           cellTypeVariable="character",
+           useOverlap="logical"))
 
 #' Make new object of class bisqueParam
 #'
@@ -61,7 +63,7 @@ setClass("bisqueParam", containcellSizeFactor="independentbulkParam",
 #' @param bulkExpressionIndependent Bulk mixed signals matrix of independent samples, which should not overlap samples in y.
 #' @param referenceExpression Signature matrix of cell type-specific signals. If not provided, can be computed from a
 #' provided ExpressionSet containing single-cell data.
-#' @paramcellSizeFactorCell size factor transformations of length equal to the K cell types to deconvolve.
+#' @param cellSizeFactor size factor transformations of length equal to the K cell types to deconvolve.
 #' @param bulkExpressionSet ExpressionSet of bulk mixed signals.
 #' @param scData SummarizedExperiment-type object of single-cell transcriptomics data. Accepts
 #' ExpressionSet, SummarizedExperiment, and SingleCellExperiment object types.
@@ -113,7 +115,7 @@ bisqueParam <- function(bulkExpression=NULL,
   cellSizeFactor <- .parseCellSize(listReferenceExpression[["referenceExpression"]], cellSizeFactor)
   ## parse batch ids in bulk and sc
   listBatchID <- .parseBatches(batchVariable=batchVariable,
-                                 bulkExpressionSet=bulkExpressionSet, 
+                                bulkExpressionSet=bulkExpressionSet, 
                                 idSC=listReferenceExpression[["idSC"]])
   ## parse independent bulk samples
   bulkExpression <- .parseBulkExpressionIndependent(

@@ -5,17 +5,17 @@
 \title{Make new cellProportionsPredictions object.}
 \usage{
 cellProportionsPredictions(
-  predictions.table,
-  cell.type.vector = NULL,
-  sample.id.vector = NULL
+  predictionsTable,
+  cellTypeVector = NULL,
+  sampleIdVector = NULL
 )
 }
 \arguments{
-\item{predictions.table}{Table of cell type predictions.}
+\item{predictionsTable}{Table of cell type predictions.}
 
-\item{cell.type.vector}{Character vector of cell type labels.}
+\item{cellTypeVector}{Character vector of cell type labels.}
 
-\item{sample.id.vector}{Character vector of sample id labels.}
+\item{sampleIdVector}{Character vector of sample id labels.}
 }
 \value{
 New cellProportionsPredictions object.
@@ -26,6 +26,6 @@ New cellProportionsPredictions object.
 Make new cellProportionsPredictions object.
 }
 \examples{
-example.data <- get_decon_example_data()
+exampleData <- get_decon_example_data()
 
 }

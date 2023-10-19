@@ -20,6 +20,6 @@ Inspect cellProportionsPredictions object.
 Method behavior for show.
 }
 \examples{
-example.data <- get_decon_example_data()
+exampleData <- get_decon_example_data()
 
 }

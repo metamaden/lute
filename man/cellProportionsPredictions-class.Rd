@@ -5,11 +5,11 @@
 \alias{cellProportionsPredictions-class}
 \title{cellProportionsPredictions-class}
 \arguments{
-\item{predictions.table}{Table containing cell type predictions.}
+\item{predictionsTable}{Table containing cell type predictions.}
 
-\item{cell.type.vector}{Character vector of cell type labels.}
+\item{cellTypeVector}{Character vector of cell type labels.}
 
-\item{sample.id.vector}{Character vector of sample id labels.}
+\item{sampleIdVector}{Character vector of sample id labels.}
 }
 \value{
 New cellProportionsPredictions object.
@@ -22,9 +22,8 @@ Main constructor for class \linkS4class{cellProportionsPredictions}.
 }
 \examples{
 new("cellProportionsPredictions")
-ptable <- matrix(sample(100,50),nrow=10)
-colnames(ptable) <- paste0("cell_type",seq(ncol(ptable)))
-rownames(ptable) <- paste0("sample", seq(nrow(ptable)))
-pred <- cellProportionsPredictions(ptable)
-pred
+predictionsTable <- matrix(sample(100,50),nrow=10)
+colnames(predictionsTable) <- paste0("cell_type",seq(ncol(predictionsTable)))
+rownames(predictionsTable) <- paste0("sample", seq(nrow(predictionsTable)))
+cellProportionsPredictions(predictionsTable)
 }

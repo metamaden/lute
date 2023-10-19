@@ -24,17 +24,17 @@ returning a list.
 }
 \examples{
 ## get data
-lexample <- get_decon_example_data_bisque()
-input_y_eset <- lexample[["y.eset"]][,seq(10)]
-input_yi <- exprs(lexample[["y.eset"]])
-input_yi <- input_yi[,c(11:ncol(input_yi))]
+exampleList <- get_decon_example_data_bisque()
+bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
+bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
+bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 
 ## get param object
-param <- bisqueParam(y.eset=input_y_eset, yi=input_yi,
-                     sc.data=lexample[["sc.eset"]], 
-                     batch.variable="SubjectName", 
-                     celltype.variable="cellType", 
-                     use.overlap=FALSE)
+param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, bulkExpressionIndependent=bulkExpression,
+                     scData=exampleList[["singleCellExpressionSet"]], 
+                     batchVariable="SubjectName", 
+                     cellTypeVariable="cellType", 
+                     useOverlap=FALSE)
 
 ## get predicted proportions
 res <- deconvolution(param)

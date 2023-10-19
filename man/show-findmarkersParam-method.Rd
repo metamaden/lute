@@ -21,10 +21,10 @@ Method for behavior of show generic when called for object of class
 \linkS4class{findmarkersParam}
 }
 \examples{
-lexample <- get_decon_example_data()
-sce.example <- random_sce()
-new.param <- findmarkersParam(sce=sce.example, 
-celltype.variable="celltype", markers.per.type=5)
-markers <- typemarkers(new.param)
+exampleList <- get_decon_example_data()
+singleCellExperimentExample <- random_singleCellExperiment()
+newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
+cellTypeVariable="celltype", markersPerType=5)
+markers <- typemarkers(newParam)
 
 }

@@ -2,15 +2,15 @@
 
 ### Author: Sean Maden
 ###
-### Utilities and miscellaneous functions supporting the lute package for deconvolution experiments.
+### Utilities and misingleCellExperimentllaneous functions supporting the lute package for deconvolution experiments.
 ###
 
-#' get_celltypes_from_sce
+#' get_celltypes_from_singleCellExperiment
 #' 
 #' Extract cell type values from SingleCellExperiment.
 #' 
-#' @param sce A SingleCellExperiment object.
-#' @param celltype.variable Variable containing cell type labels (e.g. "type1", 
+#' @param singleCellExperiment A SingleCellExperiment object.
+#' @param cellTypeVariable Variable containing cell type labels (e.g. "type1", 
 #' "type2", etc.).
 #' @returns List of cell type variable metadata and values.
 #'
@@ -20,96 +20,96 @@
 #' @importFrom S4Vectors DataFrame
 #' 
 #' @examples
-#' lexample <- get_decon_example_data()
+#' lexample <- getDeconvolutionExampleData()
 #'
 #' @export
-get_celltypes_from_sce <- function(sce, celltype.variable="celltype"){
-  celltype.vector <- as.data.frame(SummarizedExperiment::colData(sce))[,celltype.variable]
+get_celltypes_from_singleCellExperiment <- function(singleCellExperiment, cellTypeVariable="celltype"){
+  celltype.vector <- as.data.frame(SummarizedExperiment::colData(singleCellExperiment))[,cellTypeVariable]
   celltype.char <- as.character(celltype.vector)
   unique.types <- unique(celltype.char)
   unique.types <- unique.types[order(unique.types)]
   celltype.fact <- factor(celltype.vector, levels=unique.types)
-  lr <- list(variable=celltype.variable, 
+  lr <- list(variable=cellTypeVariable, 
              unique.types=unique.types, 
              character=celltype.char, 
              factor=celltype.fact)
   return(lr)
 }
 
-#' ypb_from_sce
+#' ypb_from_singleCellExperiment
 #'
 #' Get pseudobulk from a SingleCellExperiment object.
 #'
-#' @param sce An object of type \linkS4class{SingleCellExperiment}.
-#' @param assay.name Name of expression matrix in \code{sce} assays.
-#' @param celltype.variable Variable name for cell type labels in \code{sce} 
+#' @param singleCellExperiment An object of type \linkS4class{SingleCellExperiment}.
+#' @param assayName Name of expression matrix in \code{singleCellExperiment} assays.
+#' @param cellTypeVariable Variable name for cell type labels in \code{singleCellExperiment} 
 #' coldata.
 #' @param sample.id.variable Variable name for sample/group ID labels in 
-#' \code{sce} coldata.
+#' \code{singleCellExperiment} coldata.
 #' @param S Vector of cell type size scale factors. Optional.
 #' @returns Matrix of simulated bulk convoluted signals.
 #' 
 #' @examples
-#' sce.example <- random_sce()
-#' ypb_from_sce(sce.example)
+#' singleCellExperiment.example <- random_singleCellExperiment()
+#' ypb_from_singleCellExperiment(singleCellExperiment.example)
 #' 
 #' @export
-ypb_from_sce <- function(sce, assay.name="counts", 
-                         celltype.variable="celltype", 
+ypb_from_singleCellExperiment <- function(singleCellExperiment, assayName="counts", 
+                         cellTypeVariable="celltype", 
                          sample.id.variable=NULL, S=NULL){
   num.groups <- 1; unique.group.id.vector <- ""
   if(!is(sample.id.variable, "NULL")){
-    group.id.vector <- sce[[sample.id.variable]]
+    group.id.vector <- singleCellExperiment[[sample.id.variable]]
     unique.group.id.vector <- group.id.vector 
     unique.group.id.vector <- unique(unique.group.id.vector)
     unique.group.id.vector <- as.character(unique.group.id.vector)
     num.groups <- length(unique.group.id.vector)
   }
-  list.cell.types <- get_celltypes_from_sce(
-    sce=sce, celltype.variable=celltype.variable)
-  num.types <- length(list.cell.types[["unique.types"]])
+  list.cell.types <- get_celltypes_from_singleCellExperiment(
+    singleCellExperiment=singleCellExperiment, cellTypeVariable=cellTypeVariable)
+  numberType <- length(list.cell.types[["unique.types"]])
   ypb.list <- lapply(unique.group.id.vector, function(group.id){
-    sce.filter <- sce
+    singleCellExperiment.filter <- singleCellExperiment
     if(num.groups > 1){
-      filter.group <- sce[[sample.id.variable]]==group.id
-      sce.filter <- sce[,filter.group]
+      filter.group <- singleCellExperiment[[sample.id.variable]]==group.id
+      singleCellExperiment.filter <- singleCellExperiment[,filter.group]
     }
     
-    input_s <- S
-    if(is(input_s, "NULL")){
-      input_s <- rep(1, num.types)
-      names(input_s) <- list.cell.types[["unique.types"]]
+    cellScaleFactors <- S
+    if(is(cellScaleFactors, "NULL")){
+      cellScaleFactors <- rep(1, numberType)
+      names(cellScaleFactors) <- list.cell.types[["unique.types"]]
     }
     
-    input_Znew <- get_z_from_sce(sce.filter, assay.name, celltype.variable)
+    referenceExpressionZnew <- get_z_from_singleCellExperiment(singleCellExperiment.filter, assayName, cellTypeVariable)
     input_P <- table(list.cell.types[["character"]])
     input_P <- prop.table(input_P)
     order.p <- match(names(input_P), list.cell.types[["unique.types"]])
     order.p <- order(order.p)
     input_P <- input_P[order.p]
-    input_ZSnew <- .zstransform(input_Znew, input_s)
-    input_ypb <- t(t(input_P) %*% t(input_ZSnew))
-    return(input_ypb)
+    referenceExpressionZSnew <- .zstransform(referenceExpressionZnew, cellScaleFactors)
+    bulkExpressionPseudobulk <- t(t(input_P) %*% t(referenceExpressionZSnew))
+    return(bulkExpressionPseudobulk)
   })
   ypb.table <- do.call(cbind, ypb.list)
   ypb.table <- as.data.frame(ypb.table)
   if(num.groups > 1){
     colnames(ypb.table) <- unique.group.id.vector
   } else{
-    colnames(ypb.table) <- "sce.pseudobulk"
+    colnames(ypb.table) <- "singleCellExperiment.pseudobulk"
   }
   return(ypb.table)
 }
 
-#' signature_matrix_from_sce
+#' signature_matrix_from_singleCellExperiment
 #' 
 #' Calculate a Z signature matrix from object of type 
 #' \linkS4class{SingleCellExperiment}.
 #' 
-#' @param sce An object of type \linkS4class{SingleCellExperiment}.
-#' @param assay.name Name of expression matrix in \code{sce} assays (e.g. 
+#' @param singleCellExperiment An object of type \linkS4class{SingleCellExperiment}.
+#' @param assayName Name of expression matrix in \code{singleCellExperiment} assays (e.g. 
 #' "counts").
-#' @param celltype.variable Variable name for cell type labels in \code{sce} 
+#' @param cellTypeVariable Variable name for cell type labels in \code{singleCellExperiment} 
 #' coldata (e.g. "type1", "type2", etc.). 
 #' @param summary.method Summary statistic function to use.
 #' @details Calculate a Z signature matrix from object of type 
@@ -117,112 +117,124 @@ ypb_from_sce <- function(sce, assay.name="counts",
 #' @returns New Z signature matrix.
 #' 
 #' @examples
-#' sce.example <- random_sce()
-#' signature_matrix_from_sce(sce.example)
+#' singleCellExperiment.example <- random_singleCellExperiment()
+#' signature_matrix_from_singleCellExperiment(singleCellExperiment.example)
 #' 
 #' @export
-signature_matrix_from_sce <- function(sce, 
-                                      celltype.variable="celltype", 
+signature_matrix_from_singleCellExperiment <- function(singleCellExperiment, 
+                                      cellTypeVariable="celltype", 
                                       summary.method="mean", 
-                                      assay.name="counts"){
-  ## gets the z signature matrix from an sce object
-  expression.matrix <- assays(sce)[[assay.name]]
+                                      assayName="counts"){
+  ## gets the z signature matrix from an singleCellExperiment object
+  expression.matrix <- assays(singleCellExperiment)[[assayName]]
   expression.matrix <- as.matrix(expression.matrix)
-  cd <- colData(sce)
-  unique.cell.types <- unique(cd[,celltype.variable])
+  cd <- colData(singleCellExperiment)
+  unique.cell.types <- unique(cd[,cellTypeVariable])
   unique.cell.types <- unique.cell.types[order(unique.cell.types)]
-  input_z <- do.call(cbind, lapply(unique.cell.types, function(cell.type.index){
-    filter.index <- cd[,celltype.variable]==cell.type.index
+  referenceExpression <- do.call(cbind, lapply(unique.cell.types, function(cell.type.index){
+    filter.index <- cd[,cellTypeVariable]==cell.type.index
     if(summary.method == "mean"){
       DelayedArray::rowMeans(expression.matrix[,filter.index])
     } else{
       Biobase::rowMedians(expression.matrix[,filter.index])
     }
   }))
-  colnames(input_z) <- unique.cell.types
-  return(input_z)
+  colnames(referenceExpression) <- unique.cell.types
+  return(referenceExpression)
 }
 
-#' get_z_from_sce
+#' get_z_from_singleCellExperiment
 #' 
 #' Makes the Z cell atlas reference from a SingleCellExperiment.
 #' 
-#' @param sce A SingleCellExperiment object.
-#' @param assay.name Name of expression assay type (e.g. "counts").
-#' @param celltype.variable Name of variable containing cell type labels (e.g. 
+#' @param singleCellExperiment A SingleCellExperiment object.
+#' @param assayName Name of expression assay type (e.g. "counts").
+#' @param cellTypeVariable Name of variable containing cell type labels (e.g. 
 #' "type1", "type2", etc.).
 #' @returns Matrix of cell summary values (Z reference atlas).
 #'
 #' @importFrom SummarizedExperiment assays
 #' 
 #' @examples
-#' lexample <- get_decon_example_data()
+#' lexample <- getDeconvolutionExampleData()
 #' @export
-get_z_from_sce <- function(sce, assay.name="counts", celltype.variable="celltype"){
-  ltype <- get_celltypes_from_sce(sce=sce, celltype.variable=celltype.variable)
-  mexpr <- as.matrix(assays(sce)[[assay.name]])
-  input_Znew <- do.call(cbind, lapply(ltype[["unique.types"]], function(typei){
-    datav <- mexpr[,ltype[["character"]]==typei]; .z_operator(datav)
+referenceFromSingleCellExperiment <- function(
+    singleCellExperiment, assayName="counts", cellTypeVariable="celltype"){
+  typesList<- get_celltypes_from_singleCellExperiment(
+    singleCellExperiment=singleCellExperiment, 
+    cellTypeVariable=cellTypeVariable)
+  mexpr <- as.matrix(
+    assays(
+      singleCellExperiment)[[assayName]])
+  referenceExpressionZnew <- 
+    do.call(cbind, lapply(typesList[["unique.types"]], function(typei){
+    datav <- mexpr[,typesList[["character"]]==typei]; .z_operator(datav)
   }))
-  colnames(input_Znew) <- ltype[["unique.types"]]
-  rownames(input_Znew) <- rownames(sce)
-  return(input_Znew)
+  colnames(referenceExpressionZnew) <- typesList[["unique.types"]]
+  rownames(referenceExpressionZnew) <- rownames(singleCellExperiment)
+  return(referenceExpressionZnew)
 }
 
-.zstransform <- function(z, s){
-  sweep(z, 2, s, FUN="*")
+.referenceExpressionCellScaleTransform <- function(
+    referenceExpression, cellScaleFactor){
+  sweep(referenceExpression, 2, cellScaleFactor, FUN="*")
 }
 
-.z_operator <- function(datav){
+.referenceExpressionOperator <- function(datav){
   rowMeans(datav)
 }
 
-#' get_decon_example_data
+#' getDeconvolutionExampleData
 #' 
 #' Make example data for deconvolution.
 #' 
-#' @param num.bulk.samples Number of bulk samples.
-#' @param num.markers Number of cell type markers.
-#' @param num.types Number of cell types.
+#' @param numberBulkSamples Number of bulk samples.
+#' @param numberMarkers Number of cell type markers.
+#' @param numberType Number of cell types.
 #' @returns Example data as list.
 #' 
 #' @importFrom stats rpois
 #' 
 #' @examples
-#' example.data <- get_decon_example_data()
+#' exampleData <- getDeconvolutionExampleData()
 #' 
 #' @export
-get_decon_example_data <- function(num.bulk.samples=2, num.markers=10,
-                                    num.types=2){
-  input_y <- matrix(
-    rpois(n=num.markers*num.bulk.samples, lambda=seq(0, 50, 5)), 
-    ncol=num.bulk.samples)
-  input_z <- matrix(
-    rpois(n=num.types*num.markers, lambda=seq(0, 50, 5)), 
-    ncol=num.types)
-  rownames(input_y) <- rownames(input_z) <- paste0("marker", seq(num.markers))
-  colnames(input_z) <- paste0("type", seq(num.types))
-  colnames(input_y) <- paste0("sample", seq(num.bulk.samples))
-  input_s <- c(1, 10)
-  names(input_s) <- colnames(input_z)
-  return(list(z=input_z, y=input_y, s=input_s))
+getDeconvolutionExampleData <- function(
+    numberBulkSamples=2, numberMarkers=10, numberTypes=2){
+  bulkExpression <- matrix(
+    rpois(n=numberMarkers*numberBulkSamples, lambda=seq(0, 50, 5)), 
+    ncol=numberBulkSamples)
+  referenceExpression <- matrix(
+    rpois(n=numberType*numberMarkers, lambda=seq(0, 50, 5)), 
+    ncol=numberType)
+  rownames(bulkExpression) <- rownames(referenceExpression) <- 
+    paste0("marker", seq(numberMarkers))
+  colnames(referenceExpression) <- paste0("type", seq(numberType))
+  colnames(bulkExpression) <- paste0("sample", seq(numberBulkSamples))
+  cellScaleFactors <- c(1, 10)
+  names(cellScaleFactors) <- colnames(referenceExpression)
+  return(list(
+    referenceExpression=referenceExpression, 
+    bulkExpression=bulkExpression, 
+    cellScaleFactors=cellScaleFactors))
 }
 
-.get_zvar <- function(z){
-  input_z_variable <- matrix(0, nrow=nrow(z), ncol=ncol(z))
-  rownames(input_z_variable) <- rownames(z)
-  colnames(input_z_variable) <- colnames(z)
-  input_z_variable
+.getReferenceExpressionVariable <- function(referenceExpression){
+  referenceExpressionVariable <- 
+    matrix(0, nrow=nrow(referenceExpression), ncol=ncol(referenceExpression))
+  rownames(referenceExpressionVariable) <- rownames(referenceExpression)
+  colnames(referenceExpressionVariable) <- colnames(referenceExpression)
+  referenceExpressionVariable
 }
 
-#' get_decon_example_data_bisque
+#' getDeconvolutionExampleData_bisque
 #'
 #' Get example data for Bisque algorithm.
 #'
-#' @param num.bulk.samples Number of bulk samples.
-#' @param num.markers Number of cell type markers.
-#' @param num.cells Number of cells.
-#' @param num.types Number of cell types.
+#' @param numberBulkSamples Number of bulk samples.
+#' @param numberMarkers Number of cell type markers.
+#' @param numberCells Number of cells.
+#' @param numberType Number of cell types.
 #' @returns Example data as list.
 #'
 #' @importFrom Biobase ExpressionSet
@@ -230,38 +242,42 @@ get_decon_example_data <- function(num.bulk.samples=2, num.markers=10,
 #' @importFrom BiocGenerics counts
 #' 
 #' @examples
-#' example.data <- get_decon_example_data()
+#' example.data <- getDeconvolutionExampleData()
 #'
 #' @export
-get_decon_example_data_bisque <- function(num.bulk.samples=100,
-                                           num.markers=1000, 
-                                           num.cells=1000, 
-                                           num.types=2){
-  lexample <- get_decon_example_data(num.bulk.samples=num.bulk.samples,
-                               num.markers=num.markers,
-                               num.types=num.types)
-  input_y <- lexample[["y"]]
-  colnames(input_y) <- c(paste0("sample", seq(num.bulk.samples/2)), 
-                   paste0("bulk", seq(num.bulk.samples/2)))
-  df.y.pheno <- data.frame(SubjectName=colnames(input_y))
-  rownames(df.y.pheno) <- colnames(input_y)
-  y.eset <- ExpressionSet(assayData=input_y, 
-                          phenoData=AnnotatedDataFrame(df.y.pheno))
-  sce <- random_sce(num.genes=num.markers, 
-                    num.cells=num.cells, 
-                    num.types=num.types)
-  df.z.pheno <- data.frame(cellType=sce[["celltype"]], 
+getDeconvolutionExampleData_bisque <- function(numberBulkSamples=100,
+                                               numberMarkers=1000, 
+                                               numberCells=1000, 
+                                               numberType=2){
+  exampleList <- getDeconvolutionExampleData(
+    numberBulkSamples=numberBulkSamples,
+    numberMarkers=numberMarkers,
+    numberType=numberType)
+  bulkExpression <- exampleList[["bulkExpression"]]
+  colnames(bulkExpression) <- c(paste0("sample", seq(numberBulkSamples/2)), 
+                   paste0("bulk", seq(numberBulkSamples/2)))
+  dfBulkPheno <- data.frame(SubjectName=colnames(bulkExpression))
+  rownames(dfBulkPheno) <- colnames(bulkExpression)
+  bulkExpressionSet <- ExpressionSet(assayData=bulkExpression, 
+                          phenoData=AnnotatedDataFrame(dfBulkPheno))
+  singleCellExperiment <- random_singleCellExperiment(num.genes=numberMarkers, 
+                    numberCells=numberCells, 
+                    numberType=numberType)
+  dfReferenceExpressionPheno <- data.frame(
+    cellType=singleCellExperiment[["celltype"]], 
                            SubjectName=
-                             paste0("sample", seq(num.cells)))
-  rownames(df.z.pheno) <- colnames(sce)
-  z.eset <- ExpressionSet(assayData=counts(sce), 
-                          phenoData=AnnotatedDataFrame(df.z.pheno))
-  rownames(z.eset) <- rownames(y.eset)
-  return_list <- list(y.eset=y.eset, sc.eset=z.eset)
-  return(return_list)
+                             paste0("sample", seq(numberCells)))
+  rownames(dfReferenceExpressionPheno) <- colnames(singleCellExperiment)
+  referenceExpressionSet <- ExpressionSet(
+    assayData=counts(singleCellExperiment), 
+    phenoData=AnnotatedDataFrame(dfReferenceExpressionPheno))
+  rownames(referenceExpressionSet) <- rownames(bulkExpressionSet)
+  returnList <- list(bulkExpressionSet=bulkExpressionSet, 
+                      sc.eset=referenceExpressionSet)
+  return(returnList)
 }
 
-#' get_decon_example_data_scdc
+#' getDeconvolutionExampleData_scdc
 #' 
 #' Get example data for SCDC
 #'
@@ -272,31 +288,38 @@ get_decon_example_data_bisque <- function(num.bulk.samples=100,
 #' @importFrom BiocGenerics counts
 #' 
 #' @examples
-#' example.data <- get_decon_example_data()
+#' example.data <- getDeconvolutionExampleData()
 #' 
 #' @export
-get_decon_example_data_scdc <- function(){
-  ## get y.eset
-  input_y <- get_decon_example_data()[["y"]]
-  input_y <- cbind(input_y, input_y, input_y, input_y, input_y, input_y)
-  colnames(input_y) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
-  df.y.pheno <- data.frame(SubjectName=colnames(input_y))
-  rownames(df.y.pheno) <- colnames(input_y)
-  y.eset <- ExpressionSet(assayData=input_y, 
-                          phenoData=AnnotatedDataFrame(df.y.pheno))
+getDeconvolutionExampleData_scdc <- function(){
+  ## get bulkExpressionSet
+  bulkExpression <- getDeconvolutionExampleData()[["y"]]
+  bulkExpression <- cbind(bulkExpression, bulkExpression, bulkExpression, 
+                          bulkExpression, bulkExpression, bulkExpression)
+  colnames(bulkExpression) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
+  dfBulkPheno <- data.frame(SubjectName=colnames(bulkExpression))
+  rownames(dfBulkPheno) <- colnames(bulkExpression)
+  bulkExpressionSet <- ExpressionSet(assayData=bulkExpression, 
+                          phenoData=AnnotatedDataFrame(dfBulkPheno))
 
-  ## get z.eset
-  sce <- random_sce(num.genes=10, num.cells=300, num.types=4)
-  df.z.pheno <- data.frame(cellType=sce[["celltype"]], 
-                           SubjectName=paste0("sample", seq(ncol(sce))))
-  rownames(df.z.pheno) <- colnames(sce)
-  z.eset <- ExpressionSet(assayData=counts(sce), 
-                          phenoData=AnnotatedDataFrame(df.z.pheno))
-  rownames(z.eset) <- rownames(y.eset)
+  ## get referenceExpressionSet
+  singleCellExperiment <- random_singleCellExperiment(num.genes=10, 
+                                                      numberCells=300, 
+                                                      numberType=4)
+  dfReferenceExpressionPheno <- data.frame(
+    cellType=singleCellExperiment[["celltype"]], 
+                           SubjectName=
+      paste0("sample", seq(ncol(singleCellExperiment))))
+  rownames(dfReferenceExpressionPheno) <- colnames(singleCellExperiment)
+  referenceExpressionSet <- ExpressionSet(
+    assayData=counts(singleCellExperiment),
+    phenoData=AnnotatedDataFrame(dfReferenceExpressionPheno))
+  rownames(referenceExpressionSet) <- rownames(bulkExpressionSet)
   
   ## return
-  return_list <- list(y.eset=y.eset, sc.eset=z.eset)
-  return(return_list)
+  returnList <- list(bulkExpressionSet=bulkExpressionSet, 
+                      singleCellExpressionSet=referenceExpressionSet)
+  return(returnList)
 }
 
 #'
@@ -305,54 +328,64 @@ get_decon_example_data_scdc <- function(){
 #' @importFrom Biobase AnnotatedDataFrame
 #' @importFrom BiocGenerics counts
 #'
-get_decon_example_data_music2 <- function(){
-  ## get y.eset
-  input_y <- get_decon_example_data()[["y"]]
-  input_y <- cbind(input_y, input_y, input_y, input_y, input_y, input_y)
-  colnames(input_y) <- c(paste0("sample", seq(2)), 
-                   paste0("bulk",seq(ncol(input_y)-2)))
+getDeconvolutionExampleData_music2 <- function(){
+  ## get bulkExpressionSet
+  bulkExpression <- getDeconvolutionExampleData()[["y"]]
+  bulkExpression <- cbind(bulkExpression, bulkExpression, bulkExpression, 
+                          bulkExpression, bulkExpression, bulkExpression)
+  colnames(bulkExpression) <- c(paste0("sample", seq(2)), 
+                   paste0("bulk",seq(ncol(bulkExpression)-2)))
   
-  df.y.pheno <- data.frame(SubjectName=colnames(input_y))
-  rownames(df.y.pheno) <- colnames(input_y)
-  y.eset <- ExpressionSet(assayData=input_y, 
-                          phenoData=AnnotatedDataFrame(df.y.pheno))
+  dfBulkPheno <- data.frame(SubjectName=colnames(bulkExpression))
+  rownames(dfBulkPheno) <- colnames(bulkExpression)
+  bulkExpressionSet <- ExpressionSet(assayData=bulkExpression, 
+                          phenoData=AnnotatedDataFrame(dfBulkPheno))
 
-  ## get z.eset
-  sce <- random_sce(num.genes=10, num.cells=300, num.types=2)
-  df.z.pheno <- data.frame(cellType=sce[["celltype"]], 
-                           SubjectName=paste0("sample", seq(ncol(sce))))
-  rownames(df.z.pheno) <- colnames(sce)
-  z.eset <- ExpressionSet(assayData=counts(sce), 
-                          phenoData=AnnotatedDataFrame(df.z.pheno))
-  rownames(z.eset) <- rownames(y.eset)
+  ## get referenceExpressionSet
+  singleCellExperiment <- random_singleCellExperiment(num.genes=10, 
+                                                      numberCells=300, 
+                                                      numberType=2)
+  dfReferenceExpressionPheno <- data.frame(
+    cellType=singleCellExperiment[["celltype"]], 
+                           SubjectName=paste0("sample", 
+                                              seq(ncol(singleCellExperiment))))
+  rownames(dfReferenceExpressionPheno) <- colnames(singleCellExperiment)
+  referenceExpressionSet <- ExpressionSet(
+    assayData=counts(singleCellExperiment),
+    phenoData=AnnotatedDataFrame(dfReferenceExpressionPheno))
+  rownames(referenceExpressionSet) <- rownames(bulkExpressionSet)
   
   ## return
-  return_list <- list(y.eset=y.eset, sc.eset=z.eset)
-  return(return_list)
+  returnList <- list(bulkExpressionSet=bulkExpressionSet, 
+                      singleCellExpressionSet=referenceExpressionSet)
+  return(returnList)
 }
 
 
 #'
 #'
-#' @param list.pred List of cell type proportions predictions.
-#' @param column.labels Vector of cell type labels 
+#' @param listPred List of cell type proportions predictions.
+#' @param columnLabels Vector of cell type labels 
 #' (e.g. "type1", "type2", etc.).
-#' @param row.labels Vector of sample id labels 
+#' @param rowLabels Vector of sample id labels 
 #' (e.g. "sample1", "sample2", etc.).
 #'
 #'
-.parse_deconvolution_predictions_results <- function(list.pred, 
-                                                     column.labels, 
-                                                     row.labels){
-  if(is(column.labels, "NULL")){column.labels <- seq(length(list.pred[[1]]))}
-  if(is(row.labels, "NULL")){row.labels <- seq(length(list.pred))}
-  table.pred <- do.call(rbind, list.pred)
-  table.pred <- apply(table.pred, 1, function(ri){ri/sum(ri)}) 
-  table.pred <- t(table.pred)
-  colnames(table.pred) <- column.labels
-  rownames(table.pred) <- row.labels
+.parse_deconvolution_predictions_results <- function(listPred, 
+                                                     columnLabels, 
+                                                     rowLabels){
+  if(is(columnLabels, "NULL")){
+    columnLabels <- seq(length(listPred[[1]]))}
+  if(is(rowLabels, "NULL")){
+    rowLabels <- seq(length(listPred))}
+  tablePred <- do.call(rbind, listPred)
+  tablePred <- apply(tablePred, 1, function(ri){ri/sum(ri)}) 
+  tablePred <- t(tablePred)
+  colnames(tablePred) <- columnLabels
+  rownames(tablePred) <- rowLabels
   ## convert
-  table.pred <- cellProportionsPredictions(table.pred, column.labels, 
-                                           row.labels)
-  return(table.pred)
+  tablePred <- cellProportionsPredictions(tablePred, 
+                                          columnLabels,
+                                          rowLabels)
+  return(tablePred)
 }

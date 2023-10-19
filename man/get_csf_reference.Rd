@@ -4,12 +4,12 @@
 \alias{get_csf_reference}
 \title{get_csf_reference}
 \usage{
-get_csf_reference(user.celltypes.vector = NULL, prefer.orthogonal = TRUE)
+get_csf_reference(userCellTypesVector = NULL, preferOrthogonal = TRUE)
 }
 \arguments{
-\item{user.celltypes.vector}{Vector of user-specified cell types.}
+\item{userCellTypesVector}{Vector of user-specified cell types.}
 
-\item{prefer.orthogonal}{Whether to prefer expression-orthogonal values (if 
+\item{preferOrthogonal}{Whether to prefer expression-orthogonal values (if 
 TRUE, removes expression-based values, but only if alternative value types 
 are available).}
 }

@@ -7,16 +7,16 @@
 \alias{findMarkersParam-class}
 \title{findmarkersParam-class}
 \arguments{
-\item{assay.name}{Name of expression matrix in SingleCellExperiment assays 
+\item{assayName}{Name of expression matrix in SingleCellExperiment assays 
 (e.g. "counts").}
 
-\item{sce}{Object of type SingleCellExperiment (see 
+\item{singleCellExperiment}{Object of type SingleCellExperiment (see 
 \code{?SingleCellExperiment}).}
 
-\item{celltype.variable}{Name of cell type variable in SingleCellExperiment 
+\item{cellTypeVariable}{Name of cell type variable in SingleCellExperiment 
 coldata.}
 
-\item{test.type}{Test type (see \code{?findMarkers} for options).}
+\item{testType}{Test type (see \code{?findMarkers} for options).}
 }
 \value{
 New object.
@@ -28,11 +28,11 @@ class definition for findmarkersParam, which uses scran::findMarkers()
 Main constructor for class \linkS4class{findmarkersParam}.
 }
 \examples{
-lexample <- get_decon_example_data()
-sce.example <- random_sce()
-new.param <- findmarkersParam(sce=sce.example, 
-celltype.variable="celltype", markers.per.type=5)
-markers <- typemarkers(new.param)
+exampleList <- get_decon_example_data()
+singleCellExperimentExample <- random_singleCellExperiment()
+newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
+cellTypeVariable="celltype", markersPerType=5)
+markers <- typemarkers(newParam)
 
 }
 \seealso{

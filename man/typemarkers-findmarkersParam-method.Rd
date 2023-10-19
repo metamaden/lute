@@ -20,14 +20,14 @@ Defines the typemarkers method for \linkS4class{findmarkersParam}.
 \details{
 Takes an object of class \linkS4class{findmarkersParam} as input, 
 returning either a vector of cell type gene markers, or (if 
-\code{return.info == TRUE}) a list containing such a vector along with 
+\code{returnInfo == TRUE}) a list containing such a vector along with 
 original function outputs.
 }
 \examples{
-lexample <- get_decon_example_data()
-sce.example <- random_sce()
-new.param <- findmarkersParam(sce=sce.example, 
-celltype.variable="celltype", markers.per.type=5)
-markers <- typemarkers(new.param)
+exampleList <- get_decon_example_data()
+singleCellExperimentExample <- random_singleCellExperiment()
+newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
+cellTypeVariable="celltype", markersPerType=5)
+markers <- typemarkers(newParam)
 
 }

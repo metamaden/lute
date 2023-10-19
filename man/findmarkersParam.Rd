@@ -5,29 +5,29 @@
 \title{Make new object of class findmarkersParam}
 \usage{
 findmarkersParam(
-  sce,
-  assay.name = "counts",
-  celltype.variable = "cellType",
-  test.type = "wilcox",
-  markers.per.type = 20,
-  return.info = FALSE
+  singleCellExperiment,
+  assayName = "counts",
+  cellTypeVariable = "cellType",
+  testType = "wilcox",
+  markersPerType = 20,
+  returnInfo = FALSE
 )
 }
 \arguments{
-\item{sce}{Object of type SingleCellExperiment (see 
+\item{singleCellExperiment}{Object of type SingleCellExperiment (see 
 \code{?SingleCellExperiment}).}
 
-\item{assay.name}{Name of expression matrix in SingleCellExperiment assays 
+\item{assayName}{Name of expression matrix in SingleCellExperiment assays 
 (e.g. "counts").}
 
-\item{celltype.variable}{Name of cell type variable in SingleCellExperiment 
+\item{cellTypeVariable}{Name of cell type variable in SingleCellExperiment 
 coldata.}
 
-\item{test.type}{Test type (see \code{?findMarkers} for options).}
+\item{testType}{Test type (see \code{?findMarkers} for options).}
 
-\item{markers.per.type}{Number of top markers to get per cell type.}
+\item{markersPerType}{Number of top markers to get per cell type.}
 
-\item{return.info}{Whether to return metadata and original method outputs 
+\item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 }
 \value{
@@ -41,11 +41,11 @@ Main class for mapping arguments to the findMarkers method
 implemented as \code{scran::findMarkers()}.
 }
 \examples{
-lexample <- get_decon_example_data()
-sce.example <- random_sce()
-new.param <- findmarkersParam(sce=sce.example, 
-celltype.variable="celltype", markers.per.type=5)
-markers <- typemarkers(new.param)
+exampleList <- get_decon_example_data()
+singleCellExperimentExample <- random_singleCellExperiment()
+newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
+cellTypeVariable="celltype", markersPerType=5)
+markers <- typemarkers(newParam)
 
 }
 \seealso{

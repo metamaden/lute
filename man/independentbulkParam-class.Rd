@@ -5,8 +5,8 @@
 \alias{independentbulkParam-class}
 \title{independentbulkParam-class}
 \arguments{
-\item{yi}{Mixed signals matrix from bulk samples, independent from primary 
-mixed signals matrix y.}
+\item{bulkExpressionIndependent}{Bulk mixed signals matrix of independent 
+samples, which should not overlap samples in y.}
 }
 \value{
 New object.
