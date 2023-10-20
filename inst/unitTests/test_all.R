@@ -9,6 +9,7 @@ test_that("randomSingleCellExperiment produces expected SingleCellExperiment", {
 test_that("nnlsParam produces expected results", {
 
 	exampleList <- getDeconvolutionExampleData()
+	
 	param <- nnlsParam(
 	  cellScaleFactors=exampleList[["cellScaleFactors"]], 
 	  bulkExpression=exampleList[["bulkExpression"]], 
@@ -27,6 +28,30 @@ test_that("nnlsParam produces expected results", {
 	
 	expect_true(inherits(param, c("referencebasedParam", "deconvolutionParam")))
 	
+})
+
+test_that("bisqueParam produces expected results", {
+  
+  exampleList <- getDeconvolutionExampleData()
+  
+  param <- bisqueParam(
+    cellScaleFactors=exampleList[["cellScaleFactors"]], 
+    bulkExpression=exampleList[["bulkExpression"]], 
+    referenceExpression=exampleList[["referenceExpression"]]
+  )
+  
+  expect_equal(class(param)[1], "nnlsParam")
+  
+  expect_equal(class(param@referenceExpression)[1], "matrix")
+  
+  expect_equal(class(param@bulkExpression)[1], "matrix")
+  
+  expect_equal(class(param@cellScaleFactors)[1], "numeric")
+  
+  expect_equal(names(assays(randomSingleCellExperiment())), "counts")
+  
+  expect_true(inherits(param, c("referencebasedParam", "deconvolutionParam")))
+  
 })
 
 test_that("deconvolution() results have expected structure.", {
@@ -119,6 +144,3 @@ test_that("cellScaleFactors apply to the correct referenceExpression columns", {
   expect_equal(transformResult[2,2], expectedProductType2[2])
   
 })
-
-
-

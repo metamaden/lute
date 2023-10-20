@@ -19,30 +19,38 @@ bisqueParam(
 )
 }
 \arguments{
-\item{bulkExpressionIndependent}{Bulk mixed signals matrix of independent samples, which should not overlap samples in y.}
+\item{bulkExpressionIndependent}{Bulk mixed signals matrix of independent 
+samples, which should not overlap samples in y.}
 
-\item{referenceExpression}{Signature matrix of cell type-specific signals. If not provided, can be computed from a
-provided ExpressionSet containing single-cell data.}
+\item{referenceExpression}{Signature matrix of cell type-specific signals. 
+If not provided, can be computed from a provided ExpressionSet containing 
+single-cell data.}
 
-\item{cellSizeFactor}{size factor transformations of length equal to the K cell types to deconvolve.}
+\item{cellSizeFactor}{size factor transformations of length equal to the K 
+cell types to deconvolve.}
 
 \item{bulkExpressionSet}{ExpressionSet of bulk mixed signals.}
 
-\item{scData}{SummarizedExperiment-type object of single-cell transcriptomics data. Accepts
-ExpressionSet, SummarizedExperiment, and SingleCellExperiment object types.}
+\item{scData}{SummarizedExperiment-type object of single-cell transcriptomics 
+data. Accepts ExpressionSet, SummarizedExperiment, and SingleCellExperiment 
+object types.}
 
 \item{assayName}{Expression data type (e.g. counts, logcounts, tpm, etc.).}
 
-\item{batchVariable}{Name of variable identifbulkExpressionIndependentng the batches in singleCellExpressionSet pData/coldata.}
+\item{batchVariable}{Name of variable identifbulkExpressionIndependentng the 
+batches in singleCellExpressionSet pData/coldata.}
 
-\item{cellTypeVariable}{Name of cell type labels variable in singleCellExpressionSet pData/coldata.}
+\item{cellTypeVariable}{Name of cell type labels variable in 
+singleCellExpressionSet pData/coldata.}
 
 \item{useOverlap}{Whether to deconvolve samples overlapping bulk and sc 
 esets (logical, FALSE).}
 
-\item{return.info}{Whether to return metadata and original method outputs with predicted proportions.}
+\item{return.info}{Whether to return metadata and original method outputs 
+with predicted proportions.}
 
-\item{bulkExpressionBulk}{mixed signals matrix of samples, which can be matched to single-cell samples.}
+\item{bulkExpressionBulk}{mixed signals matrix of samples, which can be 
+matched to single-cell samples.}
 }
 \value{
 New object of class \linkS4class{bisqueParam}.
@@ -51,18 +59,20 @@ New object of class \linkS4class{bisqueParam}.
 Main constructor for class \linkS4class{bisqueParam}.
 }
 \details{
-Takes standard inputs for the Bisque method. If user provides matrices, will convert these
-into ExpressionSet objects compatible with the main bisque method.
+Takes standard inputs for the Bisque method. If user provides 
+matrices, will convert these into ExpressionSet objects compatible with the 
+main bisque method.
 }
 \examples{
 ## get data
-exampleList <- get_decon_example_data_bisque()
+exampleList <- getDeconvolutionExampleData()
 bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
 bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 
 ## get param object
-param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, bulkExpressionIndependent=bulkExpression,
+param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
+                     bulkExpressionIndependent=bulkExpression,
                      scData=exampleList[["singleCellExpressionSet"]], 
                      batchVariable="SubjectName", 
                      cellTypeVariable="cellType", 

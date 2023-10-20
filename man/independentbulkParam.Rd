@@ -5,29 +5,29 @@
 \title{Make a new \linkS4class{independentbulkParam} object}
 \usage{
 independentbulkParam(
-  y = NULL,
-  yi = NULL,
+  bulkExpression = NULL,
+  bulkExpressionIndependent = NULL,
   referenceExpression = NULL,
-  s = NULL,
+  cellScaleFactors = NULL,
   return.info = FALSE
 )
 }
 \arguments{
-\item{referenceExpression}{Signature matrix of cell type-specific signals. 
-If not provided, can be computed from a provided ExpressionSet containing 
-single-cell data.}
-
-\item{return.info}{Whether to return metadata and original method outputs 
-with predicted proportions.}
-
 \item{bulkExpression}{Bulk mixed signals matrix of samples, which can be 
 matched to single-cell samples.}
 
 \item{bulkExpressionIndependent}{Bulk mixed signals matrix of independent 
 samples, which should not overlap samples in y.}
 
-\item{cellSizeFactor}{Cell sireferenceExpressione factor transformations of 
+\item{referenceExpression}{Signature matrix of cell type-specific signals. 
+If not provided, can be computed from a provided ExpressionSet containing 
+single-cell data.}
+
+\item{cellScaleFactors}{Cell size scale factor transformations of 
 length equal to the K cell types to deconvolve.}
+
+\item{return.info}{Whether to return metadata and original method outputs 
+with predicted proportions.}
 }
 \value{
 New object.

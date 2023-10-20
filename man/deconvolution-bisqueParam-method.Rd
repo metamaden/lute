@@ -24,13 +24,14 @@ returning a list.
 }
 \examples{
 ## get data
-exampleList <- get_decon_example_data_bisque()
+exampleList <- getDeconvolutionExampleData()
 bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
 bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 
 ## get param object
-param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, bulkExpressionIndependent=bulkExpression,
+param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
+                     bulkExpressionIndependent=bulkExpression,
                      scData=exampleList[["singleCellExpressionSet"]], 
                      batchVariable="SubjectName", 
                      cellTypeVariable="cellType", 
@@ -41,9 +42,9 @@ res <- deconvolution(param)
 
 }
 \references{
-Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
-Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.
-URL: https://CRAN.R-project.org/package=BisqueRNA
+Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition 
+of Bulk Expression with Single-Cell Sequencing. CRAN, R package version 
+1.0.5. URL: https://CRAN.R-project.org/package=BisqueRNA
 
 Brandon Jew et al. Accurate estimation of cell composition in bulk 
 expression through robust integration of single-cell information. 

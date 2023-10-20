@@ -25,7 +25,7 @@
 #' 
 #' @returns New object.
 setClass("independentbulkParam", contains="referencebasedParam", 
-         slots=c(yi="matrix"))
+         slots=c(bulkExpressionIndependent="matrix"))
 
 #' Make a new \linkS4class{independentbulkParam} object
 #' 
@@ -38,7 +38,7 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' @param referenceExpression Signature matrix of cell type-specific signals. 
 #' If not provided, can be computed from a provided ExpressionSet containing 
 #' single-cell data.
-#' @param cellSizeFactor Cell sireferenceExpressione factor transformations of 
+#' @param cellScaleFactors Cell size scale factor transformations of 
 #' length equal to the K cell types to deconvolve.
 #' @param return.info Whether to return metadata and original method outputs 
 #' with predicted proportions.
@@ -49,19 +49,22 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' @returns New object.
 #'
 #' @export
-independentbulkParam <- function(y=NULL, yi=NULL, referenceExpression=NULL, 
-                                 s=NULL, return.info=FALSE) {
-    if(is(bulkExpression, "NULL")){bulkExpression <- matrix(0)}
-    if(is(referenceExpression, "NULL")){referenceExpression <- matrix(0)}
+independentbulkParam <- function(
+    bulkExpression=NULL, bulkExpressionIndependent=NULL, 
+    referenceExpression=NULL, cellScaleFactors=NULL, return.info=FALSE) {
+    if(is(bulkExpression, "NULL")){
+      bulkExpression <- matrix(0)}
+    if(is(referenceExpression, "NULL")){
+      referenceExpression <- matrix(0)}
     if(is(bulkExpressionIndependent, "NULL")){
       bulkExpressionIndependent <- matrix(0)}
-    if(is(cellSizeFactor, "NULL")){
-      cellSizeFactor <- rep(1, ncol(referenceExpression))}
+    if(is(cellScaleFactors, "NULL")){
+      cellScaleFactors <- rep(1, ncol(referenceExpression))}
     param <- new("independentbulkParam", 
                  bulkExpression=bulkExpression, 
                  bulkExpressionIndependent=bulkExpressionIndependent, 
                  referenceExpression=referenceExpression, 
-                 cellSizeFactor=cellSizeFactor, 
+                 cellScaleFactors=cellScaleFactors, 
                  returnInfo=returnInfo)
     return(param)
 }
@@ -96,7 +99,9 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
     ## compare marker labels and subset yi on overlapping markers
     if(is(markersBulkExpression, "NULL")|
        is(markersBulkExpressionIndependent, "NULL")){
-        message("Warning, no marker labels found in either y or yi.")
+        message(
+          paste0("Warning, no marker labels found in either Y ",
+                 "(bulkExpression) or Yi (bulkExpressionIndependent)."))
     } else{
         uniqueMarkerLabels <- 
           unique(markersBulkExpression, markersBulkExpressionIndependent)
@@ -136,10 +141,13 @@ setMethod("deconvolution", "independentbulkParam", function(object) {
       uniqueMarkerLabels=uniqueMarkerLabels,
                 uniqueSampleLabels=uniqueSampleLabels,
                 overlappingMarkerLabels=overlappingMarkerLabels,
-                overlappingSampleLabels=overlappingSampleLabels)
-    returnList <- list(bulkExpression=bulkExpression, 
-                        bulkExpressionIndependent=bulkExpressionIndependent, 
-                        object=object, metadata=metadataList)
+                overlappingSampleLabels=overlappingSampleLabels
+    )
+    returnList <- list(
+      bulkExpression=bulkExpression, 
+      bulkExpressionIndependent=bulkExpressionIndependent,
+      object=object, metadata=metadataList
+    )
     return(returnList)
 })
 

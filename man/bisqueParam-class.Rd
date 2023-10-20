@@ -17,14 +17,16 @@ Main constructor for class \linkS4class{bisqueParam}.
 }
 \examples{
 ## get data
-exampleList <- get_decon_example_data_bisque()
+exampleList <- getDeconvolutionExampleData()
 bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
 bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 
 ## get param object
-param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, bulkExpression=bulkExpression,
-                     singleCellExperimentData=exampleList[["singleCellExpressionSet"]], 
+param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
+                     bulkExpression=bulkExpression,
+                     singleCellExperimentData=
+                      exampleList[["singleCellExpressionSet"]], 
                      batchVariable="SubjectName", 
                      cellTypeVariable="cellType", 
                      useOverlap=FALSE)
@@ -43,6 +45,7 @@ expression through robust integration of single-cell information.
 Nat Commun 11, 1971 (2020). https://doi.org/10.1038/s41467-020-15816-6
 }
 \seealso{
-\linkS4class{deconvolutionParam}, \linkS4class{referencebasedParam}, 
+\linkS4class{deconvolutionParam}, 
+\linkS4class{referencebasedParam}, 
 \linkS4class{independentbulkParam}
 }
