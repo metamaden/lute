@@ -47,20 +47,64 @@ test_that("deconvolution() results have expected structure.", {
   
 })
 
+test_that("Example function returns expected results for K2,K3,K30", {
+  
+})
+
 test_that("cellScaleFactors apply to the correct referenceExpression columns", {
   
+  
+  #---------
+  #
+  # TEST K2
+  #
+  #---------
+  #
+  # get transform
   exampleList <- getDeconvolutionExampleData()
-  param <- nnlsParam(
-    cellScaleFactors=exampleList[["cellScaleFactors"]], 
-    bulkExpression=exampleList[["bulkExpression"]], 
-    referenceExpression=exampleList[["referenceExpression"]]
-  )
+  referenceExpression <- exampleList[["referenceExpression"]]
+  cellScaleFactors <- exampleList[["cellScaleFactors"]]
+  transformResult <- lute:::.zstransform(referenceExpression, cellScaleFactors)
+  #
+  # get expected values
+  factorType1 <- exampleList$cellScaleFactors["type1"]
+  referenceExpressionType1 <- exampleList$referenceExpression[,"type1"]
+  expectedProductType1 <- as.numeric(factorType1*referenceExpressionType1)
+  factorType2 <- exampleList$cellScaleFactors["type2"]
+  referenceExpressionType2 <- exampleList$referenceExpression[,"type2"]
+  expectedProductType2 <- as.numeric(factorType2*referenceExpressionType2)
+  #
+  # run tests
+  expect_equal(transformResult[1,1], expectedProductType1[1])
+  expect_equal(transformResult[2,1], expectedProductType1[2])
+  expect_equal(transformResult[1,2], expectedProductType2[1])
+  expect_equal(transformResult[2,2], expectedProductType2[2])
   
-  expect.vector.marker.1
-  
-  expect_true(identical())
-  
-  param@referenceExpression[,2]*param@cellScaleFactors[2]
+  #---------
+  #
+  # TEST K3
+  #
+  #---------
+  #
+  # get transform
+  exampleList <- getDeconvolutionExampleData(numberTypes=3)
+  referenceExpression <- exampleList[["referenceExpression"]]
+  cellScaleFactors <- exampleList[["cellScaleFactors"]]
+  transformResult <- lute:::.zstransform(referenceExpression, cellScaleFactors)
+  #
+  # get expected values
+  factorType1 <- exampleList$cellScaleFactors["type1"]
+  referenceExpressionType1 <- exampleList$referenceExpression[,"type1"]
+  expectedProductType1 <- as.numeric(factorType1*referenceExpressionType1)
+  factorType2 <- exampleList$cellScaleFactors["type2"]
+  referenceExpressionType2 <- exampleList$referenceExpression[,"type2"]
+  expectedProductType2 <- as.numeric(factorType2*referenceExpressionType2)
+  #
+  # run tests
+  expect_equal(transformResult[1,1], expectedProductType1[1])
+  expect_equal(transformResult[2,1], expectedProductType1[2])
+  expect_equal(transformResult[1,2], expectedProductType2[1])
+  expect_equal(transformResult[2,2], expectedProductType2[2])
   
 })
 

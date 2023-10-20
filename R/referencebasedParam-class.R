@@ -138,7 +138,8 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
   ## parse additional warnings
   if(is(markersBulkExpression, "NULL")){
     message(
-      "Warning, object 'bulkExpression' has no marker labels (rownames)\n")}
+      "Warning, object 'bulkExpression' has no marker labels (rownames)\n")
+    }
   if(is(markersReferenceExpression, "NULL")){
     message(
       "Warning, object 'referenceExpression' has no marker labels (rownames)\n")

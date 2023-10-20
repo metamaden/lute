@@ -70,8 +70,10 @@ setClass("nnlsParam", contains="referencebasedParam")
 #' @export
 nnlsParam <- function(
     bulkExpression, referenceExpression, cellScaleFactors, returnInfo=FALSE) {
-  new("nnlsParam", cellScaleFactors=cellScaleFactors, 
-      bulkExpression=bulkExpression, referenceExpression=referenceExpression, 
+  new("nnlsParam", 
+      cellScaleFactors=cellScaleFactors, 
+      bulkExpression=bulkExpression, 
+      referenceExpression=referenceExpression, 
       returnInfo=returnInfo)
 }
 
