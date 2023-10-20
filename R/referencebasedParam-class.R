@@ -164,7 +164,7 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
 #' \code{?referencebasedParam}).
 #' 
 #' @examples 
-#' exampleList <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' referencebasedParam(
 #' bulkExpression=exampleList$bulkExpression, 
 #' referenceExpression=exampleList$referenceExpression, 

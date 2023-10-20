@@ -145,31 +145,91 @@ setMethod("deconvolution", signature(object="nnlsParam"), function(object){
   return(returnList)
 })
 
-#' Show generic behavior for object of class \linkS4class{nnlsParam}
+#' Show generic behavior for object of class referencebasedParam
+#' @param object Object of class \linkS4class{referencebasedParam} (see 
+#' \code{?referencebasedParam}).
 #' 
-#' @param object An object of class \linkS4class{nnlsParam} (see 
-#' \code{?nnlsParam}).
-#' 
-#' @details Method for behavior of show generic when called for object of class 
-#' \linkS4class{nnlsParam}
-#' 
-#' @examples
+#' @examples 
 #' exampleList <- getDeconvolutionExampleData()
-#' param <- nnlsParam(
-#' cellScaleFactors=exampleList[["cellScaleFactors"]], 
-#' bulkExpression=exampleList[["bulkExpression"]],
-#' referenceExpression=exampleList[["referenceExpression"]])
+#' referencebasedParam(
+#' bulkExpression=exampleList$bulkExpression, 
+#' referenceExpression=exampleList$referenceExpression, 
+#' cellScaleFactors=exampleList$cellScaleFactors)
 #' 
-#' ## return only predicted proportions
-#' deconvolution(param)
-#' 
-#' # return full results
-#' param@returnInfo <- TRUE
-#' names(deconvolution(param))
-#' 
-#' @returns Shows object summaries.
-#' 
+#' @returns Prints data summary messages to console.
 #' @export
-setMethod("show", signature(object="nnlsParam"), function(object){
-  show(object)
+setMethod("show", "referencebasedParam", function(object) {
+  # nnlsParam inherits from deconvolutionParam -> referencebasedParam
+  # needs to show standard properties for each parent class
+  
+  ## deconvolutionParam -- show properties
+  bulkExpression <- object[["bulkExpression"]]
+  message("Object of class deconvolutionParam")
+  message("\nData summaries:")
+  message("\tNumber of bulk markers: ", nrow(bulkExpression))
+  message("\tNumber of bulk samples: ", ncol(bulkExpression))
+  markers <- rownames(bulkExpression)
+  if(length(markers) > 10){markers <- markers[seq(10)]}
+  message("\tFirst bulk marker labels:\n", 
+          paste0(rownames(bulkExpression), collapse="; "))
+  samples <- colnames(bulkExpression)
+  if(length(samples) > 10){samples <- samples[seq(10)]}
+  message("\tFirst sample labels:\n", paste0(samples, collapse="; "), "\n\n")
+  
+  ## referencebasedParam -- show properties
+  ## get metadata
+  cellScaleFactors <- object[[cellScaleFactors]]
+  bulkExpression <- object[[bulkExpression]]
+  referenceExpression <- object[[referenceExpression]]
+  uniqueTypes <- try(colnames(object[[referenceExpression]]))
+  markersBulkExpression <- rownames(bulkExpression)
+  markersReferenceExpression <- rownames(referenceExpression)
+  uniqueMarkers <- unique(c(markersBulkExpression, markersReferenceExpression))
+  overlappingMarkers <- 
+    intersect(markersBulkExpression, markersReferenceExpression)
+  markerGenes <- nrow(referenceExpression)
+  bulkSamples <- ncol(bulkExpression)
+  numberCellTypesK <- ncol(referenceExpression)
+  metadataList <- list(
+    markerGenes = markerGenes, bulkSamples = bulkSamples, 
+    numberCellTypesK = numberCellTypesK, cellScaleFactors = cellScaleFactors, 
+    uniqueTypes = uniqueTypes, markersBulkExpression = markersBulkExpression, 
+    markersReferenceExpression = markersReferenceExpression)
+  ## post console messages
+  cat(paste0("class: ", class(object)[1], "\n\n"))
+  cat("key deconvolution run info:\n")
+  cat("\tmarker info:\n")
+  cat("\tsignature markers (Gz): ", markerGenes, "\n")
+  cat("\tunique marker labels (Gy | Gz): ", length(uniqueMarkers), "\n")
+  cat("\toverlapping marker labels (Gy & Gz): ", 
+      length(overlappingMarkers), "\n\n")
+  cat("\tsamples info:\n")
+  cat("\tnumber of bulk samples (J): ", ncol(object[[bulkExpression]]), "\n")
+  cat("\tsample labels: ", 
+      paste0(colnames(bulkExpression), collapse = "; "), "\n")
+  cat("\n")
+  cat("\tcell size factor properties:\n")
+  if(!is(cellScaleFactors, "NULL")){
+    for(type in names(cellScaleFactors)){
+      cat("\tscale factor for type ", type, ": ", cellScaleFactors[type], "\n")}
+    if(length(cellScaleFactors) == ncol(referenceExpression)){
+      referenceExpression <- 
+        .zstransform(referenceExpression, cellScaleFactors)}
+  }; cat("\n")
+  cat("\ttypes info:\n")
+  cat("\tnumber of types (K): ", ncol(object[[referenceExpression]]), "\n")
+  if(!(is(uniqueTypes, "NULL")|is(uniqueTypes, "try-error"))){
+    uniqueTypes <- uniqueTypes[order(uniqueTypes)]
+    cat("\tunique type labels: ", paste0(uniqueTypes, collapse = ";"), "\n")
+  } else{
+    cat(
+      "\nWarning, object 'referenceExpression' has no type labels (colnames)\n")
+  }; cat("\n")
+  ## parse additional warnings
+  if(is(markersBulkExpression, "NULL")){
+    cat("Warning, object 'bulkExpression' has no marker labels (rownames)\n\n")}
+  if(is(markersReferenceExpression, "NULL")){
+    cat(paste0("Warning, object 'referenceExpression' has no marker labels",
+               " (rownames)\n\n"))}
+  
 })

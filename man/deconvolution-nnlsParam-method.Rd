@@ -42,7 +42,8 @@ names(deconvolution(param))
 
 }
 \references{
-Katharine M. Mullen and Ivo H. M. van Stokkum (2012). "nnls: The Lawson-Hanson 
-algorithm for non-negative least squares (NNLS)." CRAN, R package version 1.4. 
-URL: https://cran.r-project.org/web/packages/nnls/index.html
+Katharine M. Mullen and Ivo H. M. van Stokkum (2012). "nnls: The 
+Lawson-Hanson algorithm for non-negative least squares (NNLS)." CRAN, R 
+package version 1.4. URL: 
+https://cran.r-project.org/web/packages/nnls/index.html
 }
