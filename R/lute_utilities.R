@@ -201,6 +201,7 @@ referenceFromSingleCellExperiment <- function(
 #' 
 #' Make example data for deconvolution.
 #' 
+#' @param cellScaleFactors Vector of cell scale factors
 #' @param numberBulkSamples Number of bulk samples.
 #' @param numberMarkers Number of cell type markers.
 #' @param numberTypes Number of cell types.
@@ -213,7 +214,10 @@ referenceFromSingleCellExperiment <- function(
 #' 
 #' @export
 getDeconvolutionExampleData <- function(
-    numberBulkSamples=2, numberMarkers=10, numberTypes=2){
+    cellScaleFactors=c(1,10),numberBulkSamples=2, numberMarkers=10, numberTypes=2
+  ){
+  if(!length(cellScaleFactors)==numberTypes){
+    stop("Error, cellScaleFactors length should equal numberTypes.")}
   bulkExpression <- matrix(
     rpois(n=numberMarkers*numberBulkSamples, lambda=seq(0, 50, 5)), 
     ncol=numberBulkSamples)
@@ -224,7 +228,6 @@ getDeconvolutionExampleData <- function(
     paste0("marker", seq(numberMarkers))
   colnames(referenceExpression) <- paste0("type", seq(numberTypes))
   colnames(bulkExpression) <- paste0("sample", seq(numberBulkSamples))
-  cellScaleFactors <- c(1, 10)
   names(cellScaleFactors) <- colnames(referenceExpression)
   return(list(
     referenceExpression=referenceExpression, 

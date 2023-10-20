@@ -47,7 +47,22 @@ test_that("deconvolution() results have expected structure.", {
   
 })
 
-test_that("Example function returns expected results for K2,K3,K30", {
+test_that("Example function returns expected results for K=2, 3, and 30", {
+  
+  # test k2
+  numTypes <- 2
+  exampleK2 <- getDeconvolutionExampleData(seq(numTypes), numberTypes=2)
+  expect_equal(ncol(exampleK2$referenceExpression), numTypes)
+  
+  # test k3
+  numTypes <- 3
+  exampleK3 <- getDeconvolutionExampleData(seq(numTypes), numberTypes=3)
+  expect_equal(ncol(exampleK3$referenceExpression), numTypes)
+  
+  # test k30
+  numTypes <- 30
+  exampleK30 <- getDeconvolutionExampleData(seq(numTypes), numberTypes=30)
+  expect_equal(ncol(exampleK30$referenceExpression), numTypes)
   
 })
 
@@ -87,18 +102,15 @@ test_that("cellScaleFactors apply to the correct referenceExpression columns", {
   #---------
   #
   # get transform
-  exampleList <- getDeconvolutionExampleData(numberTypes=3)
-  referenceExpression <- exampleList[["referenceExpression"]]
-  cellScaleFactors <- exampleList[["cellScaleFactors"]]
-  transformResult <- lute:::.zstransform(referenceExpression, cellScaleFactors)
+  exampleList <- getDeconvolutionExampleData(seq(3), numberTypes=3)
+  transformResult <- lute:::.zstransform(
+    exampleList[["referenceExpression"]], exampleList[["cellScaleFactors"]])
   #
   # get expected values
-  factorType1 <- exampleList$cellScaleFactors["type1"]
-  referenceExpressionType1 <- exampleList$referenceExpression[,"type1"]
-  expectedProductType1 <- as.numeric(factorType1*referenceExpressionType1)
-  factorType2 <- exampleList$cellScaleFactors["type2"]
-  referenceExpressionType2 <- exampleList$referenceExpression[,"type2"]
-  expectedProductType2 <- as.numeric(factorType2*referenceExpressionType2)
+  expectedProductType1 <- as.numeric(
+    exampleList$cellScaleFactors["type1"]*exampleList$referenceExpression[,"type1"])
+  expectedProductType2 <- as.numeric(
+    exampleList$cellScaleFactors["type2"]*exampleList$referenceExpression[,"type2"])
   #
   # run tests
   expect_equal(transformResult[1,1], expectedProductType1[1])

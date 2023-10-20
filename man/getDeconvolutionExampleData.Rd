@@ -5,12 +5,15 @@
 \title{getDeconvolutionExampleData}
 \usage{
 getDeconvolutionExampleData(
+  cellScaleFactors = c(1, 10),
   numberBulkSamples = 2,
   numberMarkers = 10,
   numberTypes = 2
 )
 }
 \arguments{
+\item{cellScaleFactors}{Vector of cell scale factors}
+
 \item{numberBulkSamples}{Number of bulk samples.}
 
 \item{numberMarkers}{Number of cell type markers.}
