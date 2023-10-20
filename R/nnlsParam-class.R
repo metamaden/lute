@@ -145,9 +145,9 @@ setMethod("deconvolution", signature(object="nnlsParam"), function(object){
   return(returnList)
 })
 
-#' Show generic behavior for object of class referencebasedParam
-#' @param object Object of class \linkS4class{referencebasedParam} (see 
-#' \code{?referencebasedParam}).
+#' Show generic behavior for object of class nnlsParam
+#' @param object Object of class \linkS4class{nnlsParam} (see 
+#' \code{?nnlsParam}).
 #' 
 #' @examples 
 #' exampleList <- getDeconvolutionExampleData()
@@ -158,7 +158,7 @@ setMethod("deconvolution", signature(object="nnlsParam"), function(object){
 #' 
 #' @returns Prints data summary messages to console.
 #' @export
-setMethod("show", "referencebasedParam", function(object) {
+setMethod("show", "nnlsParam", function(object) {
   # nnlsParam inherits from deconvolutionParam -> referencebasedParam
   # needs to show standard properties for each parent class
   
