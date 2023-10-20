@@ -20,7 +20,7 @@ eset_to_sce
 Convert ExpressionSet to SingleCellExperiment.
 }
 \examples{
-expressionSet <- get_decon_example_data_bisque()$sc.eset
+expressionSet <- getDeconvolutionExampleDataBisque()$singleCellExpressionSet
 eset_to_sce(expressionSet)
 
 }

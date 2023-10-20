@@ -25,5 +25,6 @@ Matrix of cell summary values (Z reference atlas).
 Makes the Z cell atlas reference from a SingleCellExperiment.
 }
 \examples{
-lexample <- getDeconvolutionExampleData()
+exampleList <- getDeconvolutionExampleData()
+
 }

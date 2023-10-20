@@ -30,7 +30,7 @@ specified deconvolution method for which a subclass of type
 the \code{bluster} R/Bioconductor package.
 }
 \examples{
-example.data <- get_decon_example_data()
+exampleList <- getDeconvolutionExampleData()
 
 }
 \references{

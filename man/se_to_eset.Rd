@@ -7,10 +7,10 @@
 se_to_eset(summarizedExperiment, assayName = "counts")
 }
 \arguments{
-\item{assayName}{Name of assay to store in new ExpressionSet object.}
-
-\item{se}{Object of type SummarizedExperiment (see 
+\item{summarizedExperiment}{Object of type SummarizedExperiment (see 
 \code{?SummarizedExperiment}).}
+
+\item{assayName}{Name of assay to store in new ExpressionSet object.}
 }
 \value{
 New object of type ExpressionSet.

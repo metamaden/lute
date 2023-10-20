@@ -26,7 +26,7 @@ This generic manages tasks for marker gene identification. In particular, it
 takes a specified amount of marker genes to return per type.
 }
 \examples{
-example.data <- get_decon_example_data()
+exampleList <- getDeconvolutionExampleData()
 
 
 }

@@ -19,8 +19,8 @@ Show generic behavior for object of class referencebasedParam
 \examples{
 exampleList <- get_decon_example_data()
 referencebasedParam(
-bulkExpression=lexample$bulkExpression, 
-referenceExpression=lexample$referenceExpression, 
-cellScaleFactors=lexample$cellScaleFactors)
+bulkExpression=exampleList$bulkExpression, 
+referenceExpression=exampleList$referenceExpression, 
+cellScaleFactors=exampleList$cellScaleFactors)
 
 }

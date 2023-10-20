@@ -5,10 +5,10 @@
 \title{sce_to_eset
 Convert SingleCellExperiment to ExpressionSet.}
 \usage{
-sce_to_eset(sce, assayName = "counts")
+sce_to_eset(singleCellExperiment, assayName = "counts")
 }
 \arguments{
-\item{sce}{Object of type SingleCellExperiment (see 
+\item{singleCellExperiment}{Object of type SingleCellExperiment (see 
 \code{?SingleCellExperiment}).}
 
 \item{assayName}{Name of assay to store in new eset.}

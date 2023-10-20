@@ -250,7 +250,7 @@ bisqueParam <- function(bulkExpression=NULL,
   } else{
     if(is(bulkExpressionSet, "NULL")){
       bulkExpressionSet <- get_eset_from_matrix(
-        mat=bulkExpression, batchVariable="SubjectName")
+        bulkExpression=bulkExpression, batchVariable="SubjectName")
       ## need at least 2 columns/samples to pass to bisque
       if(ncol(bulkExpressionSet) == 1){
         sampleName <- colnames(bulkExpressionSet)

@@ -4,19 +4,24 @@
 \alias{referencebasedParam}
 \title{Make new object of class referencebasedParam}
 \usage{
-referencebasedParam(y, z, s, return.info = FALSE)
+referencebasedParam(
+  bulkExpression,
+  referenceExpression,
+  cellScaleFactors,
+  returnInfo = FALSE
+)
 }
 \arguments{
-\item{y}{Bulk mixed signals matrix of samples, which can be matched to 
+\item{bulkExpression}{Bulk mixed signals matrix of samples, which can be matched to 
 single-cell samples.}
 
-\item{z}{Signature matrix of cell type-specific signals. If not provided, can 
+\item{referenceExpression}{Signature matrix of cell type-specific signals. If not provided, can 
 be computed from a provided ExpressionSet containing single-cell data.}
 
-\item{s}{Cell size factor transformations of length equal to the K cell types 
+\item{cellScaleFactors}{Cell size factor transformations of length equal to the K cell types 
 to deconvolve.}
 
-\item{return.info}{Whether to return metadata and original method outputs 
+\item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 }
 \value{
@@ -33,8 +38,9 @@ Takes standard inputs for reference-based deconvolution algorithms.
 \examples{
 exampleList <- get_decon_example_data()
 referencebasedParam(
-bulkExpression=lexample$bulkExpression, 
-referenceExpression=lexample$referenceExpression, 
-cellScaleFactors=lexample$cellScaleFactors)
+  bulkExpression=exampleList$bulkExpression, 
+  referenceExpression=exampleList$referenceExpression, 
+  cellScaleFactors=exampleList$cellScaleFactors
+)
 
 }

@@ -20,7 +20,7 @@
 #' @importFrom S4Vectors DataFrame
 #' 
 #' @examples
-#' lexample <- getDeconvolutionExampleData()
+#' exampleList <- getDeconvolutionExampleData()
 #'
 #' @export
 get_celltypes_from_sce <- function(
@@ -168,7 +168,8 @@ z_matrix_from_sce <- function(singleCellExperiment,
 #' @importFrom SummarizedExperiment assays
 #' 
 #' @examples
-#' lexample <- getDeconvolutionExampleData()
+#' exampleList <- getDeconvolutionExampleData()
+#' 
 #' @export
 referenceFromSingleCellExperiment <- function(
     singleCellExperiment, assayName="counts", cellTypeVariable="celltype"){

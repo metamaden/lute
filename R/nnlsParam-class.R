@@ -87,8 +87,8 @@ nnlsParam <- function(
 #' of predicted cell type proportions. 
 #' 
 #' The key term mappings for this method include:
-#' * \code{A} : \code{y}, bulk signals matrix.
-#' * \code{b} : \code{z}, signature matrix.
+#' * \code{A} : \code{bulkExpression}, bulk signals matrix (Y).
+#' * \code{b} : \code{referenceExpression}, signature matrix (Z).
 #' 
 #' @examples 
 #' exampleList <- getDeconvolutionExampleData()
@@ -135,16 +135,20 @@ setMethod("deconvolution", signature(object="nnlsParam"), function(object){
   if(object[["returnInfo"]]){
     
     returnList <- list(
-      predictions=predictions, result.info=result, 
-      metadata=parametersList[["metadata"]])
+      predictions=predictions, 
+      result.info=result, 
+      metadata=parametersList[["metadata"]]
+    )
     
-    }
+  }
   return(returnList)
 })
 
 #' Show generic behavior for object of class \linkS4class{nnlsParam}
+#' 
 #' @param object An object of class \linkS4class{nnlsParam} (see 
 #' \code{?nnlsParam}).
+#' 
 #' @details Method for behavior of show generic when called for object of class 
 #' \linkS4class{nnlsParam}
 #' 

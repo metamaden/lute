@@ -7,7 +7,7 @@
 se_to_sce(summarizedExperiment)
 }
 \arguments{
-\item{se}{Object of type SummarizedExperiment (see 
+\item{summarizedExperiment}{Object of type SummarizedExperiment (see 
 \code{?SummarizedExperiment}).}
 }
 \value{

@@ -23,8 +23,8 @@ either a list containing proportions, return info, and metadata, or a vector
 of predicted cell type proportions. 
 
 The key term mappings for this method include:
-* \code{A} : \code{y}, bulk signals matrix.
-* \code{b} : \code{z}, signature matrix.
+* \code{A} : \code{bulkExpression}, bulk signals matrix (Y).
+* \code{b} : \code{referenceExpression}, signature matrix (Z).
 }
 \examples{
 exampleList <- getDeconvolutionExampleData()

@@ -40,7 +40,7 @@
 #' @importFrom stats rnbinom rpois
 #' 
 #' @examples
-#' example.data <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #'
 #' @export
 setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))
@@ -70,7 +70,7 @@ setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))
 #' Typemarkers, TypeMarkers
 #' 
 #' @examples
-#' example.data <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' 
 #'
 #' @export

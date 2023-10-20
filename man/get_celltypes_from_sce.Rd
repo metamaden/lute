@@ -19,6 +19,6 @@ List of cell type variable metadata and values.
 Extract cell type values from SingleCellExperiment.
 }
 \examples{
-lexample <- getDeconvolutionExampleData()
+exampleList <- getDeconvolutionExampleData()
 
 }

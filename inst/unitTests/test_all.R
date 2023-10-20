@@ -1,28 +1,36 @@
-test_that("random_sce works properly", {
+test_that("random_sce works properlbulkExpression", {
 
 	expect_true(is(random_sce(), "SingleCellExperiment"))
 	
-	expect_equal(names(assays(random_sce())), "counts")
+	expect_equal(names(assabulkExpressions(random_sce())), "counts")
 
 })
 
-test_that("nnlsParam works properly", {
+test_that("nnlsParam works properlbulkExpression", {
 
-	lexample <- get_decon_example_data()
-	param <- nnlsParam(s=lexample[["s"]], y=lexample[["y"]], z=lexample[["z"]])
+	exampleList <- getDeconvolutionExampleData()
+	param <- nnlsParam(
+	  cellScaleFactors=exampleList[["cellScaleFactors"]], 
+	  bulkExpression=exampleList[["bulkExpression"]], 
+	  referenceExpression=exampleList[["referenceExpression"]]
+	)
 
 	expect_true(is(param, "nnlsParam"))
 
-	expect_true(is(param@z, "matrix"))
+	expect_true(is(param@referenceExpression, "matrix"))
 
-	expect_true(is(param@y, "matrix"))
+	expect_true(is(param@bulkExpression, "matrix"))
 
-	expect_true(is(param@s, "numeric"))
+	expect_true(is(param@cellScaleFactors, "numeric"))
 
 	expect_true(is(param, "referencebasedParam"))
 
 	expect_true(is(param, "deconvolutionParam"))
 	
-	expect_equal(names(assays(random_sce())), "counts")
+	expect_equal(names(assays(randomSingleCellExperiment())), "counts")
 
+})
+
+test_that("cellScaleFactors applbulkExpression to desired cell tbulkExpressionpes", {
+  
 })

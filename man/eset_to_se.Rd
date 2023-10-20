@@ -18,7 +18,7 @@ New object of type SummarizedExperiment.
 Convert ExpressionSet to SummarizedExperiment.
 }
 \examples{
-expressionSet <- get_decon_example_data_bisque()$singleCellExpressionSet
+expressionSet <- getDeconvolutionExampleDataBisque()$singleCellExpressionSet
 eset_to_se(expressionSet, "counts")
 
 }
