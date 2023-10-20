@@ -37,13 +37,13 @@ setClass("nnlsParam", contains="referencebasedParam")
 #'
 #' Main constructor for class \linkS4class{nnlsParam}.
 #'
-#' @param bulkExpression Bulk mixed signals matrix of samples, which can be matched to 
-#' single-cell samples.
-#' @param referenceExpression Signature matrix of cell type-specific signals. If not provided, 
-#' can be computed from a provided \linkS4class{ExpressionSet} containing 
-#' single-cell data.
-#' @param cellScaleFactors Cell size factor transformations of length equal to the K cell 
-#' types to deconvolve.
+#' @param bulkExpression Bulk mixed signals matrix of samples, which can be 
+#' matched to single-cell samples.
+#' @param referenceExpression Signature matrix of cell type-specific signals. 
+#' If not provided, can be computed from a provided \linkS4class{ExpressionSet} 
+#' containing single-cell data.
+#' @param cellScaleFactors Cell size factor transformations of length equal to 
+#' the K cell types to deconvolve.
 #' @param returnInfo Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
@@ -109,9 +109,10 @@ nnlsParam <- function(
 #' 
 #' @references 
 #' 
-#' Katharine M. Mullen and Ivo H. M. van Stokkum (2012). "nnls: The Lawson-Hanson 
-#' algorithm for non-negative least squares (NNLS)." CRAN, R package version 1.4. 
-#' URL: https://cran.r-project.org/web/packages/nnls/index.html
+#' Katharine M. Mullen and Ivo H. M. van Stokkum (2012). "nnls: The 
+#' Lawson-Hanson algorithm for non-negative least squares (NNLS)." CRAN, R 
+#' package version 1.4. URL: 
+#' https://cran.r-project.org/web/packages/nnls/index.html
 #'
 #' @export
 setMethod("deconvolution", signature(object="nnlsParam"), function(object){

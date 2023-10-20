@@ -31,6 +31,6 @@ test_that("nnlsParam works properlbulkExpression", {
 
 })
 
-test_that("cellScaleFactors applbulkExpression to desired cell tbulkExpressionpes", {
+test_that("cellScaleFactors apply to the correct referenceExpression columns", {
   
 })
