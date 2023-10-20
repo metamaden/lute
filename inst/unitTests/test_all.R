@@ -1,12 +1,12 @@
-test_that("random_sce works properlbulkExpression", {
+test_that("randomSingleCellExperiment produces expected SingleCellExperiment", {
 
-	expect_true(is(random_sce(), "SingleCellExperiment"))
+	expect_true(is(randomSingleCellExperiment(), "SingleCellExperiment"))
 	
-	expect_equal(names(assabulkExpressions(random_sce())), "counts")
+	expect_equal(names(assays(randomSingleCellExperiment())), "counts")
 
 })
 
-test_that("nnlsParam works properlbulkExpression", {
+test_that("nnlsParam produces expected results", {
 
 	exampleList <- getDeconvolutionExampleData()
 	param <- nnlsParam(
