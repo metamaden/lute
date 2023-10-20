@@ -29,7 +29,7 @@
 #' @returns New object.
 #' 
 setClass("referencebasedParam", contains="deconvolutionParam", 
-         slots=c(referenceExpression = "matrix", cellScaleFactors = "numeric"))
+         slots=c(referenceExpression="matrix", cellScaleFactors="numeric"))
 
 #' Make new object of class referencebasedParam
 #'

@@ -31,7 +31,7 @@
 #'
 #' @export
 setClass("deconvolutionParam",  
-         slots=c(bulkExpression="matrix", return.info="logical"))
+         slots=c(bulkExpression="matrix", returnInfo="logical"))
 
 #' Inspect slot in \linkS4class{deconvolutionParam} object
 #' @param x Object to access.

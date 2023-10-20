@@ -12,7 +12,7 @@
 #' By default, return named numeric vector of predicted proportions for each
 #' cell type.
 #' 
-#' If \code{return.info == TRUE}, instead returns a list including proportions, 
+#' If \code{returnInfo == TRUE}, instead returns a list including proportions, 
 #' results object returned from specified method, and additional metadata.
 #' 
 #' @details 
@@ -54,7 +54,7 @@ setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))
 #' @return 
 #' By default, return a vector of marker genes.
 #' 
-#' If \code{return.info == TRUE}, provides detailed results, including original 
+#' If \code{returnInfo == TRUE}, provides detailed results, including original 
 #' outputs.
 #' 
 #' @details 
