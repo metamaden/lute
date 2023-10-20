@@ -85,9 +85,9 @@ referencebasedParam <- function(
 #' @export
 setMethod("deconvolution", "referencebasedParam", function(object) {
   ## get metadata
-  cellScaleFactors <- object[[cellScaleFactors]]
-  bulkExpression <- object[[bulkExpression]]
-  referenceExpression <- object[[referenceExpression]]
+  cellScaleFactors <- object[["cellScaleFactors"]]
+  bulkExpression <- object[["bulkExpression"]]
+  referenceExpression <- object[["referenceExpression"]]
   ## cell types in z, s
   if(is(cellScaleFactors, "NULL")){
     cellScaleFactors <- rep(1, ncol(referenceExpression))}
@@ -122,9 +122,13 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
     referenceExpression <- 
       referenceExpression[filterReferenceExpression,,drop=FALSE]
     bulkExpression <- bulkExpression[
-      order(match(rownames(bulkExpression), overlappingMarkers)),]
+      order(match(rownames(bulkExpression), overlappingMarkers)),
+    ]
     referenceExpression <- referenceExpression[
-      order(match(rownames(referenceExpression), overlappingMarkers)),]
+      order(
+        match(
+          rownames(referenceExpression), overlappingMarkers)),
+    ]
   } else{
     message(
       paste0("Warning, rownames not provided in both y (bulkExpression) ",

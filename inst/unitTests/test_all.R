@@ -33,4 +33,12 @@ test_that("nnlsParam produces expected results", {
 
 test_that("cellScaleFactors apply to the correct referenceExpression columns", {
   
+  exampleList <- getDeconvolutionExampleData()
+  param <- nnlsParam(
+    cellScaleFactors=exampleList[["cellScaleFactors"]], 
+    bulkExpression=exampleList[["bulkExpression"]], 
+    referenceExpression=exampleList[["referenceExpression"]]
+  )
+  deconvolutionResults <- deconvolution(param)
+  
 })
