@@ -178,10 +178,10 @@ setMethod("show", "nnlsParam", function(object) {
   
   ## referencebasedParam -- show properties
   ## get metadata
-  cellScaleFactors <- object[[cellScaleFactors]]
-  bulkExpression <- object[[bulkExpression]]
-  referenceExpression <- object[[referenceExpression]]
-  uniqueTypes <- try(colnames(object[[referenceExpression]]))
+  cellScaleFactors <- object[["cellScaleFactors"]]
+  bulkExpression <- object[["bulkExpression"]]
+  referenceExpression <- object[["referenceExpression"]]
+  uniqueTypes <- try(colnames(object[["referenceExpression"]]))
   markersBulkExpression <- rownames(bulkExpression)
   markersReferenceExpression <- rownames(referenceExpression)
   uniqueMarkers <- unique(c(markersBulkExpression, markersReferenceExpression))
@@ -204,20 +204,21 @@ setMethod("show", "nnlsParam", function(object) {
   cat("\toverlapping marker labels (Gy & Gz): ", 
       length(overlappingMarkers), "\n\n")
   cat("\tsamples info:\n")
-  cat("\tnumber of bulk samples (J): ", ncol(object[[bulkExpression]]), "\n")
+  cat("\tnumber of bulk samples (J): ", ncol(object[["bulkExpression"]]), "\n")
   cat("\tsample labels: ", 
       paste0(colnames(bulkExpression), collapse = "; "), "\n")
   cat("\n")
   cat("\tcell size factor properties:\n")
   if(!is(cellScaleFactors, "NULL")){
     for(type in names(cellScaleFactors)){
-      cat("\tscale factor for type ", type, ": ", cellScaleFactors[type], "\n")}
+      cat("\tscale factor for type ", 
+          type, ": ", cellScaleFactors["type"], "\n")}
     if(length(cellScaleFactors) == ncol(referenceExpression)){
       referenceExpression <- 
         .zstransform(referenceExpression, cellScaleFactors)}
   }; cat("\n")
   cat("\ttypes info:\n")
-  cat("\tnumber of types (K): ", ncol(object[[referenceExpression]]), "\n")
+  cat("\tnumber of types (K): ", ncol(object[["referenceExpression"]]), "\n")
   if(!(is(uniqueTypes, "NULL")|is(uniqueTypes, "try-error"))){
     uniqueTypes <- uniqueTypes[order(uniqueTypes)]
     cat("\tunique type labels: ", paste0(uniqueTypes, collapse = ";"), "\n")
