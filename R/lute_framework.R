@@ -63,7 +63,7 @@ lute <- function(singleCellExperiment=NULL,
                  referenceExpression=NULL, 
                  bulkExpression=NULL, 
                  bulkSummarizedExperiment=NULL, 
-                 cellScaleFactor=NULL, 
+                 cellScaleFactors=NULL, 
                  returnInfo=FALSE, 
                  markersPerType=20,
                  assayName="counts", 
@@ -98,13 +98,13 @@ lute <- function(singleCellExperiment=NULL,
       referenceExpression <- referenceFromSingleCellExperiment(
         singleCellExperiment, assayName, cellTypeVariable)
     }
-    if(is(cellScaleFactor, "NULL")){
-      cellScaleFactor <- rep(1, ncol(referenceExpression))}
+    if(is(cellScaleFactors, "NULL")){
+      cellScaleFactors <- rep(1, ncol(referenceExpression))}
     if(verbose){message("Parsing deconvolution arguments...")}
     deconvolutionResults <- map_deconvolution_algorithm(
       algorithm=deconvolution.algorithm,
       referenceExpression=referenceExpression, 
-      bulkExpression=bulkExpression, cellScaleFactor=cellScaleFactor, 
+      bulkExpression=bulkExpression, cellScaleFactors=cellScaleFactors, 
       returnInfo=returnInfo)
     resultsList[["deconvolution.results"]] <- deconvolutionResults
   }

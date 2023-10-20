@@ -55,7 +55,7 @@ get_celltypes_from_sce <- function(
 #' @returns Matrix of simulated bulk convoluted signals.
 #' 
 #' @examples
-#' singleCellExperimentExample <- random_singleCellExperiment()
+#' singleCellExperimentExample <- randomSingleCellExperiment()
 #' ypb_from_sce(singleCellExperimentExample)
 #' 
 #' @export
@@ -74,7 +74,7 @@ ypb_from_sce <- function(singleCellExperiment, assayName="counts",
   cellTypesList <- get_celltypes_from_sce(
     singleCellExperiment=singleCellExperiment, 
     cellTypeVariable=cellTypeVariable)
-  numberType <- length(cellTypesList[["unique.types"]])
+  numberTypes <- length(cellTypesList[["unique.types"]])
   pseudobulkList <- lapply(uniqueGroupIdVector, function(group.id){
     filterSingleCellExperiment <- singleCellExperiment
     if(groupNumber > 1){
@@ -82,7 +82,7 @@ ypb_from_sce <- function(singleCellExperiment, assayName="counts",
       filterSingleCellExperiment <- singleCellExperiment[,filter.group]
     }
     if(is(cellScaleFactors, "NULL")){
-      cellScaleFactors <- rep(1, numberType)
+      cellScaleFactors <- rep(1, numberTypes)
       names(cellScaleFactors) <- cellTypesList[["unique.types"]]
     }
     
@@ -127,7 +127,7 @@ ypb_from_sce <- function(singleCellExperiment, assayName="counts",
 #' @returns New Z signature matrix.
 #' 
 #' @examples
-#' singleCellExperiment.example <- random_singleCellExperiment()
+#' singleCellExperiment.example <- randomSingleCellExperiment()
 #' signature_matrix_from_singleCellExperiment(singleCellExperiment.example)
 #' 
 #' @export
@@ -202,7 +202,7 @@ referenceFromSingleCellExperiment <- function(
 #' 
 #' @param numberBulkSamples Number of bulk samples.
 #' @param numberMarkers Number of cell type markers.
-#' @param numberType Number of cell types.
+#' @param numberTypes Number of cell types.
 #' @returns Example data as list.
 #' 
 #' @importFrom stats rpois
@@ -217,11 +217,11 @@ getDeconvolutionExampleData <- function(
     rpois(n=numberMarkers*numberBulkSamples, lambda=seq(0, 50, 5)), 
     ncol=numberBulkSamples)
   referenceExpression <- matrix(
-    rpois(n=numberType*numberMarkers, lambda=seq(0, 50, 5)), 
-    ncol=numberType)
+    rpois(n=numberTypes*numberMarkers, lambda=seq(0, 50, 5)), 
+    ncol=numberTypes)
   rownames(bulkExpression) <- rownames(referenceExpression) <- 
     paste0("marker", seq(numberMarkers))
-  colnames(referenceExpression) <- paste0("type", seq(numberType))
+  colnames(referenceExpression) <- paste0("type", seq(numberTypes))
   colnames(bulkExpression) <- paste0("sample", seq(numberBulkSamples))
   cellScaleFactors <- c(1, 10)
   names(cellScaleFactors) <- colnames(referenceExpression)
@@ -246,7 +246,7 @@ getDeconvolutionExampleData <- function(
 #' @param numberBulkSamples Number of bulk samples.
 #' @param numberMarkers Number of cell type markers.
 #' @param numberCells Number of cells.
-#' @param numberType Number of cell types.
+#' @param numberTypes Number of cell types.
 #' @returns Example data as list.
 #'
 #' @importFrom Biobase ExpressionSet
@@ -260,11 +260,11 @@ getDeconvolutionExampleData <- function(
 getDeconvolutionExampleDataBisque <- function(numberBulkSamples=100,
                                                numberMarkers=1000, 
                                                numberCells=1000, 
-                                               numberType=2){
+                                               numberTypes=2){
   exampleList <- getDeconvolutionExampleData(
     numberBulkSamples=numberBulkSamples,
     numberMarkers=numberMarkers,
-    numberType=numberType)
+    numberTypes=numberTypes)
   bulkExpression <- exampleList[["bulkExpression"]]
   colnames(bulkExpression) <- c(paste0("sample", seq(numberBulkSamples/2)), 
                    paste0("bulk", seq(numberBulkSamples/2)))
@@ -272,9 +272,9 @@ getDeconvolutionExampleDataBisque <- function(numberBulkSamples=100,
   rownames(dfBulkPheno) <- colnames(bulkExpression)
   bulkExpressionSet <- ExpressionSet(assayData=bulkExpression, 
                           phenoData=AnnotatedDataFrame(dfBulkPheno))
-  singleCellExperiment <- random_singleCellExperiment(num.genes=numberMarkers, 
+  singleCellExperiment <- randomSingleCellExperiment(num.genes=numberMarkers, 
                     numberCells=numberCells, 
-                    numberType=numberType)
+                    numberTypes=numberTypes)
   dfReferenceExpressionPheno <- data.frame(
     cellType=singleCellExperiment[["celltype"]], 
                            SubjectName=
@@ -315,9 +315,9 @@ getDeconvolutionExampleDataSnewColDataC <- function(){
                           phenoData=AnnotatedDataFrame(dfBulkPheno))
 
   ## get referenceExpressionSet
-  singleCellExperiment <- random_singleCellExperiment(num.genes=10, 
-                                                      numberCells=300, 
-                                                      numberType=4)
+  singleCellExperiment <- randomSingleCellExperiment(numberGenes=10, 
+                                                     numberCells=300, 
+                                                     numberTypes=4)
   dfReferenceExpressionPheno <- data.frame(
     cellType=singleCellExperiment[["celltype"]], 
                            SubjectName=
@@ -355,9 +355,9 @@ getDeconvolutionExampleData_music2 <- function(){
                           phenoData=AnnotatedDataFrame(dfBulkPheno))
 
   ## get referenceExpressionSet
-  singleCellExperiment <- random_singleCellExperiment(num.genes=10, 
-                                                      numberCells=300, 
-                                                      numberType=2)
+  singleCellExperiment <- randomSingleCellExperiment(numberGenes=10, 
+                                                     numberCells=300, 
+                                                     numberTypes=2)
   dfReferenceExpressionPheno <- data.frame(
     cellType=singleCellExperiment[["celltype"]], 
                            SubjectName=paste0("sample", 

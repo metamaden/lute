@@ -34,7 +34,7 @@ Calculate a Z signature matrix from object of type
 \linkS4class{SingleCellExperiment}.
 }
 \examples{
-singleCellExperiment.example <- random_singleCellExperiment()
+singleCellExperiment.example <- randomSingleCellExperiment()
 signature_matrix_from_singleCellExperiment(singleCellExperiment.example)
 
 }

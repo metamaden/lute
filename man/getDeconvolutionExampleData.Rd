@@ -15,7 +15,7 @@ getDeconvolutionExampleData(
 
 \item{numberMarkers}{Number of cell type markers.}
 
-\item{numberType}{Number of cell types.}
+\item{numberTypes}{Number of cell types.}
 }
 \value{
 Example data as list.

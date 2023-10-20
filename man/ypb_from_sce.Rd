@@ -35,7 +35,7 @@ Matrix of simulated bulk convoluted signals.
 Get pseudobulk from a SingleCellExperiment object.
 }
 \examples{
-singleCellExperimentExample <- random_singleCellExperiment()
+singleCellExperimentExample <- randomSingleCellExperiment()
 ypb_from_sce(singleCellExperimentExample)
 
 }

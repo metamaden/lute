@@ -19,6 +19,6 @@ Convert ExpressionSet to SummarizedExperiment.
 }
 \examples{
 expressionSet <- get_decon_example_data_bisque()$singleCellExpressionSet
-eset_to_se(expressionSet "counts")
+eset_to_se(expressionSet, "counts")
 
 }

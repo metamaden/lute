@@ -8,7 +8,7 @@ getDeconvolutionExampleDataBisque(
   numberBulkSamples = 100,
   numberMarkers = 1000,
   numberCells = 1000,
-  numberType = 2
+  numberTypes = 2
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ getDeconvolutionExampleDataBisque(
 
 \item{numberCells}{Number of cells.}
 
-\item{numberType}{Number of cell types.}
+\item{numberTypes}{Number of cell types.}
 }
 \value{
 Example data as list.

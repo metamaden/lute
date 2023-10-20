@@ -112,7 +112,8 @@ randomMarkersVectorsList <- function(markerIndexVector, numberIterations=1,
 
 #' randomSingleCellExperiment
 #'
-#' Make a random SingleCellExperiment object.
+#' Make a random object of type SingleCellExperiment. Uses the negative binomial 
+#' distribution to randomly generate gene expression data for simulated cells.
 #'
 #' @param numberGenes Number of genes to randomize.
 #' @param numberCells Numnber of cells to randomize.
@@ -127,21 +128,21 @@ randomMarkersVectorsList <- function(markerIndexVector, numberIterations=1,
 #' @param zeroInclude Whether to include random zero-count values.
 #' @param zeroFraction Fraction of zero-count values to include.
 #' @param verbose Whether to show verbose status messages.
+#'
 #' @return New randomized SingleCellExperiment object.
 #' 
 #' @importFrom stats rnbinom
 #' @importFrom S4Vectors metadata
 #' 
 #' @examples 
-#' sce <- random_sce()
+#' singleCellExperiment <- randomSingleCellExperiment()
 #' 
 #' @export
-random_sce <- function(numberGenes=20, numberCells=12, numTypes=2, 
-                       fractionTypes=NULL, dispersion=NULL, 
-                       expressionMean=10, naInclude=FALSE, 
-                       naFraction=0.2, zeroInclude=FALSE, 
-                       zeroFraction=0.2, verbose=FALSE, 
-                       seedNumber=0){
+randomSingleCellExperiment <- function(
+    numberGenes=20, numberCells=12, numTypes=2, fractionTypes=NULL, 
+    dispersion=NULL, expressionMean=10, naInclude=FALSE, naFraction=0.2, 
+    zeroInclude=FALSE, zeroFraction=0.2, verbose=FALSE, seedNumber=0
+    ){
   if(verbose){message("Getting random expression data...")}
   if(is(dispersion, "NULL")){dispersion <- expressionMean}
   matrixData <- rnbinom(n=(numberCells*numberGenes), 
@@ -177,7 +178,7 @@ random_sce <- function(numberGenes=20, numberCells=12, numTypes=2,
   newRowData <- data.frame(gene.id=genev)
   rownames(expressionCounts) <- genev
   ## manage new metadata
-  descriptionString <- "random SingleCellExperiment made using random_sce()"
+  descriptionString <- "random SingleCellExperiment made using randomSingleCellExperiment()"
   metadataList <- list(description=descriptionString)
   if(verbose){message("Making new sce object...")}
   singleCellExperiment <- SingleCellExperiment::SingleCellExperiment(

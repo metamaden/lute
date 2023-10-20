@@ -9,7 +9,7 @@ lute(
   referenceExpression = NULL,
   bulkExpression = NULL,
   bulkSummarizedExperiment = NULL,
-  cellScaleFactor = NULL,
+  cellScaleFactors = NULL,
   returnInfo = FALSE,
   markersPerType = 20,
   assayName = "counts",
@@ -32,6 +32,9 @@ single-cell samples. Optional (see argument y.se).}
 matrix in its assays (e.g. accessible with assays(y.se)[[assayName]] using
 the provided assayName argument). Optional (see argument y).}
 
+\item{cellScaleFactors}{Cell size factor transformations of length equal to the K cell types 
+to deconvolve. Optional, if not provided, uses equal weights for types.}
+
 \item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 
@@ -49,9 +52,6 @@ use. If NULL, skips type marker analyses.}
 skips deconvolution.}
 
 \item{verbose}{Whether to show verbose status messages.}
-
-\item{cellScaleFactors}{Cell size factor transformations of length equal to the K cell types 
-to deconvolve. Optional, if not provided, uses equal weights for types.}
 }
 \value{
 A list containing results returned from type marker selection and
