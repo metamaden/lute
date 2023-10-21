@@ -18,7 +18,7 @@
 #' 
 #' @examples
 #' ## get data
-#' exampleList <- getDeconvolutionExampleData()
+#' exampleList <- getDeconvolutionExampleDataBisque()
 #' bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
 #' bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 #' bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
@@ -26,7 +26,7 @@
 #' ## get param object
 #' param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
 #'                      bulkExpression=bulkExpression,
-#'                      singleCellExperimentData=
+#'                      singleCellExpressionSet=
 #'                       exampleList[["singleCellExpressionSet"]], 
 #'                      batchVariable="SubjectName", 
 #'                      cellTypeVariable="cellType", 
@@ -87,7 +87,7 @@ setClass("bisqueParam",
 #' 
 #' @examples
 #' ## get data
-#' exampleList <- getDeconvolutionExampleData()
+#' exampleList <- getDeconvolutionExampleDataBisque()
 #' bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
 #' bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 #' bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
@@ -303,7 +303,7 @@ bisqueParam <- function(bulkExpression=NULL,
 #' 
 #' @examples
 #' ## get data
-#' exampleList <- getDeconvolutionExampleData()
+#' exampleList <- getDeconvolutionExampleDataBisque()
 #' bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
 #' bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 #' bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
@@ -361,7 +361,7 @@ setMethod("deconvolution", signature(object="bisqueParam"), function(object){
 #' \code{?bisqueParam}).
 #' 
 #' @examples 
-#' exampleList <- getDeconvolutionExampleData()
+#' exampleList <- getDeconvolutionExampleDataBisque()
 #' referencebasedParam(
 #' bulkExpression=exampleList$bulkExpression, 
 #' referenceExpression=exampleList$referenceExpression, 

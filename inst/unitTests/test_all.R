@@ -32,12 +32,12 @@ test_that("nnlsParam produces expected results", {
 
 test_that("bisqueParam produces expected results", {
   
-  exampleList <- getDeconvolutionExampleData()
+  exampleList <- getDeconvolutionExampleDataBisque()
   
   param <- bisqueParam(
-    cellScaleFactors=exampleList[["cellScaleFactors"]], 
+    cellScaleFactors=c("type1" = 1, "type2" = 10), 
     bulkExpression=exampleList[["bulkExpression"]], 
-    referenceExpression=exampleList[["referenceExpression"]]
+    referenceExpression=exampleList[["singleCellExpressionSet"]]
   )
   
   expect_equal(class(param)[1], "nnlsParam")

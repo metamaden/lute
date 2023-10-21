@@ -17,7 +17,7 @@ Main constructor for class \linkS4class{bisqueParam}.
 }
 \examples{
 ## get data
-exampleList <- getDeconvolutionExampleData()
+exampleList <- getDeconvolutionExampleDataBisque()
 bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
 bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
@@ -25,7 +25,7 @@ bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 ## get param object
 param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
                      bulkExpression=bulkExpression,
-                     singleCellExperimentData=
+                     singleCellExpressionSet=
                       exampleList[["singleCellExpressionSet"]], 
                      batchVariable="SubjectName", 
                      cellTypeVariable="cellType", 

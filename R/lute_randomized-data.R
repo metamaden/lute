@@ -139,7 +139,7 @@ randomMarkersVectorsList <- function(markerIndexVector, numberIterations=1,
 #' 
 #' @export
 randomSingleCellExperiment <- function(
-    numberGenes=20, numberCells=12, numTypes=2, fractionTypes=NULL, 
+    numberGenes=20, numberCells=12, numberTypes=2, fractionTypes=NULL, 
     dispersion=NULL, expressionMean=10, naInclude=FALSE, naFraction=0.2, 
     zeroInclude=FALSE, zeroFraction=0.2, verbose=FALSE, seedNumber=0
     ){
@@ -162,11 +162,11 @@ randomSingleCellExperiment <- function(
   expressionCounts <- matrix(matrixData, ncol=numberCells, nrow=numberGenes)
   if(verbose){message("Getting new colData...")}
   cellVector <- paste0("cell.barcode.", seq(numberCells))
-  cellsPerType <- round(numberCells/numTypes, 0)
+  cellsPerType <- round(numberCells/numberTypes, 0)
   
   if(is(fractionTypes, "NULL")){
-    fractionTypes <- rep((1/numTypes), numTypes)}
-  typeVector <- paste0("type", seq(numTypes))
+    fractionTypes <- rep((1/numberTypes), numberTypes)}
+  typeVector <- paste0("type", seq(numberTypes))
   typeVector <- unlist(lapply(seq(length(typeVector)), function(ti){
     num <- fractionTypes[ti]*numberCells; rep(typeVector[ti], num)
   }))
@@ -183,6 +183,7 @@ randomSingleCellExperiment <- function(
   if(verbose){message("Making new sce object...")}
   singleCellExperiment <- SingleCellExperiment::SingleCellExperiment(
     assays=list(counts=expressionCounts), colData=newColData, 
-    rowData=newRowData, metadata=metadataList)
+    rowData=newRowData, metadata=metadataList
+  )
   return(singleCellExperiment)
 }

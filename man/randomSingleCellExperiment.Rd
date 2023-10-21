@@ -7,7 +7,7 @@
 randomSingleCellExperiment(
   numberGenes = 20,
   numberCells = 12,
-  numTypes = 2,
+  numberTypes = 2,
   fractionTypes = NULL,
   dispersion = NULL,
   expressionMean = 10,
@@ -23,6 +23,8 @@ randomSingleCellExperiment(
 \item{numberGenes}{Number of genes to randomize.}
 
 \item{numberCells}{Numnber of cells to randomize.}
+
+\item{numberTypes}{Number of cell types to annotate.}
 
 \item{fractionTypes}{Vector of fractions by type.}
 
@@ -42,8 +44,6 @@ expressionMean}
 \item{verbose}{Whether to show verbose status messages.}
 
 \item{seedNumber}{Seed value for randomization of expression data.}
-
-\item{numberTypes}{Number of cell types to annotate.}
 }
 \value{
 New randomized SingleCellExperiment object.

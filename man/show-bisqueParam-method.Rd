@@ -17,7 +17,7 @@ Prints data summary messages to console.
 Show generic behavior for object of class bisqueParam
 }
 \examples{
-exampleList <- getDeconvolutionExampleData()
+exampleList <- getDeconvolutionExampleDataBisque()
 referencebasedParam(
 bulkExpression=exampleList$bulkExpression, 
 referenceExpression=exampleList$referenceExpression, 

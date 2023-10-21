@@ -276,7 +276,7 @@ getDeconvolutionExampleDataBisque <- function(numberBulkSamples=100,
   rownames(dfBulkPheno) <- colnames(bulkExpression)
   bulkExpressionSet <- ExpressionSet(assayData=bulkExpression, 
                           phenoData=AnnotatedDataFrame(dfBulkPheno))
-  singleCellExperiment <- randomSingleCellExperiment(num.genes=numberMarkers, 
+  singleCellExperiment <- randomSingleCellExperiment(numberGenes=numberMarkers, 
                     numberCells=numberCells, 
                     numberTypes=numberTypes)
   dfReferenceExpressionPheno <- data.frame(

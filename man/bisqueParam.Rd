@@ -65,7 +65,7 @@ main bisque method.
 }
 \examples{
 ## get data
-exampleList <- getDeconvolutionExampleData()
+exampleList <- getDeconvolutionExampleDataBisque()
 bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
 bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
