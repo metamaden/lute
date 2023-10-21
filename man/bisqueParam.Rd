@@ -8,14 +8,14 @@ bisqueParam(
   bulkExpression = NULL,
   bulkExpressionIndependent = NULL,
   referenceExpression = NULL,
-  cellSizeFactor = NULL,
+  cellScaleFactors = NULL,
   bulkExpressionSet = NULL,
   scData = NULL,
   assayName = "counts",
   batchVariable = "batch.id",
   cellTypeVariable = "celltype",
   useOverlap = FALSE,
-  return.info = FALSE
+  returnInfo = FALSE
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ samples, which should not overlap samples in y.}
 If not provided, can be computed from a provided ExpressionSet containing 
 single-cell data.}
 
-\item{cellSizeFactor}{size factor transformations of length equal to the K 
+\item{cellScaleFactors}{size factor transformations of length equal to the K 
 cell types to deconvolve.}
 
 \item{bulkExpressionSet}{ExpressionSet of bulk mixed signals.}
@@ -46,7 +46,7 @@ singleCellExpressionSet pData/coldata.}
 \item{useOverlap}{Whether to deconvolve samples overlapping bulk and sc 
 esets (logical, FALSE).}
 
-\item{return.info}{Whether to return metadata and original method outputs 
+\item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 
 \item{bulkExpressionBulk}{mixed signals matrix of samples, which can be 
@@ -71,7 +71,7 @@ bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 
 ## get param object
-param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
+newBisqueParameter <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
                      bulkExpressionIndependent=bulkExpression,
                      scData=exampleList[["singleCellExpressionSet"]], 
                      batchVariable="SubjectName", 
@@ -79,6 +79,6 @@ param <- bisqueParam(bulkExpressionSet=bulkExpressionSet,
                      useOverlap=FALSE)
 
 ## get predicted proportions
-res <- deconvolution(param)
+deconvolutionResult <- deconvolution(newBisqueParameter)
 
 }

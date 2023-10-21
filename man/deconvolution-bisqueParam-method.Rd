@@ -30,7 +30,7 @@ bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
 bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 
 ## get param object
-param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
+newBisqueParameter <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
                      bulkExpressionIndependent=bulkExpression,
                      scData=exampleList[["singleCellExpressionSet"]], 
                      batchVariable="SubjectName", 
@@ -38,7 +38,7 @@ param <- bisqueParam(bulkExpressionSet=bulkExpressionSet,
                      useOverlap=FALSE)
 
 ## get predicted proportions
-res <- deconvolution(param)
+deconvolutionResult <- deconvolution(newBisqueParameter)
 
 }
 \references{
