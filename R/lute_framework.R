@@ -72,7 +72,7 @@ lute <- function(singleCellExperiment=NULL,
                  deconvolutionAlgorithm="nnls",
                  verbose=TRUE){
   resultsList <- list()
-  if(!is(typemarker.algorithm, "NULL")){
+  if(!is(typemarkerAlgorithm, "NULL")){
     if(verbose){message("Parsing marker gene arguments...")}
     typemarkerResults <- markerVector <- map_typemarker_algorithm(
       algorithm=typemarkerAlgorithm,
@@ -89,24 +89,26 @@ lute <- function(singleCellExperiment=NULL,
     singleCellExperiment <- singleCellExperiment[filterSingleCellExperiment,]
     referenceExpression <- referenceFromSingleCellExperiment(
       singleCellExperiment, assayName, cellTypeVariable)
-    resultsList[["typemarker.results"]] <- typemarker.results
+    resultsList[["typemarkerResults"]] <- typemarkerResults
   }
-  bulkCondition <- is(bulkExpression, "NULL") & !is(bulkExpressionse, "NULL")
-  if(bulkCondition){bulkExpression <- assays(bulkExpressionse)[[assayName]]}
-  if(!is(deconvolution.algorithm, "NULL")){
+  bulkCondition <- is(bulkExpression, "NULL") & !is(bulkSummarizedExperiment, "NULL")
+  if(bulkCondition){bulkExpression <- assays(bulkSummarizedExperiment)[[assayName]]}
+  if(!is(deconvolutionAlgorithm, "NULL")){
     if(is(referenceExpression, "NULL")){
       referenceExpression <- referenceFromSingleCellExperiment(
         singleCellExperiment, assayName, cellTypeVariable)
     }
     if(is(cellScaleFactors, "NULL")){
-      cellScaleFactors <- rep(1, ncol(referenceExpression))}
+      cellScaleFactors <- rep(1, ncol(referenceExpression))
+      names(cellScaleFactors) <- colnames(referenceExpression)
+    }
     if(verbose){message("Parsing deconvolution arguments...")}
     deconvolutionResults <- map_deconvolution_algorithm(
-      algorithm=deconvolution.algorithm,
+      algorithm=deconvolutionAlgorithm,
       referenceExpression=referenceExpression, 
       bulkExpression=bulkExpression, cellScaleFactors=cellScaleFactors, 
       returnInfo=returnInfo)
-    resultsList[["deconvolution.results"]] <- deconvolutionResults
+    resultsList[["deconvolutionResults"]] <- deconvolutionResults
   }
   return(resultsList)
 }
@@ -131,7 +133,8 @@ map_typemarker_algorithm <- function(algorithm, singleCellExperiment, assayName,
     returnString <- "FALSE"
   }
   typeMarkerString <- paste0(typeMarkerString, 
-      "(singleCellExperiment=singleCellExperiment, assayName='",assayName,"', ",
+      "(singleCellExperiment=singleCellExperiment, ",
+      "assayName='",assayName,"', ",
       "markersPerType=", markersPerType, ", ",
       "cellTypeVariable='",cellTypeVariable,"',",
       "returnInfo=", returnInfo, ")")
@@ -173,7 +176,10 @@ map_deconvolution_algorithm <- function(algorithm, bulkExpression,
   } else{
     stop("Error, unidentified deconvolution algorithm provided. ")
   }
-  deconvolutionString <- paste0(deconvolutionString, "(y=y, z=z, s=s, ",
+  deconvolutionString <- paste0(deconvolutionString, 
+                                "(bulkExpression=bulkExpression, ",
+                                "referenceExpression=referenceExpression, ",
+                                "cellScaleFactors=cellScaleFactors, ",
                                 "returnInfo=", returnInfo, ")")
   newParameter <- eval(parse(text=deconvolutionString))
   return(deconvolution(newParameter))

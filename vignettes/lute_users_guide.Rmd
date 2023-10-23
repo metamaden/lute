@@ -147,7 +147,7 @@ To view a table of supported algorithms and their details, pass the following
 code to your R session:
 
 ```{r}
-info.table <- lute_supported_deconvolution_algorithms()[,seq(5)]
+info.table <- luteSupportedDeconvolutionAlgorithms()[,seq(5)]
 knitr::kable(info.table)
 ```
 
@@ -182,46 +182,48 @@ We may begin with an object of type `SingleCellExperiment` (a.k.a. "sce" object)
 containing cell-level expression data. We may use the main `lute()` framework 
 function to perform a deconvolution experiment with these data.
 
-For demonstration, we generate a randomized sce object with `random_sce()` (see 
-`?random_sce` for details). Set the $G$ marker genes to be 10, or 5 per cell 
-type, which we will identify from an initial set of 100 genes:
+For demonstration, we generate a randomized sce object with 
+`randomSingleCellExperiment()` (see `?randomSingleCellExperiment` for details). 
+Set the $G$ marker genes to be 10, or 5 per cell type, which we will identify 
+from an initial set of 100 genes:
 
 ```{r}
-markers.per.type <- 5
-total.genes <- 100
-sce.example <- random_sce(num.genes=total.genes)
+markersPerType <- 5
+totalGenes <- 100
+exampleSingleCellExperiment <- randomSingleCellExperiment(
+  numberGenes=totalGenes)
 ```
 
-We could identify marker genes in `sce.example` now by running `lute` without
-setting the deconvolution algorithm argument:
+We could identify marker genes in `exampleSingleCellExperiment` now by 
+running `lute` without setting the deconvolution algorithm argument:
 
 ```{r}
-markers <- lute(sce=sce.example, markers.per.type=markers.per.type, 
-                deconvolution.algorithm=NULL)
-length(markers$typemarker.results)
+markers <- lute(singleCellExperiment=exampleSingleCellExperiment,
+                markersPerType=markersPerType, 
+                deconvolutionAlgorithm=NULL)
+length(markers$typemarkerResults)
 ```
 
 We identified 10 marker genes from the provided data.
 
 To run a more complete experiment, we need to define $Y$. For this demonstration,
-we define $Y$ as a pseudobulk from the provided `sce.example` data using 
-`ypb_from_sce()` (see `?ypb_from_sce` for details).
+we define $Y$ as a pseudobulk from the provided `exampleSingleCellExperiment` 
+data using `ypb_from_sce()` (see `?ypb_from_sce` for details).
 
 ```{r}
-input_y <- ypb_from_sce(sce=sce.example, 
-                  assay.name="counts", 
-                  celltype.variable="celltype")
-input_y <- as.matrix(input_y)
+examplePseudobulkExpression <- exampleBulkExpression <- ypb_from_sce(
+  singleCellExperiment=exampleSingleCellExperiment)
 ```
 
-By default, the pseudobulk used all available cell data in `sce.example`. 
+By default, the pseudobulk used all available cell data in `exampleSingleCellExperiment`. 
 
 Finally, we run marker selection and deconvolution in succession with `lute` as
 follows:
 
 ```{r}
-experiment.results <- lute(sce=sce.example, y=input_y, 
-                           typemarker.algorithm=NULL)
+experiment.results <- lute(singleCellExperiment=exampleSingleCellExperiment, 
+                           bulkExpression=as.matrix(exampleBulkExpression), 
+                           typemarkerAlgorithm=NULL)
 ```
 
 By default, `lute` used the mean ratios algorithm to get markers, then the 

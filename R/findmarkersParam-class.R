@@ -124,7 +124,7 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
     resultList[[type]] <- findMarkers(x=singleCellExperiment, 
                                       group=singleCellExperiment[[cellTypeVariable]],
                                       assay.type=assayName,
-                                      testType=testType)[[type]]
+                                      test.type=testType)[[type]]
     dfIterate <- resultList[[type]][,seq(4)]
     summaryColname <- 
       colnames(dfIterate)[grepl("summary\\..*", colnames(dfIterate))]

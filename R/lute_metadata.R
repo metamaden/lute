@@ -5,7 +5,7 @@
 ### Get metadata about the lute package.
 ###
 
-#' lute_supported_deconvolution_algorithms
+#' luteSupportedDeconvolutionAlgorithms
 #'
 #' View details about supported deconvolution algorithms.
 #'
@@ -19,8 +19,8 @@
 #' @export
 luteSupportedDeconvolutionAlgorithms <- function(){
   csvName <- "lute-deconvolution_transfer-learning-table.csv"
-  readPath <- system.file("csv", package="lute")
-  readPath <- file.path(path, csvName)
+  readPath <- file.path(
+    system.file("csv", package="lute"), csvName)
   csvResult <- read.csv(readPath)
   return(csvResult)
 }

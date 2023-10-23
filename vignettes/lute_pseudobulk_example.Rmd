@@ -86,6 +86,18 @@ sampleIdVector <- sampleIdVector[nucleiPerSample >= minNuclei]
 sampleIdVector # view
 ```
 
+Next, save samples having non-zero amounts of neuron and glial cells.
+
+```{r}
+sampleIdVector <- unlist(lapply(sampleIdVector, function(sampleId){
+  numTypes <- length(
+    unique(
+      data[,data[[sampleIdVariable]]==sampleId][[newTypes]]))
+  if(numTypes==2){sampleId}
+}))
+sampleIdVector
+```
+
 View the summaries by sample id, then save these as the true cell type proportions.
 These will be used later to assess the predictions.
 
@@ -117,13 +129,9 @@ Next make the pseudobulk datasets.
 assayName <- "counts"
 pseudobulkList <- lapply(sampleIdVector, function(sampleId){
   dataIteration <- data[,data[[sampleIdVariable]]==sampleId]
-  
-  zIter <- referenceFromSingleCellExperiment()
-  
   ypb_from_sce(
     singleCellExperiment = dataIteration, assayName = assayName, 
     cellTypeVariable = newTypes, cellScaleFactors = cellScalesVector)
-  
 })
 
 dfPseudobulk <- do.call(cbind, pseudobulkList)
@@ -141,17 +149,17 @@ knitr::kable(head(dfPseudobulk))
 
 Predict the neuron proportions using non-negative least squares (NNLS), the 
 default deconvolution algorithm used by `lute()`. First, get the scaled proportions
-by setting the argument `s = cellScalesVector`.
+by setting the argument `cellScaleFactors = cellScalesVector`.
 
 ```{r}
 scaledResult <- lute(
   singleCellExperiment = data, 
   bulkExpression = as.matrix(dfPseudobulk), 
-  cellScaleFactor = cellScalesVector,
+  cellScaleFactors = cellScalesVector,
   typemarkerAlgorithm = NULL,
   cellTypeVariable = newTypes,
   assayName = assayName)
-proportions.scaled <- scaledResult[[1]]@predictions.table
+proportions.scaled <- scaledResult[[1]]@predictionsTable
 knitr::kable(proportions.scaled) # view
 ```
 
@@ -161,12 +169,12 @@ Next, get the unscaled result without setting `s`.
 
 ```{r}
 unscaledResult <- lute(
-  sce = data, 
-  y = as.matrix(dfPseudobulk), 
-  typemarker.algorithm = NULL,
-  celltype.variable = newTypes,
+  singleCellExperiment = data, 
+  bulkExpression = as.matrix(dfPseudobulk), 
+  typemarkerAlgorithm = NULL,
+  cellTypeVariable = newTypes,
   assayName = assayName)
-proportionsUnscaled <- unscaledResult[[1]]@predictions.table
+proportionsUnscaled <- unscaledResult[[1]]@predictionsTable
 knitr::kable(proportionsUnscaled) # view
 ```
 

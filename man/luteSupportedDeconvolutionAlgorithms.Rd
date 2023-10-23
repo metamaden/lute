@@ -2,7 +2,7 @@
 % Please edit documentation in R/lute_metadata.R
 \name{luteSupportedDeconvolutionAlgorithms}
 \alias{luteSupportedDeconvolutionAlgorithms}
-\title{lute_supported_deconvolution_algorithms}
+\title{luteSupportedDeconvolutionAlgorithms}
 \usage{
 luteSupportedDeconvolutionAlgorithms()
 }
