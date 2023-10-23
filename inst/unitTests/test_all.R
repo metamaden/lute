@@ -196,5 +196,10 @@ test_that(
     exampleList$cellScaleFactors["type1"]*exampleList$referenceExpression[,"type1"])
   expectedProductType2 <- as.numeric(
     exampleList$cellScaleFactors["type2"]*exampleList$referenceExpression[,"type2"])
-  
+  # 
+  # run tests
+  expect_equal(transformResult[1,1], expectedProductType1[1])
+  expect_equal(transformResult[2,1], expectedProductType1[2])
+  expect_equal(transformResult[1,2], expectedProductType2[1])
+  expect_equal(transformResult[2,2], expectedProductType2[2])
 })
