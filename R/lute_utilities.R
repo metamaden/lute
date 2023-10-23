@@ -190,7 +190,17 @@ referenceFromSingleCellExperiment <- function(
 }
 
 .zstransform <- function(referenceExpression, cellScaleFactor){
-  sweep(referenceExpression, 2, cellScaleFactor, FUN="*")
+  markersReferenceExpression <- colnames(referenceExpression)
+  markersFactors <- names(cellScaleFactor)
+  reorderFactors <- order(match(markersFactors,markersReferenceExpression))
+  cellScaleFactor <- cellScaleFactor[reorderFactors]
+  if(identical(colnames(referenceExpression),names(cellScaleFactor))){
+    referenceTransformed <- sweep(
+      referenceExpression, 2, cellScaleFactor, FUN="*")
+  } else{
+    stop("Error matching types in referenceExpression and cellScaleFator.")
+  }
+  return(referenceTransformed)
 }
 
 .z_operator <- function(expressionDataVector){

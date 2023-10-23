@@ -96,7 +96,11 @@ test_that("Example function returns expected results for K=2, 3, and 30", {
   
 })
 
-test_that("cellScaleFactors apply to the correct referenceExpression columns", {
+test_that(
+  paste0(
+    "cellScaleFactors (k2, k3, k30) apply to the correct referenceExpression ",
+    "columns"), 
+  {
   
   
   #---------
@@ -147,5 +151,50 @@ test_that("cellScaleFactors apply to the correct referenceExpression columns", {
   expect_equal(transformResult[2,1], expectedProductType1[2])
   expect_equal(transformResult[1,2], expectedProductType2[1])
   expect_equal(transformResult[2,2], expectedProductType2[2])
+  
+  #---------
+  #
+  # TEST K30
+  #
+  #---------
+  K = 30
+  # get transform
+  exampleList <- getDeconvolutionExampleData(seq(K), numberTypes=K)
+  transformResult <- lute:::.zstransform(
+    exampleList[["referenceExpression"]], exampleList[["cellScaleFactors"]])
+  #
+  # get expected values
+  expectedProductType1 <- as.numeric(
+    exampleList$cellScaleFactors["type1"]*exampleList$referenceExpression[,"type1"])
+  expectedProductType2 <- as.numeric(
+    exampleList$cellScaleFactors["type2"]*exampleList$referenceExpression[,"type2"])
+  expectedProductType30 <- as.numeric(
+    exampleList$cellScaleFactors["type30"]*exampleList$referenceExpression[,"type30"])
+  #
+  # run tests
+  expect_equal(transformResult[1,1], expectedProductType1[1])
+  expect_equal(transformResult[2,1], expectedProductType1[2])
+  expect_equal(transformResult[1,2], expectedProductType2[1])
+  expect_equal(transformResult[2,2], expectedProductType2[2])
+  expect_equal(transformResult[1,30], expectedProductType30[1])
+  expect_equal(transformResult[2,30], expectedProductType30[2])
+  
+  #-------------------
+  #
+  # shuffle labels, K3
+  #
+  #-------------------
+  K = 3
+  # get transform
+  exampleList <- getDeconvolutionExampleData(seq(K), numberTypes=K)
+  s.vector.shuffle <- exampleList[["cellScaleFactors"]][rev(seq(3))]
+  transformResult <- lute:::.zstransform(
+    exampleList[["referenceExpression"]], s.vector.shuffle)
+  #
+  # get expected values
+  expectedProductType1 <- as.numeric(
+    exampleList$cellScaleFactors["type1"]*exampleList$referenceExpression[,"type1"])
+  expectedProductType2 <- as.numeric(
+    exampleList$cellScaleFactors["type2"]*exampleList$referenceExpression[,"type2"])
   
 })
