@@ -117,8 +117,11 @@ Next make the pseudobulk datasets.
 assayName <- "counts"
 pseudobulkList <- lapply(sampleIdVector, function(sampleId){
   dataIteration <- data[,data[[sampleIdVariable]]==sampleId]
-  ypb_from_sce(dataIteration, assayName, newTypes, 
-               cellScaleFactors=cellScalesVector)
+  
+  zIter <- .zstransform()
+  
+  ypb_from_sce(dataIteration, assayName, newTypes, cellScaleFactors=cellScalesVector)
+  
 })
 
 dfPseudobulk <- do.call(cbind, pseudobulkList)

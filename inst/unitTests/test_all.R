@@ -203,3 +203,19 @@ test_that(
   expect_equal(transformResult[1,2], expectedProductType2[1])
   expect_equal(transformResult[2,2], expectedProductType2[2])
 })
+
+test_that(
+  paste0("ypb_from_sce() performs properly."), {
+  exampleData <- getDeconvolutionExampleData()
+  exampleSingleCellExperiment <- randomSingleCellExperiment()
+  examplePseudobulk <- ypb_from_sce(
+    singleCellExperiment = exampleSingleCellExperiment)
+  
+  # run tests
+  expect_equal(colnames(examplePseudobulk), "singleCellExperiment.pseudobulk")
+  expect_equal(nrow(examplePseudobulk), nrow(exampleSingleCellExperiment))
+  expect_equal(
+    rownames(examplePseudobulk), rownames(exampleSingleCellExperiment))
+  
+})
+
