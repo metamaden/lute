@@ -33,14 +33,19 @@ test_that("nnlsParam produces expected results", {
 test_that("bisqueParam produces expected results", {
   
   exampleList <- getDeconvolutionExampleDataBisque()
+  scData <- exampleList[["singleCellExpressionSet"]]
+  scData$celltype <- scData$cellType
+  scData$batch.id <- scData$SubjectName
+  bulkExpressionSet <- exampleList$bulkExpressionSet
+  phenoData(bulkExpressionSet)$batch.id <- colnames(bulkExpressionSet)
   
   param <- bisqueParam(
     cellScaleFactors=c("type1" = 1, "type2" = 10), 
-    bulkExpression=exampleList[["bulkExpression"]], 
-    referenceExpression=exampleList[["singleCellExpressionSet"]]
+    bulkExpressionSet=bulkExpressionSet, 
+    scData=scData
   )
   
-  expect_equal(class(param)[1], "nnlsParam")
+  expect_equal(class(param)[1], "bisqueParam")
   
   expect_equal(class(param@referenceExpression)[1], "matrix")
   

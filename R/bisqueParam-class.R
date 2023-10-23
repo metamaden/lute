@@ -142,16 +142,16 @@ bisqueParam <- function(bulkExpression=NULL,
   ## parse independent bulk samples
   bulkExpression <- .parseBulkExpressionIndependent(
     idOnlyBulk=listBatchID[["idOnlyBulk"]], 
-    bulkExpression=listBulk[["bulkExpression"]], 
+    bulkExpression=list.bulkExpression[["bulkExpression"]], 
     bulkExpressionIndependent=bulkExpression, 
-    bulkExpressionSet=listBulk[["bulkExpressionSet"]])
+    bulkExpressionSet=list.bulkExpression[["bulkExpressionSet"]])
   
   new("bisqueParam", 
-      bulkExpression=bulkExpression, 
-      bulkExpressionIndependent=bulkExpressionIndependent, 
+      bulkExpression=list.bulkExpression[["bulkExpression"]], 
+      bulkExpressionIndependent=bulkExpression, 
       referenceExpression=listReferenceExpression[["referenceExpression"]], 
       cellScaleFactors=cellScaleFactors, 
-      bulkExpressionSet=listBulk[["bulkExpressionSet"]], 
+      bulkExpressionSet=list.bulkExpression[["bulkExpressionSet"]], 
       singleCellExpressionSet=singleCellExpressionSet, 
       assayName=assayName, 
       batchVariable=batchVariable, 
@@ -235,8 +235,9 @@ bisqueParam <- function(bulkExpression=NULL,
   }
   if(is(referenceExpression, "NULL")){
     singleCellExperiment <- eset_to_sce(singleCellExpressionSet, "counts")
-    referenceExpression <- get_z_from_sce(sce=sce, assayName=assayName, 
-                                          cellTypeVariable=cellTypeVariable)
+    referenceExpression <- referenceFromSingleCellExperiment(
+      singleCellExperiment=singleCellExperiment, assayName=assayName, 
+      cellTypeVariable=cellTypeVariable)
   }
   if(batchVariable %in% colnames(pData(singleCellExpressionSet))){
    idSC <- unique(singleCellExpressionSet[[batchVariable]])
@@ -275,7 +276,7 @@ bisqueParam <- function(bulkExpression=NULL,
   } else{
     if(is(bulkExpressionSet, "NULL")){
       bulkExpressionSet <- get_eset_from_matrix(
-        bulkExpression=bulkExpression, batchVariable="SubjectName")
+        inputMatrix=bulkExpression, batchVariable="SubjectName")
       ## need at least 2 columns/samples to pass to bisque
       if(ncol(bulkExpressionSet) == 1){
         sampleName <- colnames(bulkExpressionSet)
