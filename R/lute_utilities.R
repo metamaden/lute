@@ -189,16 +189,24 @@ referenceFromSingleCellExperiment <- function(
   return(referenceExpressionZnew)
 }
 
-.zstransform <- function(referenceExpression, cellScaleFactor){
+.zstransform <- function(referenceExpression, cellScaleFactors){
   markersReferenceExpression <- colnames(referenceExpression)
-  markersFactors <- names(cellScaleFactor)
+  markersFactors <- names(cellScaleFactors)
   reorderFactors <- order(match(markersFactors,markersReferenceExpression))
-  cellScaleFactor <- cellScaleFactor[reorderFactors]
-  if(identical(colnames(referenceExpression),names(cellScaleFactor))){
+  cellScaleFactors <- cellScaleFactors[reorderFactors]
+  if(identical(colnames(referenceExpression),names(cellScaleFactors))){
     referenceTransformed <- sweep(
       referenceExpression, 2, cellScaleFactor, FUN="*")
   } else{
-    stop("Error matching types in referenceExpression and cellScaleFator.")
+    allTypes <- unique(c(markersReferenceExpression,markersFactors))
+    sharedTypes <- intersect(markersReferenceExpression,markersFactors)
+    outersectTypes <- c(markersReferenceExpression[
+      !markersReferenceExpression %in% markersFactors],
+      markersFactors[!markersFactors %in% markersReferenceExpression])
+    message(
+      "Cell types not shared in referenceExpression and cellScaleFactors:", 
+      cell.types.outersect)
+    stop("Error matching types in referenceExpression and cellScaleFactors.")
   }
   return(referenceTransformed)
 }

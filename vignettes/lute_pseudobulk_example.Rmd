@@ -118,9 +118,11 @@ assayName <- "counts"
 pseudobulkList <- lapply(sampleIdVector, function(sampleId){
   dataIteration <- data[,data[[sampleIdVariable]]==sampleId]
   
-  zIter <- .zstransform()
+  zIter <- referenceFromSingleCellExperiment()
   
-  ypb_from_sce(dataIteration, assayName, newTypes, cellScaleFactors=cellScalesVector)
+  ypb_from_sce(
+    singleCellExperiment = dataIteration, assayName = assayName, 
+    cellTypeVariable = newTypes, cellScaleFactors = cellScalesVector)
   
 })
 
