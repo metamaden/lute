@@ -32,7 +32,7 @@
 #'                      useOverlap=FALSE)
 #' 
 #' ## get predicted proportions
-#' res <- deconvolution(param)
+#' res <- deconvolution(newBisqueParameter)
 #'
 #' @references Brandon Jew and Marcus Alvarez (2021). BisqueRNA: Decomposition of Bulk 
 #' Expression with Single-Cell Sequencing. CRAN, R package version 1.0.5.

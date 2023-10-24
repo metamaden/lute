@@ -31,7 +31,7 @@ newBisqueParameter <- bisqueParam(bulkExpressionSet=bulkExpressionSet,
                      useOverlap=FALSE)
 
 ## get predicted proportions
-res <- deconvolution(param)
+res <- deconvolution(newBisqueParameter)
 
 }
 \references{
