@@ -327,7 +327,7 @@ getDeconvolutionExampleDataBisque <- function(numberBulkSamples=100,
 #' @export
 getDeconvolutionExampleDataSnewColDataC <- function(){
   ## get bulkExpressionSet
-  bulkExpression <- getDeconvolutionExampleData()[["y"]]
+  bulkExpression <- getDeconvolutionExampleData()[["bulkExpression"]]
   bulkExpression <- cbind(bulkExpression, bulkExpression, bulkExpression, 
                           bulkExpression, bulkExpression, bulkExpression)
   colnames(bulkExpression) <- c(paste0("sample", seq(2)), paste0("bulk",seq(4)))
@@ -365,7 +365,7 @@ getDeconvolutionExampleDataSnewColDataC <- function(){
 #'
 getDeconvolutionExampleData_music2 <- function(){
   ## get bulkExpressionSet
-  bulkExpression <- getDeconvolutionExampleData()[["y"]]
+  bulkExpression <- getDeconvolutionExampleData()[["bulkExpression"]]
   bulkExpression <- cbind(bulkExpression, bulkExpression, bulkExpression, 
                           bulkExpression, bulkExpression, bulkExpression)
   colnames(bulkExpression) <- c(paste0("sample", seq(2)), 
