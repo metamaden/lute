@@ -12,14 +12,15 @@ referencebasedParam(
 )
 }
 \arguments{
-\item{bulkExpression}{Bulk mixed signals matrix of samples, which can be matched to 
-single-cell samples.}
+\item{bulkExpression}{Bulk mixed signals matrix of samples, which can be 
+matched to single-cell samples.}
 
-\item{referenceExpression}{Signature matrix of cell type-specific signals. If not provided, can 
-be computed from a provided ExpressionSet containing single-cell data.}
+\item{referenceExpression}{Signature matrix of cell type-specific signals. 
+If not provided, can be computed from a provided ExpressionSet containing 
+single-cell data.}
 
-\item{cellScaleFactors}{Cell size factor transformations of length equal to the K cell types 
-to deconvolve.}
+\item{cellScaleFactors}{Cell size factor transformations of length equal to 
+the K cell types to deconvolve.}
 
 \item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}

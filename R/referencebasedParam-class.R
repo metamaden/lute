@@ -35,12 +35,13 @@ setClass("referencebasedParam", contains="deconvolutionParam",
 #'
 #' Main constructor for class \linkS4class{referencebasedParam}.
 #'
-#' @param bulkExpression Bulk mixed signals matrix of samples, which can be matched to 
-#' single-cell samples.
-#' @param referenceExpression Signature matrix of cell type-specific signals. If not provided, can 
-#' be computed from a provided ExpressionSet containing single-cell data.
-#' @param cellScaleFactors Cell size factor transformations of length equal to the K cell types 
-#' to deconvolve.
+#' @param bulkExpression Bulk mixed signals matrix of samples, which can be 
+#' matched to single-cell samples.
+#' @param referenceExpression Signature matrix of cell type-specific signals. 
+#' If not provided, can be computed from a provided ExpressionSet containing 
+#' single-cell data.
+#' @param cellScaleFactors Cell size factor transformations of length equal to 
+#' the K cell types to deconvolve.
 #' @param returnInfo Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #'
@@ -61,9 +62,11 @@ setClass("referencebasedParam", contains="deconvolutionParam",
 #' @export
 referencebasedParam <- function(
     bulkExpression, referenceExpression, cellScaleFactors, returnInfo = FALSE){
-  new("referencebasedParam", bulkExpression=bulkExpression, 
+  new("referencebasedParam", 
+      bulkExpression=bulkExpression, 
       referenceExpression=referenceExpression, 
-      cellScaleFactors=cellScaleFactors, returnInfo)
+      cellScaleFactors=cellScaleFactors, 
+      returnInfo=returnInfo)
 }
 
 #' Deconvolution generic behavior for object of class 
@@ -179,10 +182,10 @@ setMethod("deconvolution", "referencebasedParam", function(object) {
 #' @export
 setMethod("show", "referencebasedParam", function(object) {
   ## get metadata
-  cellScaleFactors <- object[[cellScaleFactors]]
-  bulkExpression <- object[[bulkExpression]]
-  referenceExpression <- object[[referenceExpression]]
-  uniqueTypes <- try(colnames(object[[referenceExpression]]))
+  cellScaleFactors <- object[["cellScaleFactors"]]
+  bulkExpression <- object[["bulkExpression"]]
+  referenceExpression <- object[["referenceExpression"]]
+  uniqueTypes <- try(colnames(object[["referenceExpression"]]))
   markersBulkExpression <- rownames(bulkExpression)
   markersReferenceExpression <- rownames(referenceExpression)
   uniqueMarkers <- unique(c(markersBulkExpression, markersReferenceExpression))
@@ -205,7 +208,7 @@ setMethod("show", "referencebasedParam", function(object) {
   cat("\toverlapping marker labels (Gy & Gz): ", 
       length(overlappingMarkers), "\n\n")
   cat("\tsamples info:\n")
-  cat("\tnumber of bulk samples (J): ", ncol(object[[bulkExpression]]), "\n")
+  cat("\tnumber of bulk samples (J): ", ncol(object[["bulkExpression"]]), "\n")
   cat("\tsample labels: ", 
       paste0(colnames(bulkExpression), collapse = "; "), "\n")
   cat("\n")
@@ -218,7 +221,7 @@ setMethod("show", "referencebasedParam", function(object) {
         .zstransform(referenceExpression, cellScaleFactors)}
   }; cat("\n")
   cat("\ttypes info:\n")
-  cat("\tnumber of types (K): ", ncol(object[[referenceExpression]]), "\n")
+  cat("\tnumber of types (K): ", ncol(object[["referenceExpression"]]), "\n")
   if(!(is(uniqueTypes, "NULL")|is(uniqueTypes, "try-error"))){
     uniqueTypes <- uniqueTypes[order(uniqueTypes)]
     cat("\tunique type labels: ", paste0(uniqueTypes, collapse = ";"), "\n")
