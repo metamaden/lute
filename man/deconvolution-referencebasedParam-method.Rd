@@ -25,8 +25,8 @@ of class \linkS4class{referencebasedParam}.
 \examples{
 exampleList <- getDeconvolutionExampleData()
 referencebasedParam(
-bulkExpression=lexample$bulkExpression, 
-referenceExpression=lexample$referenceExpression, 
-cellScaleFactors=lexample$cellScaleFactors)
+bulkExpression=exampleList$bulkExpression, 
+referenceExpression=exampleList$referenceExpression, 
+cellScaleFactors=exampleList$cellScaleFactors)
 
 }

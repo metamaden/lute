@@ -22,9 +22,9 @@
 #' @examples 
 #' exampleList <- getDeconvolutionExampleData()
 #' referencebasedParam(
-#' bulkExpression=lexample$bulkExpression, 
-#' referenceExpression=lexample$referenceExpression, 
-#' cellScaleFactors=lexample$cellScaleFactors)
+#' bulkExpression=exampleList$bulkExpression, 
+#' referenceExpression=exampleList$referenceExpression, 
+#' cellScaleFactors=exampleList$cellScaleFactors)
 #'
 #' @returns New object.
 #' 
@@ -77,9 +77,9 @@ referencebasedParam <- function(
 #' @examples 
 #' exampleList <- getDeconvolutionExampleData()
 #' referencebasedParam(
-#' bulkExpression=lexample$bulkExpression, 
-#' referenceExpression=lexample$referenceExpression, 
-#' cellScaleFactors=lexample$cellScaleFactors)
+#' bulkExpression=exampleList$bulkExpression, 
+#' referenceExpression=exampleList$referenceExpression, 
+#' cellScaleFactors=exampleList$cellScaleFactors)
 #' 
 #' @returns Method results.
 #' @export

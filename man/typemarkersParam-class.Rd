@@ -23,7 +23,7 @@ generic.
 Main constructor for class \linkS4class{typemarkersParam}.
 }
 \examples{
-lexample <- getDeconvolutionExampleData()
+exampleList <- getDeconvolutionExampleData()
 
 }
 \seealso{

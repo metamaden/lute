@@ -25,8 +25,8 @@ scales, (e.g. a K-length vector of equal values). See
 \examples{
 exampleList <- getDeconvolutionExampleData()
 referencebasedParam(
-bulkExpression=lexample$bulkExpression, 
-referenceExpression=lexample$referenceExpression, 
-cellScaleFactors=lexample$cellScaleFactors)
+bulkExpression=exampleList$bulkExpression, 
+referenceExpression=exampleList$referenceExpression, 
+cellScaleFactors=exampleList$cellScaleFactors)
 
 }

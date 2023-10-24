@@ -20,7 +20,7 @@
 #' with predicted proportions.
 #' 
 #' @examples
-#' lexample <- getDeconvolutionExampleData()
+#' exampleList <- getDeconvolutionExampleData()
 #'
 #' @returns New object.
 #' 
@@ -92,7 +92,7 @@ setMethod("[[", "typemarkersParam", function(x, i) {slot(x, i)})
 #' \linkS4class{typemarkersParam}
 #' 
 #' @examples
-#' lexample <- getDeconvolutionExampleData()
+#' exampleList <- getDeconvolutionExampleData()
 #' 
 #' @returns Shows object summaries.
 #' 
