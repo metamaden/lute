@@ -23,7 +23,7 @@
 #' 
 #' @examples 
 #' exampleList <- getDeconvolutionExampleData()
-#' singleCellExperimentExample <- random_singleCellExperiment()
+#' singleCellExperimentExample <- randomSingleCellExperiment()
 #' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 #' cellTypeVariable="celltype", markersPerType=5)
 #' markers <- typemarkers(newParam)
@@ -63,7 +63,7 @@ setClass("findmarkersParam", contains="typemarkersParam",
 #' 
 #' @examples 
 #' exampleList <- getDeconvolutionExampleData()
-#' singleCellExperimentExample <- random_singleCellExperiment()
+#' singleCellExperimentExample <- randomSingleCellExperiment()
 #' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 #' cellTypeVariable="celltype", markersPerType=5)
 #' markers <- typemarkers(newParam)
@@ -97,7 +97,7 @@ findmarkersParam <- function(singleCellExperiment,
 #' 
 #' @examples 
 #' exampleList <- getDeconvolutionExampleData()
-#' singleCellExperimentExample <- random_singleCellExperiment()
+#' singleCellExperimentExample <- randomSingleCellExperiment()
 #' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 #' cellTypeVariable="celltype", markersPerType=5)
 #' markers <- typemarkers(newParam)
@@ -157,7 +157,7 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
 #' 
 #' @examples
 #' exampleList <- getDeconvolutionExampleData()
-#' singleCellExperimentExample <- random_singleCellExperiment()
+#' singleCellExperimentExample <- randomSingleCellExperiment()
 #' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 #' cellTypeVariable="celltype", markersPerType=5)
 #' markers <- typemarkers(newParam)

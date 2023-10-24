@@ -29,7 +29,7 @@ Main constructor for class \linkS4class{findmarkersParam}.
 }
 \examples{
 exampleList <- getDeconvolutionExampleData()
-singleCellExperimentExample <- random_singleCellExperiment()
+singleCellExperimentExample <- randomSingleCellExperiment()
 newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 cellTypeVariable="celltype", markersPerType=5)
 markers <- typemarkers(newParam)

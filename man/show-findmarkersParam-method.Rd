@@ -22,7 +22,7 @@ Method for behavior of show generic when called for object of class
 }
 \examples{
 exampleList <- getDeconvolutionExampleData()
-singleCellExperimentExample <- random_singleCellExperiment()
+singleCellExperimentExample <- randomSingleCellExperiment()
 newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 cellTypeVariable="celltype", markersPerType=5)
 markers <- typemarkers(newParam)

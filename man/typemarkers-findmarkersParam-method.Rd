@@ -25,7 +25,7 @@ original function outputs.
 }
 \examples{
 exampleList <- getDeconvolutionExampleData()
-singleCellExperimentExample <- random_singleCellExperiment()
+singleCellExperimentExample <- randomSingleCellExperiment()
 newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 cellTypeVariable="celltype", markersPerType=5)
 markers <- typemarkers(newParam)
