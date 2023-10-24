@@ -25,8 +25,7 @@ bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
 ## get param object
 param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
                      bulkExpression=bulkExpression,
-                     singleCellExpressionSet=
-                      exampleList[["singleCellExpressionSet"]], 
+                     scData=exampleList[["singleCellExpressionSet"]], 
                      batchVariable="SubjectName", 
                      cellTypeVariable="cellType", 
                      useOverlap=FALSE)

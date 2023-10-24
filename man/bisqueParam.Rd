@@ -37,11 +37,11 @@ object types.}
 
 \item{assayName}{Expression data type (e.g. counts, logcounts, tpm, etc.).}
 
-\item{batchVariable}{Name of variable identifbulkExpressionIndependentng the 
-batches in singleCellExpressionSet pData/coldata.}
+\item{batchVariable}{Name of variable identifying the batches in scData 
+pData/coldata.}
 
-\item{cellTypeVariable}{Name of cell type labels variable in 
-singleCellExpressionSet pData/coldata.}
+\item{cellTypeVariable}{Name of cell type labels variable in scData 
+pData/coldata.}
 
 \item{useOverlap}{Whether to deconvolve samples overlapping bulk and sc 
 esets (logical, FALSE).}
