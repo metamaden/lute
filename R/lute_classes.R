@@ -35,7 +35,7 @@ setClass("cellProportionsPredictions", slots=c(predictionsTable="data.frame",
 #' @returns New cellProportionsPredictions object.
 #' 
 #' @examples
-#' exampleData <- get_decon_example_data()
+#' exampleData <- getDeconvolutionExampleData()
 #' 
 #' @export
 cellProportionsPredictions <- function(predictionsTable, 
@@ -64,7 +64,7 @@ cellProportionsPredictions <- function(predictionsTable,
 #' @returns Shows object summaries.
 #' 
 #' @examples
-#' exampleData <- get_decon_example_data()
+#' exampleData <- getDeconvolutionExampleData()
 #' 
 #' @export
 setMethod("show", "cellProportionsPredictions", function(object) {

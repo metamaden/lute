@@ -20,7 +20,7 @@
 #' with predicted proportions.
 #' 
 #' @examples
-#' lexample <- get_decon_example_data()
+#' lexample <- getDeconvolutionExampleData()
 #'
 #' @returns New object.
 #' 
@@ -48,7 +48,7 @@ setClass("typemarkersParam", slots=c(markersPerType="numeric",
 #' class meanratiosParam.
 #' 
 #' @examples
-#' example.data <- get_decon_example_data()
+#' example.data <- getDeconvolutionExampleData()
 #' 
 #' @export
 typemarkersParam <- function(markersPerType=20, returnInfo=FALSE) {
@@ -63,7 +63,7 @@ typemarkersParam <- function(markersPerType=20, returnInfo=FALSE) {
 #' @returns Info related to gene markers for cell types.
 #'
 #' @examples
-#' example.data <- get_decon_example_data()
+#' example.data <- getDeconvolutionExampleData()
 #'
 #' @export
 setMethod("typemarkers", signature(object="typemarkersParam"), function(object){
@@ -80,7 +80,7 @@ setMethod("typemarkers", signature(object="typemarkersParam"), function(object){
 #' @details Inspect slot in \linkS4class{typemarkersParam} object
 #' 
 #' @examples
-#' example.data <- get_decon_example_data()
+#' example.data <- getDeconvolutionExampleData()
 #' 
 #' @export
 setMethod("[[", "typemarkersParam", function(x, i) {slot(x, i)})
@@ -92,7 +92,7 @@ setMethod("[[", "typemarkersParam", function(x, i) {slot(x, i)})
 #' \linkS4class{typemarkersParam}
 #' 
 #' @examples
-#' lexample <- get_decon_example_data()
+#' lexample <- getDeconvolutionExampleData()
 #' 
 #' @returns Shows object summaries.
 #' 

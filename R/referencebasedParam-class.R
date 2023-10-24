@@ -20,7 +20,7 @@
 #' `vignette(package="lute")` for details about experiment terms.
 #' 
 #' @examples 
-#' exampleList <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' referencebasedParam(
 #' bulkExpression=lexample$bulkExpression, 
 #' referenceExpression=lexample$referenceExpression, 
@@ -45,7 +45,7 @@ setClass("referencebasedParam", contains="deconvolutionParam",
 #' with predicted proportions.
 #'
 #' @examples 
-#' exampleList <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' referencebasedParam(
 #'   bulkExpression=exampleList$bulkExpression, 
 #'   referenceExpression=exampleList$referenceExpression, 
@@ -75,7 +75,7 @@ referencebasedParam <- function(
 #' of class \linkS4class{referencebasedParam}.
 #' 
 #' @examples 
-#' exampleList <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' referencebasedParam(
 #' bulkExpression=lexample$bulkExpression, 
 #' referenceExpression=lexample$referenceExpression, 

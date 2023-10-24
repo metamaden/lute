@@ -31,7 +31,7 @@
 #' @importFrom methods is
 #' 
 #' @examples
-#' example.data <- get_decon_example_data()
+#' example.data <- getDeconvolutionExampleData()
 #' 
 #' @returns Table of type "data.frame" or "tibble".
 #' @export

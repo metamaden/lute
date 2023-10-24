@@ -22,7 +22,7 @@
 #' @param testType Test type (see \code{?findMarkers} for options).
 #' 
 #' @examples 
-#' exampleList <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' singleCellExperimentExample <- random_singleCellExperiment()
 #' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 #' cellTypeVariable="celltype", markersPerType=5)
@@ -62,7 +62,7 @@ setClass("findmarkersParam", contains="typemarkersParam",
 #' implemented as \code{scran::findMarkers()}.
 #' 
 #' @examples 
-#' exampleList <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' singleCellExperimentExample <- random_singleCellExperiment()
 #' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 #' cellTypeVariable="celltype", markersPerType=5)
@@ -96,7 +96,7 @@ findmarkersParam <- function(singleCellExperiment,
 #' @importFrom dplyr %>%
 #' 
 #' @examples 
-#' exampleList <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' singleCellExperimentExample <- random_singleCellExperiment()
 #' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 #' cellTypeVariable="celltype", markersPerType=5)
@@ -156,7 +156,7 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
 #' \linkS4class{findmarkersParam}
 #' 
 #' @examples
-#' exampleList <- get_decon_example_data()
+#' exampleList <- getDeconvolutionExampleData()
 #' singleCellExperimentExample <- random_singleCellExperiment()
 #' newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 #' cellTypeVariable="celltype", markersPerType=5)
