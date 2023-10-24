@@ -40,7 +40,14 @@
 #' @importFrom stats rnbinom rpois
 #' 
 #' @examples
+#' ## get param object
 #' exampleList <- getDeconvolutionExampleData()
+#' param <- nnlsParam(cellScaleFactors=exampleList[["cellScaleFactors"]],
+#'                     bulkExpression=exampleList[["bulkExpression"]],
+#'                     referenceExpression=exampleList[["referenceExpression"]])
+#' 
+#' ## run deconvolution
+#' deconvolution(param)
 #'
 #' @export
 setGeneric("deconvolution", function(object) standardGeneric("deconvolution"))

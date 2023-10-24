@@ -30,7 +30,14 @@ specified deconvolution method for which a subclass of type
 the \code{bluster} R/Bioconductor package.
 }
 \examples{
+## get param object
 exampleList <- getDeconvolutionExampleData()
+param <- nnlsParam(cellScaleFactors=exampleList[["cellScaleFactors"]],
+                    bulkExpression=exampleList[["bulkExpression"]],
+                    referenceExpression=exampleList[["referenceExpression"]])
+
+## run deconvolution
+deconvolution(param)
 
 }
 \references{
