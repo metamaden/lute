@@ -419,14 +419,15 @@ getDeconvolutionExampleData_music2 <- function(){
 #' @returns Example data as list.
 #' 
 #' @export
-parseDeconvolutionPredictionsResults <- function(listPred, columnLabels, 
-                                                  rowLabels){
+parseDeconvolutionPredictionsResults <- function(listPred, 
+                                                 columnLabels,
+                                                 rowLabels){
   if(is(columnLabels, "NULL")){
     columnLabels <- seq(length(listPred[[1]]))}
   if(is(rowLabels, "NULL")){
     rowLabels <- seq(length(listPred))}
-  tablePred <- do.call(rbind, listPred)
-  tablePred <- apply(tablePred, 1, function(ri){ri/sum(ri)}) 
+  tablePred <- do.call(rbind, lapply(listPred, function(item){item}))
+  tablePred <- apply(tablePred, 1, function(ri){ri/sum(ri)})
   tablePred <- t(tablePred)
   colnames(tablePred) <- columnLabels
   rownames(tablePred) <- rowLabels

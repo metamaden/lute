@@ -343,9 +343,11 @@ setMethod("deconvolution", signature(object="bisqueParam"), function(object){
   predictions <- result$bulk.props
   predictionsList <- lapply(seq(ncol(predictions)), 
                             function(index){predictions[,index]})
+  names(predictionsList) <- colnames(predictions)
   returnList <- parseDeconvolutionPredictionsResults(
-    listPred = predictionsList, columnLabels = colnames(predictions),
-    rowLabels = row.names(predictions)
+    listPred = predictionsList, 
+    columnLabels = rownames(predictions),
+    rowLabels = colnames(predictions)
   )
   if(object[["returnInfo"]]){
     returnList <- list(
