@@ -18,7 +18,7 @@
 #' @importFrom Biobase AnnotatedDataFrame
 #'
 #' @examples
-#' sce <- random_sce()
+#' sce <- randomSingleCellExperiment()
 #' sce_to_eset(sce, "counts")
 #' 
 #' @export
@@ -68,7 +68,7 @@ eset_to_sce <- function(expressionSet, assayName="counts"){
 #' @importFrom S4Vectors metadata
 #' 
 #' @examples
-#' sce <- random_sce()
+#' sce <- randomSingleCellExperiment()
 #' sce_to_se(sce)
 #' @export
 sce_to_se <- function(singleCellExperiment){
@@ -144,7 +144,7 @@ eset_to_se <- function(expressionSet, assayName="counts"){
 #' @importFrom Biobase AnnotatedDataFrame
 #'
 #' @examples
-#' summarizedExperiment <- sce_to_se(random_sce())
+#' summarizedExperiment <- sce_to_se(randomSingleCellExperiment())
 #' se_to_eset(summarizedExperiment)
 #' 
 #' @export

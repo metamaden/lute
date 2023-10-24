@@ -21,7 +21,7 @@ sce_to_eset
 Convert SingleCellExperiment to ExpressionSet.
 }
 \examples{
-sce <- random_sce()
+sce <- randomSingleCellExperiment()
 sce_to_eset(sce, "counts")
 
 }

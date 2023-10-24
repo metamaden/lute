@@ -19,6 +19,6 @@ sce_to_se
 Convert SingleCellExperiment to SummarizedExperiment.
 }
 \examples{
-sce <- random_sce()
+sce <- randomSingleCellExperiment()
 sce_to_se(sce)
 }

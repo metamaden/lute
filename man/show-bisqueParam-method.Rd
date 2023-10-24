@@ -17,10 +17,20 @@ Prints data summary messages to console.
 Show generic behavior for object of class bisqueParam
 }
 \examples{
+## get data
 exampleList <- getDeconvolutionExampleDataBisque()
-referencebasedParam(
-bulkExpression=exampleList$bulkExpression, 
-referenceExpression=exampleList$referenceExpression, 
-cellScaleFactors=exampleList$cellScaleFactors)
+bulkExpressionSet <- exampleList[["bulkExpressionSet"]][,seq(10)]
+bulkExpression <- exprs(exampleList[["bulkExpressionSet"]])
+bulkExpression <- bulkExpression[,c(11:ncol(bulkExpression))]
+
+## get param object
+newBisqueParameter <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
+                     bulkExpressionIndependent=bulkExpression,
+                     scData=exampleList[["singleCellExpressionSet"]], 
+                     batchVariable="SubjectName", 
+                     cellTypeVariable="cellType", 
+                     useOverlap=FALSE)
+## show
+newBisqueParameter
 
 }

@@ -35,6 +35,6 @@ Calculate a Z signature matrix from object of type
 }
 \examples{
 singleCellExperiment.example <- randomSingleCellExperiment()
-signature_matrix_from_singleCellExperiment(singleCellExperiment.example)
+z_matrix_from_sce(singleCellExperiment.example)
 
 }

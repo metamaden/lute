@@ -128,7 +128,7 @@ ypb_from_sce <- function(singleCellExperiment, assayName="counts",
 #' 
 #' @examples
 #' singleCellExperiment.example <- randomSingleCellExperiment()
-#' signature_matrix_from_singleCellExperiment(singleCellExperiment.example)
+#' z_matrix_from_sce(singleCellExperiment.example)
 #' 
 #' @export
 z_matrix_from_sce <- function(singleCellExperiment,

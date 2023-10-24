@@ -19,7 +19,7 @@ New object of type ExpressionSet.
 Convert SummarizedExperiment to ExpressionSet.
 }
 \examples{
-summarizedExperiment <- sce_to_se(random_sce())
+summarizedExperiment <- sce_to_se(randomSingleCellExperiment())
 se_to_eset(summarizedExperiment)
 
 }
