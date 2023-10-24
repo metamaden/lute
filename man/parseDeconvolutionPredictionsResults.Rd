@@ -2,7 +2,7 @@
 % Please edit documentation in R/lute_utilities.R
 \name{parseDeconvolutionPredictionsResults}
 \alias{parseDeconvolutionPredictionsResults}
-\title{getDeconvolutionExampleDataSnewColDataC}
+\title{parseDeconvolutionPredictionsResults}
 \usage{
 parseDeconvolutionPredictionsResults(listPred, columnLabels, rowLabels)
 }
@@ -19,11 +19,6 @@ parseDeconvolutionPredictionsResults(listPred, columnLabels, rowLabels)
 Example data as list.
 }
 \description{
-Get example data for SnewColDataC
-}
-\details{
-parseDeconvolutionPredictionsResults
-
 Gets formatted predicted cell type proportions table from deconvolution 
 results list.
 }
