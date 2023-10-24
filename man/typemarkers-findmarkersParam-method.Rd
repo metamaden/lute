@@ -24,7 +24,7 @@ returning either a vector of cell type gene markers, or (if
 original function outputs.
 }
 \examples{
-exampleList <- get_decon_example_data()
+exampleList <- getDeconvolutionExampleData()
 singleCellExperimentExample <- random_singleCellExperiment()
 newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 cellTypeVariable="celltype", markersPerType=5)

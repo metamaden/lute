@@ -27,6 +27,6 @@ identification methods. Currently supported methods and their child classes incl
 class meanratiosParam.
 }
 \examples{
-example.data <- get_decon_example_data()
+example.data <- getDeconvolutionExampleData()
 
 }

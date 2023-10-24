@@ -23,7 +23,7 @@ Method for behavior of deconvolution generic when called for object
 of class \linkS4class{referencebasedParam}.
 }
 \examples{
-exampleList <- get_decon_example_data()
+exampleList <- getDeconvolutionExampleData()
 referencebasedParam(
 bulkExpression=lexample$bulkExpression, 
 referenceExpression=lexample$referenceExpression, 

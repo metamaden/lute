@@ -23,7 +23,7 @@ scales, (e.g. a K-length vector of equal values). See
 `vignette(package="lute")` for details about experiment terms.
 }
 \examples{
-exampleList <- get_decon_example_data()
+exampleList <- getDeconvolutionExampleData()
 referencebasedParam(
 bulkExpression=lexample$bulkExpression, 
 referenceExpression=lexample$referenceExpression, 

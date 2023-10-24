@@ -20,6 +20,6 @@ Inspect cellProportionsPredictions object.
 Method behavior for show.
 }
 \examples{
-exampleData <- get_decon_example_data()
+exampleData <- getDeconvolutionExampleData()
 
 }

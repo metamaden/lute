@@ -21,6 +21,6 @@ Inspect slot in \linkS4class{typemarkersParam} object
 Inspect slot in \linkS4class{typemarkersParam} object
 }
 \examples{
-example.data <- get_decon_example_data()
+example.data <- getDeconvolutionExampleData()
 
 }

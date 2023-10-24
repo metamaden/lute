@@ -41,7 +41,7 @@ Main class for mapping arguments to the findMarkers method
 implemented as \code{scran::findMarkers()}.
 }
 \examples{
-exampleList <- get_decon_example_data()
+exampleList <- getDeconvolutionExampleData()
 singleCellExperimentExample <- random_singleCellExperiment()
 newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 cellTypeVariable="celltype", markersPerType=5)

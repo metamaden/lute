@@ -21,6 +21,6 @@ Method for behavior of show generic when called for object of class
 \linkS4class{typemarkersParam}
 }
 \examples{
-lexample <- get_decon_example_data()
+lexample <- getDeconvolutionExampleData()
 
 }

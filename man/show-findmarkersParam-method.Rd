@@ -21,7 +21,7 @@ Method for behavior of show generic when called for object of class
 \linkS4class{findmarkersParam}
 }
 \examples{
-exampleList <- get_decon_example_data()
+exampleList <- getDeconvolutionExampleData()
 singleCellExperimentExample <- random_singleCellExperiment()
 newParam <- findmarkersParam(singleCellExperiment=singleCellExperimentExample, 
 cellTypeVariable="celltype", markersPerType=5)

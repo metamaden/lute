@@ -36,7 +36,7 @@ Main constructor for class \linkS4class{referencebasedParam}.
 Takes standard inputs for reference-based deconvolution algorithms.
 }
 \examples{
-exampleList <- get_decon_example_data()
+exampleList <- getDeconvolutionExampleData()
 referencebasedParam(
   bulkExpression=exampleList$bulkExpression, 
   referenceExpression=exampleList$referenceExpression, 

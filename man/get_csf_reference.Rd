@@ -35,6 +35,6 @@ measure summaries were made.
 Further details about the reference table can be found in the cellScaleFactors package.
 }
 \examples{
-example.data <- get_decon_example_data()
+example.data <- getDeconvolutionExampleData()
 
 }

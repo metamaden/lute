@@ -26,6 +26,6 @@ New cellProportionsPredictions object.
 Make new cellProportionsPredictions object.
 }
 \examples{
-exampleData <- get_decon_example_data()
+exampleData <- getDeconvolutionExampleData()
 
 }
