@@ -9,7 +9,7 @@ independentbulkParam(
   bulkExpressionIndependent = NULL,
   referenceExpression = NULL,
   cellScaleFactors = NULL,
-  return.info = FALSE
+  returnInfo = FALSE
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ single-cell data.}
 \item{cellScaleFactors}{Cell size scale factor transformations of 
 length equal to the K cell types to deconvolve.}
 
-\item{return.info}{Whether to return metadata and original method outputs 
+\item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
 }
 \value{

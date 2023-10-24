@@ -63,10 +63,10 @@ setClass("bisqueParam",
 #'
 #' Main constructor for class \linkS4class{bisqueParam}.
 #'
-#' @param bulkExpressionBulk mixed signals matrix of samples, which can be 
-#' matched to single-cell samples.
-#' @param bulkExpressionIndependent Bulk mixed signals matrix of independent 
-#' samples, which should not overlap samples in y.
+#' @param bulkExpression Bulk expression matrix.
+#' @param bulkExpressionSet Bulk expression ExpressionSet.
+#' @param bulkExpressionIndependent Bulk expression matrix of independent 
+#' samples.
 #' @param referenceExpression Signature matrix of cell type-specific signals. 
 #' If not provided, can be computed from a provided ExpressionSet containing 
 #' single-cell data.
@@ -111,11 +111,11 @@ setClass("bisqueParam",
 #' main bisque method.
 #' 
 #' @export
-bisqueParam <- function(bulkExpression=NULL, 
+bisqueParam <- function(bulkExpression=NULL,
+                        bulkExpressionSet=NULL, 
                         bulkExpressionIndependent=NULL, 
                         referenceExpression=NULL, 
                         cellScaleFactors=NULL, 
-                        bulkExpressionSet=NULL, 
                         scData=NULL, 
                         assayName="counts", 
                         batchVariable="batch.id", 

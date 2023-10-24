@@ -40,7 +40,7 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' single-cell data.
 #' @param cellScaleFactors Cell size scale factor transformations of 
 #' length equal to the K cell types to deconvolve.
-#' @param return.info Whether to return metadata and original method outputs 
+#' @param returnInfo Whether to return metadata and original method outputs 
 #' with predicted proportions.
 #' 
 #' @examples 
@@ -51,7 +51,7 @@ setClass("independentbulkParam", contains="referencebasedParam",
 #' @export
 independentbulkParam <- function(
     bulkExpression=NULL, bulkExpressionIndependent=NULL, 
-    referenceExpression=NULL, cellScaleFactors=NULL, return.info=FALSE) {
+    referenceExpression=NULL, cellScaleFactors=NULL, returnInfo=FALSE) {
     if(is(bulkExpression, "NULL")){
       bulkExpression <- matrix(0)}
     if(is(referenceExpression, "NULL")){

@@ -83,7 +83,7 @@ singleCellExperiment <- randomSingleCellExperiment()[seq(10),]
 # get framework results
 experiment.results <- lute(
 singleCellExperiment=singleCellExperiment, 
-referenceExpression=referenceExpression, typemarkerAlgorithm=NULL
+bulkExpression=bulkExpression, typemarkerAlgorithm=NULL
 )
 
 }

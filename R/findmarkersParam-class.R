@@ -145,7 +145,7 @@ setMethod("typemarkers", signature(object="findmarkersParam"), function(object){
   returnList <- topMarkersVector %>% unique()
   if(object[["returnInfo"]]){
     returnList <- list(
-      markers=topMarkersVector, result.info=markerTable, metadata=object)}
+      markers=topMarkersVector, result.info=topMarkerTable, metadata=object)}
   return(returnList)
 })
 

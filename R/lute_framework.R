@@ -55,7 +55,7 @@
 #' # get framework results
 #' experiment.results <- lute(
 #' singleCellExperiment=singleCellExperiment, 
-#' referenceExpression=referenceExpression, typemarkerAlgorithm=NULL
+#' bulkExpression=bulkExpression, typemarkerAlgorithm=NULL
 #' )
 #' 
 #' @export

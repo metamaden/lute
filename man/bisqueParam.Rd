@@ -6,10 +6,10 @@
 \usage{
 bisqueParam(
   bulkExpression = NULL,
+  bulkExpressionSet = NULL,
   bulkExpressionIndependent = NULL,
   referenceExpression = NULL,
   cellScaleFactors = NULL,
-  bulkExpressionSet = NULL,
   scData = NULL,
   assayName = "counts",
   batchVariable = "batch.id",
@@ -19,8 +19,12 @@ bisqueParam(
 )
 }
 \arguments{
-\item{bulkExpressionIndependent}{Bulk mixed signals matrix of independent 
-samples, which should not overlap samples in y.}
+\item{bulkExpression}{Bulk expression matrix.}
+
+\item{bulkExpressionSet}{ExpressionSet of bulk mixed signals.}
+
+\item{bulkExpressionIndependent}{Bulk expression matrix of independent 
+samples.}
 
 \item{referenceExpression}{Signature matrix of cell type-specific signals. 
 If not provided, can be computed from a provided ExpressionSet containing 
@@ -28,8 +32,6 @@ single-cell data.}
 
 \item{cellScaleFactors}{size factor transformations of length equal to the K 
 cell types to deconvolve.}
-
-\item{bulkExpressionSet}{ExpressionSet of bulk mixed signals.}
 
 \item{scData}{SummarizedExperiment-type object of single-cell transcriptomics 
 data. Accepts ExpressionSet, SummarizedExperiment, and SingleCellExperiment 
@@ -48,9 +50,6 @@ esets (logical, FALSE).}
 
 \item{returnInfo}{Whether to return metadata and original method outputs 
 with predicted proportions.}
-
-\item{bulkExpressionBulk}{mixed signals matrix of samples, which can be 
-matched to single-cell samples.}
 }
 \value{
 New object of class \linkS4class{bisqueParam}.
