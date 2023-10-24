@@ -26,8 +26,7 @@
 #' ## get param object
 #' param <- bisqueParam(bulkExpressionSet=bulkExpressionSet, 
 #'                      bulkExpression=bulkExpression,
-#'                      singleCellExpressionSet=
-#'                       exampleList[["singleCellExpressionSet"]], 
+#'                      scData=exampleList[["singleCellExpressionSet"]], 
 #'                      batchVariable="SubjectName", 
 #'                      cellTypeVariable="cellType", 
 #'                      useOverlap=FALSE)
@@ -52,7 +51,7 @@ setClass("bisqueParam",
          contains="independentbulkParam", 
          slots=c(
                  bulkExpressionSet="ExpressionSet",
-                 singleCellExpressionSet="ExpressionSet",
+                 scData="ExpressionSet",
                  assayName="character",
                  batchVariable="character",
                  cellTypeVariable="character",
@@ -78,10 +77,10 @@ setClass("bisqueParam",
 #' data. Accepts ExpressionSet, SummarizedExperiment, and SingleCellExperiment 
 #' object types.
 #' @param assayName Expression data type (e.g. counts, logcounts, tpm, etc.).
-#' @param batchVariable Name of variable identifbulkExpressionIndependentng the 
-#' batches in singleCellExpressionSet pData/coldata.
-#' @param cellTypeVariable Name of cell type labels variable in 
-#' singleCellExpressionSet pData/coldata.
+#' @param batchVariable Name of variable identifying the batches in scData 
+#' pData/coldata.
+#' @param cellTypeVariable Name of cell type labels variable in scData 
+#' pData/coldata.
 #' @param useOverlap Whether to deconvolve samples overlapping bulk and sc 
 #' esets (logical, FALSE).
 #' @param returnInfo Whether to return metadata and original method outputs 
@@ -127,11 +126,11 @@ bisqueParam <- function(bulkExpression=NULL,
   list.bulkExpression<- 
     .parseBulkExpression(bulkExpression, bulkExpressionSet)
   ## parse scData
-  singleCellExpressionSet <- .parseSingleCellData(scData, assayName)
+  scData <- .parseSingleCellData(scData, assayName)
   ## parse z data
   listReferenceExpression <- .parseReferenceExpression(
-    singleCellExpressionSet, referenceExpression, assayName, batchVariable, 
-    cellTypeVariable)
+    scData, referenceExpression, assayName, batchVariable, cellTypeVariable
+  )
   ## parse s
   cellScaleFactors <- .parseCellSize(
     listReferenceExpression[["referenceExpression"]], cellScaleFactors)
@@ -152,7 +151,7 @@ bisqueParam <- function(bulkExpression=NULL,
       referenceExpression=listReferenceExpression[["referenceExpression"]], 
       cellScaleFactors=cellScaleFactors, 
       bulkExpressionSet=list.bulkExpression[["bulkExpressionSet"]], 
-      singleCellExpressionSet=singleCellExpressionSet, 
+      scData=scData, 
       assayName=assayName, 
       batchVariable=batchVariable, 
       cellTypeVariable=cellTypeVariable, 
@@ -224,23 +223,23 @@ bisqueParam <- function(bulkExpression=NULL,
 }
 
 #'
-.parseReferenceExpression <- function(singleCellExpressionSet=NULL, 
+.parseReferenceExpression <- function(scData=NULL, 
                                       referenceExpression=NULL, 
                                       assayName="counts",
                                       batchVariable="group",
                                       cellTypeVariable="celltype"){
   stopOption <- FALSE
-  if(!cellTypeVariable %in% colnames(pData(singleCellExpressionSet))){
+  if(!cellTypeVariable %in% colnames(pData(scData))){
     stopOption <- TRUE
   }
   if(is(referenceExpression, "NULL")){
-    singleCellExperiment <- eset_to_sce(singleCellExpressionSet, "counts")
+    singleCellExperiment <- eset_to_sce(scData, "counts")
     referenceExpression <- referenceFromSingleCellExperiment(
       singleCellExperiment=singleCellExperiment, assayName=assayName, 
       cellTypeVariable=cellTypeVariable)
   }
-  if(batchVariable %in% colnames(pData(singleCellExpressionSet))){
-   idSC <- unique(singleCellExpressionSet[[batchVariable]])
+  if(batchVariable %in% colnames(pData(scData))){
+   idSC <- unique(scData[[batchVariable]])
   } else{
     stopOption <- TRUE
   }
@@ -334,19 +333,20 @@ bisqueParam <- function(bulkExpression=NULL,
 setMethod("deconvolution", signature(object="bisqueParam"), function(object){
   parametersList <- callNextMethod()
   bulkExpressionSet <- object[["bulkExpressionSet"]]
-  singleCellExpressionSet <- object[["singleCellExpressionSet"]]
+  scData <- object[["scData"]]
   useOverlap <- object[["useOverlap"]]
   result <- BisqueRNA::ReferenceBasedDecomposition(
     bulk.eset=bulkExpressionSet,
-    sc.eset=singleCellExpressionSet,
+    sc.eset=scData,
     use.overlap=useOverlap
   )
   predictions <- result$bulk.props
   predictionsList <- lapply(seq(ncol(predictions)), 
                             function(index){predictions[,index]})
-  returnList <- .parsedeconvolution_predictions_results(predictionsList, 
-                                                 row.names(predictions), 
-                                                 colnames(predictions))
+  returnList <- parseDeconvolutionPredictionsResults(
+    listPred = predictionsList, columnLabels = colnames(predictions),
+    rowLabels = row.names(predictions)
+  )
   if(object[["returnInfo"]]){
     returnList <- list(
       predictioncellScaleFactors=predictions, 
@@ -354,7 +354,7 @@ setMethod("deconvolution", signature(object="bisqueParam"), function(object){
       metadata=
         list(metadataList=parametersList[["metadata"]], 
              bulkExpressionSet=bulkExpressionSet, 
-             singleCellExpressionSet=singleCellExpressionSet))
+             scData=scData))
   }
   return(returnList)
 })
