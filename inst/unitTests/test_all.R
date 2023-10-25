@@ -7,26 +7,48 @@ test_that("randomSingleCellExperiment produces expected SingleCellExperiment", {
 })
 
 test_that("nnlsParam produces expected results", {
-
+  
+  set.seed(0)
+  
 	exampleList <- getDeconvolutionExampleData()
 	
+	# evaluate param
 	param <- nnlsParam(
 	  cellScaleFactors=exampleList[["cellScaleFactors"]], 
 	  bulkExpression=exampleList[["bulkExpression"]], 
 	  referenceExpression=exampleList[["referenceExpression"]]
 	)
-	
+	#
+	# run tests
 	expect_equal(class(param)[1], "nnlsParam")
-
 	expect_equal(class(param@referenceExpression)[1], "matrix")
-
 	expect_equal(class(param@bulkExpression)[1], "matrix")
-
 	expect_equal(class(param@cellScaleFactors)[1], "numeric")
-
 	expect_equal(names(assays(randomSingleCellExperiment())), "counts")
-	
 	expect_true(inherits(param, c("referencebasedParam", "deconvolutionParam")))
+	
+	# evalute deconvolution results
+	deconvolutionResults <- deconvolution(param)
+	predictionsTable <- deconvolutionResults@predictionsTable
+	digitsRound <- 5
+	# expect values
+	expectType1Sample1 <- as.numeric(round(0.9985854, digitsRound))
+	expectType2Sample1 <- round(0.001414605, digitsRound)
+	expectType1Sample2 <- round(0.2231840, digitsRound)
+	expectType2Sample2 <- round(0.776815983, digitsRound)
+	# observed values
+	observeType1Sample1 <- round(predictionsTable[1,1], digitsRound)
+	observeType2Sample1 <- round(predictionsTable[1,2], digitsRound)
+	observeType1Sample2 <- round(predictionsTable[2,1], digitsRound)
+	observeType2Sample2 <- round(predictionsTable[2,2], digitsRound)
+	#
+	# run tests
+	expect_equal(nrow(predictionsTable), 2)
+	expect_equal(ncol(predictionsTable), 2)
+	expect_equal(expectType1Sample1, observeType1Sample1)
+	expect_equal(expectType2Sample1, observeType2Sample1)
+	expect_equal(expectType1Sample2, observeType1Sample2)
+	expect_equal(expectType2Sample2, observeType2Sample2)
 	
 })
 
