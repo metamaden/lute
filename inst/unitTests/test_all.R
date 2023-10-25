@@ -54,6 +54,8 @@ test_that("nnlsParam produces expected results", {
 
 test_that("bisqueParam produces expected results", {
   
+  set.seed(0)
+  
   exampleList <- getDeconvolutionExampleDataBisque()
   scData <- exampleList[["singleCellExpressionSet"]]
   scData$celltype <- scData$cellType
@@ -61,23 +63,43 @@ test_that("bisqueParam produces expected results", {
   bulkExpressionSet <- exampleList$bulkExpressionSet
   phenoData(bulkExpressionSet)$batch.id <- colnames(bulkExpressionSet)
   
+  # test param properties
   param <- bisqueParam(
     cellScaleFactors=c("type1" = 1, "type2" = 10), 
     bulkExpressionSet=bulkExpressionSet, 
     scData=scData
   )
-  
+  #
+  # run tests
   expect_equal(class(param)[1], "bisqueParam")
-  
   expect_equal(class(param@referenceExpression)[1], "matrix")
-  
   expect_equal(class(param@bulkExpression)[1], "matrix")
-  
   expect_equal(class(param@cellScaleFactors)[1], "numeric")
-  
   expect_equal(names(assays(randomSingleCellExperiment())), "counts")
-  
   expect_true(inherits(param, c("referencebasedParam", "deconvolutionParam")))
+  
+  # evalute deconvolution results
+  deconvolutionResults <- deconvolution(param)
+  predictionsTable <- deconvolutionResults@predictionsTable
+  digitsRound <- 5
+  # expect values
+  expectType1Sample1 <- as.numeric(round(0.4417268, digitsRound))
+  expectType2Sample1 <- round(0.5582732, digitsRound)
+  expectType1Sample2 <- round(0.5099963, digitsRound)
+  expectType2Sample2 <- round(0.4900037, digitsRound)
+  # observed values
+  observeType1Sample1 <- round(predictionsTable[1,1], digitsRound)
+  observeType2Sample1 <- round(predictionsTable[1,2], digitsRound)
+  observeType1Sample2 <- round(predictionsTable[2,1], digitsRound)
+  observeType2Sample2 <- round(predictionsTable[2,2], digitsRound)
+  #
+  # run tests
+  expect_equal(nrow(predictionsTable), 100)
+  expect_equal(ncol(predictionsTable), 2)
+  expect_equal(expectType1Sample1, observeType1Sample1)
+  expect_equal(expectType2Sample1, observeType2Sample1)
+  expect_equal(expectType1Sample2, observeType1Sample2)
+  expect_equal(expectType2Sample2, observeType2Sample2)
   
 })
 
