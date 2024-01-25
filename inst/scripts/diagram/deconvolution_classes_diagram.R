@@ -4,6 +4,21 @@
 ###
 ### Get diagram of deconvolution classes from lute.
 ###
+### 1. A. deconvolutionParam
+### 2. B. referencebasedParam
+### 3. C. independentbulkParam
+### 4. 1. nnlsParam
+### 5. 2. musicParam
+### 6. 3. epicParam
+### 7. 4. deconrnaseqParam
+### 8. 5. music2Param
+### 9. 6. music2Param
+### 10. 7. bisqueParam
+### 11. 8. scdcParam
+###
+###
+###
+
 
 libv <- c("DiagrammeR", "lute")
 sapply(libv, library, character.only=T)
@@ -47,6 +62,10 @@ add_method_edges <- function(filter.string, csv, input, output,
 ###----------------
 ## parse csv data
 ## initialize parent class nodes and edges
+
+#input <- c("deconParam", "deconParam", "referencebasedParam")
+#output <- c("referencebasedParam", "referencefreeParam", "independentbulkParam")
+
 input <- c("deconParam", "deconParam", "referencebasedParam")
 output <- c("referencebasedParam", "referencefreeParam", "independentbulkParam")
 
@@ -125,12 +144,14 @@ deconvolution_classes_chart <- function(csv.filename=paste0("lute-deconvolution"
                                                               "_transfer-learning-table.csv"),
                                         method.colname="method_class",
                                         parent.class.colname="parent_classes",
-                                        input.node.start=c("deconvolutionParam", 
-                                                             "deconvolutionParam", 
-                                                             "referencebasedParam"),
-                                        output.node.start=c("referencebasedParam", 
-                                                              "referencefreeParam", 
-                                                              "independentbulkParam"),
+                                        #input.node.start=c("deconvolutionParam", 
+                                        #                     "deconvolutionParam", 
+                                        #                     "referencebasedParam"),
+                                        #output.node.start=c("referencebasedParam", 
+                                        #                      "referencefreeParam", 
+                                        #                      "independentbulkParam"),
+                                        input.node.start=c("A", "A", "B"),
+                                        output.node.start=c("B", "B", "C"),
                                         method.node.fillcolor="lightgray",
                                         method.node.outlinecolor="black",
                                         method.node.shape="oval",
@@ -148,15 +169,23 @@ deconvolution_classes_chart <- function(csv.filename=paste0("lute-deconvolution"
   ## set chart edges
   input <- input.node.start; output <- output.node.start
   ## append independent bulk methods
-  lchart <- add_method_edges(filter.string="independentbulkParam",
+  #lchart <- add_method_edges(filter.string="independentbulkParam",
+  #                           filter.type="in", csv=csv,
+  #                           input=input, output=output, 
+  #                           input.node.string="independentbulkParam")
+  lchart <- add_method_edges(filter.string="C",
                              filter.type="in", csv=csv,
                              input=input, output=output, 
-                             input.node.string="independentbulkParam")
+                             input.node.string="C")
   ## append remaining methods
-  lchart <- add_method_edges(filter.string="independentbulkParam", 
+  #lchart <- add_method_edges(filter.string="independentbulkParam", 
+  #                           filter.type="out", csv=csv,
+  #                           lchart[["input"]], lchart[["output"]], 
+  #                           input.node.string="referencebasedParam")
+  lchart <- add_method_edges(filter.string="C", 
                              filter.type="out", csv=csv,
                              lchart[["input"]], lchart[["output"]], 
-                             input.node.string="referencebasedParam")
+                             input.node.string="B")
   ## set edge strings
   edge.string <- paste0(lchart[["input"]], "->", lchart[["output"]], 
                         collapse=" ")

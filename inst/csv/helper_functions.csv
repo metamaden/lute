@@ -1,0 +1,14 @@
+function_name,description
+`referenceFromSingleCellExperiment()`,Makes the Z cell atlas reference from a SingleCellExperiment.
+`eset_to_sce()`,Convert ExpressionSet to SingleCellExperiment.
+`sce_to_eset()`,Convert SingleCellExperiment to ExpressionSet
+`se_to_eset()`,Convert SummarizedExperiment to ExpressionSet.
+`get_eset_from_matrix()`,Makes an ExpressionSet from a matrix.
+`parseDeconvolutionPredictionsResults()`,Gets formatted predicted cell type proportions table from deconvolution results list.
+`show()`,Method to inspect and summarize param object contents.
+`deconvolution()`,Method to perform deconvolution with a param object.
+`typemarkers()`,Method to get cell type markers with a param object.
+`deconvolutionParam()`,Defines the principal parent class for all deconvolution method parameters.
+`referencebasedParam()`,Class and methods for managing reference-based deconvolution methods.
+`independentbulkParam()`,Class and methods for managing methods requiring independent bulk samples.
+`typemarkersParam()`,Main constructor for class to manage mappings to the typemarkers() generic.
