@@ -7,13 +7,13 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 bibliography: bibliography.bib
 package: lute
 output:
-  BiocStyle::pdf_document: 
-    toc: no
-    toc_depth: 0
   BiocStyle::html_document:
     code_folding: show
     toc: no
     tocfloat: no
+  BiocStyle::pdf_document: 
+    toc: no
+    toc_depth: 0
 vignette: > 
   %\VignetteIndexEntry{The lute user's guide}
   %\usepackage[UTF-8]{inputenc} 
