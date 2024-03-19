@@ -13,8 +13,11 @@
 #' @param vector2 Second numeric vector
 #' @description Takes 2 vectors of numerics
 #' @returns single numeric
-#' @example
-#' rmse(seq(1e-10,2e-10,1e-11), rev(seq(1e-10,2e-10,1e-11)))
+#' @examples
+#' proportionsVectorPred <- seq(1e-10,2e-10,1e-11)
+#' proportionsVectorTrue <- rev(proportionsVectorPred)
+#' rmseTest(proportionsVectorTrue, proportionsVectorPred)
+#' 
 #' @details Function to test RMSE values (see `test_rmse.R`)
 #' @export
 rmseTest <- function(firstVector, secondVector){
@@ -31,8 +34,11 @@ rmseTest <- function(firstVector, secondVector){
 #' @param summaryType Toggle summary type (either "mean" or "median")
 #' @description Takes 2 vectors of numerics
 #' @returns single numeric
-#' @example
-#' rmse(seq(1e-10,2e-10,1e-11), rev(seq(1e-10,2e-10,1e-11)))
+#' @examples
+#' proportionsVectorPred <- seq(1e-10,2e-10,1e-11)
+#' proportionsVectorTrue <- rev(proportionsVectorPred)
+#' rmse(proportionsVectorTrue, proportionsVectorPred)
+#' 
 #' @details
 #' Function does not distinguish between true and predicted status, variable 
 #' labels provided for convenience.

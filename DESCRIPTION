@@ -1,5 +1,5 @@
 Package: lute
-Version: 0.99.28
+Version: 0.99.29
 Title: Framework for cell size scale factor normalized bulk transcriptomics deconvolution experiments
 Authors@R: c(
     person(c("Sean", "K"), "Maden", role = c("cre", "aut"), 

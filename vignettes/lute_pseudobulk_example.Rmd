@@ -278,7 +278,8 @@ scale treatment (x-axis). The sample IDs are depicted by the point colors.
 ggplot(dfPlotTall, aes(x = type, y = error, color = sampleId)) + 
   geom_jitter(alpha = 0.5, size = 4) + theme_bw() +
   geom_boxplot(alpha = 0, color = "cyan") +
-  theme(text = element_text(size = textSize)) +
+  theme(text = element_text(size = textSize),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
   xlab("Type") + ylab("Error (Neuron)")
 ```
 
