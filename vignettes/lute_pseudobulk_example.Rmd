@@ -117,7 +117,7 @@ knitr::kable(dfProportions) # view
 Define the cell size scale factors and use these to make the pseudobulks. 
 For demonstration we set these to have large difference (i.e. neuron/glial > 3).
 While we set these manually, the cell scale factors could also be defined from 
-library sizes or by referencing the `cellScaleFactors` package ([link]()).
+library sizes or by referencing the `cellScaleFactors` package ([link](https://github.com/metamaden/cellScaleFactors/tree/main)).
 
 ```{r}
 cellScalesVector <- c("glial" = 3, "neuron" = 10)
@@ -237,12 +237,36 @@ Show sample results scatterplots of true (x-axis) by predicted (y-axis) neuron
 proportions. Also include a reference line (slope = 1, yintercept = 0) showing
 where agreement is absolute between proportions.
 
+Also shows RMSE in plot titles.
+
 ```{r}
+
+dfPlotTallNew <- dfPlotTall
+
+rmseScaled <- 
+  rmse(
+    dfPlotTallNew[dfPlotTallNew$type=="scaled",]$true,
+    dfPlotTall[dfPlotTall$type=="scaled",]$predicted, "mean")
+
+rmseUnscaled <- 
+  rmse(
+    dfPlotTallNew[dfPlotTallNew$type=="unscaled",]$true,
+    dfPlotTallNew[dfPlotTallNew$type=="unscaled",]$predicted, "mean")
+
+dfPlotTallNew$type <- 
+  ifelse(grepl("un.*", dfPlotTallNew$type),
+         paste0(dfPlotTallNew$type,
+                " (RMSE = ", round(rmseScaled, 3), ")"),
+         paste0(dfPlotTallNew$type,
+                " (RMSE = ", round(rmseUnscaled, 3), ")"))
+
 textSize <- 15
-ggplot(dfPlotTall, aes(x = true, y = predicted)) + 
+ggplot(dfPlotTallNew, aes(x = true, y = predicted)) + 
   geom_point(size = 4, alpha = 0.5) + geom_abline(slope = 1, intercept = 0) + 
-  xlim(0, 1) + ylim(0, 1) + facet_wrap(~type) + 
-  theme(text = element_text(size = textSize))
+  xlim(0, 1) + ylim(0, 1) + facet_wrap(~type) + theme_bw() +
+  xlab("True") + ylab("Predicted") +
+  theme(text = element_text(size = textSize),
+        axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ## Make boxplots with jittered points for neuron errors
@@ -252,8 +276,11 @@ scale treatment (x-axis). The sample IDs are depicted by the point colors.
 
 ```{r}
 ggplot(dfPlotTall, aes(x = type, y = error, color = sampleId)) + 
-  geom_jitter(alpha = 0.5, size = 4) + geom_boxplot(alpha = 0, color = "cyan") +
-  theme(text = element_text(size = textSize))
+  geom_jitter(alpha = 0.5, size = 4) + theme_bw() +
+  geom_boxplot(alpha = 0, color = "cyan") +
+  theme(text = element_text(size = textSize),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  xlab("Type") + ylab("Error (Neuron)")
 ```
 
 This process could be readily repeated for the remaining cell types, or just 
