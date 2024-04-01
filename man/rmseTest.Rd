@@ -7,22 +7,23 @@
 rmseTest(firstVector, secondVector)
 }
 \arguments{
-\item{vector1}{First numeric vector}
+\item{firstVector}{First numeric vector.}
 
-\item{vector2}{Second numeric vector}
+\item{secondVector}{Second numeric vector.}
 }
 \value{
-single numeric
+Single numeric value
 }
 \description{
 Takes 2 vectors of numerics
 }
 \details{
-Function to test RMSE values (see `test_rmse.R`)
+Tests the rmse function for rounding imprecision.
+
+Function to test RMSE values (`./unitTests/test_rmse.R`).
 }
 \examples{
 proportionsVectorPred <- seq(1e-10,2e-10,1e-11)
 proportionsVectorTrue <- rev(proportionsVectorPred)
 rmseTest(proportionsVectorTrue, proportionsVectorPred)
-
 }
