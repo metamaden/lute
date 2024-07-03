@@ -29,28 +29,73 @@ knitr::opts_chunk$set(echo=TRUE, eval=TRUE)
 
 # How to use this guide
 
-This User's Guide describes how to use `lute`, a framework for bulk 
-transcriptomics deconvolution. An introduction to deconvolution experiments is 
-provided, followed by a description of the framework and a small experiment 
-using example data.
+User's Guide for `lute`, a framework for bulk transcriptomics deconvolution 
+experiments. We described this new software and method for cell size rescaling 
+is in @maden_lute-preprint_2024. Below, we provided setup instructions, 
+introduced essential deconvolution experiment concepts, provided an example 
+experiment, and linked to resources for further learning.
 
-Begin by passing the following to your active R session:
+# Install and setup
 
-```{r}
-library(lute)
-```
+The `lute` package is available from Bioconductor or GitHub. Install and run 
+`lute` using R (v4.3.2 or later) with Bioconductor (v3.19 or later). This 
+section walks through install and further setup for the conda environment and 
+Docker image.
 
-# Installation
+## Install
 
-Install `lute` by passing the following to the console from an active R session.
-You must have the `BiocManager` package installed.
+Install `lute` by passing the following to the console from an active R session. 
+With the `BiocManager` package installed, install `lute` from Bioconductor with:
 
 ```{r, eval = F}
 BiocManager::install("lute")
 ```
 
+Alternatively, install from GitHub using `devtools`:
+
+```{r, eval = F}
+devtools::install("metamaden/lute")
+```
+
+With `lute` successfully installed, run:
+
+```{r}
+library(lute)
+```
+
+## Setup
+
+Setup instructions for `lute`.
+
+### Conda 
+
+From the base directory for the package, create and activate a new environment 
+from the YML script:
+
+```
+conda env create /inst/yml/lute.yml
+```
+
+Running `conda info --env` or `conda env list` should now show the new 
+environment. Activate it with `conda activate lute`, and install additional 
+dependencies with `/inst/yml/setup.R`. To install `lute`, see above.
+
+### Docker
+
+Access the `lute` Docker image with tag `madensean758/lute_bioconductor:3.20`:
+
+```
+docker pull madensean758/lute_bioconductor:3.20
+docker run madensean758/lute_bioconductor:3.20
+```
+
+If this times out, it may be necessary to log in to Dockerhub with `docker 
+login`, check your internet connection, or try again later.
 
 # Deconvolution overview
+
+Walks through the definition, experiment elements, simulation assumptions, and 
+rescaling for deconvolution experiments.
 
 ## Definition
 
@@ -72,9 +117,11 @@ Most deconvolution algorithms predict the type-specific proportions from a
 signature matrix and a convoluted signals matrix in the following manner:
 
 $$P \leftarrow [Y, Z]$$
-Where we have the following term definitions for bulk transcriptomics deconvolution:
+Where we have the following term definitions for bulk transcriptomics 
+deconvolution:
 
-* $P$ : $K$-length vector of predicted proportions for the number of cell types $K$.
+* $P$ : $K$-length vector of predicted proportions for the number of cell types 
+$K$.
 
 * $Z$ : Signature expression matrix, with dimensions of $G$ total rows of 
 signature genes by $K$ total columns of cell types.
@@ -118,7 +165,7 @@ such as brain that feature principal cell types with very different sizes.
 ## Deconvolution algorithms
 
 There are dozens of different deconvolution algorithms used in the field of 
-trascriptomics alone. These may be organized in several ways, such as whether 
+transcriptomics alone. These may be organized in several ways, such as whether 
 they incorporate a variance weighting strategy or cell size scale factors. 
 Another useful way to organize algorithms is by whether they incorporate the
 non-negative least squares (NNLS) algorithm in some way. This is a statistical
@@ -206,16 +253,18 @@ length(markers$typemarkerResults)
 
 We identified 10 marker genes from the provided data.
 
-To run a more complete experiment, we need to define $Y$. For this demonstration,
-we define $Y$ as a pseudobulk from the provided `exampleSingleCellExperiment` 
-data using `ypb_from_sce()` (see `?ypb_from_sce` for details).
+To run a more complete experiment, we need to define $Y$. For this 
+demonstration, we define $Y$ as a pseudobulk from the provided 
+`exampleSingleCellExperiment` data using `ypb_from_sce()` (see `?ypb_from_sce` 
+for details).
 
 ```{r}
 examplePseudobulkExpression <- exampleBulkExpression <- ypb_from_sce(
   singleCellExperiment=exampleSingleCellExperiment)
 ```
 
-By default, the pseudobulk used all available cell data in `exampleSingleCellExperiment`. 
+By default, the pseudobulk used all available cell data in 
+`exampleSingleCellExperiment`. 
 
 Finally, we run marker selection and deconvolution in succession with `lute` as
 follows:
