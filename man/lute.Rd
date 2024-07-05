@@ -14,7 +14,7 @@ lute(
   markersPerType = 20,
   assayName = "counts",
   cellTypeVariable = "celltype",
-  typemarkerAlgorithm = "findmarkers",
+  typemarkerAlgorithm = NULL,
   deconvolutionAlgorithm = "nnls",
   verbose = TRUE
 )
@@ -72,6 +72,10 @@ Support is provided for \linkS4class{SummarizedExperiment}-type or
 matrix-type inputs for the Z signature matrix (see referenceExpression 
 argument) and Y bulk signals matrix (see bulkExpression arguments). Note,
 both Z and Y need to be provided or derivable in order to run deconvolution.
+
+Key framework steps are controlled with the arguments: 1. typemarkerAlgorithm 
+and 2. deconvolutionAlgorithm, where the first argument is parsed prior to 
+the second. Either step may be skipped by setting it to "NULL".
 }
 \examples{
 # get example bulk data

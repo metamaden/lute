@@ -9,16 +9,17 @@
 
 #' rmseTest
 #'
-#' @param vector1 First numeric vector
-#' @param vector2 Second numeric vector
+#' Tests the rmse function for rounding imprecision.
+#'
+#' @param firstVector First numeric vector.
+#' @param secondVector Second numeric vector.
 #' @description Takes 2 vectors of numerics
-#' @returns single numeric
+#' @returns Single numeric value
 #' @examples
 #' proportionsVectorPred <- seq(1e-10,2e-10,1e-11)
 #' proportionsVectorTrue <- rev(proportionsVectorPred)
 #' rmseTest(proportionsVectorTrue, proportionsVectorPred)
-#' 
-#' @details Function to test RMSE values (see `test_rmse.R`)
+#' @details Function to test RMSE values (`./unitTests/test_rmse.R`).
 #' @export
 rmseTest <- function(firstVector, secondVector){
   sqrt(mean((firstVector-secondVector)^2))
