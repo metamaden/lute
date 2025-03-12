@@ -292,6 +292,14 @@ Returning to the example, inspect the predicted cell type proportions $P$ from
 experiment.results$deconvolution.results
 ```
 
+# Visualizing results
+
+To visualize the results of the deconvolution experiment, we 
+suggesting using functions such as the 
+[`plot_composition_bar()` function](https://research.libd.org/DeconvoBuddies/reference/plot_composition_bar.html) 
+from the `DeconvoBuddies` package. This function generates a bar plot of the 
+cell compositions estimates. 
+
 # Conclusions and further reading
 
 This User's Guide introduced the `lute` framework for deconvolution, including 
